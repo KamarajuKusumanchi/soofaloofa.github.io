@@ -1,0 +1,32 @@
+.post-content {
+  padding-top: 1em;
+}
+
+.social-links a i {
+  color: #666;
+}
+
+img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+.landing-header {
+	height: 650px;
+	background: url(/img/header-bg.jpg) center center no-repeat;
+	background-size: cover;
+  margin-top: -21px;
+}
+
+.headline {
+  padding-top: 80px;
+  margin-top: 2em;
+  font-size: 400%;
+  font-weight: bold;
+  color: #FFF;
+}
+
+.margin-base-vertical {
+  margin: 40px 0;
+}

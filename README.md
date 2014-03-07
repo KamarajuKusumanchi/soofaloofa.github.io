@@ -1,10 +1,10 @@
-# sookocheff.com
+# soofaloofa.github.io
 
 Source code for sookocheff.com.
 
 ## Deployment
 
-git remote add target https://github.com/soofaloofa/soofaloofa.github.io.git
-docpad deploy-ghpages --env static
+ghp-import -n -p -b master out/
 
-deploys from current master branch to the master branch of soofaloofa.github.io.
+Deploys the out/ directory from the current `source` branch to the `master`
+branch of soofaloofa.github.io.

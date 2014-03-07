@@ -2,7 +2,7 @@
 layout: post
 title: "On choosing a hypermedia type for your API - HAL, JSON-LD, Collection+JSON, SIREN, Oh My!"
 author: Kevin Sookocheff
-date: 2014/02/21
+date: 2014/03/11
 tags: 
   - Hypermedia
   - REST

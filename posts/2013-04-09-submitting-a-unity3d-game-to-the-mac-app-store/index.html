@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><title>Submitting a Unity3d Game to the Mac App Store | Kevin Sookocheff</title><meta name="description" content="Tinker. Tailor. Soldier. Sailor."><meta name="keywords" content=""><meta name="author" content="Kevin Sookocheff"><!-- Meta--><meta charset="utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="DocPad v6.59.6" /><!--[if lt IE 9]><script async src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><script async src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.2.0/respond.js"></script><![endif]--><!-- Analytics--><script>
+<!DOCTYPE html><html lang="en"><head><title>Submitting a Unity3d Game to the Mac App Store | Kevin Sookocheff</title><meta name="description" content="Tinker. Tailor. Soldier. Sailor."><meta name="keywords" content=""><meta name="author" content="Kevin Sookocheff"><!-- Meta--><meta charset="utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="DocPad v6.64.0" /><!--[if lt IE 9]><script async src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><script async src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.2.0/respond.js"></script><![endif]--><!-- Analytics--><script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -18,90 +18,95 @@ Subscribe <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="http:/
 <p>Navigate to the Contents directory and open the file Info.plist in your favorite text editor. You will need to make a few changes to this file.</p>
 <p><img src="/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/info-plist.png" alt="Info.plist" title="Info.plist"></p>
 <p>Specifically, you will need to edit the following entries to correspond to your specific application.</p>
-<pre class="highlight"><code class="xml">CFBundleExecutable: The name of your game.
+<pre class="highlight"><code class="hljs xml">CFBundleExecutable: The name of your game.
 CFBundleGetInfoString: Human readable information about your game.
 CFBundleIdentifier: The App identifier you registered at the Mac App Store.
 CFBundleName: The name of your game.
 CFBundleShortVersionString: The version number of your game.
 NSHumanReadableCopyright: Your copyright.
-LSApplicationCategoryType: The category of your application.</code></pre>
+LSApplicationCategoryType: The category of your application.
+</code></pre>
 <p>The end result will look something like this:</p>
-<pre class="highlight"><code class="xml"><span class="pi">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
-<span class="doctype">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span>
-<span class="tag">&lt;<span class="title">plist</span> <span class="attribute">version</span>=<span class="value">"1.0"</span>&gt;</span>
-<span class="tag">&lt;<span class="title">dict</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>CFBundleDevelopmentRegion<span class="tag">&lt;/<span class="title">key</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">string</span>&gt;</span>English<span class="tag">&lt;/<span class="title">string</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>CFBundleExecutable<span class="tag">&lt;/<span class="title">key</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">string</span>&gt;</span>PhantomLeader<span class="tag">&lt;/<span class="title">string</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>CFBundleGetInfoString<span class="tag">&lt;/<span class="title">key</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">string</span>&gt;</span>Phantom Leader version 1.0.7<span class="tag">&lt;/<span class="title">string</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>CFBundleIconFile<span class="tag">&lt;/<span class="title">key</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">string</span>&gt;</span>icons.icns<span class="tag">&lt;/<span class="title">string</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>CFBundleIdentifier<span class="tag">&lt;/<span class="title">key</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">string</span>&gt;</span>com.dvg.phantomleadermac<span class="tag">&lt;/<span class="title">string</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>CFBundleInfoDictionaryVersion<span class="tag">&lt;/<span class="title">key</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">string</span>&gt;</span>6.0<span class="tag">&lt;/<span class="title">string</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>CFBundleName<span class="tag">&lt;/<span class="title">key</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">string</span>&gt;</span>PhantomLeader<span class="tag">&lt;/<span class="title">string</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>CFBundlePackageType<span class="tag">&lt;/<span class="title">key</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">string</span>&gt;</span>APPL<span class="tag">&lt;/<span class="title">string</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>CFBundleShortVersionString<span class="tag">&lt;/<span class="title">key</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">string</span>&gt;</span>1.0.7<span class="tag">&lt;/<span class="title">string</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>CFBundleSignature<span class="tag">&lt;/<span class="title">key</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">string</span>&gt;</span>????<span class="tag">&lt;/<span class="title">string</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>CFBundleVersion<span class="tag">&lt;/<span class="title">key</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">string</span>&gt;</span>1.0.7<span class="tag">&lt;/<span class="title">string</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>NSMainNibFile<span class="tag">&lt;/<span class="title">key</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">string</span>&gt;</span>MainMenu<span class="tag">&lt;/<span class="title">string</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>NSPrincipalClass<span class="tag">&lt;/<span class="title">key</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">string</span>&gt;</span>PlayerApplication<span class="tag">&lt;/<span class="title">string</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>NSHumanReadableCopyright<span class="tag">&lt;/<span class="title">key</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">string</span>&gt;</span>Dan Verssen Games/Red Finch Software<span class="tag">&lt;/<span class="title">string</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>LSApplicationCategoryType<span class="tag">&lt;/<span class="title">key</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">string</span>&gt;</span>public.app-category.board-games<span class="tag">&lt;/<span class="title">string</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>UnityBuildNumber<span class="tag">&lt;/<span class="title">key</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">string</span>&gt;</span>b81e0151ec83<span class="tag">&lt;/<span class="title">string</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">dict</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">plist</span>&gt;</span></code></pre>
-<p>You can get more information about these keys from the Apple developer documentation. The most notable key in need of changing is the LSApplicationCategoryType which must correspond to an actual category on the Mac App Store. You can find the LS keys documentation <a href="http://developer.apple.com/library/ios/#documentation/general/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html">here</a>.</p>
+<pre class="highlight"><code class="hljs xml"><span class="hljs-pi">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hljs-doctype">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">plist</span> <span class="hljs-attribute">version</span>=<span class="hljs-value">"1.0"</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">dict</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>CFBundleDevelopmentRegion<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">string</span>&gt;</span>English<span class="hljs-tag">&lt;/<span class="hljs-title">string</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>CFBundleExecutable<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">string</span>&gt;</span>PhantomLeader<span class="hljs-tag">&lt;/<span class="hljs-title">string</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>CFBundleGetInfoString<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">string</span>&gt;</span>Phantom Leader version 1.0.7<span class="hljs-tag">&lt;/<span class="hljs-title">string</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>CFBundleIconFile<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">string</span>&gt;</span>icons.icns<span class="hljs-tag">&lt;/<span class="hljs-title">string</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>CFBundleIdentifier<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">string</span>&gt;</span>com.dvg.phantomleadermac<span class="hljs-tag">&lt;/<span class="hljs-title">string</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>CFBundleInfoDictionaryVersion<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">string</span>&gt;</span>6.0<span class="hljs-tag">&lt;/<span class="hljs-title">string</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>CFBundleName<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">string</span>&gt;</span>PhantomLeader<span class="hljs-tag">&lt;/<span class="hljs-title">string</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>CFBundlePackageType<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">string</span>&gt;</span>APPL<span class="hljs-tag">&lt;/<span class="hljs-title">string</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>CFBundleShortVersionString<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">string</span>&gt;</span>1.0.7<span class="hljs-tag">&lt;/<span class="hljs-title">string</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>CFBundleSignature<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">string</span>&gt;</span>????<span class="hljs-tag">&lt;/<span class="hljs-title">string</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>CFBundleVersion<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">string</span>&gt;</span>1.0.7<span class="hljs-tag">&lt;/<span class="hljs-title">string</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>NSMainNibFile<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">string</span>&gt;</span>MainMenu<span class="hljs-tag">&lt;/<span class="hljs-title">string</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>NSPrincipalClass<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">string</span>&gt;</span>PlayerApplication<span class="hljs-tag">&lt;/<span class="hljs-title">string</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>NSHumanReadableCopyright<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">string</span>&gt;</span>Dan Verssen Games/Red Finch Software<span class="hljs-tag">&lt;/<span class="hljs-title">string</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>LSApplicationCategoryType<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">string</span>&gt;</span>public.app-category.board-games<span class="hljs-tag">&lt;/<span class="hljs-title">string</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>UnityBuildNumber<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">string</span>&gt;</span>b81e0151ec83<span class="hljs-tag">&lt;/<span class="hljs-title">string</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">dict</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">plist</span>&gt;</span>
+</code></pre><p>You can get more information about these keys from the Apple developer documentation. The most notable key in need of changing is the LSApplicationCategoryType which must correspond to an actual category on the Mac App Store. You can find the LS keys documentation <a href="http://developer.apple.com/library/ios/#documentation/general/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html">here</a>.</p>
 <h3 id="icons">Icons</h3>
 <p>You will need to generate an iconset matching Apple’s <a href="https://developer.apple.com/library/mac/#documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/Optimizing/Optimizing.html#//apple_ref/doc/uid/TP40012302-CH7-SW2">Human Interface Guidelines</a>. The first step is to create all of the required icons. You will need variations of your icon supporting the following resolutions.</p>
-<pre class="highlight"><code class="avrasm">icon_16x16<span class="preprocessor">.png</span>
-icon_16x16<span class="localvars">@2</span><span class="built_in">x</span><span class="preprocessor">.png</span>
-icon_32x32<span class="preprocessor">.png</span>
-icon_32x32<span class="localvars">@2</span><span class="built_in">x</span><span class="preprocessor">.png</span>
-icon_128x128<span class="preprocessor">.png</span>
-icon_128x128<span class="localvars">@2</span><span class="built_in">x</span><span class="preprocessor">.png</span>
-icon_256x256<span class="preprocessor">.png</span>
-icon_256x256<span class="localvars">@2</span><span class="built_in">x</span><span class="preprocessor">.png</span>
-icon_512x512<span class="preprocessor">.png</span>
-icon_512x512<span class="localvars">@2</span><span class="built_in">x</span><span class="preprocessor">.png</span></code></pre>
-<p>Place all of these icons in the same folder called icons.iconset. Now we have to drop in to Terminal and run the iconutil program to create your icns file which will be named the same as your icons folder. Running</p>
-<pre class="highlight"><code class="bash">iconutil -c icns</code></pre>
+<pre class="highlight"><code class="hljs avrasm">icon_16x16<span class="hljs-preprocessor">.png</span>
+icon_16x16<span class="hljs-localvars">@2</span><span class="hljs-built_in">x</span><span class="hljs-preprocessor">.png</span>
+icon_32x32<span class="hljs-preprocessor">.png</span>
+icon_32x32<span class="hljs-localvars">@2</span><span class="hljs-built_in">x</span><span class="hljs-preprocessor">.png</span>
+icon_128x128<span class="hljs-preprocessor">.png</span>
+icon_128x128<span class="hljs-localvars">@2</span><span class="hljs-built_in">x</span><span class="hljs-preprocessor">.png</span>
+icon_256x256<span class="hljs-preprocessor">.png</span>
+icon_256x256<span class="hljs-localvars">@2</span><span class="hljs-built_in">x</span><span class="hljs-preprocessor">.png</span>
+icon_512x512<span class="hljs-preprocessor">.png</span>
+icon_512x512<span class="hljs-localvars">@2</span><span class="hljs-built_in">x</span><span class="hljs-preprocessor">.png</span>
+</code></pre><p>Place all of these icons in the same folder called icons.iconset. Now we have to drop in to Terminal and run the iconutil program to create your icns file which will be named the same as your icons folder. Running</p>
+<pre class="highlight"><code class="hljs bash">iconutil -c icns
+</code></pre>
 <p>will generate a file called icons.icns. You will need to replace the file <code>UnityPlayer.icns</code> with this icon file using Finder. The <code>UnityPlayer.icns</code> file is located in <code>Contents -&gt; Resources</code> within your .App.</p>
 <h3 id="entitlements">Entitlements</h3>
 <p>All Apps on the Mac App Store must be sandboxed. To sandbox your Unity app you have to provide an entitlements file to use during the code signing process. A fairly minimal entitlements file should look something like this.</p>
-<pre class="highlight"><code class="xml"><span class="pi">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
-<span class="doctype">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span>
-<span class="tag">&lt;<span class="title">plist</span> <span class="attribute">version</span>=<span class="value">"1.0"</span>&gt;</span>
-<span class="tag">&lt;<span class="title">dict</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>com.apple.security.app-sandbox<span class="tag">&lt;/<span class="title">key</span>&gt;</span> <span class="tag">&lt;<span class="title">true</span>/&gt;</span>
-    <span class="tag">&lt;<span class="title">key</span>&gt;</span>com.apple.security.device.usb<span class="tag">&lt;/<span class="title">key</span>&gt;</span> <span class="tag">&lt;<span class="title">true</span>/&gt;</span>
-<span class="tag">&lt;/<span class="title">dict</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">plist</span>&gt;</span></code></pre>
-<p>You can read more about entitlements at the <a href="http://developer.apple.com/library/mac/#documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/AboutEntitlements.html">Entitlement Key Reference</a>.</p>
+<pre class="highlight"><code class="hljs xml"><span class="hljs-pi">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hljs-doctype">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">plist</span> <span class="hljs-attribute">version</span>=<span class="hljs-value">"1.0"</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">dict</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>com.apple.security.app-sandbox<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span> <span class="hljs-tag">&lt;<span class="hljs-title">true</span>/&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>com.apple.security.device.usb<span class="hljs-tag">&lt;/<span class="hljs-title">key</span>&gt;</span> <span class="hljs-tag">&lt;<span class="hljs-title">true</span>/&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">dict</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">plist</span>&gt;</span>
+</code></pre><p>You can read more about entitlements at the <a href="http://developer.apple.com/library/mac/#documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/AboutEntitlements.html">Entitlement Key Reference</a>.</p>
 <h3 id="code-signing">Code Signing</h3>
 <p>Now that we have our iconset and entitlements ready we can codesign our App for delivery to the Mac App Store. We have to drop back to the Terminal to run the codesign application.</p>
-<pre class="highlight"><code class="bash">codesign --force --sign <span class="string">"3rd Party Mac Developer Application: XXXX"</span> --entitlements yourapp.entitlements YourApp.app</code></pre>
+<pre class="highlight"><code class="hljs bash">codesign --force --sign <span class="hljs-string">"3rd Party Mac Developer Application: XXXX"</span> --entitlements yourapp.entitlements YourApp.app
+</code></pre>
 <p>You can find &quot;XXXX&quot; in the Keychain Access program. Look for a code signing certificate beginning with the text &quot;3rd Party Mac Developer Application&quot; you will need to copy this entire text to the codesign command above. You can find more details from the <a href="http://developer.apple.com/library/mac/#releasenotes/General/SubmittingToMacAppStore/index.html">App Store Submission documentation</a>.</p>
 <p><img src="/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/keychain.png" alt="KeyChain Access" title="KeyChain Access"></p>
 <p>In addition to signing your app you must sign <code>libmono.dylib</code>.  </p>
-<pre class="highlight"><code class="bash">codesign --force --sign <span class="string">"3rd Party Mac Developer Application: XXXX"</span> --entitlements yourapp.entitlements YourApp.app/Contents/Frameworks/MonoEmbedRuntime/osx/libmono.<span class="number">0</span>.dylib</code></pre>
+<pre class="highlight"><code class="hljs bash">codesign --force --sign <span class="hljs-string">"3rd Party Mac Developer Application: XXXX"</span> --entitlements yourapp.entitlements YourApp.app/Contents/Frameworks/MonoEmbedRuntime/osx/libmono.<span class="hljs-number">0</span>.dylib
+</code></pre>
 <p>If you don’t have the required Keychain Access certificates you will need to create these using the Apple Member Center.</p>
 <h3 id="product-building">Product Building</h3>
 <p>To build your final product run productbuild from the command line.</p>
-<pre class="highlight"><code class="bash">productbuild --component /YourApp.app /Applications --sign <span class="string">"3rd Party Mac Developer Installer: XXXX"</span> YourApp.pkg</code></pre>
+<pre class="highlight"><code class="hljs bash">productbuild --component /YourApp.app /Applications --sign <span class="hljs-string">"3rd Party Mac Developer Installer: XXXX"</span> YourApp.pkg
+</code></pre>
 <p>Where &quot;XXXX&quot; is again from Keychain Access. This time, use the certificate beginning with  &quot;3rd Party Mac Developer Installer&quot;.</p>
 <h3 id="application-loader">Application Loader</h3>
 <p>You are finally ready to submit your App! Before submission you must create your App on iTunes Connect and fill out detailed app information. After your app is created launch Application Loader and click on Deliver Your App. Choose the application you created in iTunes Connect from the drop down menu and follow the prompts to choose your .pkg file that was created with the productbuild  command.</p>

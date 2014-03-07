@@ -1,0 +1,156 @@
+<!DOCTYPE html><html lang="en"><head><title>Blog | Kevin Sookocheff</title><meta name="description" content="Tinker. Tailor. Soldier. Sailor."><meta name="keywords" content=""><meta name="author" content="Kevin Sookocheff"><!-- Meta--><meta charset="utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="DocPad v6.64.0" /><!--[if lt IE 9]><script async src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><script async src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.2.0/respond.js"></script><![endif]--><!-- Analytics--><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-20611089-6', 'sookocheff.com');
+  ga('send', 'pageview');
+
+</script>
+<link  rel="stylesheet" href="/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai.css" /></head><body><!-- Navbar--><div class="navbar navbar-default"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/" class="navbar-brand">Kevin Sookocheff</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav navbar-right"><li><a href="/pages/speaking">Speaking</a></li><li><a href="/blog">Blog</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle"> 
+Subscribe <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="http://eepurl.com/KJE01">email</a></li><li><a href="http://sookocheff.com/rss.xml">RSS</a></li></ul></li></ul></div></div></div><!-- Container--><!-- Container--><div class="container"><!-- Content--><section id="content" class="content"><section class="page"><div class="page-header"><h1>Blog</h1></div><div class="page-content"><article><h2><a href="/posts/2010-06-11-the-incredible-effeciency-of-the-pomodoro-technique">The incredible effeciency of the Pomodoro Technique</a></h2><small class="text-muted">Posted on <time datetime="2010-5-11">Friday, June 11, 2010</time></small><div class="post-content"><p>I recently started using the <a href="http://www.pomodorotechnique.com/">Pomodore Technique</a> and am absolutely amazed at home much my productivity has increased.   After one full week I can honestly say I am a convert.  My productivity, and my job satisfaction, has increased knowing that I am making progress towards a goal — each and every day.</p>
+<p>If you are not aware of the Pomodoro Technique I will explain it briefly here.  For more information, head over to the <a href="http://www.pomodorotechnique.com/">website</a>.</p>
+<p>The Pomodoro Technique can be split into five steps:</p>
+<ol>
+<li>Choose a task to be accomplished</li>
+<li>Set the Pomodoro to 25 minutes (the Pomodoro is the timer)</li>
+<li>Work on the task until the Pomodoro rings, then put a check on your sheet of paper</li>
+<li>Take a short break (5 minutes is OK)</li>
+<li>Every 4 Pomodoros take a longer break</li>
+</ol>
+<p>That’s it, that’s all.  It really doesn’t get any harder (or easier).  Avoid interruptions and try to be consistent.  Do this for a week and you will be amazed at how much you can accomplish.</p>
+</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2010-06-11-the-incredible-effeciency-of-the-pomodoro-technique&amp;text=The incredible effeciency of the Pomodoro Technique&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2010-06-11-the-incredible-effeciency-of-the-pomodoro-technique"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2010-06-11-the-incredible-effeciency-of-the-pomodoro-technique"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2010-06-11-the-incredible-effeciency-of-the-pomodoro-technique"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2010-06-11-the-incredible-effeciency-of-the-pomodoro-technique"><i class="fa fa-envelope"></i></a></p><hr/></article><article><h2><a href="/posts/2010-06-01-how-to-forward-root-users-mail-to-an-external-address">How to forward root users mail to an external address</a></h2><small class="text-muted">Posted on <time datetime="2010-5-1">Tuesday, June 01, 2010</time></small><div class="post-content"><p>I recently set up a RAID array wanted to keep notified of any errors that may occur. By default Ubuntu Server sends mail to the root user whenever an error occurs but logging in as root to check mail every so often didn’t seem very convenient. There had to be a better way. The best information that I found came from the Ubuntu community forums. Here I’ll expand on that discussion, hopefully helping other people who are trying to do the same thing. The traditional way to forward mail is to create a .forward file in your home directory, entering the addresses that you would like to forward mail to.</p>
+<p>For example,</p>
+<pre class="highlight"><code class="hljs bash"><span class="hljs-built_in">sudo</span> su <span class="hljs-built_in">cd</span> ~ vim .forward
+</code></pre><p>And add the line</p>
+<pre class="highlight"><code class="hljs avrasm">jane<span class="hljs-preprocessor">.doe</span>@gmail<span class="hljs-preprocessor">.com</span>
+</code></pre><p>before saving and closing the file. Unfortunately, things won’t be that easy for two reasons.</p>
+<ol>
+<li>Postfix needs to be set up to handle and recognize external addresses.</li>
+<li>As a security measure, the root user cannot send mail to external addresses, so we need to forward root mail to another user before sending it on to an external address.</li>
+</ol>
+<p>So, if you are following along, delete the .forward file from the root directory so that we are starting fresh. First, install postfix if you haven’t already done so. You can choose no configuration since we will manually configure it.</p>
+<pre class="highlight"><code class="hljs bash"><span class="hljs-built_in">sudo</span> apt-get install postfix
+</code></pre><p>Postfix configuration is specified in /etc/postfix/main.cf. Edit this file by replacing it with the following code. The important parts are highlighted by a large comment block.</p>
+<pre class="highlight"><code class="hljs makefile"><span class="hljs-comment"># Debian specific: Specifying a file name will cause the first </span>
+<span class="hljs-comment"># line of that file to be used as the name. The Debian default </span>
+<span class="hljs-comment"># is /etc/mailname. </span>
+<span class="hljs-comment">#myorigin = /etc/mailname </span>
+
+<span class="hljs-constant">smtpd_banner</span> = $myhostname ESMTP $mail_name (Ubuntu)
+<span class="hljs-constant">biff</span> = no  
+
+<span class="hljs-comment"># appending .domain is the MUA's job. </span>
+<span class="hljs-constant">append_dot_mydomain</span> = no  
+
+<span class="hljs-comment"># Uncomment the next line to generate "delayed mail" warnings </span>
+<span class="hljs-comment">#delay_warning_time = 4h </span>
+
+<span class="hljs-comment"># TLS parameters </span>
+<span class="hljs-constant">smtpd_tls_cert_file</span>=/etc/ssl/certs/ssl-cert-snakeoil.pem
+<span class="hljs-constant">smtpd_tls_key_file</span>=/etc/ssl/private/ssl-cert-snakeoil.key
+<span class="hljs-constant">smtpd_use_tls</span>=yes
+<span class="hljs-constant">smtpd_tls_session_cache_database</span> = btree:${queue_directory}/smtpd_scache
+<span class="hljs-constant">smtp_tls_session_cache_database</span> = btree:${queue_directory}/smtp_scache  
+
+<span class="hljs-comment"># See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for </span>
+<span class="hljs-comment"># information on enabling SSL in the smtp client. </span>
+
+<span class="hljs-constant">myhostname</span> = localhost
+<span class="hljs-constant">alias_maps</span> = hash:/etc/aliases
+<span class="hljs-constant">alias_database</span> = hash:/etc/aliases
+<span class="hljs-constant">mydestination</span> = localhost, localhost.localdomain
+<span class="hljs-constant">mynetworks</span> = 127.0.0.0/8
+<span class="hljs-constant">mailbox_size_limit</span> = 0
+<span class="hljs-constant">recipient_delimiter</span> =  
+<span class="hljs-constant">inet_interfaces</span> = loopback-only
+<span class="hljs-constant">inet_protocols</span> = all  
+
+<span class="hljs-comment">############################# </span>
+<span class="hljs-comment"># enable forwarding to external address</span>
+<span class="hljs-comment">############################# </span>
+
+<span class="hljs-comment">##### client TLS parameters ##### </span>
+<span class="hljs-constant">smtp_tls_loglevel</span>=1
+<span class="hljs-constant">smtp_tls_security_level</span>=encrypt
+<span class="hljs-constant">smtp_sasl_auth_enable</span>=yes
+<span class="hljs-constant">smtp_sasl_password_maps</span>=hash:/etc/postfix/sasl/passwd
+<span class="hljs-constant">smtp_sasl_security_options</span> = noanonymous  
+
+<span class="hljs-comment">##### map jane@localhost to jane.doe@gmail.com ##### </span>
+<span class="hljs-constant">smtp_generic_maps</span>=hash:/etc/postfix/generic
+<span class="hljs-constant">relayhost</span>=[smtp.gmail.com]:587
+</code></pre><p>By default, Postfix tries to deliver mail directly to the Internet. The relayhost tells Postfix to use gmails servers to provide mail delivery service instead. This is a good thing for two reasons.</p>
+<ol>
+<li>Google’s mail servers (or your ISPs, or whoever is your mail provider) are already set up for secure smtp. Running a mail server is non-trivial so in most cases you want someone else to do this for you.</li>
+<li>Most services will reject mail that does not originate from a registered domain name in order to cut down on spam. I use my server locally and don’t have a domain name; by using GMail as my relayhost all mail is sent from Google’s servers which will not be rejected for delivery.</li>
+</ol>
+<p>Note that to use DNS the relayhost needs square brackets around it, otherwise it will look for an MX record.  I’ve seen a few tutorials that don’t properly explain this and it took a bit of fiddling to figure out what was wrong. Other important parts of the main.cf file are</p>
+<pre class="highlight"><code class="hljs bash">smtp_sasl_password_maps=<span class="hljs-built_in">hash</span>:/etc/postfix/sasl/passwd
+</code></pre><p>and</p>
+<pre class="highlight"><code class="hljs bash">smtp_generic_maps=<span class="hljs-built_in">hash</span>:/etc/postfix/generic
+</code></pre><p>The /etc/postfix/sasl/passwd file contains your Gmail password. You can edit the file and add the lines</p>
+<pre class="highlight"><code class="hljs markdown">[<span class="hljs-link_reference">smtp.gmail.com</span>]:587<span class="hljs-link_url"> jane.doe@gmail.com:doeadeer</span><span class="hljs-link_url">
+</span></code></pre><p>Postfix reads a hashmap database generated from the passwd file.  To create passwd.db and set ownership and permissions appropriately run the following commands:</p>
+<pre class="highlight"><code class="hljs avrasm">cd /etc/postfix/sasl
+postmap passwd
+chown root<span class="hljs-preprocessor">.root</span> passwd passwd<span class="hljs-preprocessor">.db</span>
+chmod <span class="hljs-number">600</span> passwd passwd<span class="hljs-preprocessor">.db</span>
+</code></pre><p>The file /etc/postfix/generic tells Postfix how to map local e-mail addresses to Internet addresses when mail is sent.  Postfix rewrites “From:” headers to make e-mail appear to come from  instead of jane@localhost. You can edit this file and add the line</p>
+<pre class="highlight"><code class="hljs ruby">jane<span class="hljs-variable">@localhost</span> jane.doe<span class="hljs-variable">@gmail</span>.com
+</code></pre><p>Postfix is expecting to read a hashmap just like the passwd.db file above.  You can generate /etc/postfix/generic.db by using the postmap command:</p>
+<pre class="highlight"><code class="hljs bash"><span class="hljs-built_in">cd</span> /etc/postfix postmap generic
+</code></pre><p>Start or reload Postfix</p>
+<pre class="highlight"><code class="hljs avrasm">/etc/init<span class="hljs-preprocessor">.d</span>/postfix restart
+</code></pre><p>Now, let’s test out what we have done. To check that basic delivery works, run the following command as a normal user (replacing “jane” with your username):</p>
+<pre class="highlight"><code class="hljs lasso">sendmail <span class="hljs-attribute">-bv</span> jane
+</code></pre><p>Then, while logged in as jane check to see that you have mail.</p>
+<pre class="highlight"><code class="hljs undefined">mail
+</code></pre><p>To check that Postfix can successfully connect to Gmail, run</p>
+<pre class="highlight"><code class="hljs avrasm">sendmail -bv jane<span class="hljs-preprocessor">.doe</span>@gmail<span class="hljs-preprocessor">.com</span>
+</code></pre><p>and check your Gmail account to see that you received your test message. If both of these commands worked we know that you can properly send mail both locally and externally. This doesn’t quite solve our problem yet.  We still need to forward mail from root to a local user and from the local user to your external address.</p>
+<p>First we’ll forward mail from root on to a local user</p>
+<pre class="highlight"><code class="hljs bash"><span class="hljs-built_in">sudo</span> su <span class="hljs-built_in">cd</span> ~ vim .forward
+</code></pre><p>Add the line</p>
+<pre class="highlight"><code class="hljs avrasm">jane<span class="hljs-preprocessor">.localhost</span>
+</code></pre><p>And then to forward from the local user to gmail create a .forward file in the local users home directory and add the line</p>
+<pre class="highlight"><code class="hljs avrasm">jane<span class="hljs-preprocessor">.doe</span>@gmail<span class="hljs-preprocessor">.com</span>
+</code></pre><p>Lastly, send mail to root.</p>
+<pre class="highlight"><code class="hljs lasso">sendmail <span class="hljs-attribute">-bv</span> root
+</code></pre><p>and then open Gmail to ensure everything worked!</p>
+</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2010-06-01-how-to-forward-root-users-mail-to-an-external-address&amp;text=How to forward root users mail to an external address&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2010-06-01-how-to-forward-root-users-mail-to-an-external-address"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2010-06-01-how-to-forward-root-users-mail-to-an-external-address"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2010-06-01-how-to-forward-root-users-mail-to-an-external-address"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2010-06-01-how-to-forward-root-users-mail-to-an-external-address"><i class="fa fa-envelope"></i></a></p><hr/></article><article><h2><a href="/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server">How to monitor a RAID array in Ubuntu server</a></h2><small class="text-muted">Posted on <time datetime="2010-4-28">Friday, May 28, 2010</time></small><div class="post-content"><p>I’ve been searching for a way to reliably monitor a RAID array.  I found a few resources and decided to compile them in one post.  If you are running Ubuntu Server skip to the bottom for some good news. </p>
+<h2 id="-proc-mdstat">/proc/mdstat</h2>
+<p>The first resource I found is from the <a href="https://raid.wiki.kernel.org/index.php/Detecting,_querying_and_testing#Monitoring_RAID_arrays:/etc/cron.d">Linux RAID wiki</a>.</p>
+<blockquote>
+<p>You can always take a look at /proc/mdstat. It won’t hurt. Let’s learn how to read the file. For</p>
+<p>Personalities : [raid1]<br>read_ahead 1024 sectors<br>md0 : active raid1 sdb5[1] sda5[0]<br>4200896 blocks [2/2] [UU]</p>
+<p>unused devices: none</p>
+<p>To identify the spare devices, first look for the [#/#] value on a line. The first number is the number of a complete raid device as defined. Lets say it is “n”. The raid role numbers [#] following each device indicate its role, or function, within the raid set. Any device with “n” or higher are spare disks. 0,1,..,n-1 are for the working array.</p>
+<p>Also, if you have a failure, the failed device will be marked with (F) after the [#]. The spare that replaces this device will be the device with the lowest role number n or higher that is not marked (F). Once the resync operation is complete, the device’s role numbers are swapped.</p>
+<p>The order in which the devices appear in the /proc/mdstat output means nothing.</p>
+</blockquote>
+<p>Given this information you could write a script that polls /proc/mdstat searching for character sequence [UU] and then schedule this via cron. That seemed like a good solution, but I had also heard about mdadm and wanted to investigate it too.</p>
+<h2 id="mdadm">mdadm</h2>
+<p>Also from the <a href="https://raid.wiki.kernel.org/index.php/Detecting,_querying_and_testing#Monitoring_RAID_arrays:/etc/cron.d">Linux RAID wiki</a>.</p>
+<blockquote>
+<p>mdadm –detail /dev/md0</p>
+<p>This commands will show spare and failed disks loud and clear.</p>
+<p>You can run mdadm as a daemon by using the follow-monitor mode. If needed, that will make mdadm send email alerts to the system administrator when arrays encounter errors or fail. Also, follow mode can be used to trigger contingency commands if a disk fails, like giving a second chance to a failed disk by removing and reinserting it, so a non-fatal failure could be automatically solved.</p>
+<p>Let’s see a basic example. Running</p>
+<p>mdadm –monitor –mail=root@localhost –delay=1800 /dev/md2</p>
+<p>should release a mdadm daemon to monitor /dev/md2. The delay parameter means that polling will be done in intervals of 1800 seconds. Finally, critical events and fatal errors should be e-mailed to the system manager. That’s RAID monitoring made easy.</p>
+<p>Finally, the –program or –alert parameters specify the program to be run whenever an event is detected.</p>
+</blockquote>
+<h2 id="ubuntu-server">ubuntu server</h2>
+<p>This was all great but now my dilemma was in deciding how to put this information to use.  I searched some more and came across the following from <a href="http://serverfault.com/questions/49939/daemon-to-verify-linux-md-raid">ServerFault</a>.</p>
+<blockquote>
+<p>On Debian (and therefore Ubuntu) machines, cron runs:</p>
+<p>/usr/share/mdadm/checkarray –cron –all –quiet</p>
+<p>the first Sunday of the month by default (see /etc/cron.d).   All output is mailed to the sys admin.   This command checks all data integrity.</p>
+<p>It basically boils down to:</p>
+<p>echo check &gt; /sys/block/$array/md/sync_action</p>
+<p>but with a lot of sanity around it.   Steal it from your nearest Debian install, or from the mdadm source package.</p>
+</blockquote>
+<p>So, it turns out that my version of Ubuntu Server was already monitoring data integrity once a month.  I then decided to search my init scripts to see what was installed by default and found /etc/init.d/mdadm.  It turns out that, by default, a daemon job to monitor the array (with the mdadm –monitor command shown above) is run at startup and will send mail to root for any strange occurrence. So, if you are running a debian-based server and wish to monitor the state of your RAID array you really don’t have to do anything at all.  But how about sending root mail to your external e-mail address.  Well, that’s the subject of <a href="http://www.kevinsookocheff.com/2010/06/01/how-to-forward-root-users-mail-to-an-external-address/">another post</a>.</p>
+</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server&amp;text=How to monitor a RAID array in Ubuntu server&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server"><i class="fa fa-envelope"></i></a></p><hr/></article><!-- Pagination --><ul class="pager"><li class="previous disabled"><a href="#">&larr; Older</a></li><li><a href="/archives">Archives</a></li><li class="next"><a href="/blog.6">Newer &rarr; </a></li></ul></div></section></section></div><div class="container"><hr><!-- Footer--><footer><p class="pull-right"><a href="#" class="pull-right">Top</a></p><p>© Kevin Sookocheff</p></footer></div><!-- Scripts--><script defer="defer"  src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script defer="defer"  src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script></body></html>

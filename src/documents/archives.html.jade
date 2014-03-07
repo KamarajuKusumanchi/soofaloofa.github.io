@@ -1,0 +1,16 @@
+---
+title: Archives
+layout: page
+---
+
+each post in getCollection('posts').toJSON()
+  .row
+    .col-md-2
+      if post.date.getFullYear() != currentYear
+        currentYear = post.date.getFullYear()
+        h3= currentYear
+
+    .col-md-10
+      article
+        h3: a(href=post.url)= post.title
+        != partial('post-date.html.jade', {date: post.date, author:post.author})

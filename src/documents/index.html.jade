@@ -1,0 +1,43 @@
+---
+title: Home
+layout: global
+---
+
+.landing-header
+  .row
+    .col-lg-12
+      h1.headline.text-center Hi, I'm Kevin.
+
+.container
+  .row.margin-base-vertical
+    .col-md-12
+      p.lead
+        != partial('blurb.html.jade')
+
+  .row.margin-base-vertical
+
+    .col-xs-6
+      a.btn.btn-default.btn-block(href='/blog', role='button')
+        i.fa.fa-align-left
+        | &nbsp;Blog
+
+      a.btn.btn-default.btn-block(href='http://www.linkedin.com/in/kevinsookocheff', role='button')
+        i.fa.fa-linkedin
+        | &nbsp;LinkedIn
+
+    .col-xs-6
+      a.btn.btn-default.btn-block(href='https://twitter.com/soofaloofa', role='button')
+        i.fa.fa-twitter
+        | &nbsp;Twitter
+
+      a.btn.btn-default.btn-block(href='https://github.com/soofaloofa', role='button')
+        i.fa.fa-github 
+        | &nbsp;GitHub
+
+  .row.margin-base-vertical
+    .col-md-12
+      p.text-center
+        small.text-muted
+          a(href='mailto://kevin.sookocheff@gmail.com') 
+            i.fa.fa-envelope
+            | &nbsp;email

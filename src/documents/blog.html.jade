@@ -1,0 +1,43 @@
+---
+title: Blog
+layout: page
+isPaged: true
+pagedCollection: 'posts'
+pageSize: 5
+---
+
+- var posts = getCollection('posts').toJSON()
+
+- for (var i=document.page.startIdx; i<document.page.endIdx; i++)
+  post = posts[i]
+  article
+    h2
+      a(href=post.url)= post.title
+
+    small.text-muted
+      != partial('post-date.html.jade', {date: post.date})
+
+    .post-content!= post.contentRenderedWithoutLayouts
+
+    hr
+
+    p
+      != partial('share-this.html.jade', {url: post.url, title: post.title})
+
+    hr
+
+// Pagination 
+ul.pager
+  if hasNextPage()
+    li.previous: a(href=getNextPage()) &larr; Older
+  else
+    li.previous.disabled: a(href="#") &larr; Older
+        
+  li
+    a(href="/archives") Archives
+
+  if hasPrevPage()
+    li.next: a(href=getPrevPage()) Newer &rarr; 
+  else
+    li.next.disabled: a(href="#") Newer &rarr; 
+

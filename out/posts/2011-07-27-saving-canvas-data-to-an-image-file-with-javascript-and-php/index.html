@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang="en"><head><title>Saving canvas data to an image file with JavaScript and PHP | Kevin Sookocheff</title><meta name="description" content="Tinker. Tailor. Soldier. Sailor."><meta name="keywords" content=""><meta name="author" content="Kevin Sookocheff"><!-- Meta--><meta charset="utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="DocPad v6.64.0" /><!--[if lt IE 9]><script async src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><script async src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.2.0/respond.js"></script><![endif]--><!-- Analytics--><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-20611089-6', 'sookocheff.com');
+  ga('send', 'pageview');
+
+</script>
+<link  rel="stylesheet" href="/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai.css" /></head><body><!-- Navbar--><div class="navbar navbar-default"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/" class="navbar-brand">Kevin Sookocheff</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav navbar-right"><li><a href="/pages/speaking">Speaking</a></li><li><a href="/blog">Blog</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle"> 
+Subscribe <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="http://eepurl.com/KJE01">email</a></li><li><a href="http://sookocheff.com/rss.xml">RSS</a></li></ul></li></ul></div></div></div><!-- Container--><!-- Container--><div class="container"><!-- Content--><section id="content" class="content"><section class="page"><div class="page-header"><h1>Saving canvas data to an image file with JavaScript and PHP</h1></div><div class="page-content"><article class="post"><p><small class="text-muted">Posted on <time datetime="2011-6-27">Wednesday, July 27, 2011</time></small></p><div class="post-content"><p>Saving HTML canvas element data to an image in a user friendly manner is a tricky problem.</p>
+<h3 id="first-attempt">First Attempt</h3>
+<p>We could always open our canvas in a new browser tab (or window) with the <code>toDataURL</code> JavaScript method.</p>
+<pre class="highlight"><code class="hljs avrasm">window<span class="hljs-preprocessor">.location</span><span class="hljs-preprocessor">.href</span> = canvas<span class="hljs-preprocessor">.toDataURL</span>(<span class="hljs-string">"image/png"</span>)<span class="hljs-comment">;</span>
+</code></pre><p>Unfortunately this requires the user to use the file menu or the right-click button to save the image from the newly opened browser tab. I wouldn’t call this user friendly.</p>
+<h3 id="second-attempt">Second Attempt</h3>
+<p>After some investigation I came across Nihilogic’s <a href="http://www.nihilogic.dk/labs/canvas2image/"><code>Canvas2Image</code></a> JavaScript package. This package presents a Dialog Box to the user allowing them to save the image. This would solve my problem except the downloaded filename has the format 8iqALWM5.part . If my mom encountered a filename like that she wouldn’t know what to do with it. Still not user friendly.</p>
+<h3 id="final-attempt">Final Attempt</h3>
+<p>What to do? Enter PHP.</p>
+<p><a href="http://www.permadi.com/blog/2010/10/html5-saving-canvas-image-data-using-php-and-ajax/">Permadi</a> presents a technique using PHP and AJAX that is exactly what I need. After some tweaking here’s what I came up with.</p>
+<h3 id="save-php">save.php</h3>
+<p>The first PHP file saves the passed in canvas data to the server at a random location determined by the md5(uniqid())  method.</p>
+<pre class="highlight"><code class="hljs ruby"><span class="hljs-variable">$data</span> = <span class="hljs-variable">$_POST</span>[<span class="hljs-string">'data'</span>];
+<span class="hljs-variable">$file</span> = md5(uniqid()) . <span class="hljs-string">'.png'</span>;
+
+<span class="hljs-regexp">//</span> remove <span class="hljs-string">"data:image/png;base64,"</span>
+<span class="hljs-variable">$uri</span> =  substr(<span class="hljs-variable">$data</span>,strpos(<span class="hljs-variable">$data</span>,<span class="hljs-string">","</span>) <span class="hljs-number">1</span>);
+
+<span class="hljs-regexp">//</span> save to file
+file_put_contents(<span class="hljs-variable">$file</span>, base64_decode(<span class="hljs-variable">$uri</span>));
+
+<span class="hljs-regexp">//</span> <span class="hljs-keyword">return</span> the filename
+echo json_encode(<span class="hljs-variable">$file</span>);
+</code></pre><p>We would call this via JQuery with the $.post method, filling the data parameter using the <code>toDataURL</code> method.</p>
+<pre class="highlight"><code class="hljs css">$<span class="hljs-class">.post</span>("<span class="hljs-tag">save</span><span class="hljs-class">.php</span>", <span class="hljs-rules">{<span class="hljs-rule"><span class="hljs-attribute">data</span>:<span class="hljs-value"> canvas.<span class="hljs-function">toDataURL(<span class="hljs-string">"image/png"</span>)</span></span></span></span>})
+</code></pre><h3 id="download-php">download.php</h3>
+<p>Now we can use PHP to force the download of the saved image data. You can read more about this in the <a href="http://php.net/manual/en/function.readfile.php">PHP Manual</a>.</p>
+<pre class="highlight"><code class="hljs bash"><span class="hljs-variable">$file</span> = trim(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">'path'</span>]);
+
+// force user to download the image
+<span class="hljs-keyword">if</span> (file_exists(<span class="hljs-variable">$file</span>)) {
+    header(<span class="hljs-string">'Content-Description: File Transfer'</span>);
+    header(<span class="hljs-string">'Content-Type: image/png'</span>);
+    header(<span class="hljs-string">'Content-Disposition: attachment; filename='</span>.basename(<span class="hljs-variable">$file</span>));
+    header(<span class="hljs-string">'Content-Transfer-Encoding: binary'</span>);
+    header(<span class="hljs-string">'Expires: 0'</span>);
+    header(<span class="hljs-string">'Cache-Control: must-revalidate, post-check=0, pre-check=0'</span>);
+    header(<span class="hljs-string">'Pragma: public'</span>);
+    header(<span class="hljs-string">'Content-Length: '</span> . filesize(<span class="hljs-variable">$file</span>));
+    ob_clean();
+    flush();
+    readfile(<span class="hljs-variable">$file</span>);
+    <span class="hljs-keyword">exit</span>;
+}
+<span class="hljs-keyword">else</span> {
+    <span class="hljs-built_in">echo</span> <span class="hljs-string">"<span class="hljs-variable">$file</span> not found"</span>;
+}
+</code></pre><p>We can use the return value of our first AJAX request as input to <code>download.php</code> to provide the filename.</p>
+<pre class="highlight"><code class="hljs javascript">$(<span class="hljs-string">"#save"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+    $.post(<span class="hljs-string">"save.php"</span>, {data: G_cv.toDataURL(<span class="hljs-string">"image/png"</span>)}, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(file)</span> {</span>
+        window.location.href =  <span class="hljs-string">"download.php?path="</span>  file});
+    });
+</code></pre><p>Now when the <code>Save</code> link is clicked a dialog box will be presented to the user asking them to save their image.</p>
+<p>User friendly?</p>
+</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php&amp;text=Saving canvas data to an image file with JavaScript and PHP&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php"><i class="fa fa-envelope"></i></a></p><hr/><div class="well"><div class="row"><div class="col-md-8 col-md-offset-2"><h4>About Kevin</h4></div></div><div class="row"><div class="col-md-2 col-md-offset-2"><img src="/img/profile.png"/></div><div class="col-md-6"><p>I am a Software Developer. I work at <a href="http://www.vendasta.com">VendAsta</a>&nbsp;with a bunch of great people. I run a business as <a href="http://redfinchsoftware.com">Red Finch Software</a>. You can find me online as <a href="https://twitter.com/soofaloofa">soofaloofa</a>. I love to teach, learn, speak and write about business and software.</p><p class="lead social-links"><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square"></i></a>&nbsp;<a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square"></i></a>&nbsp;<a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square"></i></a>&nbsp;<a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square"></i></a>&nbsp;<a href="https://github.com/soofaloofa"><i class="fa fa-github-square"></i></a>&nbsp;<a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square"></i></a></p></div></div></div><hr/><div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'kevinsookocheff'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article></div></section></section></div><div class="container"><hr><!-- Footer--><footer><p class="pull-right"><a href="#" class="pull-right">Top</a></p><p>© Kevin Sookocheff</p></footer></div><!-- Scripts--><script defer="defer"  src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script defer="defer"  src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script></body></html>

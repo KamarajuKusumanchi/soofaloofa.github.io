@@ -5,10 +5,10 @@
         <description><![CDATA[Tinker. Tailor. Soldier. Sailor.]]></description>
         <link>http://sookocheff.com</link>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Thu, 06 Mar 2014 23:33:05 GMT</lastBuildDate>
+        <lastBuildDate>Fri, 07 Mar 2014 15:32:37 GMT</lastBuildDate>
         <atom:link href="http://sookocheff.com/rss.xml" rel="self" type="application/rss+xml"/>
         <author><![CDATA[Kevin Sookocheff]]></author>
-        <pubDate>Thu, 06 Mar 2014 23:32:35 GMT</pubDate>
+        <pubDate>Fri, 07 Mar 2014 15:32:03 GMT</pubDate>
         <item>
             <title><![CDATA[On choosing a hypermedia type for your API - HAL, JSON-LD, Collection+JSON, SIREN, Oh My!]]></title>
             <description><![CDATA[<p>In recent years REST has been at the forefront of modern API 

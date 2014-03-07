@@ -4,7 +4,7 @@ Source code for sookocheff.com.
 
 ## Deployment
 
-ghp-import -n -p -b master out/
+/bin/deploy.sh
 
 Deploys the out/ directory from the current `source` branch to the `master`
 branch of soofaloofa.github.io.

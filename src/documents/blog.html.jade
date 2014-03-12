@@ -15,7 +15,7 @@ pageSize: 5
       a(href=post.url)= post.title
 
     small.text-muted
-      != partial('post-date.html.jade', {date: post.date})
+      != partial('post-date.html.jade', {posted: post.date, updated: post.updated})
 
     .post-content!= post.contentRenderedWithoutLayouts
 

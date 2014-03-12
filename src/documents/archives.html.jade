@@ -13,4 +13,4 @@ each post in getCollection('posts').toJSON()
     .col-md-10
       article
         h3: a(href=post.url)= post.title
-        != partial('post-date.html.jade', {date: post.date, author:post.author})
+        != partial('post-date.html.jade', {posted: post.date, updated: post.updated})

@@ -1,3 +1,9 @@
 | Posted on 
-time(datetime=date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate())= date.toLocaleDateString()
-      
+time(datetime=posted.getFullYear() + "-" + posted.getMonth() + "-" + posted.getDate())= posted.toLocaleDateString()
+| . 
+
+if updated
+  - updated = new Date(updated)
+  | Updated on
+  time(datetime=updated.getFullYear() + "-" + updated.getMonth() + "-" + updated.getDate())= updated.toLocaleDateString()
+  | .

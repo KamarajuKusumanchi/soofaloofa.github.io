@@ -6,7 +6,7 @@ article.post
 
   p
     small.text-muted
-      != partial('post-date.html.jade', {date: document.date, author: document.author})
+      != partial('post-date.html.jade', {posted: document.date, updated: document.updated})
 
   .post-content!= content
 

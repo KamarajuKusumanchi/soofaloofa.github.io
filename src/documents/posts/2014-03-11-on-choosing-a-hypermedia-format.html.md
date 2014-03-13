@@ -3,6 +3,7 @@ layout: post
 title: "On choosing a hypermedia type for your API - HAL, JSON-LD, Collection+JSON, SIREN, Oh My!"
 author: Kevin Sookocheff
 date: 2014/03/11
+updated: 2014/03/13
 tags: 
   - Hypermedia
   - REST
@@ -217,8 +218,136 @@ GET https://api.example.com/player/1234567890
 
 This gives us the representation of our `Player` resource in JSON-LD. This
 example doesn't cover all of JSON-LD but should give you a flavour of how the
-format can be used. If you want to dive fully into JSON-LD you can always read
+format can be used. 
+
+Thanks to [Markus Lanthaler](https://twitter.com/markuslanthaler) for offering
+suggestions on how to simplify this even more. In this example we define a
+`@vocab` for our context that encompasses the terms that we use within our
+response. Our list of friends is provided as a simple link to a separate
+endpoint.
+
+```bash
+GET https://api.example.com/player/1234567890
+```
+
+```
+{
+    "@context": {
+        "@vocab": "https://schema.org/",
+        "image": { "@type": "@id" },
+        "friends": { "@type": "@id" }
+    },
+    "@id": "https://api.example.com/player/1234567890",
+    "playerId": "1234567890",
+    "name": "Kevin Sookocheff",
+    "alternateName": "soofaloofa",
+    "image": "https://api.example.com/player/1234567890/avatar.png",
+    "friends": "https://api.example.com/player/1234567890/friends"
+}
+```
+
+If you want to dive fully into JSON-LD you can always read
 the [specification](https://www.w3.org/TR/json-ld/).
+
+JSON-LD lacks support for specifying the actions you can take on a resource. To
+address this short-coming [HYDRA](http://www.markus-lanthaler.com/hydra/)
+provides a vocabulary allowing client-server communication using the JSON-LD
+message format.
+
+To specify the actions available on a resource we would use the `operation`
+property.
+
+```bash
+GET https://api.example.com/player/1234567890/friends
+```
+ 
+```json
+{
+    "@context": [
+        "http://www.w3.org/ns/hydra/core",
+        {
+            "@vocab": "https://schema.org/",
+            "image": { "@type": "@id" },
+            "friends": { "@type": "@id" }
+        }
+    ],
+    "@id": "https://api.example.com/player/1234567890/friends",
+    "operation": {
+        "@type": "BefriendAction",
+        "method": "POST",
+        "expects": {
+            "@id": "http://schema.org/Person",
+            "supportedProperty": [
+                { "property": "name", "range": "Text" },
+                { "property": "alternateName", "range": "Text" },
+                { "property": "image", "range": "URL" }
+            ]
+        }
+    }
+}
+```
+
+The `operation` property defines a `method` term that specifies the HTTP method
+that the endpoint allows. HYDRA also provides a template of the expected
+properties and their data types. In our example a POST request to
+`https://api.example.com/player/1234567890/friends` (the resource's URL) will
+add a new friend to our user's friend list.
+
+HYDRA also provides a `member` property that allows us to embed additional
+resources within our current representations. In the following example we embed
+our friends directly within the resource as a list. 
+
+```
+GET https://api.example.com/player/1234567890/friends
+```
+
+```
+{
+    "@context": [
+        "http://www.w3.org/ns/hydra/core",
+        {
+            "@vocab": "https://schema.org/",
+            "image": { "@type": "@id" },
+            "friends": { "@type": "@id" }
+        }
+    ],
+    "@id": "https://api.example.com/player/1234567890/friends",
+    "operation": {
+        "@type": "BefriendAction",
+        "method": "POST",
+        "expects": {
+            "@id": "http://schema.org/Person",
+            "supportedProperty": [
+                { "property": "name", "range": "Text" },
+                { "property": "alternateName", "range": "Text" },
+                { "property": "image", "range": "URL" }
+            ]
+        }
+    },
+    "member": [
+            {
+                "@id": "https://api.example.com/player/1895638109",
+                "name": "Sheldon Dong",
+                "alternateName": "sdong",
+                "image": "https://api.example.com/player/1895638109/avatar.png",
+                "friends": "https://api.example.com/player/1895638109/friends"
+            },
+            {
+                "@id": "https://api.example.com/player/8371023509",
+                "name": "Martin Liu",
+                "alternateName": "mliu",
+                "image": "https://api.example.com/player/8371023509/avatar.png",
+                "friends": "https://api.example.com/player/8371023509/friends"
+            }
+        ],
+    "nextPage": "https://api.example.com/player/1234567890/friends?page=2"
+}
+```
+
+We've also added a `nextPage` property which is a property defined by HYDRA for
+paged collections. For more details on HYDRA's reserved properties you can read
+the full
+[documentation](http://www.markus-lanthaler.com/hydra/spec/latest/core/#properties).
 
 ### HAL
 
@@ -772,10 +901,10 @@ After going through this exercise I've come to a few conclusions.
 
 JSON-LD is great for augmenting existing APIs without introducing
 breaking changes. This augmentation mostly serves as a way to self document your
-API.  Unfortunately, I think the benefits of JSON-LD end there. The media type
-is verbose and lacks support for specifying the actions you can take on the
-resource (without introducing another complicated standard --
-[Hydra](http://www.markus-lanthaler.com/hydra/)).
+API. If you are looking to add operations to a JSON-LD response look to HYDRA.
+HYDRA adds a vocabulary for communicating using the JSON-LD specification. This
+is an interesting choice as it decouples the API serialization format from the
+communication format.
 
 #### HAL
 

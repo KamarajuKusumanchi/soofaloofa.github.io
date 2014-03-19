@@ -1,0 +1,9 @@
+<h3 id="get">GET</h3>
+<p>The get a resource from your API use the HTTP <code>GET</code>. <code>GET</code> is used to retrieve a representation of a resource by specifying the host and path of the resource.</p>
+<pre class="highlight"><code class="hljs avrasm">GET /player/<span class="hljs-number">1234567890</span>
+<span class="hljs-label">Host:</span> api<span class="hljs-preprocessor">.example</span><span class="hljs-preprocessor">.com</span>
+</code></pre><p>The client may choose between different representations using <em>content negototiation</em>. HTTP defines an <code>Accept</code> header that the client can use to request a specific representation of the resource. For example, an HTML client may use the following <code>Accept</code> header to request an HTML representation from the server.</p>
+<pre class="highlight"><code class="hljs http"><span class="hljs-attribute">Accept</span>: <span class="hljs-string">text/html</span>
+</code></pre><p>Whereas an XML client may use the following <code>Accept</code> header to request an XML representation from the server.</p>
+<pre class="highlight"><code class="hljs http"><span class="hljs-attribute">Accept</span>: <span class="hljs-string">application/xml</span>
+</code></pre><p>By allowing your users to specify the type of data to be returned through your API you can introduce upgraded data types without affecting already deployed clients. Content negotiation allows the client and server to evolve independently without changing the unique resource identifier specified by the URL.</p>

@@ -2,7 +2,7 @@
 layout: post
 title: "When to Use HTTP PUT and HTTP POST"
 author: Kevin Sookocheff
-date: 2014/03/25
+date: 2014/03/27
 tags: 
   - Hypermedia
   - REST
@@ -12,12 +12,10 @@ tags:
 ---
 
 The HTTP protocol defines two methods for updating a resource -- `PUT` and
-`POST`. `PUT` and `POST` have similar syntax and use cases and this similarity
-can confuse API developers deciding which method to allow when modifying a
-resource. This confusion is exacerbated by the success of HTML which only
-allows a `POST` operation when submitting form data to the server. This
-confusion has led most developers to use `POST` for any action which may modify
-the state of a resource, ignoring `PUT` entirely.
+`POST`. Both `PUT` and `POST` are used to modify a resource and this semantic
+similarity can confuse API developers. This confusion has led most developers to
+use `POST` for any action which may modify the state of a resource, ignoring
+`PUT` entirely.
 
 This article attempts to explain the semantics behind the `PUT` and `POST`
 methods and offers clear suggestions on when to use each method.
@@ -34,12 +32,12 @@ Let's go [straight to the HTTP/1.1 RFC][1] for the [definition of PUT][2].
 
 The PUT specification requires that you already know the URL of the resource you
 wish to create or update. On create, if the client chooses the identifier for a
-resource a PUT request such as the following will create a new resource at the
-specified URL.
+resource a PUT request will create the new resource at the specified URL.
 
 ```
-PUT /user/1234567890
+PUT /user/1234567890 HTTP/1.1
 Host: http://sookocheff.com
+
 {
 	"name": "Kevin Sookocheff",
 	"website": "http://kevinsookocheff.com"
@@ -56,11 +54,12 @@ Location: /user/1234567890
 
 In addition, if you know that a resource already exists for a URL, you can make
 a PUT request to that URL to replace the state of that resource on the server.
-In this example I will update the website for this user.
+This example updates the user's website.
 
 ```
-PUT /user/1234567890
+PUT /user/1234567890 HTTP/1.1
 Host: http://sookocheff.com
+
 {
 	"name": "Kevin Sookocheff",
 	"website": "http://sookocheff.com"
@@ -88,8 +87,9 @@ resource -- the server decides the location where it is stored under the
 `user` collection. 
 
 ```
-POST /user
+POST /user HTTP/1.1
 Host: http://sookocheff.com
+
 {
     "name": "Bryan Larson",
     "website": "http://www.bryanlarson.ca"
@@ -107,10 +107,9 @@ Location: /user/636363
 Subsequent updates to this user would be made through a `PUT` request to the
 specific URL for the user - `/user/636363`.
 
-The book [RESTful Web
-APIs](http://www.amazon.ca/RESTful-Web-APIs-Leonard-Richardson/dp/1449358063)
-class this behaviour *POST-to-append* and is the generally recommended way
-to handle a POST request within the context of a specific resource.
+The book [RESTful Web APIs][4]
+classify this behaviour *POST-to-append* and is the generally recommended way to
+handle a POST request within the context of a specific resource.
 
 ## Putting it Together
 
@@ -120,18 +119,17 @@ PUT][2].
 > The fundamental difference between the POST and PUT requests is reflected in
 > the different meaning of the Request-URI. The URI in a POST request identifies
 > the resource that will handle the enclosed entity ...  In contrast, the URI in
-> a PUT request identifies the entity enclosed with the request -- the user
-> agent knows what URI is intended and the server MUST NOT attempt to apply the
-> request to some other resource.
+> a PUT request identifies the entity enclosed with the request.
 
 By following the existing semantics of the HTTP PUT and POST methods we can
-begin to take advantage of the [benefits of
-REST](http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/)
-to write scalable and robust APIs. Not only is your API ready to scale and easy
-to maintain, it is easy to understand and use. By consistently following these
-existing semantics you can avoid inserting special cases and 'gotchas' into your
-API that confuse client developers.
+begin to take advantage of the [benefits of REST][5] to write scalable and
+robust APIs. Not only is your API ready to scale and easy to maintain, it is
+easy to understand and use. By consistently following these existing semantics
+you can avoid inserting special cases and 'gotchas' into your API that confuse
+client developers.
 
 [1]: http://www.w3.org/Protocols/rfc2616/rfc2616.html
-[2]: http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6. 
-[3]: http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.5. 
+[2]: http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6
+[3]: http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.5
+[4]: http://www.amazon.ca/RESTful-Web-APIs-Leonard-Richardson/dp/1449358063
+[5]: http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/

@@ -60,18 +60,16 @@
   <div class="page-content">
 <article class="post">
   <p><small class="text-muted">Posted on 
-<time datetime="2014-2-25">Tuesday, March 25, 2014</time>. </small></p>
+<time datetime="2014-2-27">Thursday, March 27, 2014</time>. </small></p>
   <div class="post-content"><p>The HTTP protocol defines two methods for updating a resource -- <code>PUT</code> and
-<code>POST</code>. <code>PUT</code> and <code>POST</code> have similar syntax and use cases and this similarity
-can confuse API developers deciding which method to allow when modifying a
-resource. This confusion is exacerbated by the success of HTML which only
-allows a <code>POST</code> operation when submitting form data to the server. This
-confusion has led most developers to use <code>POST</code> for any action which may modify
-the state of a resource, ignoring <code>PUT</code> entirely.</p>
+<code>POST</code>. Both <code>PUT</code> and <code>POST</code> are used to modify a resource and this semantic
+similarity can confuse API developers. This confusion has led most developers to
+use <code>POST</code> for any action which may modify the state of a resource, ignoring
+<code>PUT</code> entirely.</p>
 <p>This article attempts to explain the semantics behind the <code>PUT</code> and <code>POST</code>
 methods and offers clear suggestions on when to use each method.</p>
 <h3 id="put">PUT</h3>
-<p>Let&#39;s go <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.html">straight to the HTTP/1.1 RFC</a> for the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6.">definition of PUT</a>.</p>
+<p>Let&#39;s go <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.html">straight to the HTTP/1.1 RFC</a> for the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6">definition of PUT</a>.</p>
 <blockquote>
 <p>The PUT method requests that the enclosed entity be stored under the supplied
 Request-URI. If the Request-URI refers to an already existing resource, the
@@ -81,32 +79,33 @@ resource ... the origin server can create the resource with that URI.</p>
 </blockquote>
 <p>The PUT specification requires that you already know the URL of the resource you
 wish to create or update. On create, if the client chooses the identifier for a
-resource a PUT request such as the following will create a new resource at the
-specified URL.</p>
-<pre class="highlight"><code class="hljs avrasm">PUT /user/<span class="hljs-number">1234567890</span>
-<span class="hljs-label">Host:</span> http://sookocheff<span class="hljs-preprocessor">.com</span>
-{
-    <span class="hljs-string">"name"</span>: <span class="hljs-string">"Kevin Sookocheff"</span>,
-    <span class="hljs-string">"website"</span>: <span class="hljs-string">"http://kevinsookocheff.com"</span>
-}
-</code></pre><p>The server could respond with a <code>201 Created</code> status code and the new resource&#39;s
+resource a PUT request will create the new resource at the specified URL.</p>
+<pre class="highlight"><code class="hljs http"><span class="hljs-request">PUT <span class="hljs-string">/user/1234567890</span> HTTP/1.1</span>
+<span class="hljs-attribute">Host</span>: <span class="hljs-string">http://sookocheff.com</span>
+
+<span class="json">{
+    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>,
+    "<span class="hljs-attribute">website</span>": <span class="hljs-value"><span class="hljs-string">"http://kevinsookocheff.com"</span>
+</span>}
+</span></code></pre><p>The server could respond with a <code>201 Created</code> status code and the new resource&#39;s
 location.</p>
 <pre class="highlight"><code class="hljs http"><span class="hljs-status">HTTP/1.1 <span class="hljs-number">201</span> Created</span>
 <span class="hljs-attribute">Location</span>: <span class="hljs-string">/user/1234567890</span>
 </code></pre><p>In addition, if you know that a resource already exists for a URL, you can make
 a PUT request to that URL to replace the state of that resource on the server.
-In this example I will update the website for this user.</p>
-<pre class="highlight"><code class="hljs avrasm">PUT /user/<span class="hljs-number">1234567890</span>
-<span class="hljs-label">Host:</span> http://sookocheff<span class="hljs-preprocessor">.com</span>
-{
-    <span class="hljs-string">"name"</span>: <span class="hljs-string">"Kevin Sookocheff"</span>,
-    <span class="hljs-string">"website"</span>: <span class="hljs-string">"http://sookocheff.com"</span>
-}
-</code></pre><p>In general the HTTP PUT method replaces the resource at the current URL with the
+This example updates the user&#39;s website.</p>
+<pre class="highlight"><code class="hljs http"><span class="hljs-request">PUT <span class="hljs-string">/user/1234567890</span> HTTP/1.1</span>
+<span class="hljs-attribute">Host</span>: <span class="hljs-string">http://sookocheff.com</span>
+
+<span class="json">{
+    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>,
+    "<span class="hljs-attribute">website</span>": <span class="hljs-value"><span class="hljs-string">"http://sookocheff.com"</span>
+</span>}
+</span></code></pre><p>In general the HTTP PUT method replaces the resource at the current URL with the
 resource contained within the request. PUT is used to both create and update the
 state of a resource on the server. </p>
 <h3 id="post">POST</h3>
-<p>Let&#39;s go <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.html">back to the HTTP/1.1 RFC</a> for the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.5.">definition of POST</a>.</p>
+<p>Let&#39;s go <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.html">back to the HTTP/1.1 RFC</a> for the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.5">definition of POST</a>.</p>
 <blockquote>
 <p>The POST method is used to request that the origin server accept the entity
 enclosed in the request as a new subordinate of the resource identified by the
@@ -119,43 +118,40 @@ to a database.</p>
 collection. In the following example you do not know the actual URL of the
 resource -- the server decides the location where it is stored under the
 <code>user</code> collection. </p>
-<pre class="highlight"><code class="hljs avrasm">POST /user
-<span class="hljs-label">Host:</span> http://sookocheff<span class="hljs-preprocessor">.com</span>
-{
-    <span class="hljs-string">"name"</span>: <span class="hljs-string">"Bryan Larson"</span>,
-    <span class="hljs-string">"website"</span>: <span class="hljs-string">"http://www.bryanlarson.ca"</span>
-}
-</code></pre><p>The server could respond with a <code>201 Created</code> status code and the resource&#39;s new
+<pre class="highlight"><code class="hljs http"><span class="hljs-request">POST <span class="hljs-string">/user</span> HTTP/1.1</span>
+<span class="hljs-attribute">Host</span>: <span class="hljs-string">http://sookocheff.com</span>
+
+<span class="json">{
+    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Bryan Larson"</span></span>,
+    "<span class="hljs-attribute">website</span>": <span class="hljs-value"><span class="hljs-string">"http://www.bryanlarson.ca"</span>
+</span>}
+</span></code></pre><p>The server could respond with a <code>201 Created</code> status code and the resource&#39;s new
 location.</p>
 <pre class="highlight"><code class="hljs http"><span class="hljs-status">HTTP/1.1 <span class="hljs-number">201</span> Created</span>
 <span class="hljs-attribute">Location</span>: <span class="hljs-string">/user/636363</span>
 </code></pre><p>Subsequent updates to this user would be made through a <code>PUT</code> request to the
 specific URL for the user - <code>/user/636363</code>.</p>
-<p>The book <a href="http://www.amazon.ca/RESTful-Web-APIs-Leonard-Richardson/dp/1449358063">RESTful Web
-APIs</a>
-class this behaviour <em>POST-to-append</em> and is the generally recommended way
-to handle a POST request within the context of a specific resource.</p>
+<p>The book <a href="http://www.amazon.ca/RESTful-Web-APIs-Leonard-Richardson/dp/1449358063">RESTful Web APIs</a>
+classify this behaviour <em>POST-to-append</em> and is the generally recommended way to
+handle a POST request within the context of a specific resource.</p>
 <h2 id="putting-it-together">Putting it Together</h2>
-<p>The <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.html">HTTP/1.1 RFC</a> offers some guidance on <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6.">distinguishing between POST and
+<p>The <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.html">HTTP/1.1 RFC</a> offers some guidance on <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6">distinguishing between POST and
 PUT</a>.</p>
 <blockquote>
 <p>The fundamental difference between the POST and PUT requests is reflected in
 the different meaning of the Request-URI. The URI in a POST request identifies
 the resource that will handle the enclosed entity ...  In contrast, the URI in
-a PUT request identifies the entity enclosed with the request -- the user
-agent knows what URI is intended and the server MUST NOT attempt to apply the
-request to some other resource.</p>
+a PUT request identifies the entity enclosed with the request.</p>
 </blockquote>
 <p>By following the existing semantics of the HTTP PUT and POST methods we can
-begin to take advantage of the <a href="http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/">benefits of
-REST</a>
-to write scalable and robust APIs. Not only is your API ready to scale and easy
-to maintain, it is easy to understand and use. By consistently following these
-existing semantics you can avoid inserting special cases and &#39;gotchas&#39; into your
-API that confuse client developers.</p>
+begin to take advantage of the <a href="http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/">benefits of REST</a> to write scalable and
+robust APIs. Not only is your API ready to scale and easy to maintain, it is
+easy to understand and use. By consistently following these existing semantics
+you can avoid inserting special cases and &#39;gotchas&#39; into your API that confuse
+client developers.</p>
 </div>
   <hr/>
-  <p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/drafts/2014-03-25-when-to-use-http-put-and-http-post&amp;text=When to Use HTTP PUT and HTTP POST&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/drafts/2014-03-25-when-to-use-http-put-and-http-post"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/drafts/2014-03-25-when-to-use-http-put-and-http-post"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/drafts/2014-03-25-when-to-use-http-put-and-http-post"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/drafts/2014-03-25-when-to-use-http-put-and-http-post"><i class="fa fa-envelope"></i></a>
+  <p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post&amp;text=When to Use HTTP PUT and HTTP POST&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post"><i class="fa fa-envelope"></i></a>
   </p>
   <hr/>
   <div class="well">

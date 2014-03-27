@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="en"><head><title>Blog | Kevin Sookocheff</title><meta name="description" content="Tinker. Tailor. Soldier. Sailor."><meta name="keywords" content=""><meta name="author" content="Kevin Sookocheff"><!-- Meta--><meta charset="utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="DocPad v6.64.0" /><!--[if lt IE 9]><script async src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><script async src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.2.0/respond.js"></script><![endif]--><!-- Analytics--><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-20611089-6', 'sookocheff.com');
+  ga('send', 'pageview');
+
+</script>
+<link  rel="stylesheet" href="/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai.css" /></head><body><!-- Navbar--><div class="navbar navbar-default"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/" class="navbar-brand">Kevin Sookocheff</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav navbar-right"><li><a href="/pages/speaking">Speaking</a></li><li><a href="/blog">Blog</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle"> 
+Subscribe <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="http://eepurl.com/KJE01">email</a></li><li><a href="http://sookocheff.com/rss.xml">RSS</a></li></ul></li></ul></div></div></div><!-- Container--><!-- Container--><div class="container"><!-- Content--><section id="content" class="content"><section class="page"><div class="page-header"><h1>Blog</h1></div><div class="page-content"><article><h2><a href="/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server">How to monitor a RAID array in Ubuntu server</a></h2><small class="text-muted">Posted on <time datetime="2010-4-28">Friday, May 28, 2010</time>. </small><div class="post-content"><p>I’ve been searching for a way to reliably monitor a RAID array.  I found a few resources and decided to compile them in one post.  If you are running Ubuntu Server skip to the bottom for some good news. </p>
+<h2 id="-proc-mdstat">/proc/mdstat</h2>
+<p>The first resource I found is from the <a href="https://raid.wiki.kernel.org/index.php/Detecting,_querying_and_testing#Monitoring_RAID_arrays:/etc/cron.d">Linux RAID wiki</a>.</p>
+<blockquote>
+<p>You can always take a look at /proc/mdstat. It won’t hurt. Let’s learn how to read the file. For</p>
+<p>Personalities : [raid1]<br>read_ahead 1024 sectors<br>md0 : active raid1 sdb5[1] sda5[0]<br>4200896 blocks [2/2] [UU]</p>
+<p>unused devices: none</p>
+<p>To identify the spare devices, first look for the [#/#] value on a line. The first number is the number of a complete raid device as defined. Lets say it is “n”. The raid role numbers [#] following each device indicate its role, or function, within the raid set. Any device with “n” or higher are spare disks. 0,1,..,n-1 are for the working array.</p>
+<p>Also, if you have a failure, the failed device will be marked with (F) after the [#]. The spare that replaces this device will be the device with the lowest role number n or higher that is not marked (F). Once the resync operation is complete, the device’s role numbers are swapped.</p>
+<p>The order in which the devices appear in the /proc/mdstat output means nothing.</p>
+</blockquote>
+<p>Given this information you could write a script that polls /proc/mdstat searching for character sequence [UU] and then schedule this via cron. That seemed like a good solution, but I had also heard about mdadm and wanted to investigate it too.</p>
+<h2 id="mdadm">mdadm</h2>
+<p>Also from the <a href="https://raid.wiki.kernel.org/index.php/Detecting,_querying_and_testing#Monitoring_RAID_arrays:/etc/cron.d">Linux RAID wiki</a>.</p>
+<blockquote>
+<p>mdadm –detail /dev/md0</p>
+<p>This commands will show spare and failed disks loud and clear.</p>
+<p>You can run mdadm as a daemon by using the follow-monitor mode. If needed, that will make mdadm send email alerts to the system administrator when arrays encounter errors or fail. Also, follow mode can be used to trigger contingency commands if a disk fails, like giving a second chance to a failed disk by removing and reinserting it, so a non-fatal failure could be automatically solved.</p>
+<p>Let’s see a basic example. Running</p>
+<p>mdadm –monitor –mail=root@localhost –delay=1800 /dev/md2</p>
+<p>should release a mdadm daemon to monitor /dev/md2. The delay parameter means that polling will be done in intervals of 1800 seconds. Finally, critical events and fatal errors should be e-mailed to the system manager. That’s RAID monitoring made easy.</p>
+<p>Finally, the –program or –alert parameters specify the program to be run whenever an event is detected.</p>
+</blockquote>
+<h2 id="ubuntu-server">ubuntu server</h2>
+<p>This was all great but now my dilemma was in deciding how to put this information to use.  I searched some more and came across the following from <a href="http://serverfault.com/questions/49939/daemon-to-verify-linux-md-raid">ServerFault</a>.</p>
+<blockquote>
+<p>On Debian (and therefore Ubuntu) machines, cron runs:</p>
+<p>/usr/share/mdadm/checkarray –cron –all –quiet</p>
+<p>the first Sunday of the month by default (see /etc/cron.d).   All output is mailed to the sys admin.   This command checks all data integrity.</p>
+<p>It basically boils down to:</p>
+<p>echo check &gt; /sys/block/$array/md/sync_action</p>
+<p>but with a lot of sanity around it.   Steal it from your nearest Debian install, or from the mdadm source package.</p>
+</blockquote>
+<p>So, it turns out that my version of Ubuntu Server was already monitoring data integrity once a month.  I then decided to search my init scripts to see what was installed by default and found /etc/init.d/mdadm.  It turns out that, by default, a daemon job to monitor the array (with the mdadm –monitor command shown above) is run at startup and will send mail to root for any strange occurrence. So, if you are running a debian-based server and wish to monitor the state of your RAID array you really don’t have to do anything at all.  But how about sending root mail to your external e-mail address.  Well, that’s the subject of <a href="http://www.kevinsookocheff.com/2010/06/01/how-to-forward-root-users-mail-to-an-external-address/">another post</a>.</p>
+</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server&amp;text=How to monitor a RAID array in Ubuntu server&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server"><i class="fa fa-envelope"></i></a></p><hr/></article><!-- Pagination --><ul class="pager"><li class="previous disabled"><a href="#">&larr; Older</a></li><li><a href="/archives">Archives</a></li><li class="next"><a href="/blog.7">Newer &rarr; </a></li></ul></div></section></section></div><div class="container"><hr><!-- Footer--><footer><p class="pull-right"><a href="#" class="pull-right">Top</a></p><p>© Kevin Sookocheff</p></footer></div><!-- Scripts--><script defer="defer"  src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script defer="defer"  src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script></body></html>

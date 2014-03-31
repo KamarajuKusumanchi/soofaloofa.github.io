@@ -9,7 +9,52 @@
 
 </script>
 <link  rel="stylesheet" href="/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai.css" /></head><body><!-- Navbar--><div class="navbar navbar-default"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/" class="navbar-brand">Kevin Sookocheff</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav navbar-right"><li><a href="/pages/speaking">Speaking</a></li><li><a href="/blog">Blog</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle"> 
-Subscribe <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="http://eepurl.com/KJE01">email</a></li><li><a href="http://sookocheff.com/rss.xml">RSS</a></li></ul></li></ul></div></div></div><!-- Container--><!-- Container--><div class="container"><!-- Content--><section id="content" class="content"><section class="page"><div class="page-header"><h1>Blog</h1></div><div class="page-content"><article><h2><a href="/posts/2011-01-15-the-future-of-mobile-development">The future of mobile development</a></h2><small class="text-muted">Posted on <time datetime="2011-0-15">Saturday, January 15, 2011</time>. </small><div class="post-content"><p>The future of mobile development is cross-platform HTML5, JavaScript, and CSS3.  Let me explain. I’ve been working on a couple Windows Phone 7 applications to accompany my first release, <a href="http://www.appsfuze.com/applications/windowsphone.photo/faceart,3617">FaceArt</a>, in the Marketplace. As I do more research and development with the mobile platform I keep looking for ways to increase the reach of my apps. The most obvious is to release Android and iOS versions but I have a few hurdles to clear first, the biggest being lack of time. I do all development as a moonlighting gig while I work full-time and I’m already struggling to find extra hours during the week to finish my first three applications for one platform. How am I going to write and maintain three separate codebases for each app for the major mobile platforms while still keeping my employer happy during the work week?  The solution is cross-platform libraries targeting mobile and web apps. <a href="http://www.phonegap.com">PhoneGap</a>, <a href="http://www.airplaysdk.com">AirPlay</a>, and <a href="http://www.dragonfiresdk.com">DragonFire SDK</a> are a few notable products designed for just this problem.  The most notable, and most intriguing for me, is PhoneGap. I first noticed PhoneGap through an article on <a href="http://arstechnica.com/apple/news/2010/11/introducing-the-ars-technica-reader-for-ipad.ars">ArsTechnica</a>. This open-source solution wraps apps designed with HTML5, JavaScript, and CSS in a container suitable for the respective app stores. Why is this exciting? You can design an application for the web and get the mobile app for free (or minimal) time investment.  This is as close to the write once, run anywhere ideal that we will get for mobile phones and as the tools improve the experience is only going to get better for developers.  I personally can’t wait to see what the future holds for this product. What do you think?</p>
+Subscribe <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="http://eepurl.com/KJE01">email</a></li><li><a href="http://sookocheff.com/rss.xml">RSS</a></li></ul></li></ul></div></div></div><!-- Container--><!-- Container--><div class="container"><!-- Content--><section id="content" class="content"><section class="page"><div class="page-header"><h1>Blog</h1></div><div class="page-content"><article><h2><a href="/posts/2011-01-18-safely-remove-the-header-from-the-wordpress-twentyten-theme">Safely remove the header from the WordPress TwentyTen theme</a></h2><small class="text-muted">Posted on <time datetime="2011-0-18">Tuesday, January 18, 2011</time>. </small><div class="post-content"><p>WordPress’ new TwentyTen theme is terrific. Well supported, highly modifiable, and with tons of widgets to get the exact layout you desire right out of the box. However, one thing I didn’t like too much was having a big header image on the page. I’m a bit of a minimalist so I wanted to trim down the theme by removing the banner image and the navigation bar. The first step in pulling off a hack like this is to find out what the header image actually looks like in HMTL. If you view the source of the page (right click on the page and select View Source) you will see a section starting with the words . This sounds like the right place to start. Looking inside this div you can clearly see an tag for the site banner. Another way to view this information is to use the Inspect element tool in Google Chrome or the Firefox extension Firebug. This will show you the exact HTML for any area you click in the page. Very useful for any sort of web design. So, now we know what we are looking for. We could go straight to the TwentyTen theme’s directory (wp-content/themes/twentyten) and edit header.php, deleting the lines responsible for rendering the banner image. But what would happen when the theme is updated? All of our changes would be overwritten. The best thing to do is to create a child theme based on TwentyTen. You can edit the child theme to your heart’s content while leaving the parent theme untouched. Create a directory in the wp-content/themes directory called minimaltwentyten. This is where we will store the files for our child theme. One file is required in this directory: style.css. Go ahead and create this file and with the contents below.</p>
+<pre class="highlight"><code class="hljs css"><span class="hljs-comment">/*
+Theme Name: MinimalTwentyTen
+Theme URI: http://
+Description: Child Theme TwentyTen
+Author:
+Author URI: http://
+Template: twentyten
+Version: 0.1
+*/</span>  
+
+<span class="hljs-at_rule">@<span class="hljs-keyword">import</span> <span class="hljs-function">url(<span class="hljs-string">"../twentyten/style.css"</span>)</span></span>;
+</code></pre><p>The first few lines between /<em> and </em>/ are comments that contain metadata about our child theme. You can go ahead and fill this out with whatever you please. None of it is required with the exception of the line</p>
+<pre class="highlight"><code class="hljs http"><span class="hljs-attribute">Template</span>: <span class="hljs-string">twentyten</span>
+</code></pre><p>This line tells WordPress the directory to find our parent theme. Next you see the line</p>
+<pre class="highlight"><code class="hljs css"><span class="hljs-at_rule">@<span class="hljs-keyword">import</span> <span class="hljs-function">url(<span class="hljs-string">"../twentyten/style.css"</span>)</span></span>;
+</code></pre><p>This line tells WordPress to use the parent themes style. Save the file and go ahead and apply our new theme. You will see that our blog looks exactly the same. This is because we are using the exact same style sheet as our parent theme TwentyTen. Let’s go ahead and make some changes. First, let’s get rid of the banner image. We already know that the div is called branding so we can select that with the #branding tag in CSS and use img to select only the image element under the branding div.</p>
+<pre class="highlight"><code class="hljs css"><span class="hljs-id">#branding</span> <span class="hljs-tag">img</span> <span class="hljs-rules">{
+    <span class="hljs-rule"><span class="hljs-attribute">display</span>:<span class="hljs-value"> none</span></span>;
+<span class="hljs-rule">}</span></span>
+</code></pre><p>display:none tells the browser not to display this element of the page. We can do exactly the same thing for the navigation bar with the following code</p>
+<pre class="highlight"><code class="hljs css"><span class="hljs-id">#access</span> <span class="hljs-rules">{
+    <span class="hljs-rule"><span class="hljs-attribute">display</span>:<span class="hljs-value"> none</span></span>;
+<span class="hljs-rule">}</span></span>
+</code></pre><p>Putting this all together, our final style.css file is</p>
+<pre class="highlight"><code class="hljs css"><span class="hljs-comment">/*
+Theme Name: MinimalTwentyTen
+Theme URI: http://
+Description: Child Theme TwentyTen
+Author:
+Author URI: http://
+Template: twentyten
+Version: 0.1
+*/</span>  
+
+<span class="hljs-at_rule">@<span class="hljs-keyword">import</span> <span class="hljs-function">url(<span class="hljs-string">"../twentyten/style.css"</span>)</span></span>;  
+
+<span class="hljs-id">#branding</span> <span class="hljs-tag">img</span> <span class="hljs-rules">{
+    <span class="hljs-rule"><span class="hljs-attribute">display</span>:<span class="hljs-value"> none</span></span>;
+<span class="hljs-rule">}</span></span>  
+
+<span class="hljs-id">#access</span> <span class="hljs-rules">{
+    <span class="hljs-rule"><span class="hljs-attribute">display</span>:<span class="hljs-value"> none</span></span>;
+<span class="hljs-rule">}</span></span>
+</code></pre><p>Go ahead and apply this theme and you will have safely removed the header and navigation area from the TwentyTen theme.</p>
+</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2011-01-18-safely-remove-the-header-from-the-wordpress-twentyten-theme&amp;text=Safely remove the header from the WordPress TwentyTen theme&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2011-01-18-safely-remove-the-header-from-the-wordpress-twentyten-theme"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2011-01-18-safely-remove-the-header-from-the-wordpress-twentyten-theme"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2011-01-18-safely-remove-the-header-from-the-wordpress-twentyten-theme"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2011-01-18-safely-remove-the-header-from-the-wordpress-twentyten-theme"><i class="fa fa-envelope"></i></a></p><hr/></article><article><h2><a href="/posts/2011-01-15-the-future-of-mobile-development">The future of mobile development</a></h2><small class="text-muted">Posted on <time datetime="2011-0-15">Saturday, January 15, 2011</time>. </small><div class="post-content"><p>The future of mobile development is cross-platform HTML5, JavaScript, and CSS3.  Let me explain. I’ve been working on a couple Windows Phone 7 applications to accompany my first release, <a href="http://www.appsfuze.com/applications/windowsphone.photo/faceart,3617">FaceArt</a>, in the Marketplace. As I do more research and development with the mobile platform I keep looking for ways to increase the reach of my apps. The most obvious is to release Android and iOS versions but I have a few hurdles to clear first, the biggest being lack of time. I do all development as a moonlighting gig while I work full-time and I’m already struggling to find extra hours during the week to finish my first three applications for one platform. How am I going to write and maintain three separate codebases for each app for the major mobile platforms while still keeping my employer happy during the work week?  The solution is cross-platform libraries targeting mobile and web apps. <a href="http://www.phonegap.com">PhoneGap</a>, <a href="http://www.airplaysdk.com">AirPlay</a>, and <a href="http://www.dragonfiresdk.com">DragonFire SDK</a> are a few notable products designed for just this problem.  The most notable, and most intriguing for me, is PhoneGap. I first noticed PhoneGap through an article on <a href="http://arstechnica.com/apple/news/2010/11/introducing-the-ars-technica-reader-for-ipad.ars">ArsTechnica</a>. This open-source solution wraps apps designed with HTML5, JavaScript, and CSS in a container suitable for the respective app stores. Why is this exciting? You can design an application for the web and get the mobile app for free (or minimal) time investment.  This is as close to the write once, run anywhere ideal that we will get for mobile phones and as the tools improve the experience is only going to get better for developers.  I personally can’t wait to see what the future holds for this product. What do you think?</p>
 </div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2011-01-15-the-future-of-mobile-development&amp;text=The future of mobile development&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2011-01-15-the-future-of-mobile-development"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2011-01-15-the-future-of-mobile-development"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2011-01-15-the-future-of-mobile-development"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2011-01-15-the-future-of-mobile-development"><i class="fa fa-envelope"></i></a></p><hr/></article><article><h2><a href="/posts/2011-01-11-a-cheap-home-server">A cheap home server</a></h2><small class="text-muted">Posted on <time datetime="2011-0-11">Tuesday, January 11, 2011</time>. </small><div class="post-content"><p>In order to have a home server you need the server.  That is, you need the hardware.  You could probably find all sorts of information comparing performance, power consumption, and cost for an assortment of different parts (check <a href="http://www.tomshardware.com">tomshardware.com</a> or do some intense [Googling][2]).  Or, you can trust that I’ve done my research and go with the same setup as me. I started with a barebones <a href="http://www.newegg.ca/Product/Product.aspx?Item=N82E16856167037">MSI Wind Nettop PC</a>.  It’s small and built to be both quiet and efficient, plus it comes with a compact flash slot to house the operating system; all big wins for a home server.  Really, any bare bones PC with an Atom 330 processor or better will do. You can always check out <a href="http://us.shuttle.com/">Shuttle’s</a> latest offerings as well. With bare bones systems you must supply your own RAM and hard drives (be careful, you may have to supply your own CPU as well).  Just be careful to get the right type of RAM for your motherboard.  I went with 2GB of <a href="http://www.newegg.ca/Product/Product.aspx?Item=N82E16820231146">G.SKILL DDR2 533 Laptop Memory</a>. I opted for two <a href="http://">Western Digital Caviar Green 1TB hard drives</a>.  These drives will be used solely to house data.  Get as big a hard drive as you want/need (you can even build a two drive RAID array if you want) and a <a href="http://www.newegg.ca/Product/Product.aspx?Item=N82E16820220459">Patriot 4GB Compact Flash</a> card to house the operating system.  That’s it, that’s all. I won’t guide you through every piece of the component installation as there are far better resources out there already.  However, if you are following along with the exact component list I described beware of one potential snafu.  The MSI Nettop has only one hard drive bay and we ordered two drives.  However, with appropriate <a href="http://www.newegg.ca/Product/Product.aspx?Item=N82E16817994073&amp;cm_re=drive_bay_adapter-_-17-994-073-_-Product">5.25″ to 3.5″ drive bay adapters</a> you can re-purpose the DVD tray to hold that second hard drive. Beware that the compact flash slot on this PC is positioned awkwardly and you will have to unscrew the male VGA adapter from the case in order to install the compact flash card. Lastly, since we have no DVD drive we will need to have a USB drive handy for installing the operating system. Hardware List:</p>
 <p> [2]: <a href="http://lmgtfy.com/?q=diyhome">http://lmgtfy.com/?q=diyhome</a> server</p>
 <p><a href="http://www.newegg.ca/Product/Product.aspx?Item=N82E16856167037">MSI Wind Nettop PC</a></p>
@@ -32,124 +77,4 @@ Subscribe <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="http:/
 </span></code></pre><p>then update the GRUB configuration.</p>
 <pre class="highlight"><code class="hljs bash"><span class="hljs-built_in">sudo</span> update-grub
 </code></pre><p>This will allow you to select which kernel to run at boot time so you can alternate between the real-time and vanilla kernels depending on your needs.</p>
-</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2010-10-19-how-to-install-the-real-time-kernel-in-ubuntu&amp;text=How to install the real-time kernel in Ubuntu&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2010-10-19-how-to-install-the-real-time-kernel-in-ubuntu"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2010-10-19-how-to-install-the-real-time-kernel-in-ubuntu"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2010-10-19-how-to-install-the-real-time-kernel-in-ubuntu"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2010-10-19-how-to-install-the-real-time-kernel-in-ubuntu"><i class="fa fa-envelope"></i></a></p><hr/></article><article><h2><a href="/posts/2010-09-28-how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards">How to get Pulse Audio to recognize your Delta 44 (and other ICE1712 cards)</a></h2><small class="text-muted">Posted on <time datetime="2010-8-28">Tuesday, September 28, 2010</time>. </small><div class="post-content"><p>I bought a used Delta 44 soundcard with the intention of recording my guitar playing. Pairing this with Rockit 5 powered monitors, a Mackie 802-VLZ3 mixer and the classic Shure SM57 microphone made for a good quality, inexpensive home studio. Using the PCI-based Delta 44 meant that any old computer would work and my idea was to use vanilla Ubuntu and install the Ardour digital audio workstation to push costs even further down. So far so good. Now the only issue is getting everything up and running. Ubuntu is a fairly mature distribution; you can expect a certain level of quality with each release. Unfortunately, this has not been the case with PulseAudio. I won’t go into details; suffice it to say it had a tumultuous upbringing and many of the kinks have since been worked out. Anyways, I quickly discovered that PulseAudio does not recognize the Delta 44. Don’t worry, this is a known problem and a workaround exists. Finding the workaround, however, did take some time.</p>
-<p>By writing this, I hope to spare some time of yours. I’m going to copy the solution almost verbatim from the Launchpad bug report on this issue and hope that it gets a little more visibility than being buried in a long bug report with cross-references to other forum discussions. Make sure you entirely remove any leftovers from previous attempts to fix the problem. First, create the file</p>
-<pre class="highlight"><code class="hljs avrasm">/etc/udev/rules<span class="hljs-preprocessor">.d</span>/ice1712-pulseaudio-workaround<span class="hljs-preprocessor">.rules</span>
-</code></pre><p>and enter the following information.</p>
-<pre class="highlight"><code class="hljs mathematica">SUBSYSTEM!=<span class="hljs-string">"sound"</span>, GOTO=<span class="hljs-string">"ice1712_end"</span>
-ACTION!=<span class="hljs-string">"change"</span>, GOTO=<span class="hljs-string">"ice1712_end"</span>
-KERNEL!=<span class="hljs-string">"card*"</span>, GOTO=<span class="hljs-string">"ice1712_end"</span>
-
-SUBSYSTEMS==<span class="hljs-string">"pci"</span>, ATTRS<span class="hljs-list">{vendor}</span>==<span class="hljs-string">"0x1412"</span>, ATTRS<span class="hljs-list">{device}</span>==<span class="hljs-string">"0x1712"</span>, ATTRS<span class="hljs-list">{subsystem_vendor}</span>==<span class="hljs-string">"0x1412"</span>, ATTRS<span class="hljs-list">{subsystem_device}</span>==<span class="hljs-string">"0xd633"</span>, ENV<span class="hljs-list">{PULSE_PROFILE_SET}</span>=<span class="hljs-string">"via-ice1712.conf"</span>
-
-LABEL=<span class="hljs-string">"ice1712_end"</span>
-</code></pre><p>If you have a different audio card with the ICE1712 chipset (such as the Delta 66 for example) substitute</p>
-<pre class="highlight"><code class="hljs mathematica">ATTRS<span class="hljs-list">{subsystem_device}</span>==<span class="hljs-string">"0xd633"</span>
-</code></pre><p>with whatever is given by the command</p>
-<pre class="highlight"><code class="hljs lasso">lspci <span class="hljs-attribute">-vvnnd1412</span>
-</code></pre><p>Now, create the file</p>
-<pre class="highlight"><code class="hljs lasso">/usr/share/pulseaudio/alsa<span class="hljs-attribute">-mixer</span>/profile<span class="hljs-attribute">-sets</span>/via<span class="hljs-attribute">-ice1712</span><span class="hljs-built_in">.</span>conf
-</code></pre><p>whose contents should be those of , or those of the second “code” block in  When you are finished it should look like this.</p>
-<pre class="highlight"><code class="hljs vhdl"># This <span class="hljs-keyword">file</span> <span class="hljs-keyword">is</span> part <span class="hljs-keyword">of</span> PulseAudio.
-#
-# PulseAudio <span class="hljs-keyword">is</span> free software; you can redistribute it <span class="hljs-keyword">and</span>/<span class="hljs-keyword">or</span> modify
-# it under the terms <span class="hljs-keyword">of</span> the GNU Lesser General Public License as
-# published by the Free Software Foundation; either version <span class="hljs-number">2.1</span> <span class="hljs-keyword">of</span> the
-# License, <span class="hljs-keyword">or</span> (at your option) any later version.
-#
-# PulseAudio <span class="hljs-keyword">is</span> distributed <span class="hljs-keyword">in</span> the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty <span class="hljs-keyword">of</span>
-# MERCHANTABILITY <span class="hljs-keyword">or</span> FITNESS <span class="hljs-keyword">FOR</span> A PARTICULAR PURPOSE. See the GNU
-# General Public License <span class="hljs-keyword">for</span> more details.
-#
-# You should have received a copy <span class="hljs-keyword">of</span> the GNU Lesser General Public License
-# along <span class="hljs-keyword">with</span> PulseAudio; <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span>, write <span class="hljs-keyword">to</span> the Free Software Foundation,
-# Inc., <span class="hljs-number">59</span> Temple Place, Suite <span class="hljs-number">330</span>, Boston, MA <span class="hljs-number">02111</span>-<span class="hljs-number">1307</span> USA.
-
-; Via ICE1712 multi-channel audio chipset
-;
-; This chipset has up <span class="hljs-keyword">to</span> four stereo pairs <span class="hljs-keyword">of</span> input <span class="hljs-keyword">and</span> four stereo pairs <span class="hljs-keyword">of</span>
-; output, named channels <span class="hljs-number">1</span> <span class="hljs-keyword">to</span> <span class="hljs-number">8.</span> Also available are separate S/PDIF stereo
-; channels (input <span class="hljs-keyword">and</span> output), <span class="hljs-keyword">and</span> a separate <span class="hljs-string">"system-out"</span> stereo jack that
-; supports <span class="hljs-number">6</span>-channel hardware mixing.
-;
-; The S/PDIF stereo channels can be controlled via the mixer <span class="hljs-keyword">for</span> hw:<span class="hljs-number">0</span>, <span class="hljs-keyword">and</span>
-; additionally, the <span class="hljs-number">8</span> main outputs can be <span class="hljs-keyword">loop</span>-routed <span class="hljs-keyword">to</span> a separate stereo
-; input pair, available as channels <span class="hljs-number">11</span> <span class="hljs-keyword">and</span> <span class="hljs-number">12.</span>
-;
-; Many cards available from vendors do <span class="hljs-keyword">not</span> expose <span class="hljs-keyword">all</span> channels from this chip
-; <span class="hljs-keyword">to</span> an external <span class="hljs-keyword">port</span>, which effectively reduces the number <span class="hljs-keyword">of</span> channels that
-; are useful <span class="hljs-keyword">to</span> the user. However, the ALSA driver still exposes <span class="hljs-keyword">all</span> channels
-; even <span class="hljs-keyword">if</span> they are <span class="hljs-keyword">not</span> connected.
-;
-; We knowingly only define a subset <span class="hljs-keyword">of</span> the theoretically possible
-; mapping combinations as profiles here.
-;
-; See <span class="hljs-keyword">default</span>.conf <span class="hljs-keyword">for</span> an explanation <span class="hljs-keyword">on</span> the directives used here.
-
-[General]
-auto-profiles = no
-
-[Mapping analog-mch-<span class="hljs-keyword">in</span>]
-description = Analog Multi-Channel Main Input
-device-strings = hw:%f,<span class="hljs-number">0</span>
-#channel-<span class="hljs-keyword">map</span> = front-left,front-right,rear-left,rear-right,front-center,lfe,side-left,side-right,aux0,aux1,aux2,aux3
-channel-<span class="hljs-keyword">map</span> = aux0,aux1,front-left,front-right,aux2,aux3,aux4,aux5,aux6,aux7,aux8,aux9
-direction = input
-
-[Mapping analog-mch-<span class="hljs-keyword">out</span>]
-description = Analog Multi-Channel Main Output
-device-strings = hw:%f,<span class="hljs-number">0</span>
-#channel-<span class="hljs-keyword">map</span> = front-left,front-right,rear-left,rear-right,front-center,lfe,side-left,side-right,aux0,aux1
-channel-<span class="hljs-keyword">map</span> = front-left,front-right,aux0,aux1,aux2,aux3,aux4,aux5,aux6,aux7
-direction = output
-
-[Mapping digital-stereo]
-description = Digital Stereo Input/Output
-#device-strings = hw:%f,<span class="hljs-number">1</span>
-device-strings = iec958:%f
-channel-<span class="hljs-keyword">map</span> = left,right
-direction = any
-
-[Mapping analog-system-<span class="hljs-keyword">out</span>]
-description = Analog Stereo System-<span class="hljs-keyword">Out</span>
-device-strings = hw:%f,<span class="hljs-number">2</span>
-channel-<span class="hljs-keyword">map</span> = left,right
-direction = output
-
-[Profile output:mch]
-description = Multi-Channel Output Active (Digital Disabled)
-output-mappings = analog-mch-<span class="hljs-keyword">out</span> analog-system-<span class="hljs-keyword">out</span>
-input-mappings =
-priority = <span class="hljs-number">90</span>
-skip-probe = yes
-
-[Profile output:mch input:mch]
-description = Multi-Channel Input/Output (Digital Disabled)
-output-mappings = analog-mch-<span class="hljs-keyword">out</span> analog-system-<span class="hljs-keyword">out</span>
-input-mappings = analog-mch-<span class="hljs-keyword">in</span>
-priority = <span class="hljs-number">100</span>
-skip-probe = yes
-
-[Profile output:spdif]
-description = Digital Output (Multi-Channel Disabled)
-output-mappings = digital-stereo analog-system-<span class="hljs-keyword">out</span>
-input-mappings =
-priority = <span class="hljs-number">80</span>
-skip-probe = yes
-
-[Profile output:spdif input:spdif]
-description = Digital Input/Output (Multi-Channel Disabled)
-output-mappings = digital-stereo analog-system-<span class="hljs-keyword">out</span>
-input-mappings = digital-stereo
-priority = <span class="hljs-number">90</span>
-skip-probe = yes
-
-[Profile output:system]
-description = System Output Only
-output-mappings = analog-system-<span class="hljs-keyword">out</span>
-input-mappings =
-priority = <span class="hljs-number">60</span>
-skip-probe = yes
-</code></pre><p>Make sure you save everything and then restart pulseaudio (or reboot your system) to enjoy your Delta 44!</p>
-</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2010-09-28-how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards&amp;text=How to get Pulse Audio to recognize your Delta 44 (and other ICE1712 cards)&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2010-09-28-how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2010-09-28-how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2010-09-28-how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2010-09-28-how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards"><i class="fa fa-envelope"></i></a></p><hr/></article><!-- Pagination --><ul class="pager"><li class="previous"><a href="/blog.7">&larr; Older</a></li><li><a href="/archives">Archives</a></li><li class="next"><a href="/blog.5">Newer &rarr; </a></li></ul></div></section></section></div><div class="container"><hr><!-- Footer--><footer><p class="pull-right"><a href="#" class="pull-right">Top</a></p><p>© Kevin Sookocheff</p></footer></div><!-- Scripts--><script defer="defer"  src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script defer="defer"  src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script></body></html>
+</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2010-10-19-how-to-install-the-real-time-kernel-in-ubuntu&amp;text=How to install the real-time kernel in Ubuntu&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2010-10-19-how-to-install-the-real-time-kernel-in-ubuntu"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2010-10-19-how-to-install-the-real-time-kernel-in-ubuntu"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2010-10-19-how-to-install-the-real-time-kernel-in-ubuntu"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2010-10-19-how-to-install-the-real-time-kernel-in-ubuntu"><i class="fa fa-envelope"></i></a></p><hr/></article><!-- Pagination --><ul class="pager"><li class="previous"><a href="/blog.7">&larr; Older</a></li><li><a href="/archives">Archives</a></li><li class="next"><a href="/blog.5">Newer &rarr; </a></li></ul></div></section></section></div><div class="container"><hr><!-- Footer--><footer><p class="pull-right"><a href="#" class="pull-right">Top</a></p><p>© Kevin Sookocheff</p></footer></div><!-- Scripts--><script defer="defer"  src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script defer="defer"  src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script></body></html>

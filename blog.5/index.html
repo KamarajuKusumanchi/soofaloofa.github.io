@@ -9,7 +9,34 @@
 
 </script>
 <link  rel="stylesheet" href="/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai.css" /></head><body><!-- Navbar--><div class="navbar navbar-default"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/" class="navbar-brand">Kevin Sookocheff</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav navbar-right"><li><a href="/pages/speaking">Speaking</a></li><li><a href="/blog">Blog</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle"> 
-Subscribe <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="http://eepurl.com/KJE01">email</a></li><li><a href="http://sookocheff.com/rss.xml">RSS</a></li></ul></li></ul></div></div></div><!-- Container--><!-- Container--><div class="container"><!-- Content--><section id="content" class="content"><section class="page"><div class="page-header"><h1>Blog</h1></div><div class="page-content"><article><h2><a href="/posts/2011-03-23-custom-posterous-subdomains-with-cpanel">Custom Posterous Subdomains with CPanel</a></h2><small class="text-muted">Posted on <time datetime="2011-2-23">Wednesday, March 23, 2011</time>. </small><div class="post-content"><p>I recently started using Posterous and will be converting my WordPress blog to the service.  One thing I wanted was a custom subdomain (i.e., blog.kevinsookocheff.com); I couldn’t easily find clear instructions for  subdomains (just for domains) so I thought I’d share how I did it from a basic cPanel hosting environment.</p>
+Subscribe <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="http://eepurl.com/KJE01">email</a></li><li><a href="http://sookocheff.com/rss.xml">RSS</a></li></ul></li></ul></div></div></div><!-- Container--><!-- Container--><div class="container"><!-- Content--><section id="content" class="content"><section class="page"><div class="page-header"><h1>Blog</h1></div><div class="page-content"><article><h2><a href="/posts/2011-04-20-constants-in-javascript">Constants in JavaScript</a></h2><small class="text-muted">Posted on <time datetime="2011-3-20">Wednesday, April 20, 2011</time>. </small><div class="post-content"><p>How are constants declared in JavaScript?</p>
+<p>You could use the const keyword like so.</p>
+<pre class="highlight"><code class="hljs coffeescript"><span class="hljs-reserved">const</span> pi = <span class="hljs-number">3.14</span>;
+<span class="hljs-built_in">document</span>.writeln(<span class="hljs-string">"pi is roughly"</span>   pi   <span class="hljs-string">"."</span>);
+</code></pre><p>But watch out!  The MDN’s <a href="https://developer.mozilla.org/en/JavaScript/Reference/Statements/const">JavaScript Reference</a> says that</p>
+<blockquote>
+<p><code>const</code> is a <strong>Mozilla-specific extension</strong>.</p>
+</blockquote>
+<p>Constants are actually not part of the JavaScript specification and we’ll have to roll our own solution.  We could use the <a href="http://www.yuiblog.com/blog/2007/06/12/module-pattern/">module  pattern</a> and create accessor functions to our constant data like this.</p>
+<pre class="highlight"><code class="hljs actionscript"><span class="hljs-keyword">var</span> CONSTANTS = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">var</span> <span class="hljs-keyword">private</span> = {
+    <span class="hljs-string">'PI'</span> : <span class="hljs-string">'3.14'</span>,
+  };
+
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-keyword">get</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span> {</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">private</span>[name]; }
+  };
+})();
+
+alert(<span class="hljs-string">'PI: '</span>   CONSTANTS.<span class="hljs-keyword">get</span>(<span class="hljs-string">'PI'</span>));
+</code></pre><p>This prevents write access to our data and allows read access through a bit of extra syntax.  Another method is to simply use a convention such as ALL CAPS to define constants. Most programmers know this convention and will respect it.</p>
+<pre class="highlight"><code class="hljs fix"><span class="hljs-attribute">var PI </span>=<span class="hljs-string"> 3.14;
+</span></code></pre><p>The solution I use is to place all constants in an object literal.</p>
+<pre class="highlight"><code class="hljs fix"><span class="hljs-attribute">var CONSTANTS </span>=<span class="hljs-string"> {
+  pi : 3.14
+};
+</span></code></pre><p>This strikes me as a good compromise between the ALL CAPS convention and the over engineered module pattern solution.  What do you think?</p>
+</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2011-04-20-constants-in-javascript&amp;text=Constants in JavaScript&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2011-04-20-constants-in-javascript"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2011-04-20-constants-in-javascript"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2011-04-20-constants-in-javascript"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2011-04-20-constants-in-javascript"><i class="fa fa-envelope"></i></a></p><hr/></article><article><h2><a href="/posts/2011-03-23-custom-posterous-subdomains-with-cpanel">Custom Posterous Subdomains with CPanel</a></h2><small class="text-muted">Posted on <time datetime="2011-2-23">Wednesday, March 23, 2011</time>. </small><div class="post-content"><p>I recently started using Posterous and will be converting my WordPress blog to the service.  One thing I wanted was a custom subdomain (i.e., blog.kevinsookocheff.com); I couldn’t easily find clear instructions for  subdomains (just for domains) so I thought I’d share how I did it from a basic cPanel hosting environment.</p>
 <ol>
 <li>Login to your cPanel account.</li>
 <li>Under the Domains heading, select Simple DNS Zone Editor.</li>
@@ -90,49 +117,4 @@ alert(output());
 <p><a href="http://www.amazon.com/JavaScript-Good-Parts-Douglas-Crockford/dp/0596517742">JavaScript: The Good Parts</a></p>
 <p><a href="http://jibbering.com/faq/notes/closures/">JavaScript Closures</a></p>
 <p><a href="http://www.crockford.com/javascript/private.html">Private Members in JavaScript</a></p>
-</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript&amp;text=Understanding Closures in JavaScript&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript"><i class="fa fa-envelope"></i></a></p><hr/></article><article><h2><a href="/posts/2011-01-18-safely-remove-the-header-from-the-wordpress-twentyten-theme">Safely remove the header from the WordPress TwentyTen theme</a></h2><small class="text-muted">Posted on <time datetime="2011-0-18">Tuesday, January 18, 2011</time>. </small><div class="post-content"><p>WordPress’ new TwentyTen theme is terrific. Well supported, highly modifiable, and with tons of widgets to get the exact layout you desire right out of the box. However, one thing I didn’t like too much was having a big header image on the page. I’m a bit of a minimalist so I wanted to trim down the theme by removing the banner image and the navigation bar. The first step in pulling off a hack like this is to find out what the header image actually looks like in HMTL. If you view the source of the page (right click on the page and select View Source) you will see a section starting with the words . This sounds like the right place to start. Looking inside this div you can clearly see an tag for the site banner. Another way to view this information is to use the Inspect element tool in Google Chrome or the Firefox extension Firebug. This will show you the exact HTML for any area you click in the page. Very useful for any sort of web design. So, now we know what we are looking for. We could go straight to the TwentyTen theme’s directory (wp-content/themes/twentyten) and edit header.php, deleting the lines responsible for rendering the banner image. But what would happen when the theme is updated? All of our changes would be overwritten. The best thing to do is to create a child theme based on TwentyTen. You can edit the child theme to your heart’s content while leaving the parent theme untouched. Create a directory in the wp-content/themes directory called minimaltwentyten. This is where we will store the files for our child theme. One file is required in this directory: style.css. Go ahead and create this file and with the contents below.</p>
-<pre class="highlight"><code class="hljs css"><span class="hljs-comment">/*
-Theme Name: MinimalTwentyTen
-Theme URI: http://
-Description: Child Theme TwentyTen
-Author:
-Author URI: http://
-Template: twentyten
-Version: 0.1
-*/</span>  
-
-<span class="hljs-at_rule">@<span class="hljs-keyword">import</span> <span class="hljs-function">url(<span class="hljs-string">"../twentyten/style.css"</span>)</span></span>;
-</code></pre><p>The first few lines between /<em> and </em>/ are comments that contain metadata about our child theme. You can go ahead and fill this out with whatever you please. None of it is required with the exception of the line</p>
-<pre class="highlight"><code class="hljs http"><span class="hljs-attribute">Template</span>: <span class="hljs-string">twentyten</span>
-</code></pre><p>This line tells WordPress the directory to find our parent theme. Next you see the line</p>
-<pre class="highlight"><code class="hljs css"><span class="hljs-at_rule">@<span class="hljs-keyword">import</span> <span class="hljs-function">url(<span class="hljs-string">"../twentyten/style.css"</span>)</span></span>;
-</code></pre><p>This line tells WordPress to use the parent themes style. Save the file and go ahead and apply our new theme. You will see that our blog looks exactly the same. This is because we are using the exact same style sheet as our parent theme TwentyTen. Let’s go ahead and make some changes. First, let’s get rid of the banner image. We already know that the div is called branding so we can select that with the #branding tag in CSS and use img to select only the image element under the branding div.</p>
-<pre class="highlight"><code class="hljs css"><span class="hljs-id">#branding</span> <span class="hljs-tag">img</span> <span class="hljs-rules">{
-    <span class="hljs-rule"><span class="hljs-attribute">display</span>:<span class="hljs-value"> none</span></span>;
-<span class="hljs-rule">}</span></span>
-</code></pre><p>display:none tells the browser not to display this element of the page. We can do exactly the same thing for the navigation bar with the following code</p>
-<pre class="highlight"><code class="hljs css"><span class="hljs-id">#access</span> <span class="hljs-rules">{
-    <span class="hljs-rule"><span class="hljs-attribute">display</span>:<span class="hljs-value"> none</span></span>;
-<span class="hljs-rule">}</span></span>
-</code></pre><p>Putting this all together, our final style.css file is</p>
-<pre class="highlight"><code class="hljs css"><span class="hljs-comment">/*
-Theme Name: MinimalTwentyTen
-Theme URI: http://
-Description: Child Theme TwentyTen
-Author:
-Author URI: http://
-Template: twentyten
-Version: 0.1
-*/</span>  
-
-<span class="hljs-at_rule">@<span class="hljs-keyword">import</span> <span class="hljs-function">url(<span class="hljs-string">"../twentyten/style.css"</span>)</span></span>;  
-
-<span class="hljs-id">#branding</span> <span class="hljs-tag">img</span> <span class="hljs-rules">{
-    <span class="hljs-rule"><span class="hljs-attribute">display</span>:<span class="hljs-value"> none</span></span>;
-<span class="hljs-rule">}</span></span>  
-
-<span class="hljs-id">#access</span> <span class="hljs-rules">{
-    <span class="hljs-rule"><span class="hljs-attribute">display</span>:<span class="hljs-value"> none</span></span>;
-<span class="hljs-rule">}</span></span>
-</code></pre><p>Go ahead and apply this theme and you will have safely removed the header and navigation area from the TwentyTen theme.</p>
-</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2011-01-18-safely-remove-the-header-from-the-wordpress-twentyten-theme&amp;text=Safely remove the header from the WordPress TwentyTen theme&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2011-01-18-safely-remove-the-header-from-the-wordpress-twentyten-theme"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2011-01-18-safely-remove-the-header-from-the-wordpress-twentyten-theme"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2011-01-18-safely-remove-the-header-from-the-wordpress-twentyten-theme"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2011-01-18-safely-remove-the-header-from-the-wordpress-twentyten-theme"><i class="fa fa-envelope"></i></a></p><hr/></article><!-- Pagination --><ul class="pager"><li class="previous"><a href="/blog.6">&larr; Older</a></li><li><a href="/archives">Archives</a></li><li class="next"><a href="/blog.4">Newer &rarr; </a></li></ul></div></section></section></div><div class="container"><hr><!-- Footer--><footer><p class="pull-right"><a href="#" class="pull-right">Top</a></p><p>© Kevin Sookocheff</p></footer></div><!-- Scripts--><script defer="defer"  src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script defer="defer"  src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script></body></html>
+</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript&amp;text=Understanding Closures in JavaScript&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript"><i class="fa fa-envelope"></i></a></p><hr/></article><!-- Pagination --><ul class="pager"><li class="previous"><a href="/blog.6">&larr; Older</a></li><li><a href="/archives">Archives</a></li><li class="next"><a href="/blog.4">Newer &rarr; </a></li></ul></div></section></section></div><div class="container"><hr><!-- Footer--><footer><p class="pull-right"><a href="#" class="pull-right">Top</a></p><p>© Kevin Sookocheff</p></footer></div><!-- Scripts--><script defer="defer"  src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script defer="defer"  src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script></body></html>

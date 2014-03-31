@@ -1,0 +1,121 @@
+<!DOCTYPE html><html lang="en"><head><title>How to Version a REST API | Kevin Sookocheff</title><meta name="description" content="Tinker. Tailor. Soldier. Sailor."><meta name="keywords" content=""><meta name="author" content="Kevin Sookocheff"><!-- Meta--><meta charset="utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="DocPad v6.64.0" /><!--[if lt IE 9]><script async src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><script async src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.2.0/respond.js"></script><![endif]--><!-- Analytics--><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-20611089-6', 'sookocheff.com');
+  ga('send', 'pageview');
+
+</script>
+<link  rel="stylesheet" href="/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai.css" /></head><body><!-- Navbar--><div class="navbar navbar-default"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/" class="navbar-brand">Kevin Sookocheff</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav navbar-right"><li><a href="/pages/speaking">Speaking</a></li><li><a href="/blog">Blog</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle"> 
+Subscribe <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="http://eepurl.com/KJE01">email</a></li><li><a href="http://sookocheff.com/rss.xml">RSS</a></li></ul></li></ul></div></div></div><!-- Container--><!-- Container--><div class="container"><!-- Content--><section id="content" class="content"><section class="page"><div class="page-header"><h1>How to Version a REST API</h1></div><div class="page-content"><article class="post"><p><small class="text-muted">Posted on <time datetime="2014-3-1">Tuesday, April 01, 2014</time>. </small></p><div class="post-content"><p>API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients. </p>
+<h3 id="1-versioned-url">1) Versioned URL</h3>
+<p>URL versioning inserts a version number directly in the URL of the resource. As an example,  version one of the API could be accessed through the <code>v1</code> URL.</p>
+<pre class="highlight"><code class="hljs bash">http://sookocheff.com/api/v1/users/<span class="hljs-number">12345</span>
+</code></pre>
+<p>Version two of the API could be accessed through the <code>v2</code> URL. </p>
+<pre class="highlight"><code class="hljs bash">http://sookocheff.com/api/v2/users/<span class="hljs-number">12345</span>
+</code></pre>
+<p>This solution has been widely adopted because it is easy to deploy and easy for client developers to understand. This method also makes each API version discoverable and browseable without using an advanced HTTP client — just alter the URL. </p>
+<p>The drawback to using URL versioning is that by changing the URL of a resource with each new API version we are violating the REST constraint that <a href="http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/">each resource be accessible via a unique URL</a>. To mitigate this you can map the current version of the API to a non-versioned URL.</p>
+<pre class="highlight"><code class="hljs bash">http://sookocheff.com/api/users/
+</code></pre>
+<p>Once this mapping is in place you can safely deprecate old URLs by redirecting to the non-versioned URL -- notifying the client to use the latest version. At all times the non-versioned URL represents the latest version of that resource.</p>
+<h4 id="pros-">Pros:</h4>
+<ul>
+<li>Easy to implement.</li>
+<li>Easy to understand.</li>
+<li>Direct path to deprecation.</li>
+</ul>
+<h4 id="cons-">Cons:</h4>
+<ul>
+<li>Violates REST principle of unique URLs for a resource.</li>
+</ul>
+<h3 id="2-versioned-media-type">2) Versioned Media Type</h3>
+<p>When making an HTTP request the client can request a specific MIME type (or list of MIME types) that it is willing to accept using an <code>Accept</code> header. For example, an HTML client may use the following <code>Accept</code> header to request an HTML representation of the resource.</p>
+<pre class="highlight"><code class="hljs http"><span class="hljs-request">GET <span class="hljs-string">/v1/users/12345</span> HTTP/1.1</span>
+<span class="hljs-attribute">Host</span>: <span class="hljs-string">sookocheff.com</span>
+<span class="hljs-attribute">Accept</span>: <span class="hljs-string">text/html</span>
+</code></pre><p>Whereas an XML client may use the following <code>Accept</code> header to request an XML representation of the resource.</p>
+<pre class="highlight"><code class="hljs http"><span class="hljs-request">GET <span class="hljs-string">/v1/users/12345</span> HTTP/1.1</span>
+<span class="hljs-attribute">Host</span>: <span class="hljs-string">sookocheff.com</span>
+<span class="hljs-attribute">Accept</span>: <span class="hljs-string">application/xml</span>
+</code></pre><p>We can use this functionality to allow the client to access specific versions of a resource.</p>
+<pre class="highlight"><code class="hljs http"><span class="hljs-request">GET <span class="hljs-string"></span> /users/12345 <span class="hljs-string">HTTP/1.1
+Host:</span> sookocheff.com</span>
+<span class="hljs-attribute">Accept</span>: <span class="hljs-string">application/vnd.sookocheff.user+json?version=2</span>
+</code></pre><p>This method assumes we have defined a custom media type to represent every resource in our API and that the media type accepts a <code>version</code> parameter.</p>
+<p>Versioning the media type does adhere to strict REST principles but causes problems in other ways. First, you need a custom media type for every resource returned by your API. This is not only reinventing the wheel -- <a href="http://schema.org/">perfectly good</a> <a href="http://www.iana.org/assignments/media-types/media-types.xhtml">media types</a> <a href="http://www.freeformatter.com/mime-types-list.html">already exist</a> -- it also creates a media type so specific to your API that it cannot be reused elsewhere. Lastly, it is unclear whether the version parameter applies to the version of the media type or to the version of your API.</p>
+<h4 id="pros-">Pros:</h4>
+<ul>
+<li>Adheres to REST principles.</li>
+</ul>
+<h4 id="cons-">Cons:</h4>
+<ul>
+<li>Custom media type for every resource.</li>
+<li>Binds your media type to your API.</li>
+<li>Unclear versioning.</li>
+<li>Requires sophisticated API client.</li>
+</ul>
+<h3 id="3-versioned-http-header">3) Versioned HTTP Header</h3>
+<p>The <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec7.html#sec7.1">HTTP specification</a> states that unknown HTTP headers MUST be forwarded on to the recipient. This means that custom HTTP headers can be set by our client and received by our API.</p>
+<pre class="highlight"><code class="hljs bash">GET /users/<span class="hljs-number">12345</span> HTTP/<span class="hljs-number">1.1</span>
+Host: sookocheff.com
+Accept: application/json
+Users-Version: <span class="hljs-number">2</span>
+</code></pre>
+<p>A server receiving this request can parse the header to ascertain the version number being requested by the client and return the proper representation. </p>
+<p>This method requires that your API client is able to modify the HTTP headers of its requests. If the client is unable to provide a version number with the HTTP header you can assume that a request is made for the latest API version.</p>
+<h4 id="pros-">Pros:</h4>
+<ul>
+<li>Adheres to REST principles.</li>
+</ul>
+<h4 id="cons-">Cons:</h4>
+<ul>
+<li>Requires sophisticated API client.</li>
+</ul>
+<h3 id="4-versioned-resources">4) Versioned Resources</h3>
+<p>The last versioning method is to set the version number in the response itself. This places the burden of versioning with the client rather than the server. A client receiving a response from a known version number can parse it and act appropriately. It would be up to the client how to handle an unknown version number.</p>
+<p>This method is only appropriate if you as the developer have direct control over both the server and the client being deployed.</p>
+<h4 id="pros-">Pros:</h4>
+<ul>
+<li>Simplified server.</li>
+</ul>
+<h4 id="cons-">Cons:</h4>
+<ul>
+<li>Complex client.</li>
+<li>Tightly couples server to client.</li>
+</ul>
+<h3 id="what-to-do-">What to do?</h3>
+<p>By following <a href="http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/">REST principles</a> we can guide our API versioning practices while being pragmatic about our choices so that our API can work in the real world.</p>
+<p>My recommendation is to combine versioned URLs with custom HTTP headers using the following guidelines. With these guidelines we can safely version our API while supporting existing clients and offering them a clear upgrade path.</p>
+<ol>
+<li>Each major version of the API recieves a versioned URL.</li>
+<li>One non-versioned URL always represents the latest API version. </li>
+<li>Redirect deprecated URLs to the canonical URL after an advertised grace period.</li>
+<li>Add a custom HTTP header for the version number.<ul>
+<li>This header specifies both major <strong>and</strong> minor version numbers.</li>
+<li>The non-versioned URL returns the appropriate version of the resource when specified by the HTTP header.</li>
+</ul>
+</li>
+</ol>
+<h3 id="references">References</h3>
+<p><a href="http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api">Vinay Sahni</a> has collected a long list of best practices for pragmatic API design, including versioning. </p>
+<p><a href="http://stackoverflow.com/questions/389169/best-practices-for-api-versioning">stackoverflow</a> presents a collection of good answers providing best practices for API versioning.</p>
+</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api&amp;text=How to Version a REST API&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api"><i class="fa fa-envelope"></i></a></p><hr/><div class="well"><div class="row"><div class="col-md-8 col-md-offset-2"><h4>About Kevin</h4></div></div><div class="row"><div class="col-md-2 col-md-offset-2"><img src="/img/profile.png"/></div><div class="col-md-6"><p>I am a Software Developer. I work at <a href="http://www.vendasta.com">VendAsta</a>&nbsp;with a bunch of great people. I run a business as <a href="http://redfinchsoftware.com">Red Finch Software</a>. You can find me online as <a href="https://twitter.com/soofaloofa">soofaloofa</a>. I love to teach, learn, speak and write about business and software.</p><p class="lead social-links"><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square"></i></a>&nbsp;<a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square"></i></a>&nbsp;<a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square"></i></a>&nbsp;<a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square"></i></a>&nbsp;<a href="https://github.com/soofaloofa"><i class="fa fa-github-square"></i></a>&nbsp;<a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square"></i></a></p></div></div></div><hr/><div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'kevinsookocheff'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article></div></section></section></div><div class="container"><hr><!-- Footer--><footer><p class="pull-right"><a href="#" class="pull-right">Top</a></p><p>© Kevin Sookocheff</p></footer></div><!-- Scripts--><script defer="defer"  src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script defer="defer"  src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script></body></html>

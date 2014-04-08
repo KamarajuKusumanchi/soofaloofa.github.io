@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "How to Version a REST API""
+title: "How to Version a REST API"
 author: Kevin Sookocheff
 date: 2014/04/01
 tags: 

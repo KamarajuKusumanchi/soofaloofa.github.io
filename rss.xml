@@ -5,10 +5,162 @@
         <description><![CDATA[Tinker. Tailor. Soldier. Sailor.]]></description>
         <link>http://sookocheff.com</link>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Mon, 31 Mar 2014 19:12:38 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 08 Apr 2014 21:07:32 GMT</lastBuildDate>
         <atom:link href="http://sookocheff.com/rss.xml" rel="self" type="application/rss+xml"/>
         <author><![CDATA[Kevin Sookocheff]]></author>
-        <pubDate>Mon, 31 Mar 2014 19:12:00 GMT</pubDate>
+        <pubDate>Tue, 08 Apr 2014 21:06:57 GMT</pubDate>
+        <item>
+            <title><![CDATA[Understanding JSON Patch]]></title>
+            <description><![CDATA[<p>The typical update cycle for an API resource is to (1) GET the representation, (2) modify it and (3) PUT back the entire representation. This can waste bandwidth and processing time for large resources. An alternative is to use the <a href="https://tools.ietf.org/html/rfc5789">HTTP PATCH</a> extension method to only send the differences between two resources. HTTP PATCH applies a set of changes to the document referenced by the HTTP request.</p>
+<pre class="highlight"><code class="hljs bash">PATCH /file.txt HTTP/<span class="hljs-number">1.1</span>
+Host: sookocheff.com
+Content-Type: application/json
+If-Match: <span class="hljs-string">"e0036bbc6f"</span>
+
+[description of changes]
+</code></pre>
+<p>The format of the PATCH request body differs depending on the representation of the resource. For JSON documents, <a href="https://tools.ietf.org/html/rfc6902">JSON Patch</a> defines this format.</p>
+<p>A JSON Patch document is a sequential list of operations to be applied to an object. Each operation is a JSON object having exactly one <code>op</code> member.
+Valid operations are <code>add</code>, <code>remove</code>, <code>replace</code>, <code>move</code>, <code>copy</code> and <code>test</code>. Any other operation is considered an error. </p>
+<pre class="highlight"><code class="hljs json">{ "<span class="hljs-attribute">op</span>": <span class="hljs-value"><span class="hljs-string">"add"</span> </span>}
+</code></pre>
+<p>Each operation must also have exactly one <code>path</code> member. 
+The <code>path</code> member is a <a href="https://tools.ietf.org/html/rfc6901">JSON Pointer</a> that determines a location within the JSON document to modify.</p>
+<pre class="highlight"><code class="hljs json">{ "<span class="hljs-attribute">op</span>": <span class="hljs-value"><span class="hljs-string">"add"</span></span>, "<span class="hljs-attribute">path</span>": <span class="hljs-value"><span class="hljs-string">"/player/name"</span> </span>}
+</code></pre>
+<p>The remaining elements of a JSON Patch operation depend on the particular operation being performed.</p>
+<h3 id="add">add</h3>
+<p>The <code>add</code> operation is used in different ways depending on the target of the <code>path</code> being referenced. Generally speaking we can use <code>add</code> to append to a list, add a member to an object or update the value of an existing field. The <code>add</code> operation accepts a <code>value</code> member which is the value to update the referenced <code>path</code>. </p>
+<h4 id="append-to-a-list">Append to a List</h4>
+<p>To append a value to a list you use an existing list as the <code>path</code> of the operation. So, given the JSON document.</p>
+<pre class="highlight"><code class="hljs bash">{
+    <span class="hljs-string">"orders"</span>: [{<span class="hljs-string">"id"</span>: <span class="hljs-number">123</span>}, {<span class="hljs-string">"id"</span>: <span class="hljs-number">456</span>}]
+}
+</code></pre>
+<p>We can append an order to the list using the <code>add</code> operation.</p>
+<pre class="highlight"><code class="hljs bash">{ <span class="hljs-string">"op"</span>: <span class="hljs-string">"add"</span>, <span class="hljs-string">"path"</span>: <span class="hljs-string">"/orders"</span>, <span class="hljs-string">"value"</span>: {<span class="hljs-string">"id"</span>: <span class="hljs-number">789</span>} }
+</code></pre>
+<p>After applying the patch we get the final document.</p>
+<pre class="highlight"><code class="hljs bash">{
+    <span class="hljs-string">"orders"</span>: [{<span class="hljs-string">"id"</span>: <span class="hljs-number">123</span>}, {<span class="hljs-string">"id"</span>: <span class="hljs-number">456</span>}, {<span class="hljs-string">"id"</span>: <span class="hljs-number">789</span>}]
+}
+</code></pre>
+<h4 id="add-a-member-to-an-object">Add a Member to an Object</h4>
+<p>If the <code>path</code> references a member of an object that does not exist, a new member is added to the object. We start with our JSON document listing our orders.</p>
+<pre class="highlight"><code class="hljs undefined">{
+    "orders": [{"id": 123}, {"id": 456}, {"id": 789"}]
+}
+</code></pre>
+<p>Using this JSON Patch document we can add a total and a currency member to the document.</p>
+<pre class="highlight"><code class="hljs json">[
+{ "<span class="hljs-attribute">op</span>": <span class="hljs-value"><span class="hljs-string">"add"</span></span>, "<span class="hljs-attribute">path</span>": <span class="hljs-value"><span class="hljs-string">"/total"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-number">20.00</span> </span>},
+{ "<span class="hljs-attribute">op</span>": <span class="hljs-value"><span class="hljs-string">"add"</span></span>, "<span class="hljs-attribute">path</span>": <span class="hljs-value"><span class="hljs-string">"/currency"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"USD"</span> </span>}
+]
+</code></pre>
+<p>After applying the patch we get the final representation.</p>
+<pre class="highlight"><code class="hljs json">{
+    "<span class="hljs-attribute">orders</span>": <span class="hljs-value">[{"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">123</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">456</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">789</span></span>}]</span>,
+    "<span class="hljs-attribute">total</span>": <span class="hljs-value"><span class="hljs-number">20.00</span></span>,
+    "<span class="hljs-attribute">currency</span>": <span class="hljs-value"><span class="hljs-string">"USD"</span>
+</span>}
+</code></pre>
+<h4 id="update-an-existing-member-of-an-object">Update an Existing Member of an Object</h4>
+<p>If the <code>path</code> refers to an existing object member, that member is updated with the newly supplied value.</p>
+<p>Given the JSON document.</p>
+<pre class="highlight"><code class="hljs json">{
+    "<span class="hljs-attribute">orders</span>": <span class="hljs-value">[{"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">123</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">456</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">789</span></span>}]</span>,
+    "<span class="hljs-attribute">total</span>": <span class="hljs-value"><span class="hljs-number">20.00</span></span>,
+    "<span class="hljs-attribute">currency</span>": <span class="hljs-value"><span class="hljs-string">"USD"</span>
+</span>}
+</code></pre>
+<p>We can update the total by using an <code>add</code> operation.</p>
+<pre class="highlight"><code class="hljs undefined">{ "op": "add", "path": "/total", "value": 30.00 },
+</code></pre>
+<p>Leaving the final result.</p>
+<pre class="highlight"><code class="hljs json">{
+    "<span class="hljs-attribute">orders</span>": <span class="hljs-value">[{"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">123</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">456</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">789</span></span>}]</span>,
+    "<span class="hljs-attribute">total</span>": <span class="hljs-value"><span class="hljs-number">30.00</span></span>,
+    "<span class="hljs-attribute">currency</span>": <span class="hljs-value"><span class="hljs-string">"USD"</span>
+</span>}
+</code></pre>
+<h3 id="remove">remove</h3>
+<p>Remove is a simple operation. The target location of the <code>path</code> is removed from the object.</p>
+<p>Starting with the following document.</p>
+<pre class="highlight"><code class="hljs json">{
+    "<span class="hljs-attribute">orders</span>": <span class="hljs-value">[{"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">123</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">456</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">789</span></span>}]</span>,
+    "<span class="hljs-attribute">total</span>": <span class="hljs-value"><span class="hljs-number">30.00</span></span>,
+    "<span class="hljs-attribute">currency</span>": <span class="hljs-value"><span class="hljs-string">"USD"</span>
+</span>}
+</code></pre>
+<p>We can remove the <code>currency</code> member with a <code>remove</code> operation.</p>
+<pre class="highlight"><code class="hljs json">{ "<span class="hljs-attribute">op</span>": <span class="hljs-value"><span class="hljs-string">"remove"</span></span>, "<span class="hljs-attribute">path</span>": <span class="hljs-value"><span class="hljs-string">"/currency"</span> </span>}
+</code></pre>
+<pre class="highlight"><code class="hljs json">{
+    "<span class="hljs-attribute">orders</span>": <span class="hljs-value">[{"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">123</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">456</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">789</span></span>}]</span>,
+    "<span class="hljs-attribute">total</span>": <span class="hljs-value"><span class="hljs-number">30.00</span>
+</span>}
+</code></pre>
+<p>We can also remove an element from an array. All remaining elements are shifted one position to the left. To remove order <code>456</code> we can remove the array index referencing this order.</p>
+<pre class="highlight"><code class="hljs json">{ "<span class="hljs-attribute">op</span>": <span class="hljs-value"><span class="hljs-string">"remove"</span></span>, "<span class="hljs-attribute">path</span>": <span class="hljs-value"><span class="hljs-string">"/orders/1"</span> </span>}
+</code></pre>
+<pre class="highlight"><code class="hljs json">{
+    "<span class="hljs-attribute">orders</span>": <span class="hljs-value">[{"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">123</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">789</span></span>}]</span>,
+    "<span class="hljs-attribute">total</span>": <span class="hljs-value"><span class="hljs-number">30.00</span>
+</span>}
+</code></pre>
+<h3 id="replace">replace</h3>
+<p>Replace is used to set a new value to a member of the object. It is logically equivalent to a <code>remove</code> operation followed by an <code>add</code> operation to the same <code>path</code> or to an <code>add</code> operation to an existing member. </p>
+<p>Given the following JSON document.</p>
+<pre class="highlight"><code class="hljs json">{
+    "<span class="hljs-attribute">orders</span>": <span class="hljs-value">[{"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">123</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">456</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">789</span></span>}]</span>,
+    "<span class="hljs-attribute">total</span>": <span class="hljs-value"><span class="hljs-number">20.00</span></span>,
+    "<span class="hljs-attribute">currency</span>": <span class="hljs-value"><span class="hljs-string">"USD"</span>
+</span>}
+</code></pre>
+<p>We can apply the <code>replace</code> operation to update the order total.</p>
+<pre class="highlight"><code class="hljs undefined">{ "op": "replace", "path": "/total", "value": 30.00 },
+</code></pre>
+<pre class="highlight"><code class="hljs json">{
+    "<span class="hljs-attribute">orders</span>": <span class="hljs-value">[{"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">123</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">456</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">789</span></span>}]</span>,
+    "<span class="hljs-attribute">total</span>": <span class="hljs-value"><span class="hljs-number">30.00</span></span>,
+    "<span class="hljs-attribute">currency</span>": <span class="hljs-value"><span class="hljs-string">"USD"</span>
+</span>}
+</code></pre>
+<h3 id="move">move</h3>
+<p> The <code>move</code> operation removes the value at a specified location and adds it to the target location. The removal location is given by a <code>from</code> member and the target location is given by the <code>path</code> member.</p>
+<p>Given this starting document.</p>
+<pre class="highlight"><code class="hljs json">{
+    "<span class="hljs-attribute">orders</span>": <span class="hljs-value">[{"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">123</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">456</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">789</span></span>}]</span>,
+    "<span class="hljs-attribute">total</span>": <span class="hljs-value"><span class="hljs-number">30.00</span></span>,
+    "<span class="hljs-attribute">currency</span>": <span class="hljs-value"><span class="hljs-string">"USD"</span>
+</span>}
+</code></pre>
+<p>We can move an order to the root of the document by applying this JSON patch.</p>
+<pre class="highlight"><code class="hljs bash">json
+{ <span class="hljs-string">"op"</span>: <span class="hljs-string">"move"</span>, <span class="hljs-string">"from"</span>: <span class="hljs-string">"/orders/0"</span>, <span class="hljs-string">"path"</span>: <span class="hljs-string">"/rootOrder"</span> }
+</code></pre><pre class="highlight"><code class="hljs json">{
+    "<span class="hljs-attribute">orders</span>": <span class="hljs-value">[{"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">456</span></span>}, {"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">789</span></span>}]</span>,
+    "<span class="hljs-attribute">rootOrder</span>": <span class="hljs-value">{"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">123</span></span>}</span>, 
+    "<span class="hljs-attribute">total</span>": <span class="hljs-value"><span class="hljs-number">30.00</span></span>,
+    "<span class="hljs-attribute">currency</span>": <span class="hljs-value"><span class="hljs-string">"USD"</span>
+</span>}
+</code></pre>
+<h3 id="copy">copy</h3>
+<p><code>copy</code> is like <code>move</code>. It copies the value at the <code>from</code> location to the  <code>path</code> location, leaving duplicates of the data at each location.</p>
+<pre class="highlight"><code class="hljs json">{ "<span class="hljs-attribute">op</span>": <span class="hljs-value"><span class="hljs-string">"copy"</span></span>, "<span class="hljs-attribute">from</span>": <span class="hljs-value"><span class="hljs-string">"/orders/0"</span></span>, "<span class="hljs-attribute">path</span>": <span class="hljs-value"><span class="hljs-string">"/rootOrder"</span> </span>}
+</code></pre>
+<h3 id="test">test</h3>
+<p>The HTTP PATCH method is atomic and the patch should only be applied if all operations can be safely applied. The <code>test</code> operation can offer additional validation to ensure that patch preconditions or postconditions are met. If the test fails the whole patch is discarded. <code>test</code> is strictly an equality check.</p>
+<pre class="highlight"><code class="hljs json">{ "<span class="hljs-attribute">op</span>": <span class="hljs-value"><span class="hljs-string">"test"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-number">30.00</span></span>, "<span class="hljs-attribute">path</span>": <span class="hljs-value"><span class="hljs-string">"/total"</span> </span>}
+</code></pre>
+<h3 id="conclusion">Conclusion</h3>
+<p>JSON Patch is an effective way to provide diffs of your API resources. Most languages already have an implementation available. There is no reason not to adopt the HTTP PATCH today.</p>
+]]></description>
+            <link>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</link>
+            <guid isPermaLink="true">http://sookocheff.com/posts/2014-04-08-understanding-json-patch</guid>
+            <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
+            <pubDate>Tue, 08 Apr 2014 06:00:00 GMT</pubDate>
+        </item>
         <item>
             <title><![CDATA[How to Version a REST API]]></title>
             <description><![CDATA[<p>API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients. </p>
@@ -1134,16 +1286,6 @@ comments!</p>
             <guid isPermaLink="true">http://sookocheff.com/posts/2013-06-04-install-npm-packages-with-a-chef-cookbook</guid>
             <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
             <pubDate>Thu, 06 Jun 2013 06:00:00 GMT</pubDate>
-        </item>
-        <item>
-            <title><![CDATA[Photos is the Killer Feature of Google+]]></title>
-            <description><![CDATA[<p>Yesterday&#39;s <a href="http://www.youtube.com/watch?feature=player_embedded&amp;v=9pmPa_KxsAM">Google I/O keynote</a> unveiled some new features in Music, Maps and Search. But to me the biggest and most important announcement was the new <a href="http://thenextweb.com/google/2013/05/15/googles-new-google-photo-features-15gb-full-size-storage-auto-highlight-auto-enhance-more/">Google+ photo features</a>. Full-size high-resolution photos, automatic highlights of entire albums, automatic enhancement and auto-awesome combine to make Google+ <em>the</em> most feature packed photo hosting service on the web. Add the ability to share pictures with anyone via e-mail (take that Facebook) and Google+ is now <em>the</em> best social network to host and share photos. </p>
-<p>Why is this important? It encroaches directly on Facebook&#39;s bread and butter, sharing pictures. Take a look at the <a href="http://expandedramblings.com/index.php/by-the-numbers-17-amazing-facebook-stats/">statistics</a>. As of May 2013 Facebook hosts 240 billion photos and averages roughly 350 million photo uploads per day. This implies (and my limited anecdotal evidence supports) that most Facebook users view the site as a photo sharing service. If Google can gain mindshare as the premiere social network for sharing photos you may see a large defection users from Facebook. </p>
-]]></description>
-            <link>http://sookocheff.com/posts/2013-05-16-why-photos-is-the-killer-feature-of-google-plus</link>
-            <guid isPermaLink="true">http://sookocheff.com/posts/2013-05-16-why-photos-is-the-killer-feature-of-google-plus</guid>
-            <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
-            <pubDate>Thu, 16 May 2013 06:00:00 GMT</pubDate>
         </item>
     </channel>
 </rss>

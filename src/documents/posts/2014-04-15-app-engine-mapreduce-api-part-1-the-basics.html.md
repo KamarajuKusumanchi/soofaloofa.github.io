@@ -14,12 +14,12 @@ API](https://developers.google.com/appengine/docs/python/dataprocessing/). We
 will give a basic overview of what MapReduce is and how it is used to do
 parallel and distributed processing of large datasets.
 
-### The Map and Reduce Functions
+### 1. The Map and Reduce Functions
 
 MapReduce is based on the `map` and `reduce` functions that are commonly used in
 lazily-evaluated functional programming languages. Let's look at `map` first.
 
-#### map
+### 1.1 map
 
 A `map` function is a way to apply a transformation to every element in a list.
 Using Clojure as the example functional language we can use the `map` function
@@ -38,7 +38,7 @@ it to the map function.
 => (map fn [1 2 3 4 5])
 ```
 
-#### reduce
+### 1.2 reduce
 
 Reduce applying a function `fn` of two arguments to a sequence of parameters.
 Each iteration of the function call uses the value of the previous call as an
@@ -59,7 +59,7 @@ evaluated -- meaning that each operation can be performed only when it is
 needed. With MapReduce, lazy evaluation allows you to work with large datasets
 by processing data only when needed. 
 
-### MapReduce in the Cloud
+### 2. MapReduce Stages
 
 The App Engine MapReduce API provides a method for operating over large datasets
 via a parallel and distributed system of lazy evaluation. In contrast to the
@@ -68,11 +68,9 @@ of values depending on the job requirements.
 
 A MapReduce job is made up of stages. Each stage completes before the next stage
 begins and any intermediate data is stored in temporary storage between the
-stages. 
+stages. MapReduce has three stages: map, shuffle and reduce.
 
-#### MapReduce Stages
-
-##### Map
+### 2.1 Map
 
 The map stage has two components -- an *InputReader* and a *map* function. The
 InputReader's job is to deliver data one record at a time to the *map* function.
@@ -123,7 +121,7 @@ forage 1
 quinoa 1
 ```
 
-##### Shuffle
+### 2.2 Shuffle
 
 The shuffle stage is done in two steps. First, the data emitted by the map stage
 is sorted. Entries with the same key are grouped together. 
@@ -156,7 +154,7 @@ values are stored in temporary storage for processing by the next stage.
 (typewriter, [1])
 ```
 
-##### Reduce
+### 2.3 Reduce
 
 The reduce stage has two components -- a *reduce* function and an
 *OutputWriter*. The reduce function is called for each unique key in the
@@ -187,13 +185,13 @@ Applying this reducing function to our data would give the following output.
 
 This output is passed to the *OutputWriter* which writes the data to permanent storage.
 
-### The Benefits of MapReduce
+### 3. The Benefits of MapReduce
 
 MapReduce performs parallel and distributed operations by partitioning the data
 to be processed both spatially and temporally. The spatial partitioning is done
 via *sharding* while the temporal partitioning is done via *slicing*.
 
-#### Sharding: Parallel Processing
+### 3.1 Sharding: Parallel Processing
 
 The input data is divided into multiple smaller datasets called *shards*. Each
 of these shards are processed in parallel. A shard is processed by an individual
@@ -202,7 +200,7 @@ reserved for this shard. Likewise for the reduce function.
 
 The benefit of sharding is that each shard can be processed in parallel.
 
-#### Slicing: Fault Tolerance
+### 3.2 Slicing: Fault Tolerance
 
 The data in a shard is processed sequentially. Each shard is assigned a task and
 that task iterates over all data in the shard using an App Engine Task Queue.
@@ -214,7 +212,7 @@ The benefit of slicing is fault tolerance. If an error occurs during the run of
 a slice, that particular slice can be run again without affecting the processing
 of previous or subsequent slices.
 
-### Conclusions
+### 4. Conclusions
 
 MapReduce provides a convenient programming model for operating on large
 datasets. In our next article we look at how to use the Python MapReduce API for

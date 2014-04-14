@@ -5,10 +5,165 @@
         <description><![CDATA[Tinker. Tailor. Soldier. Sailor.]]></description>
         <link>http://sookocheff.com</link>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Tue, 08 Apr 2014 21:07:32 GMT</lastBuildDate>
+        <lastBuildDate>Mon, 14 Apr 2014 22:50:10 GMT</lastBuildDate>
         <atom:link href="http://sookocheff.com/rss.xml" rel="self" type="application/rss+xml"/>
         <author><![CDATA[Kevin Sookocheff]]></author>
-        <pubDate>Tue, 08 Apr 2014 21:06:57 GMT</pubDate>
+        <pubDate>Mon, 14 Apr 2014 22:49:32 GMT</pubDate>
+        <item>
+            <title><![CDATA[App Engine MapReduce API - Part 1: The Basics]]></title>
+            <description><![CDATA[<p>This article provides an overview of the <a href="https://developers.google.com/appengine/docs/python/dataprocessing/">App Engine MapReduce
+API</a>. We
+will give a basic overview of what MapReduce is and how it is used to do
+parallel and distributed processing of large datasets.</p>
+<h3 id="1-the-map-and-reduce-functions">1. The Map and Reduce Functions</h3>
+<p>MapReduce is based on the <code>map</code> and <code>reduce</code> functions that are commonly used in
+lazily-evaluated functional programming languages. Let&#39;s look at <code>map</code> first.</p>
+<h3 id="1-1-map">1.1 map</h3>
+<p>A <code>map</code> function is a way to apply a transformation to every element in a list.
+Using Clojure as the example functional language we can use the <code>map</code> function
+to increment every number in a list by <code>1</code>.</p>
+<pre class="highlight"><code class="hljs haml">=<span class="ruby">&gt; (map inc [<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span>])
+</span>(2 3 4 5 6)
+</code></pre><p>In this example <code>inc</code> is the increment function where <code>inc(x) = x+1</code>. More
+generally, you can apply any function <code>fn</code> to all elements of a list by passing
+it to the map function.</p>
+<pre class="highlight"><code class="hljs haml">=<span class="ruby">&gt; (map fn [<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span>])
+</span></code></pre><h3 id="1-2-reduce">1.2 reduce</h3>
+<p>Reduce applying a function <code>fn</code> of two arguments to a sequence of parameters.
+Each iteration of the function call uses the value of the previous call as an
+input parameter of the function. In this example we start with a base value of 0
+and iteratively add to that base value to sum a list of numbers.</p>
+<pre class="highlight"><code class="hljs coffeescript"><span class="hljs-function">=&gt;</span> <span class="hljs-function"><span class="hljs-params">(reduce + <span class="hljs-number">0</span> [<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span>])</span>
+=&gt;</span> <span class="hljs-function"><span class="hljs-params">(reduce + <span class="hljs-number">1</span> [<span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span>])</span>
+=&gt;</span> <span class="hljs-function"><span class="hljs-params">(reduce + <span class="hljs-number">3</span> [<span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span>])</span>
+=&gt;</span> <span class="hljs-function"><span class="hljs-params">(reduce + <span class="hljs-number">6</span> [<span class="hljs-number">4</span> <span class="hljs-number">5</span>])</span>
+=&gt;</span> (reduce + <span class="hljs-number">10</span> [<span class="hljs-number">5</span>])
+<span class="hljs-number">15</span>
+</code></pre><p>An interesting feature of both map and reduce is that they can be lazily
+evaluated -- meaning that each operation can be performed only when it is
+needed. With MapReduce, lazy evaluation allows you to work with large datasets
+by processing data only when needed. </p>
+<h3 id="2-mapreduce-stages">2. MapReduce Stages</h3>
+<p>The App Engine MapReduce API provides a method for operating over large datasets
+via a parallel and distributed system of lazy evaluation. In contrast to the
+<code>map</code> and <code>reduce</code> functions a MapReduce job may output a single value or a list
+of values depending on the job requirements. </p>
+<p>A MapReduce job is made up of stages. Each stage completes before the next stage
+begins and any intermediate data is stored in temporary storage between the
+stages. MapReduce has three stages: map, shuffle and reduce.</p>
+<h3 id="2-1-map">2.1 Map</h3>
+<p>The map stage has two components -- an <em>InputReader</em> and a <em>map</em> function. The
+InputReader&#39;s job is to deliver data one record at a time to the <em>map</em> function.
+The <em>map</em> function is applied to each record individually and a key-value pair
+is emitted. The data emitted by the <em>map</em> function is stored in temporary
+storage for processing by the next stage.</p>
+<p>The prototypical MapReduce example counts the number of each words in a set of
+documents. For example, assume the input is a document database containing a
+document id and the text of that document.</p>
+<pre class="highlight"><code class="hljs livecodeserver"><span class="hljs-number">14877</span> DIY Pinterest narwhal forage typewriter, quinoa Odd Future. Fap hashtag 
+<span class="hljs-number">88390</span> chillwave, paleo <span class="hljs-built_in">post</span>-ironic squid fanny pack yr PBR&amp;B High Life. Put <span class="hljs-operator">a</span> bird <span class="hljs-command"><span class="hljs-keyword">on</span> <span class="hljs-title">it</span></span>
+<span class="hljs-number">73205</span> gastropub leggings ennui PBR&amp;B. Vice Pinterest <span class="hljs-number">8</span>-bit chambray. Dreamcatcher
+<span class="hljs-number">95782</span> letterpress <span class="hljs-number">3</span> wolf moon, mustache craft beer Pitchfork yr trust fund Tonx <span class="hljs-number">77865</span> collie lassie
+<span class="hljs-number">75093</span> Portland skateboard bespoke kitsch. Seitan irony mustache messenger bag,
+<span class="hljs-number">24798</span> skateboard hashtag pickled tote bag <span class="hljs-keyword">try</span>-hard meggings actually Vice quinoa
+<span class="hljs-number">13334</span> plaid. Biodiesel Echo Park fashion axe direct trade, forage Neutra <span class="hljs-keyword">try</span>-hard
+</code></pre><p>Using the App Engine MapReduce API we can define a map function to output a
+key-value pair for each occurrence of a word in the document.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">map</span><span class="hljs-params">(document)</span>:</span>
+    <span class="hljs-string">"""
+    Count the occurrence of each word in a document.
+    """</span>
+    <span class="hljs-keyword">for</span> word <span class="hljs-keyword">in</span> document:
+        <span class="hljs-keyword">yield</span> (word.lower(), <span class="hljs-number">1</span>)
+</code></pre>
+<p>Our output would record each time a word was encountered within a document.</p>
+<pre class="highlight"><code class="hljs r">diy <span class="hljs-number">1</span>
+pinterest <span class="hljs-number">1</span>
+narwhal <span class="hljs-number">1</span>
+forage <span class="hljs-number">1</span>
+typewriter <span class="hljs-number">1</span>
+quinoa <span class="hljs-number">1</span>
+odd <span class="hljs-number">1</span>
+future <span class="hljs-number">1</span>
+<span class="hljs-keyword">...</span> more records <span class="hljs-keyword">...</span>
+pinterest <span class="hljs-number">1</span>
+forage <span class="hljs-number">1</span>
+quinoa <span class="hljs-number">1</span>
+</code></pre><h3 id="2-2-shuffle">2.2 Shuffle</h3>
+<p>The shuffle stage is done in two steps. First, the data emitted by the map stage
+is sorted. Entries with the same key are grouped together. </p>
+<pre class="highlight"><code class="hljs clojure"><span class="hljs-list">(<span class="hljs-title">diy</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">forage</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">forage</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title"><span class="hljs-built_in">future</span></span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">narwhal</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">odd</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">pinterest</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">pinterest</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">quinoa</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">quinoa</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">typewriter</span>,<span class="hljs-number"> 1</span>)</span>
+</code></pre><p>Second, entries for each key are condensed into a single list of values. These
+values are stored in temporary storage for processing by the next stage.</p>
+<pre class="highlight"><code class="hljs clojure"><span class="hljs-list">(<span class="hljs-title">diy</span>, <span class="hljs-collection">[1]</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">forage</span>, <span class="hljs-collection">[1,<span class="hljs-number"> 1</span>]</span>)</span>
+<span class="hljs-list">(<span class="hljs-title"><span class="hljs-built_in">future</span></span>, <span class="hljs-collection">[1]</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">narwhal</span>, <span class="hljs-collection">[1]</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">odd</span>, <span class="hljs-collection">[1]</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">pinterest</span>, <span class="hljs-collection">[1,<span class="hljs-number"> 1</span>]</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">quinoa</span>, <span class="hljs-collection">[1,<span class="hljs-number"> 1</span>]</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">typewriter</span>, <span class="hljs-collection">[1]</span>)</span>
+</code></pre><h3 id="2-3-reduce">2.3 Reduce</h3>
+<p>The reduce stage has two components -- a <em>reduce</em> function and an
+<em>OutputWriter</em>. The reduce function is called for each unique key in the
+shuffled temporary data. The <em>reduce</em> function emits a final value based on its
+input. To count the number of occurrences of a word our reduce function will
+look like this.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">reduce</span><span class="hljs-params">(key, values)</span>:</span>
+   <span class="hljs-string">"""
+    Sum the list of values.
+    """</span>
+    <span class="hljs-keyword">yield</span> (key, sum(values))
+</code></pre>
+<p>Applying this reducing function to our data would give the following output.</p>
+<pre class="highlight"><code class="hljs clojure"><span class="hljs-list">(<span class="hljs-title">diy</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">forage</span>,<span class="hljs-number"> 2</span>)</span>
+<span class="hljs-list">(<span class="hljs-title"><span class="hljs-built_in">future</span></span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">narwhal</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">odd</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">pinterest</span>,<span class="hljs-number"> 2</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">quinoa</span>,<span class="hljs-number"> 2</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">typewriter</span>,<span class="hljs-number"> 1</span>)</span>
+</code></pre><p>This output is passed to the <em>OutputWriter</em> which writes the data to permanent storage.</p>
+<h3 id="3-the-benefits-of-mapreduce">3. The Benefits of MapReduce</h3>
+<p>MapReduce performs parallel and distributed operations by partitioning the data
+to be processed both spatially and temporally. The spatial partitioning is done
+via <em>sharding</em> while the temporal partitioning is done via <em>slicing</em>.</p>
+<h3 id="3-1-sharding-parallel-processing">3.1 Sharding: Parallel Processing</h3>
+<p>The input data is divided into multiple smaller datasets called <em>shards</em>. Each
+of these shards are processed in parallel. A shard is processed by an individual
+instance of the map function with its own input reader that feeds it data
+reserved for this shard. Likewise for the reduce function.</p>
+<p>The benefit of sharding is that each shard can be processed in parallel.</p>
+<h3 id="3-2-slicing-fault-tolerance">3.2 Slicing: Fault Tolerance</h3>
+<p>The data in a shard is processed sequentially. Each shard is assigned a task and
+that task iterates over all data in the shard using an App Engine Task Queue.
+When a task is run it iterates over as much data from the shard as it can in 15
+seconds (configurable). After this time period expires a new slice is created
+and the process repeats until all data in the shard has been processed.</p>
+<p>The benefit of slicing is fault tolerance. If an error occurs during the run of
+a slice, that particular slice can be run again without affecting the processing
+of previous or subsequent slices.</p>
+<h3 id="4-conclusions">4. Conclusions</h3>
+<p>MapReduce provides a convenient programming model for operating on large
+datasets. In our next article we look at how to use the Python MapReduce API for
+App Engine to process entities from the datastore.</p>
+]]></description>
+            <link>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</link>
+            <guid isPermaLink="true">http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</guid>
+            <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
+            <pubDate>Tue, 15 Apr 2014 06:00:00 GMT</pubDate>
+        </item>
         <item>
             <title><![CDATA[Understanding JSON Patch]]></title>
             <description><![CDATA[<p>The typical update cycle for an API resource is to (1) GET the representation, (2) modify it and (3) PUT back the entire representation. This can waste bandwidth and processing time for large resources. An alternative is to use the <a href="https://tools.ietf.org/html/rfc5789">HTTP PATCH</a> extension method to only send the differences between two resources. HTTP PATCH applies a set of changes to the document referenced by the HTTP request.</p>
@@ -1276,16 +1431,6 @@ comments!</p>
             <guid isPermaLink="true">http://sookocheff.com/posts/2013-12-19-how-to-get-accepted-to-a-business-plan-competition</guid>
             <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
             <pubDate>Thu, 19 Dec 2013 06:00:00 GMT</pubDate>
-        </item>
-        <item>
-            <title><![CDATA[Install node.js packages via npm with a Chef Cookbook]]></title>
-            <description><![CDATA[<p>I wanted to set up a Vagrant instance with node.js and some specific packages pre-installed. I found a Chef cookbook to install node and after a bit of work have a cookbook that will install arbitrary node packages through npm.  I based this heavily on <a href="https://github.com/balbeko/chef-npm">balbeko</a>&#39;s chef-npm cookbook with modifications to accept a data bag list of npm packages. Any packages in this list will be installed by Chef.</p>
-<p>Behold! My first <a href="https://github.com/soofaloofa/chef-npm-package-install">Chef cookbook</a>.</p>
-]]></description>
-            <link>http://sookocheff.com/posts/2013-06-04-install-npm-packages-with-a-chef-cookbook</link>
-            <guid isPermaLink="true">http://sookocheff.com/posts/2013-06-04-install-npm-packages-with-a-chef-cookbook</guid>
-            <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
-            <pubDate>Thu, 06 Jun 2013 06:00:00 GMT</pubDate>
         </item>
     </channel>
 </rss>

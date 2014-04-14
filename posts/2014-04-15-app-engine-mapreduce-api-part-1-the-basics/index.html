@@ -1,0 +1,174 @@
+<!DOCTYPE html><html lang="en"><head><title>App Engine MapReduce API - Part 1: The Basics | Kevin Sookocheff</title><meta name="description" content="Tinker. Tailor. Soldier. Sailor."><meta name="keywords" content=""><meta name="author" content="Kevin Sookocheff"><!-- Meta--><meta charset="utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="DocPad v6.64.0" /><!--[if lt IE 9]><script async src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><script async src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.2.0/respond.js"></script><![endif]--><!-- Analytics--><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-20611089-6', 'sookocheff.com');
+  ga('send', 'pageview');
+
+</script>
+<link  rel="stylesheet" href="/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" /></head><body><!-- Navbar--><div class="navbar navbar-default"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/" class="navbar-brand">Kevin Sookocheff</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav navbar-right"><li><a href="/pages/speaking">Speaking</a></li><li><a href="/blog">Blog</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle"> 
+Subscribe <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="http://eepurl.com/KJE01">email</a></li><li><a href="http://sookocheff.com/rss.xml">RSS</a></li></ul></li></ul></div></div></div><!-- Container--><div class="container"><!-- Content--><div class="row"><div class="col-md-8 col-md-offset-2"><section id="content" class="content"><section class="page"><div class="page-header"><h1>App Engine MapReduce API - Part 1: The Basics</h1></div><div class="page-content"><article class="post"><p><small class="text-muted">Posted on <time datetime="2014-3-15">Tuesday, April 15, 2014</time>. </small></p><div class="post-content"><p>This article provides an overview of the <a href="https://developers.google.com/appengine/docs/python/dataprocessing/">App Engine MapReduce
+API</a>. We
+will give a basic overview of what MapReduce is and how it is used to do
+parallel and distributed processing of large datasets.</p>
+<h3 id="1-the-map-and-reduce-functions">1. The Map and Reduce Functions</h3>
+<p>MapReduce is based on the <code>map</code> and <code>reduce</code> functions that are commonly used in
+lazily-evaluated functional programming languages. Let&#39;s look at <code>map</code> first.</p>
+<h3 id="1-1-map">1.1 map</h3>
+<p>A <code>map</code> function is a way to apply a transformation to every element in a list.
+Using Clojure as the example functional language we can use the <code>map</code> function
+to increment every number in a list by <code>1</code>.</p>
+<pre class="highlight"><code class="hljs haml">=<span class="ruby">&gt; (map inc [<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span>])
+</span>(2 3 4 5 6)
+</code></pre><p>In this example <code>inc</code> is the increment function where <code>inc(x) = x+1</code>. More
+generally, you can apply any function <code>fn</code> to all elements of a list by passing
+it to the map function.</p>
+<pre class="highlight"><code class="hljs haml">=<span class="ruby">&gt; (map fn [<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span>])
+</span></code></pre><h3 id="1-2-reduce">1.2 reduce</h3>
+<p>Reduce applying a function <code>fn</code> of two arguments to a sequence of parameters.
+Each iteration of the function call uses the value of the previous call as an
+input parameter of the function. In this example we start with a base value of 0
+and iteratively add to that base value to sum a list of numbers.</p>
+<pre class="highlight"><code class="hljs coffeescript"><span class="hljs-function">=&gt;</span> <span class="hljs-function"><span class="hljs-params">(reduce + <span class="hljs-number">0</span> [<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span>])</span>
+=&gt;</span> <span class="hljs-function"><span class="hljs-params">(reduce + <span class="hljs-number">1</span> [<span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span>])</span>
+=&gt;</span> <span class="hljs-function"><span class="hljs-params">(reduce + <span class="hljs-number">3</span> [<span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span>])</span>
+=&gt;</span> <span class="hljs-function"><span class="hljs-params">(reduce + <span class="hljs-number">6</span> [<span class="hljs-number">4</span> <span class="hljs-number">5</span>])</span>
+=&gt;</span> (reduce + <span class="hljs-number">10</span> [<span class="hljs-number">5</span>])
+<span class="hljs-number">15</span>
+</code></pre><p>An interesting feature of both map and reduce is that they can be lazily
+evaluated -- meaning that each operation can be performed only when it is
+needed. With MapReduce, lazy evaluation allows you to work with large datasets
+by processing data only when needed. </p>
+<h3 id="2-mapreduce-stages">2. MapReduce Stages</h3>
+<p>The App Engine MapReduce API provides a method for operating over large datasets
+via a parallel and distributed system of lazy evaluation. In contrast to the
+<code>map</code> and <code>reduce</code> functions a MapReduce job may output a single value or a list
+of values depending on the job requirements. </p>
+<p>A MapReduce job is made up of stages. Each stage completes before the next stage
+begins and any intermediate data is stored in temporary storage between the
+stages. MapReduce has three stages: map, shuffle and reduce.</p>
+<h3 id="2-1-map">2.1 Map</h3>
+<p>The map stage has two components -- an <em>InputReader</em> and a <em>map</em> function. The
+InputReader&#39;s job is to deliver data one record at a time to the <em>map</em> function.
+The <em>map</em> function is applied to each record individually and a key-value pair
+is emitted. The data emitted by the <em>map</em> function is stored in temporary
+storage for processing by the next stage.</p>
+<p>The prototypical MapReduce example counts the number of each words in a set of
+documents. For example, assume the input is a document database containing a
+document id and the text of that document.</p>
+<pre class="highlight"><code class="hljs livecodeserver"><span class="hljs-number">14877</span> DIY Pinterest narwhal forage typewriter, quinoa Odd Future. Fap hashtag 
+<span class="hljs-number">88390</span> chillwave, paleo <span class="hljs-built_in">post</span>-ironic squid fanny pack yr PBR&amp;B High Life. Put <span class="hljs-operator">a</span> bird <span class="hljs-command"><span class="hljs-keyword">on</span> <span class="hljs-title">it</span></span>
+<span class="hljs-number">73205</span> gastropub leggings ennui PBR&amp;B. Vice Pinterest <span class="hljs-number">8</span>-bit chambray. Dreamcatcher
+<span class="hljs-number">95782</span> letterpress <span class="hljs-number">3</span> wolf moon, mustache craft beer Pitchfork yr trust fund Tonx <span class="hljs-number">77865</span> collie lassie
+<span class="hljs-number">75093</span> Portland skateboard bespoke kitsch. Seitan irony mustache messenger bag,
+<span class="hljs-number">24798</span> skateboard hashtag pickled tote bag <span class="hljs-keyword">try</span>-hard meggings actually Vice quinoa
+<span class="hljs-number">13334</span> plaid. Biodiesel Echo Park fashion axe direct trade, forage Neutra <span class="hljs-keyword">try</span>-hard
+</code></pre><p>Using the App Engine MapReduce API we can define a map function to output a
+key-value pair for each occurrence of a word in the document.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">map</span><span class="hljs-params">(document)</span>:</span>
+    <span class="hljs-string">"""
+    Count the occurrence of each word in a document.
+    """</span>
+    <span class="hljs-keyword">for</span> word <span class="hljs-keyword">in</span> document:
+        <span class="hljs-keyword">yield</span> (word.lower(), <span class="hljs-number">1</span>)
+</code></pre>
+<p>Our output would record each time a word was encountered within a document.</p>
+<pre class="highlight"><code class="hljs r">diy <span class="hljs-number">1</span>
+pinterest <span class="hljs-number">1</span>
+narwhal <span class="hljs-number">1</span>
+forage <span class="hljs-number">1</span>
+typewriter <span class="hljs-number">1</span>
+quinoa <span class="hljs-number">1</span>
+odd <span class="hljs-number">1</span>
+future <span class="hljs-number">1</span>
+<span class="hljs-keyword">...</span> more records <span class="hljs-keyword">...</span>
+pinterest <span class="hljs-number">1</span>
+forage <span class="hljs-number">1</span>
+quinoa <span class="hljs-number">1</span>
+</code></pre><h3 id="2-2-shuffle">2.2 Shuffle</h3>
+<p>The shuffle stage is done in two steps. First, the data emitted by the map stage
+is sorted. Entries with the same key are grouped together. </p>
+<pre class="highlight"><code class="hljs clojure"><span class="hljs-list">(<span class="hljs-title">diy</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">forage</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">forage</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title"><span class="hljs-built_in">future</span></span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">narwhal</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">odd</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">pinterest</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">pinterest</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">quinoa</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">quinoa</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">typewriter</span>,<span class="hljs-number"> 1</span>)</span>
+</code></pre><p>Second, entries for each key are condensed into a single list of values. These
+values are stored in temporary storage for processing by the next stage.</p>
+<pre class="highlight"><code class="hljs clojure"><span class="hljs-list">(<span class="hljs-title">diy</span>, <span class="hljs-collection">[1]</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">forage</span>, <span class="hljs-collection">[1,<span class="hljs-number"> 1</span>]</span>)</span>
+<span class="hljs-list">(<span class="hljs-title"><span class="hljs-built_in">future</span></span>, <span class="hljs-collection">[1]</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">narwhal</span>, <span class="hljs-collection">[1]</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">odd</span>, <span class="hljs-collection">[1]</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">pinterest</span>, <span class="hljs-collection">[1,<span class="hljs-number"> 1</span>]</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">quinoa</span>, <span class="hljs-collection">[1,<span class="hljs-number"> 1</span>]</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">typewriter</span>, <span class="hljs-collection">[1]</span>)</span>
+</code></pre><h3 id="2-3-reduce">2.3 Reduce</h3>
+<p>The reduce stage has two components -- a <em>reduce</em> function and an
+<em>OutputWriter</em>. The reduce function is called for each unique key in the
+shuffled temporary data. The <em>reduce</em> function emits a final value based on its
+input. To count the number of occurrences of a word our reduce function will
+look like this.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">reduce</span><span class="hljs-params">(key, values)</span>:</span>
+   <span class="hljs-string">"""
+    Sum the list of values.
+    """</span>
+    <span class="hljs-keyword">yield</span> (key, sum(values))
+</code></pre>
+<p>Applying this reducing function to our data would give the following output.</p>
+<pre class="highlight"><code class="hljs clojure"><span class="hljs-list">(<span class="hljs-title">diy</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">forage</span>,<span class="hljs-number"> 2</span>)</span>
+<span class="hljs-list">(<span class="hljs-title"><span class="hljs-built_in">future</span></span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">narwhal</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">odd</span>,<span class="hljs-number"> 1</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">pinterest</span>,<span class="hljs-number"> 2</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">quinoa</span>,<span class="hljs-number"> 2</span>)</span>
+<span class="hljs-list">(<span class="hljs-title">typewriter</span>,<span class="hljs-number"> 1</span>)</span>
+</code></pre><p>This output is passed to the <em>OutputWriter</em> which writes the data to permanent storage.</p>
+<h3 id="3-the-benefits-of-mapreduce">3. The Benefits of MapReduce</h3>
+<p>MapReduce performs parallel and distributed operations by partitioning the data
+to be processed both spatially and temporally. The spatial partitioning is done
+via <em>sharding</em> while the temporal partitioning is done via <em>slicing</em>.</p>
+<h3 id="3-1-sharding-parallel-processing">3.1 Sharding: Parallel Processing</h3>
+<p>The input data is divided into multiple smaller datasets called <em>shards</em>. Each
+of these shards are processed in parallel. A shard is processed by an individual
+instance of the map function with its own input reader that feeds it data
+reserved for this shard. Likewise for the reduce function.</p>
+<p>The benefit of sharding is that each shard can be processed in parallel.</p>
+<h3 id="3-2-slicing-fault-tolerance">3.2 Slicing: Fault Tolerance</h3>
+<p>The data in a shard is processed sequentially. Each shard is assigned a task and
+that task iterates over all data in the shard using an App Engine Task Queue.
+When a task is run it iterates over as much data from the shard as it can in 15
+seconds (configurable). After this time period expires a new slice is created
+and the process repeats until all data in the shard has been processed.</p>
+<p>The benefit of slicing is fault tolerance. If an error occurs during the run of
+a slice, that particular slice can be run again without affecting the processing
+of previous or subsequent slices.</p>
+<h3 id="4-conclusions">4. Conclusions</h3>
+<p>MapReduce provides a convenient programming model for operating on large
+datasets. In our next article we look at how to use the Python MapReduce API for
+App Engine to process entities from the datastore.</p>
+</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics&amp;text=App Engine MapReduce API - Part 1: The Basics&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics"><i class="fa fa-envelope"></i></a></p><hr/><div class="well"><div class="col-md-8 col-md-offset-2"><h4>About Kevin</h4></div><div class="col-md-2 col-md-offset-2"><img src="/img/profile.png"/></div><div class="col-md-6"><p>I am a Software Developer. I work at <a href="http://www.vendasta.com">VendAsta</a>&nbsp;with a bunch of great people. I run a business as <a href="http://redfinchsoftware.com">Red Finch Software</a>. You can find me online as <a href="https://twitter.com/soofaloofa">soofaloofa</a>. I love to teach, learn, speak and write about business and software.</p><p class="lead social-links"><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square"></i></a>&nbsp;<a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square"></i></a>&nbsp;<a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square"></i></a>&nbsp;<a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square"></i></a>&nbsp;<a href="https://github.com/soofaloofa"><i class="fa fa-github-square"></i></a>&nbsp;<a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square"></i></a></p></div></div><hr/><div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'kevinsookocheff'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article></div></section></section></div></div></div><!-- Footer--><div class="container"><hr><footer><p class="pull-right"><a href="#" class="pull-right">Top</a></p><p>© Kevin Sookocheff</p></footer></div><!-- Scripts--><script defer="defer"  src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script defer="defer"  src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script></body></html>

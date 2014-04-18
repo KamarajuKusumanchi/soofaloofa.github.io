@@ -1,0 +1,51 @@
+---
+title: Blog
+layout: page
+isPaged: true
+pagedCollection: 'posts'
+pageSize: 5
+---
+
+<!-- Page Content -->
+<% for post in @getPageCollection('posts').toJSON(): %>
+  <article>
+    <h2><a href="<%= post.url %>"><%= post.title %></a></h1>
+    <small class="text-muted">
+      <%- @partial("post-date.html.eco", {posted: post.date, updated: post.updated}) %>
+    </small>
+
+    <div class="post-content">
+      <%- post.contentRenderedWithoutLayouts %>
+    </div>
+
+    <hr>
+
+    <p>
+      <%- @partial("share-this.html.eco", {url: post.url, title: post.title}) %>
+    <p>
+
+    <hr>
+  </article>
+<% end %>
+
+<!-- Page Listing -->
+<div>
+  <ul class="pager">
+    <!-- Previous Page Button -->
+    <% unless @hasNextPage(): %>
+      <li class="previous disabled"><span>← Older</span></li>
+    <% else: %>
+      <li class="previous"><a href="<%= @getNextPage() %>">← Older</a></li>
+    <% end %>
+
+    <!-- Archives -->
+    <li><a href="/archives/">Archives</a></li>
+
+    <!-- Next Page Button -->
+    <% unless @hasPrevPage(): %>
+      <li class="next disabled"><span>Newer</span></li>
+    <% else: %>
+      <li class="next"><a href="<%= @getPrevPage() %>">Newer →</a></li>
+    <% end %>
+  </ul>
+</div>

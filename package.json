@@ -33,7 +33,8 @@
     "docpad-plugin-rss": "~2.1.3",
     "docpad-plugin-marked": "~2.2.0",
     "docpad-plugin-highlightjs": "~2.2.1",
-    "docpad-plugin-associatedfiles": "~2.2.0"
+    "docpad-plugin-associatedfiles": "~2.2.0",
+    "docpad-plugin-eco": "~2.0.3"
   },
   "devDependencies": {},
   "main": "node_modules/docpad/bin/docpad-server",

@@ -1,0 +1,37 @@
+---
+layout: page
+---
+
+<article class="post">
+  <p>
+    <small class="text-muted">
+      <%- @partial("post-date.html.eco", {posted: @document.date, updated: @document.updated}) %>
+    </small>
+  </p>
+
+  <div class=".post-content">
+    <%- @content %>
+  </div>
+
+  <hr>
+
+  <p>
+    <%- @partial("share-this.html.eco", {url: @document.url, title: @document.title}) %>
+  </p>
+
+  <hr>
+
+  <div class="well">
+    <h4>About Kevin</h4>
+    
+    <img src="/img/profile.png">
+
+    <p>
+      <%- @partial('blurb.html') %>
+    </p>
+  </div>
+
+  <hr>
+
+  <%- @partial('post-comments.html') %>
+</article>

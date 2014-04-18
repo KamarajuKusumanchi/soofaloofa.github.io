@@ -1,0 +1,23 @@
+---
+layout: default
+---
+
+<!-- Page Container -->
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <section class="page">
+        <div class="page-header">
+        <% if @document.tag: %>
+          <h1>Tag: <%= @document.tag %></h1>
+        <% else: %>
+          <h1><%= @document.title %></h1>
+        <% end %>
+        </div>
+        <div class="page-content">
+          <%- @content %>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

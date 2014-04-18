@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<title><%= @getPreparedTitle() %></title>
+
+<meta charset="utf-8">
+<meta http-equiv="content-type", content="text/html; charset=utf-8">
+<meta name="viewport", content="width=device-width, initial-scale=1.0">
+
+<meta name="description" content="<%= @getPreparedDescription() %>">
+<meta name="keywords" content="<%= @getPreparedKeywords() %>">
+<meta name="author" content="<%= @site.author %>">
+
+<%- @getBlock("styles").add(["//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css", "/styles/vendor/bootstrap.min.css", "/styles/style.css", "/styles/monokai_sublime.css"]).toHTML() %>
+
+<%- @partial("analytics.html") %>
+
+<!--[if lt IE 9]>
+<script async src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.2.0/respond.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+<!-- Navbar-->
+<div class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand">Kevin Sookocheff</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <% for page in @getCollection("pages").toJSON(): %>
+          <li class="<%= if page.id is @document.id then 'active' else 'inactive' %>">
+            <a href="<%= page.url %>"><%= page.title %></a>
+          </li>
+        <% end %>
+        <li class="<%= if @document.title is 'Blog' then 'active' else 'inactive' %>">
+          <a href="/blog/">Blog</a>
+        </li>
+        <li class="<%= if @document.title is 'Archives' then 'active' else 'inactive' %>">
+          <a href="/archives/">Archives</a>
+        </li>
+        <li class="dropdown">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+            Subscribe <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="http://eepurl.com/KJE01">email</a></li>
+            <li><a href="http://sookocheff.com/rss.xml">RSS</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Default Content -->
+<%- @content %>
+
+<!-- Footer -->
+<div class="container">
+  <hr>
+  <footer>
+    <p class="pull-right">
+      <a href="#" class="pull-right">Top</a>
+    </p>
+    <p>
+    <%= @site.copyright %>
+    </p>
+  </footer>
+</div>
+
+<%- @getBlock("scripts").add(["//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js", "//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"]).toHTML() %>
+</body>
+</html>

@@ -5,17 +5,17 @@
         <description><![CDATA[Tinker. Tailor. Soldier. Sailor.]]></description>
         <link>http://sookocheff.com</link>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Mon, 14 Apr 2014 22:50:10 GMT</lastBuildDate>
+        <lastBuildDate>Fri, 18 Apr 2014 21:06:01 GMT</lastBuildDate>
         <atom:link href="http://sookocheff.com/rss.xml" rel="self" type="application/rss+xml"/>
         <author><![CDATA[Kevin Sookocheff]]></author>
-        <pubDate>Mon, 14 Apr 2014 22:49:32 GMT</pubDate>
+        <pubDate>Fri, 18 Apr 2014 21:05:36 GMT</pubDate>
         <item>
             <title><![CDATA[App Engine MapReduce API - Part 1: The Basics]]></title>
             <description><![CDATA[<p>This article provides an overview of the <a href="https://developers.google.com/appengine/docs/python/dataprocessing/">App Engine MapReduce
 API</a>. We
 will give a basic overview of what MapReduce is and how it is used to do
 parallel and distributed processing of large datasets.</p>
-<h3 id="1-the-map-and-reduce-functions">1. The Map and Reduce Functions</h3>
+<h2 id="1-the-map-and-reduce-functions">1. The Map and Reduce Functions</h2>
 <p>MapReduce is based on the <code>map</code> and <code>reduce</code> functions that are commonly used in
 lazily-evaluated functional programming languages. Let&#39;s look at <code>map</code> first.</p>
 <h3 id="1-1-map">1.1 map</h3>
@@ -43,7 +43,7 @@ and iteratively add to that base value to sum a list of numbers.</p>
 evaluated -- meaning that each operation can be performed only when it is
 needed. With MapReduce, lazy evaluation allows you to work with large datasets
 by processing data only when needed. </p>
-<h3 id="2-mapreduce-stages">2. MapReduce Stages</h3>
+<h2 id="2-mapreduce-stages">2. MapReduce Stages</h2>
 <p>The App Engine MapReduce API provides a method for operating over large datasets
 via a parallel and distributed system of lazy evaluation. In contrast to the
 <code>map</code> and <code>reduce</code> functions a MapReduce job may output a single value or a list
@@ -135,7 +135,7 @@ look like this.</p>
 <span class="hljs-list">(<span class="hljs-title">quinoa</span>,<span class="hljs-number"> 2</span>)</span>
 <span class="hljs-list">(<span class="hljs-title">typewriter</span>,<span class="hljs-number"> 1</span>)</span>
 </code></pre><p>This output is passed to the <em>OutputWriter</em> which writes the data to permanent storage.</p>
-<h3 id="3-the-benefits-of-mapreduce">3. The Benefits of MapReduce</h3>
+<h2 id="3-the-benefits-of-mapreduce">3. The Benefits of MapReduce</h2>
 <p>MapReduce performs parallel and distributed operations by partitioning the data
 to be processed both spatially and temporally. The spatial partitioning is done
 via <em>sharding</em> while the temporal partitioning is done via <em>slicing</em>.</p>
@@ -154,7 +154,7 @@ and the process repeats until all data in the shard has been processed.</p>
 <p>The benefit of slicing is fault tolerance. If an error occurs during the run of
 a slice, that particular slice can be run again without affecting the processing
 of previous or subsequent slices.</p>
-<h3 id="4-conclusions">4. Conclusions</h3>
+<h2 id="4-conclusions">4. Conclusions</h2>
 <p>MapReduce provides a convenient programming model for operating on large
 datasets. In our next article we look at how to use the Python MapReduce API for
 App Engine to process entities from the datastore.</p>
@@ -162,7 +162,7 @@ App Engine to process entities from the datastore.</p>
             <link>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</link>
             <guid isPermaLink="true">http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</guid>
             <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
-            <pubDate>Tue, 15 Apr 2014 06:00:00 GMT</pubDate>
+            <pubDate>Tue, 15 Apr 2014 18:09:36 GMT</pubDate>
         </item>
         <item>
             <title><![CDATA[Understanding JSON Patch]]></title>

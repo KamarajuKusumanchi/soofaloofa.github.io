@@ -1,4 +1,20 @@
-<!DOCTYPE html><html lang="en"><head><title>Blog | Kevin Sookocheff</title><meta name="description" content="Tinker. Tailor. Soldier. Sailor."><meta name="keywords" content=""><meta name="author" content="Kevin Sookocheff"><!-- Meta--><meta charset="utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="DocPad v6.64.0" /><!--[if lt IE 9]><script async src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><script async src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.2.0/respond.js"></script><![endif]--><!-- Analytics--><script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<title>Blog | Kevin Sookocheff</title>
+
+<meta charset="utf-8">
+<meta http-equiv="content-type", content="text/html; charset=utf-8">
+<meta name="viewport", content="width=device-width, initial-scale=1.0">
+
+<meta name="description" content="Tinker. Tailor. Soldier. Sailor.">
+<meta name="keywords" content="">
+<meta name="author" content="Kevin Sookocheff">
+
+<link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" />
+
+<script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -6,157 +22,99 @@
 
   ga('create', 'UA-20611089-6', 'sookocheff.com');
   ga('send', 'pageview');
-
 </script>
-<link  rel="stylesheet" href="/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" /></head><body><!-- Navbar--><div class="navbar navbar-default"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/" class="navbar-brand">Kevin Sookocheff</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav navbar-right"><li><a href="/pages/speaking">Speaking</a></li><li><a href="/blog">Blog</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle"> 
-Subscribe <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="http://eepurl.com/KJE01">email</a></li><li><a href="http://sookocheff.com/rss.xml">RSS</a></li></ul></li></ul></div></div></div><!-- Container--><div class="container"><!-- Content--><div class="row"><div class="col-md-8 col-md-offset-2"><section id="content" class="content"><section class="page"><div class="page-header"><h1>Blog</h1></div><div class="page-content"><article><h2><a href="/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics">App Engine MapReduce API - Part 1: The Basics</a></h2><small class="text-muted">Posted on <time datetime="2014-3-15">Tuesday, April 15, 2014</time>. </small><div class="post-content"><p>This article provides an overview of the <a href="https://developers.google.com/appengine/docs/python/dataprocessing/">App Engine MapReduce
-API</a>. We
-will give a basic overview of what MapReduce is and how it is used to do
-parallel and distributed processing of large datasets.</p>
-<h3 id="1-the-map-and-reduce-functions">1. The Map and Reduce Functions</h3>
-<p>MapReduce is based on the <code>map</code> and <code>reduce</code> functions that are commonly used in
-lazily-evaluated functional programming languages. Let&#39;s look at <code>map</code> first.</p>
-<h3 id="1-1-map">1.1 map</h3>
-<p>A <code>map</code> function is a way to apply a transformation to every element in a list.
-Using Clojure as the example functional language we can use the <code>map</code> function
-to increment every number in a list by <code>1</code>.</p>
-<pre class="highlight"><code class="hljs haml">=<span class="ruby">&gt; (map inc [<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span>])
-</span>(2 3 4 5 6)
-</code></pre><p>In this example <code>inc</code> is the increment function where <code>inc(x) = x+1</code>. More
-generally, you can apply any function <code>fn</code> to all elements of a list by passing
-it to the map function.</p>
-<pre class="highlight"><code class="hljs haml">=<span class="ruby">&gt; (map fn [<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span>])
-</span></code></pre><h3 id="1-2-reduce">1.2 reduce</h3>
-<p>Reduce applying a function <code>fn</code> of two arguments to a sequence of parameters.
-Each iteration of the function call uses the value of the previous call as an
-input parameter of the function. In this example we start with a base value of 0
-and iteratively add to that base value to sum a list of numbers.</p>
-<pre class="highlight"><code class="hljs coffeescript"><span class="hljs-function">=&gt;</span> <span class="hljs-function"><span class="hljs-params">(reduce + <span class="hljs-number">0</span> [<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span>])</span>
-=&gt;</span> <span class="hljs-function"><span class="hljs-params">(reduce + <span class="hljs-number">1</span> [<span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span>])</span>
-=&gt;</span> <span class="hljs-function"><span class="hljs-params">(reduce + <span class="hljs-number">3</span> [<span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span>])</span>
-=&gt;</span> <span class="hljs-function"><span class="hljs-params">(reduce + <span class="hljs-number">6</span> [<span class="hljs-number">4</span> <span class="hljs-number">5</span>])</span>
-=&gt;</span> (reduce + <span class="hljs-number">10</span> [<span class="hljs-number">5</span>])
-<span class="hljs-number">15</span>
-</code></pre><p>An interesting feature of both map and reduce is that they can be lazily
-evaluated -- meaning that each operation can be performed only when it is
-needed. With MapReduce, lazy evaluation allows you to work with large datasets
-by processing data only when needed. </p>
-<h3 id="2-mapreduce-stages">2. MapReduce Stages</h3>
-<p>The App Engine MapReduce API provides a method for operating over large datasets
-via a parallel and distributed system of lazy evaluation. In contrast to the
-<code>map</code> and <code>reduce</code> functions a MapReduce job may output a single value or a list
-of values depending on the job requirements. </p>
-<p>A MapReduce job is made up of stages. Each stage completes before the next stage
-begins and any intermediate data is stored in temporary storage between the
-stages. MapReduce has three stages: map, shuffle and reduce.</p>
-<h3 id="2-1-map">2.1 Map</h3>
-<p>The map stage has two components -- an <em>InputReader</em> and a <em>map</em> function. The
-InputReader&#39;s job is to deliver data one record at a time to the <em>map</em> function.
-The <em>map</em> function is applied to each record individually and a key-value pair
-is emitted. The data emitted by the <em>map</em> function is stored in temporary
-storage for processing by the next stage.</p>
-<p>The prototypical MapReduce example counts the number of each words in a set of
-documents. For example, assume the input is a document database containing a
-document id and the text of that document.</p>
-<pre class="highlight"><code class="hljs livecodeserver"><span class="hljs-number">14877</span> DIY Pinterest narwhal forage typewriter, quinoa Odd Future. Fap hashtag 
-<span class="hljs-number">88390</span> chillwave, paleo <span class="hljs-built_in">post</span>-ironic squid fanny pack yr PBR&amp;B High Life. Put <span class="hljs-operator">a</span> bird <span class="hljs-command"><span class="hljs-keyword">on</span> <span class="hljs-title">it</span></span>
-<span class="hljs-number">73205</span> gastropub leggings ennui PBR&amp;B. Vice Pinterest <span class="hljs-number">8</span>-bit chambray. Dreamcatcher
-<span class="hljs-number">95782</span> letterpress <span class="hljs-number">3</span> wolf moon, mustache craft beer Pitchfork yr trust fund Tonx <span class="hljs-number">77865</span> collie lassie
-<span class="hljs-number">75093</span> Portland skateboard bespoke kitsch. Seitan irony mustache messenger bag,
-<span class="hljs-number">24798</span> skateboard hashtag pickled tote bag <span class="hljs-keyword">try</span>-hard meggings actually Vice quinoa
-<span class="hljs-number">13334</span> plaid. Biodiesel Echo Park fashion axe direct trade, forage Neutra <span class="hljs-keyword">try</span>-hard
-</code></pre><p>Using the App Engine MapReduce API we can define a map function to output a
-key-value pair for each occurrence of a word in the document.</p>
-<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">map</span><span class="hljs-params">(document)</span>:</span>
-    <span class="hljs-string">"""
-    Count the occurrence of each word in a document.
-    """</span>
-    <span class="hljs-keyword">for</span> word <span class="hljs-keyword">in</span> document:
-        <span class="hljs-keyword">yield</span> (word.lower(), <span class="hljs-number">1</span>)
-</code></pre>
-<p>Our output would record each time a word was encountered within a document.</p>
-<pre class="highlight"><code class="hljs r">diy <span class="hljs-number">1</span>
-pinterest <span class="hljs-number">1</span>
-narwhal <span class="hljs-number">1</span>
-forage <span class="hljs-number">1</span>
-typewriter <span class="hljs-number">1</span>
-quinoa <span class="hljs-number">1</span>
-odd <span class="hljs-number">1</span>
-future <span class="hljs-number">1</span>
-<span class="hljs-keyword">...</span> more records <span class="hljs-keyword">...</span>
-pinterest <span class="hljs-number">1</span>
-forage <span class="hljs-number">1</span>
-quinoa <span class="hljs-number">1</span>
-</code></pre><h3 id="2-2-shuffle">2.2 Shuffle</h3>
-<p>The shuffle stage is done in two steps. First, the data emitted by the map stage
-is sorted. Entries with the same key are grouped together. </p>
-<pre class="highlight"><code class="hljs clojure"><span class="hljs-list">(<span class="hljs-title">diy</span>,<span class="hljs-number"> 1</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">forage</span>,<span class="hljs-number"> 1</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">forage</span>,<span class="hljs-number"> 1</span>)</span>
-<span class="hljs-list">(<span class="hljs-title"><span class="hljs-built_in">future</span></span>,<span class="hljs-number"> 1</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">narwhal</span>,<span class="hljs-number"> 1</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">odd</span>,<span class="hljs-number"> 1</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">pinterest</span>,<span class="hljs-number"> 1</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">pinterest</span>,<span class="hljs-number"> 1</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">quinoa</span>,<span class="hljs-number"> 1</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">quinoa</span>,<span class="hljs-number"> 1</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">typewriter</span>,<span class="hljs-number"> 1</span>)</span>
-</code></pre><p>Second, entries for each key are condensed into a single list of values. These
-values are stored in temporary storage for processing by the next stage.</p>
-<pre class="highlight"><code class="hljs clojure"><span class="hljs-list">(<span class="hljs-title">diy</span>, <span class="hljs-collection">[1]</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">forage</span>, <span class="hljs-collection">[1,<span class="hljs-number"> 1</span>]</span>)</span>
-<span class="hljs-list">(<span class="hljs-title"><span class="hljs-built_in">future</span></span>, <span class="hljs-collection">[1]</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">narwhal</span>, <span class="hljs-collection">[1]</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">odd</span>, <span class="hljs-collection">[1]</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">pinterest</span>, <span class="hljs-collection">[1,<span class="hljs-number"> 1</span>]</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">quinoa</span>, <span class="hljs-collection">[1,<span class="hljs-number"> 1</span>]</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">typewriter</span>, <span class="hljs-collection">[1]</span>)</span>
-</code></pre><h3 id="2-3-reduce">2.3 Reduce</h3>
-<p>The reduce stage has two components -- a <em>reduce</em> function and an
-<em>OutputWriter</em>. The reduce function is called for each unique key in the
-shuffled temporary data. The <em>reduce</em> function emits a final value based on its
-input. To count the number of occurrences of a word our reduce function will
-look like this.</p>
-<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">reduce</span><span class="hljs-params">(key, values)</span>:</span>
-   <span class="hljs-string">"""
-    Sum the list of values.
-    """</span>
-    <span class="hljs-keyword">yield</span> (key, sum(values))
-</code></pre>
-<p>Applying this reducing function to our data would give the following output.</p>
-<pre class="highlight"><code class="hljs clojure"><span class="hljs-list">(<span class="hljs-title">diy</span>,<span class="hljs-number"> 1</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">forage</span>,<span class="hljs-number"> 2</span>)</span>
-<span class="hljs-list">(<span class="hljs-title"><span class="hljs-built_in">future</span></span>,<span class="hljs-number"> 1</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">narwhal</span>,<span class="hljs-number"> 1</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">odd</span>,<span class="hljs-number"> 1</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">pinterest</span>,<span class="hljs-number"> 2</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">quinoa</span>,<span class="hljs-number"> 2</span>)</span>
-<span class="hljs-list">(<span class="hljs-title">typewriter</span>,<span class="hljs-number"> 1</span>)</span>
-</code></pre><p>This output is passed to the <em>OutputWriter</em> which writes the data to permanent storage.</p>
-<h3 id="3-the-benefits-of-mapreduce">3. The Benefits of MapReduce</h3>
-<p>MapReduce performs parallel and distributed operations by partitioning the data
-to be processed both spatially and temporally. The spatial partitioning is done
-via <em>sharding</em> while the temporal partitioning is done via <em>slicing</em>.</p>
-<h3 id="3-1-sharding-parallel-processing">3.1 Sharding: Parallel Processing</h3>
-<p>The input data is divided into multiple smaller datasets called <em>shards</em>. Each
-of these shards are processed in parallel. A shard is processed by an individual
-instance of the map function with its own input reader that feeds it data
-reserved for this shard. Likewise for the reduce function.</p>
-<p>The benefit of sharding is that each shard can be processed in parallel.</p>
-<h3 id="3-2-slicing-fault-tolerance">3.2 Slicing: Fault Tolerance</h3>
-<p>The data in a shard is processed sequentially. Each shard is assigned a task and
-that task iterates over all data in the shard using an App Engine Task Queue.
-When a task is run it iterates over as much data from the shard as it can in 15
-seconds (configurable). After this time period expires a new slice is created
-and the process repeats until all data in the shard has been processed.</p>
-<p>The benefit of slicing is fault tolerance. If an error occurs during the run of
-a slice, that particular slice can be run again without affecting the processing
-of previous or subsequent slices.</p>
-<h3 id="4-conclusions">4. Conclusions</h3>
-<p>MapReduce provides a convenient programming model for operating on large
-datasets. In our next article we look at how to use the Python MapReduce API for
-App Engine to process entities from the datastore.</p>
-</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics&amp;text=App Engine MapReduce API - Part 1: The Basics&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics"><i class="fa fa-envelope"></i></a></p><hr/></article><article><h2><a href="/posts/2014-04-08-understanding-json-patch">Understanding JSON Patch</a></h2><small class="text-muted">Posted on <time datetime="2014-3-8">Tuesday, April 08, 2014</time>. </small><div class="post-content"><p>The typical update cycle for an API resource is to (1) GET the representation, (2) modify it and (3) PUT back the entire representation. This can waste bandwidth and processing time for large resources. An alternative is to use the <a href="https://tools.ietf.org/html/rfc5789">HTTP PATCH</a> extension method to only send the differences between two resources. HTTP PATCH applies a set of changes to the document referenced by the HTTP request.</p>
+
+
+<!--[if lt IE 9]>
+<script async src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.2.0/respond.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+<!-- Navbar-->
+<div class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand">Kevin Sookocheff</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        
+        <li class="active">
+          <a href="/blog/">Blog</a>
+        </li>
+        <li class="inactive">
+          <a href="/archives/">Archives</a>
+        </li>
+        <li class="dropdown">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+            Subscribe <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="http://eepurl.com/KJE01">email</a></li>
+            <li><a href="http://sookocheff.com/rss.xml">RSS</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Default Content -->
+<!-- Page Container -->
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <section class="page">
+        <div class="page-header">
+        
+          <h1>Blog</h1>
+        
+        </div>
+        <div class="page-content">
+          <!-- Page Content -->
+
+  <article>
+    <h2><a href="/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics">App Engine MapReduce API - Part 1: The Basics</a></h2>
+    <small class="text-muted">
+      Posted on Tuesday, April 15, 2014.
+
+
+    </small>
+
+    
+      <p>
+        <p>This article provides an overview of the <a href="https://developers.google.com/appengine/docs/python/dataprocessing/">App Engine MapReduce API</a>. We will give a basic overview of what MapReduce is and how it is used to do parallel and distributed processing of large datasets.</p>
+ 
+      </p>
+    
+
+    
+    <p class="text-center">
+      <a href="/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics"><button type="button" class="btn btn-primary">Read More</button></a>
+    </p>
+    
+
+    <hr>
+  </article>
+
+  <article>
+    <h2><a href="/posts/2014-04-08-understanding-json-patch">Understanding JSON Patch</a></h2>
+    <small class="text-muted">
+      Posted on Tuesday, April 08, 2014.
+
+
+    </small>
+
+    
+      <p>The typical update cycle for an API resource is to (1) GET the representation, (2) modify it and (3) PUT back the entire representation. This can waste bandwidth and processing time for large resources. An alternative is to use the <a href="https://tools.ietf.org/html/rfc5789">HTTP PATCH</a> extension method to only send the differences between two resources. HTTP PATCH applies a set of changes to the document referenced by the HTTP request.</p>
 <pre class="highlight"><code class="hljs bash">PATCH /file.txt HTTP/<span class="hljs-number">1.1</span>
 Host: sookocheff.com
 Content-Type: application/json
@@ -300,7 +258,24 @@ The <code>path</code> member is a <a href="https://tools.ietf.org/html/rfc6901">
 </code></pre>
 <h3 id="conclusion">Conclusion</h3>
 <p>JSON Patch is an effective way to provide diffs of your API resources. Most languages already have an implementation available. There is no reason not to adopt the HTTP PATCH today.</p>
-</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2014-04-08-understanding-json-patch&amp;text=Understanding JSON Patch&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2014-04-08-understanding-json-patch"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2014-04-08-understanding-json-patch"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2014-04-08-understanding-json-patch"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2014-04-08-understanding-json-patch"><i class="fa fa-envelope"></i></a></p><hr/></article><article><h2><a href="/posts/2014-04-01-how-to-version-a-rest-api">How to Version a REST API</a></h2><small class="text-muted">Posted on <time datetime="2014-3-1">Tuesday, April 01, 2014</time>. </small><div class="post-content"><p>API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients. </p>
+
+    
+
+    
+
+    <hr>
+  </article>
+
+  <article>
+    <h2><a href="/posts/2014-04-01-how-to-version-a-rest-api">How to Version a REST API</a></h2>
+    <small class="text-muted">
+      Posted on Tuesday, April 01, 2014.
+
+
+    </small>
+
+    
+      <p>API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients. </p>
 <h3 id="1-versioned-url">1) Versioned URL</h3>
 <p>URL versioning inserts a version number directly in the URL of the resource. As an example,  version one of the API could be accessed through the <code>v1</code> URL.</p>
 <pre class="highlight"><code class="hljs bash">http://sookocheff.com/api/v1/users/<span class="hljs-number">12345</span>
@@ -394,7 +369,24 @@ Users-Version: <span class="hljs-number">2</span>
 <h3 id="references">References</h3>
 <p><a href="http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api">Vinay Sahni</a> has collected a long list of best practices for pragmatic API design, including versioning. </p>
 <p><a href="http://stackoverflow.com/questions/389169/best-practices-for-api-versioning">stackoverflow</a> presents a collection of good answers providing best practices for API versioning.</p>
-</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api&amp;text=How to Version a REST API&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api"><i class="fa fa-envelope"></i></a></p><hr/></article><article><h2><a href="/posts/2014-03-27-when-to-use-http-put-and-http-post">When to Use HTTP PUT and HTTP POST</a></h2><small class="text-muted">Posted on <time datetime="2014-2-27">Thursday, March 27, 2014</time>. </small><div class="post-content"><p>The HTTP protocol defines two methods for updating a resource -- <code>PUT</code> and
+
+    
+
+    
+
+    <hr>
+  </article>
+
+  <article>
+    <h2><a href="/posts/2014-03-27-when-to-use-http-put-and-http-post">When to Use HTTP PUT and HTTP POST</a></h2>
+    <small class="text-muted">
+      Posted on Thursday, March 27, 2014.
+
+
+    </small>
+
+    
+      <p>The HTTP protocol defines two methods for updating a resource -- <code>PUT</code> and
 <code>POST</code>. Both <code>PUT</code> and <code>POST</code> are used to modify a resource and this semantic
 similarity can confuse API developers. This confusion has led most developers to
 use <code>POST</code> for any action which may modify the state of a resource, ignoring
@@ -482,8 +474,72 @@ robust APIs. Not only is your API ready to scale and easy to maintain, it is
 easy to understand and use. By consistently following these existing semantics
 you can avoid inserting special cases and &#39;gotchas&#39; into your API that confuse
 client developers.</p>
-</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post&amp;text=When to Use HTTP PUT and HTTP POST&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post"><i class="fa fa-envelope"></i></a></p><hr/></article><article><h2><a href="/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab">Stripe checkout opening in a new tab</a></h2><small class="text-muted">Posted on <time datetime="2014-2-25">Tuesday, March 25, 2014</time>. </small><div class="post-content"><p>At <a href="http://www.vendasta.com">VendAsta</a> we&#39;ve been integrating with the <a href="http://stripe.com/checkout">Stripe</a> payment system using Stripe Checkout. The experience has been completely painless and surprisingly simple. Then came a hiccup. While demoing the new functionality we found that one particular computer in the office would open the checkout modal dialog in a new browser window. Just one laptop. It was running the same version of Chrome that we were developing on. It was running the same OS as a working test machine. But the dialog would consistently open in a new browser window on just this one laptop. </p>
+
+    
+
+    
+
+    <hr>
+  </article>
+
+  <article>
+    <h2><a href="/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab">Stripe checkout opening in a new tab</a></h2>
+    <small class="text-muted">
+      Posted on Tuesday, March 25, 2014.
+
+
+    </small>
+
+    
+      <p>At <a href="http://www.vendasta.com">VendAsta</a> we&#39;ve been integrating with the <a href="http://stripe.com/checkout">Stripe</a> payment system using Stripe Checkout. The experience has been completely painless and surprisingly simple. Then came a hiccup. While demoing the new functionality we found that one particular computer in the office would open the checkout modal dialog in a new browser window. Just one laptop. It was running the same version of Chrome that we were developing on. It was running the same OS as a working test machine. But the dialog would consistently open in a new browser window on just this one laptop. </p>
 <p>After a Friday afternoon debugging session our Product Owner decided to jump onto IRC and chat directly with the Stripe developers. They were quickly able to diagnose our problem: touch. The troublesome laptop was a Windows 8 machine with a touch display — and Stripe Checkout will open in a new browser window when used on a tablet.</p>
 <p>This episode was a great reminder of how the first step in debugging is often to <a href="http://www.hanselman.com/blog/BackToBasicsAssertYourAssumptionsAndDiffYourSourceCode.aspx">find the difference between the working and non-working system</a>. Hopefully this post will help someone else with the same problem. </p>
 <p>P.S. Kudos to Stripe for their prompt help via IRC.</p>
-</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab&amp;text=Stripe checkout opening in a new tab&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab"><i class="fa fa-envelope"></i></a></p><hr/></article><!-- Pagination --><ul class="pager"><li class="previous"><a href="/blog.1">&larr; Older</a></li><li><a href="/archives">Archives</a></li><li class="next disabled"><a href="#">Newer &rarr;</a></li></ul></div></section></section></div></div></div><!-- Footer--><div class="container"><hr><footer><p class="pull-right"><a href="#" class="pull-right">Top</a></p><p>© Kevin Sookocheff</p></footer></div><!-- Scripts--><script defer="defer"  src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script defer="defer"  src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script></body></html>
+
+    
+
+    
+
+    <hr>
+  </article>
+
+
+<!-- Page Listing -->
+<div>
+  <ul class="pager">
+    <!-- Previous Page Button -->
+    
+      <li class="previous"><a href="/blog.1">← Older</a></li>
+    
+
+    <!-- Archives -->
+    <li><a href="/archives/">Archives</a></li>
+
+    <!-- Next Page Button -->
+    
+      <li class="next disabled"><span>Newer</span></li>
+    
+  </ul>
+</div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="container">
+  <hr>
+  <footer>
+    <p class="pull-right">
+      <a href="#" class="pull-right">Top</a>
+    </p>
+    <p>
+    © Kevin Sookocheff
+    </p>
+  </footer>
+</div>
+
+<script defer="defer"  src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script defer="defer"  src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+</body>
+</html>

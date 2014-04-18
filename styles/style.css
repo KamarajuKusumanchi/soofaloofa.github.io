@@ -1,15 +1,14 @@
-.post-content {
-  padding-top: 1em;
-}
-
-.social-links a i {
-  color: #666;
-}
-
+/* Make all images responsive */
 img {
   display: block;
   height: auto;
   max-width: 100%;
+}
+
+/* No underline for font icon links */
+a:hover i[class^="fa"],
+a:hover i[class*="fa"] {
+  text-decoration: none;
 }
 
 .landing-header {
@@ -30,3 +29,16 @@ img {
 .margin-base-vertical {
   margin: 40px 0;
 }
+
+.colored-content {
+  background-color: #f8f8f8;
+  border-radius: 15px;
+}
+p {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  line-height: 1.4em;
+  font-size: 16px;
+}
+
+

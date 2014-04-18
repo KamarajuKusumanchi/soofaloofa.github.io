@@ -1,4 +1,20 @@
-<!DOCTYPE html><html lang="en"><head><title>Blog | Kevin Sookocheff</title><meta name="description" content="Tinker. Tailor. Soldier. Sailor."><meta name="keywords" content=""><meta name="author" content="Kevin Sookocheff"><!-- Meta--><meta charset="utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="DocPad v6.64.0" /><!--[if lt IE 9]><script async src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><script async src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.2.0/respond.js"></script><![endif]--><!-- Analytics--><script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<title>Blog | Kevin Sookocheff</title>
+
+<meta charset="utf-8">
+<meta http-equiv="content-type", content="text/html; charset=utf-8">
+<meta name="viewport", content="width=device-width, initial-scale=1.0">
+
+<meta name="description" content="Tinker. Tailor. Soldier. Sailor.">
+<meta name="keywords" content="">
+<meta name="author" content="Kevin Sookocheff">
+
+<link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" />
+
+<script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -6,16 +22,115 @@
 
   ga('create', 'UA-20611089-6', 'sookocheff.com');
   ga('send', 'pageview');
-
 </script>
-<link  rel="stylesheet" href="/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" /></head><body><!-- Navbar--><div class="navbar navbar-default"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/" class="navbar-brand">Kevin Sookocheff</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav navbar-right"><li><a href="/pages/speaking">Speaking</a></li><li><a href="/blog">Blog</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle"> 
-Subscribe <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="http://eepurl.com/KJE01">email</a></li><li><a href="http://sookocheff.com/rss.xml">RSS</a></li></ul></li></ul></div></div></div><!-- Container--><div class="container"><!-- Content--><div class="row"><div class="col-md-8 col-md-offset-2"><section id="content" class="content"><section class="page"><div class="page-header"><h1>Blog</h1></div><div class="page-content"><article><h2><a href="/posts/2011-06-28-using-leiningen-behind-a-windows-proxy">Using Leiningen behind a Windows proxy</a></h2><small class="text-muted">Posted on <time datetime="2011-5-28">Tuesday, June 28, 2011</time>. </small><div class="post-content"><p>I’ve been getting familiar with the <a href="https://github.com/technomancy/leiningen">Leiningen</a> build tool for <a href="http://clojure.org/">Clojure</a> but had trouble connecting to the Clojar and Maven repositories behind a proxy.</p>
+
+
+<!--[if lt IE 9]>
+<script async src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.2.0/respond.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+<!-- Navbar-->
+<div class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand">Kevin Sookocheff</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        
+        <li class="active">
+          <a href="/blog/">Blog</a>
+        </li>
+        <li class="inactive">
+          <a href="/archives/">Archives</a>
+        </li>
+        <li class="dropdown">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+            Subscribe <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="http://eepurl.com/KJE01">email</a></li>
+            <li><a href="http://sookocheff.com/rss.xml">RSS</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Default Content -->
+<!-- Page Container -->
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <section class="page">
+        <div class="page-header">
+        
+          <h1>Blog</h1>
+        
+        </div>
+        <div class="page-content">
+          <!-- Page Content -->
+
+  <article>
+    <h2><a href="/posts/2011-06-28-using-leiningen-behind-a-windows-proxy">Using Leiningen behind a Windows proxy</a></h2>
+    <small class="text-muted">
+      Posted on Tuesday, June 28, 2011.
+
+
+    </small>
+
+    
+      <p>I’ve been getting familiar with the <a href="https://github.com/technomancy/leiningen">Leiningen</a> build tool for <a href="http://clojure.org/">Clojure</a> but had trouble connecting to the Clojar and Maven repositories behind a proxy.</p>
 <p>I ended up adding my proxy to Maven’s <code>settings.xml</code> and everything worked out.</p>
 <p>You can find <code>settings.xml</code>  at <code>C:\apache-maven-X.X.X\conf\settings.xml</code>  and can edit it according to the conventions described <a href="http://maven.apache.org/guides/mini/guide-proxies.html">here</a>.</p>
 <p>After editing the file run lein deps  to download your project dependencies. If still can’t connect to the repository servers you may have to copy the <code>settings.xml</code> file to your <code>.m2</code> directory at <code>C:\Documents and Settings\username\.m2\settings.xml</code></p>
-</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2011-06-28-using-leiningen-behind-a-windows-proxy&amp;text=Using Leiningen behind a Windows proxy&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2011-06-28-using-leiningen-behind-a-windows-proxy"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2011-06-28-using-leiningen-behind-a-windows-proxy"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2011-06-28-using-leiningen-behind-a-windows-proxy"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2011-06-28-using-leiningen-behind-a-windows-proxy"><i class="fa fa-envelope"></i></a></p><hr/></article><article><h2><a href="/posts/2011-06-09-date-now-in-ie6">Date.now() in IE6</a></h2><small class="text-muted">Posted on <time datetime="2011-5-9">Thursday, June 09, 2011</time>. </small><div class="post-content"><p>I was fiddling with a JavaScript timer application and noticed a bug in IE6. I’m sure this is documented elsewhere but I couldn’t find anything with some quick searches; hence this post.</p>
+
+    
+
+    
+
+    <hr>
+  </article>
+
+  <article>
+    <h2><a href="/posts/2011-06-09-date-now-in-ie6">Date.now() in IE6</a></h2>
+    <small class="text-muted">
+      Posted on Thursday, June 09, 2011.
+
+
+    </small>
+
+    
+      <p>I was fiddling with a JavaScript timer application and noticed a bug in IE6. I’m sure this is documented elsewhere but I couldn’t find anything with some quick searches; hence this post.</p>
 <p><code>Date.now()</code> is not supported by IE6. Use <code>new Date().getTime()</code> instead.</p>
-</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2011-06-09-date-now-in-ie6&amp;text=Date.now() in IE6&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2011-06-09-date-now-in-ie6"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2011-06-09-date-now-in-ie6"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2011-06-09-date-now-in-ie6"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2011-06-09-date-now-in-ie6"><i class="fa fa-envelope"></i></a></p><hr/></article><article><h2><a href="/posts/2011-06-02-the-javascript-click-event-and-hidden-input-elements">The JavaScript click event and hidden input elements</a></h2><small class="text-muted">Posted on <time datetime="2011-5-2">Thursday, June 02, 2011</time>. </small><div class="post-content"><p>I was recently working with the HTML canvas element and wanted to attach an event to the canvas that would fire the click event of a file input element. I would then hide the input element so that the canvas element was the only way to browse for files. My first attempt was simple enough.</p>
+
+    
+
+    
+
+    <hr>
+  </article>
+
+  <article>
+    <h2><a href="/posts/2011-06-02-the-javascript-click-event-and-hidden-input-elements">The JavaScript click event and hidden input elements</a></h2>
+    <small class="text-muted">
+      Posted on Thursday, June 02, 2011.
+
+
+    </small>
+
+    
+      <p>I was recently working with the HTML canvas element and wanted to attach an event to the canvas that would fire the click event of a file input element. I would then hide the input element so that the canvas element was the only way to browse for files. My first attempt was simple enough.</p>
 <pre class="highlight"><code class="hljs javascript">document.getElementById(<span class="hljs-string">'canvas'</span>).onclick = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
     document.getElementById(<span class="hljs-string">'filepicker'</span>).click();
 };
@@ -27,7 +142,24 @@ Subscribe <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="http:/
     <span class="hljs-rule"><span class="hljs-attribute">opacity</span>:<span class="hljs-value"> <span class="hljs-number">0</span></span></span>;
 <span class="hljs-rule">}</span></span>
 </code></pre><p>Setting the input elements class tofakehidden  effectively hides the element from the user yet click events can be fired as usual.</p>
-</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2011-06-02-the-javascript-click-event-and-hidden-input-elements&amp;text=The JavaScript click event and hidden input elements&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2011-06-02-the-javascript-click-event-and-hidden-input-elements"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2011-06-02-the-javascript-click-event-and-hidden-input-elements"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2011-06-02-the-javascript-click-event-and-hidden-input-elements"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2011-06-02-the-javascript-click-event-and-hidden-input-elements"><i class="fa fa-envelope"></i></a></p><hr/></article><article><h2><a href="/posts/2011-05-18-dissecting-jquerys-fade-animation">Dissecting jQuery's Fade Animation</a></h2><small class="text-muted">Posted on <time datetime="2011-4-18">Wednesday, May 18, 2011</time>. </small><div class="post-content"><p>Fade animations are a standard tool in any jQuery developer’s toolbox. But how do they really work? Let’s create a small function that encapsulates solely the fade functionality and find out.</p>
+
+    
+
+    
+
+    <hr>
+  </article>
+
+  <article>
+    <h2><a href="/posts/2011-05-18-dissecting-jquerys-fade-animation">Dissecting jQuery's Fade Animation</a></h2>
+    <small class="text-muted">
+      Posted on Wednesday, May 18, 2011.
+
+
+    </small>
+
+    
+      <p>Fade animations are a standard tool in any jQuery developer’s toolbox. But how do they really work? Let’s create a small function that encapsulates solely the fade functionality and find out.</p>
 <p>Let’s start with the jQuery <code>$</code> idiom.</p>
 <pre class="highlight"><code class="hljs javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">$</span><span class="hljs-params">(id)</span> {</span>
     <span class="hljs-keyword">var</span> $ = document.getElementById(id);
@@ -70,8 +202,72 @@ Subscribe <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="http:/
 };
 </code></pre><p>Now the trick is to call this function to fade the element over a period of time. We do this by using the <code>setTimeout(callbk, delay)</code> function to set the opacity to different values at particular moments in time. The method signature defines a callbk parameter as a function to call when delay time has passed. If we call this function 100 times throughout our animation we will have a smooth and fluid result.</p>
 <p>First we set up the <code>for</code> loop to iterate from 1 to 100 and then call an anonymous function sending the index of our loop as a parameter to the function. Our anonymous function then calls <code>setTimeout</code> periodically (100 times in total).</p>
-</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation&amp;text=Dissecting jQuery's Fade Animation&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation"><i class="fa fa-envelope"></i></a></p><hr/></article><article><h2><a href="/posts/2011-05-10-an-argument-against-javascript-minification">An Argument Against JavaScript Minification</a></h2><small class="text-muted">Posted on <time datetime="2011-4-10">Tuesday, May 10, 2011</time>. </small><div class="post-content"><p>Developers learn by example. This is no secret. The first advice given to new developers is to read a lot of good source code and the best advice given to experienced developers is to read a lot of good source code. Canonical texts for many languages let the source code say far more than the text. I’m thinking of text’s like <a href="http://cm.bell-labs.com/cm/cs/cbook/">Kernighan &amp; Ritchie</a> and <a href="http://mitpress.mit.edu/catalog/item/default.asp?ttype=2&amp;tid=4825">Friedman &amp; Felleisen</a>.</p>
+
+    
+
+    
+
+    <hr>
+  </article>
+
+  <article>
+    <h2><a href="/posts/2011-05-10-an-argument-against-javascript-minification">An Argument Against JavaScript Minification</a></h2>
+    <small class="text-muted">
+      Posted on Tuesday, May 10, 2011.
+
+
+    </small>
+
+    
+      <p>Developers learn by example. This is no secret. The first advice given to new developers is to read a lot of good source code and the best advice given to experienced developers is to read a lot of good source code. Canonical texts for many languages let the source code say far more than the text. I’m thinking of text’s like <a href="http://cm.bell-labs.com/cm/cs/cbook/">Kernighan &amp; Ritchie</a> and <a href="http://mitpress.mit.edu/catalog/item/default.asp?ttype=2&amp;tid=4825">Friedman &amp; Felleisen</a>.</p>
 <p>When the world wide web was in its infancy view source was the best tool for wannabe webmasters learning their craft. Sure, bad designs and bad decisions propagated quickly. But good designs and good decisions propagated too. Those who really wanted to learn found best of breed web sites and quickly copied, edited and pasted their way to a beautiful site, learning much about web design in the process.</p>
 <p>I would argue that JavaScript is still in its infancy. Developers are building complex web applications and in the process distilling years of hacking experience in to solid design. And we are hiding all this knowledge from the public for performance gains. The irony is that the JavaScript developers writing the best code are the JavaScript developers that minify. In effect we are hiding the best public source of information on JavaScript web development behind nebulous performance gains.</p>
 <p>Is it worth it? Google serves billions of pages a day. Do you?</p>
-</div><hr/><p>Share this post: <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2011-05-10-an-argument-against-javascript-minification&amp;text=An Argument Against JavaScript Minification&amp;via=soofaloofa"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2011-05-10-an-argument-against-javascript-minification"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2011-05-10-an-argument-against-javascript-minification"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2011-05-10-an-argument-against-javascript-minification"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2011-05-10-an-argument-against-javascript-minification"><i class="fa fa-envelope"></i></a></p><hr/></article><!-- Pagination --><ul class="pager"><li class="previous"><a href="/blog.5">&larr; Older</a></li><li><a href="/archives">Archives</a></li><li class="next"><a href="/blog.3">Newer &rarr; </a></li></ul></div></section></section></div></div></div><!-- Footer--><div class="container"><hr><footer><p class="pull-right"><a href="#" class="pull-right">Top</a></p><p>© Kevin Sookocheff</p></footer></div><!-- Scripts--><script defer="defer"  src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script defer="defer"  src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script></body></html>
+
+    
+
+    
+
+    <hr>
+  </article>
+
+
+<!-- Page Listing -->
+<div>
+  <ul class="pager">
+    <!-- Previous Page Button -->
+    
+      <li class="previous"><a href="/blog.5">← Older</a></li>
+    
+
+    <!-- Archives -->
+    <li><a href="/archives/">Archives</a></li>
+
+    <!-- Next Page Button -->
+    
+      <li class="next"><a href="/blog.3">Newer →</a></li>
+    
+  </ul>
+</div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="container">
+  <hr>
+  <footer>
+    <p class="pull-right">
+      <a href="#" class="pull-right">Top</a>
+    </p>
+    <p>
+    © Kevin Sookocheff
+    </p>
+  </footer>
+</div>
+
+<script defer="defer"  src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script defer="defer"  src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+/* Make all images responsive */
+img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+/* No underline for font icon links */
+a:hover i[class^="fa"],
+a:hover i[class*="fa"] {
+  text-decoration: none;
+}
+
+.landing-header {
+	height: 650px;
+	background: url(/img/header-bg.jpg) center center no-repeat;
+	background-size: cover;
+  margin-top: -21px;
+}
+
+.headline {
+  padding-top: 80px;
+  margin-top: 2em;
+  font-size: 400%;
+  font-weight: bold;
+  color: #FFF;
+}
+
+.margin-base-vertical {
+  margin: 40px 0;
+}
+
+.colored-content {
+  background-color: #f8f8f8;
+  border-radius: 15px;
+}
+p {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  line-height: 1.4em;
+  font-size: 16px;
+}
+
+

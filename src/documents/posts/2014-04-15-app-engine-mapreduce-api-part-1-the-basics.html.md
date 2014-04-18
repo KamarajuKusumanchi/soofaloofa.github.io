@@ -2,7 +2,8 @@
 layout: post
 title: "App Engine MapReduce API - Part 1: The Basics"
 author: Kevin Sookocheff
-date: 2014/04/15
+date: 2014/04/15 12:09:36
+description: <t render="markdown">This article provides an overview of the [App Engine MapReduce API](https://developers.google.com/appengine/docs/python/dataprocessing/). We will give a basic overview of what MapReduce is and how it is used to do parallel and distributed processing of large datasets.</t>
 tags: 
   - App Engine
   - MapReduce
@@ -14,7 +15,7 @@ API](https://developers.google.com/appengine/docs/python/dataprocessing/). We
 will give a basic overview of what MapReduce is and how it is used to do
 parallel and distributed processing of large datasets.
 
-### 1. The Map and Reduce Functions
+## 1. The Map and Reduce Functions
 
 MapReduce is based on the `map` and `reduce` functions that are commonly used in
 lazily-evaluated functional programming languages. Let's look at `map` first.
@@ -59,7 +60,7 @@ evaluated -- meaning that each operation can be performed only when it is
 needed. With MapReduce, lazy evaluation allows you to work with large datasets
 by processing data only when needed. 
 
-### 2. MapReduce Stages
+## 2. MapReduce Stages
 
 The App Engine MapReduce API provides a method for operating over large datasets
 via a parallel and distributed system of lazy evaluation. In contrast to the
@@ -185,7 +186,7 @@ Applying this reducing function to our data would give the following output.
 
 This output is passed to the *OutputWriter* which writes the data to permanent storage.
 
-### 3. The Benefits of MapReduce
+## 3. The Benefits of MapReduce
 
 MapReduce performs parallel and distributed operations by partitioning the data
 to be processed both spatially and temporally. The spatial partitioning is done
@@ -212,7 +213,7 @@ The benefit of slicing is fault tolerance. If an error occurs during the run of
 a slice, that particular slice can be run again without affecting the processing
 of previous or subsequent slices.
 
-### 4. Conclusions
+## 4. Conclusions
 
 MapReduce provides a convenient programming model for operating on large
 datasets. In our next article we look at how to use the Python MapReduce API for

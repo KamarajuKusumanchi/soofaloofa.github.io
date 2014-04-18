@@ -65,11 +65,21 @@ docpadConfig =
 
     # This one, will fetch in all documents that will be outputted to the posts directory
     posts: ->
-        @getCollection('html').findAllLive(
-                relativeOutDirPath: 'posts'
-                isPagedAuto: $ne: true,
-                {date:-1}
-            )
+      @getCollection('html').findAllLive(
+              relativeOutDirPath: 'posts',
+              isPagedAuto: $ne: true,
+              {date:-1}
+          )
+
+  environments:
+    development:
+      collections:
+        posts: ->
+          @getCollection('html').findAllLive(
+              relativeOutDirPath: {'$in' : ['posts', 'drafts']},
+              isPagedAuto: $ne: true,
+              {date: -1}
+          )
 
   plugins:
     rss: {

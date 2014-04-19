@@ -2,7 +2,7 @@
 layout: post
 title: Understanding Closures in JavaScript
 author: Kevin Sookocheff
-date: 2011/01/19
+date: 2011/01/19 09:11:15
 description: Closures are easy. There I said it. Invest a little bit of time, and you will say it too. Follow along with me as I attempt to explain what closures are and how they are used.
 tags:
   - javascript

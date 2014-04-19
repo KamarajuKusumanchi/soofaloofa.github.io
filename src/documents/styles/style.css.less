@@ -1,0 +1,112 @@
+// retina.less
+// A helper mixin for applying high-resolution background images (http://www.retinajs.com)
+
+@highdpi: ~"(-webkit-min-device-pixel-ratio: 1.5), (min--moz-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3/2), (min-resolution: 1.5dppx)";
+
+.at2x(@path, @w: auto, @h: auto) {
+  background-image: url(@path);
+  @at2x_path: ~`@{path}.replace(/\.\w+$/, function(match) { return "@2x" + match; })`;
+
+  @media @highdpi {
+    background-image: url("@{at2x_path}");
+    background-size: @w @h;
+  }
+}
+
+.border-radius(@radius: 5px) {
+  -webkit-border-radius: @radius;
+     -moz-border-radius: @radius;
+          border-radius: @radius;
+}
+
+.border-radius-bottom(@radius: 5px) {
+  -webkit-border-bottom-right-radius: @radius;
+     -moz-border-bottom-right-radius: @radius;
+          border-bottom-right-radius: @radius;
+
+  -webkit-border-bottom-left-radius: @radius;
+     -moz-border-bottom-left-radius: @radius;
+          border-bottom-left-radius: @radius;
+}
+
+@heading-font:'Bree Serif', Georgia, Times, serif;
+@body-font: 'Open Sans', Helvetica, Arial, sans-serif;
+
+/* Make all images responsive */
+img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+/* Increase spacing between paragraphs and lines */
+p {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  line-height: 1.4em;
+  font-size: 16px;
+  font-family: @body-font;
+}
+
+body {
+  font-family: @body-font;
+  .at2x('/img/bg.png');
+}
+
+h1 {
+  font-family: @heading-font;
+}
+
+h2 {
+  font-family: @heading-font;
+}
+
+h3 {
+  font-family: @heading-font;
+}
+
+
+.page-container {
+  background-color: #ffffff;
+  .border-radius(15px);
+  padding-bottom: 10px;
+}
+
+.box-container {
+  background-color: #ffffff;
+  .border-radius-bottom(15px);
+}
+
+.landing-header {
+	height: 650px;
+	background: url(/img/header-bg.jpg) center center no-repeat;
+	background-size: cover;
+  margin-top: -21px;
+}
+
+.headline {
+  font-family: @body-font;
+  padding-top: 80px;
+  margin-top: 2em;
+  font-size: 400%;
+  font-weight: bold;
+  color: #FFF;
+}
+
+.margin-base-vertical {
+  margin: 40px 0;
+}
+
+.blurb{
+  background-color: #f8f8f8;
+  .border-radius(15px);
+
+  p {
+    padding: 0 0 10px 10px;
+  }
+
+  ul {
+    padding: 0 0 10px 10px;
+  }
+}
+

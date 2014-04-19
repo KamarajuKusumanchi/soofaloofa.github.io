@@ -5,10 +5,10 @@
         <description><![CDATA[Tinker. Tailor. Soldier. Sailor.]]></description>
         <link>http://sookocheff.com</link>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Sat, 19 Apr 2014 14:02:32 GMT</lastBuildDate>
+        <lastBuildDate>Sat, 19 Apr 2014 16:35:26 GMT</lastBuildDate>
         <atom:link href="http://sookocheff.com/rss.xml" rel="self" type="application/rss+xml"/>
         <author><![CDATA[Kevin Sookocheff]]></author>
-        <pubDate>Sat, 19 Apr 2014 14:02:07 GMT</pubDate>
+        <pubDate>Sat, 19 Apr 2014 16:35:02 GMT</pubDate>
         <item>
             <title><![CDATA[App Engine MapReduce API - Part 1: The Basics]]></title>
             <description><![CDATA[<p>This article provides an overview of the <a href="https://developers.google.com/appengine/docs/python/dataprocessing/">App Engine MapReduce

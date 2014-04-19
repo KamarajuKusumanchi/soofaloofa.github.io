@@ -3,7 +3,7 @@ title: Blog
 layout: page
 isPaged: true
 pagedCollection: 'posts'
-pageSize: 5
+pageSize: 10
 ---
 
 <!-- Page Content -->
@@ -47,7 +47,7 @@ pageSize: 5
 
     <!-- Next Page Button -->
     <% unless @hasPrevPage(): %>
-      <li class="next disabled"><span>Newer</span></li>
+      <li class="next disabled"><span>Newer →</span></li>
     <% else: %>
       <li class="next"><a href="<%= @getPrevPage() %>">Newer →</a></li>
     <% end %>

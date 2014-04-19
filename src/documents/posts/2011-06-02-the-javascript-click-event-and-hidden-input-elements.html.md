@@ -2,9 +2,9 @@
 layout: post
 title: The JavaScript click event and hidden input elements
 author: Kevin Sookocheff
-date: 2011/06/02
+date: 2011/06/02 16:42:48
 tags:
-  - Technology
+  - javascript
 ---
 
 I was recently working with the HTML canvas element and wanted to attach an event to the canvas that would fire the click event of a file input element. I would then hide the input element so that the canvas element was the only way to browse for files. My first attempt was simple enough.
@@ -25,4 +25,4 @@ With CSS we set the opacity to `0` rendering the element invisible. The differen
         opacity: 0;
     }
 
-Setting the input elements class tofakehidden  effectively hides the element from the user yet click events can be fired as usual.
+Setting the input elements class `tofakehidden` effectively hides the element from the user yet click events can be fired as usual.

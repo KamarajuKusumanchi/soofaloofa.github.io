@@ -1,10 +1,12 @@
 ---
 layout: post
-title: The incredible effeciency of the Pomodoro Technique
+title: The incredible efficiency of the Pomodoro Technique
 author: Kevin Sookocheff
-date: 2010/06/11
+date: 2010/06/11 15:09:36
+description: <t render="markdown">I recently started using the [Pomodore Technique][1] and am absolutely amazed at home much my productivity has increased. After one full week I can honestly say I am a convert. My productivity, and my job satisfaction, has increased knowing that I am making progress towards a goal — each and every day.</t>
 tags:
-  - Productivity
+  - productivity
+  - pomodoro
 ---
 
 I recently started using the [Pomodore Technique][1] and am absolutely amazed at home much my productivity has increased.   After one full week I can honestly say I am a convert.  My productivity, and my job satisfaction, has increased knowing that I am making progress towards a goal — each and every day.

@@ -2,9 +2,12 @@
 layout: post
 title: How to Display HTML5 Notifications
 author: Kevin Sookocheff
-date: 2011/05/06
+date: 2011/05/06 10:10:10
 tags:
-  - Technology
+  - html
+  - notifications
+  - chrome
+  - javascript
 ---
 
 Chrome recently introduced support for HTML Notifications.

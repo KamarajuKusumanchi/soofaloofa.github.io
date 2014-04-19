@@ -2,9 +2,10 @@
 layout: post
 title: Using Unity3d with Version Control
 author: Kevin Sookocheff
-date: 2012/10/08
+date: 2012/10/08 09:11:18
 tags:
-  - Technology
+  - unity
+  - version control
 ---
 
 I had a tough time finding this page. The steps to get Unity set up with version control aren’t that difficult but it is one of those problems that you need to be told how to solve.

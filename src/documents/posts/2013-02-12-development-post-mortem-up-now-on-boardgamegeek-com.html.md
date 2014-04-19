@@ -2,9 +2,9 @@
 layout: post
 title: Development Post-Mortem up now on BoardGameGeek.com
 author: Kevin Sookocheff
-date: 2013-02-12
+date: 2013-02-12 07:28:19
 tags:
-  - Business
+  - phantom leader
 ---
 
 I recently published a full development post-mortem at BoardGameGeek.com. Give it a read and let me know what you think!

@@ -2,10 +2,11 @@
 layout: post
 title: "Apple has a Software Problem - Why I'll be Switching to Android"
 author: Kevin Sookocheff
-date: 2013/04/30
+date: 2013/04/30 22:10:18
 tags:
-  - Technology
-  - Thoughts
+  - apple
+  - iphone
+  - android
 ---
 
 No one can question Apple’s dominance in hardware. The build quality and user experience of the iPod, iPhone and iPad positioned Apple as the most profitable company in the world. However, with the build quality of rival devices quickly approaching Apple quality, software will be the next battleground for consumer loyalty. And Apple has a software problem.

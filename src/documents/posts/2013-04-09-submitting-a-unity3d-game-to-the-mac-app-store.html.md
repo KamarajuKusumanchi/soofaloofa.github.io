@@ -2,14 +2,16 @@
 layout: post
 title: Submitting a Unity3d Game to the Mac App Store
 author: Kevin Sookocheff
-date: 2013-04-09
+date: 2013-04-09 14:43:12
+description: Submitting a Unity3d game to the Mac App Store is a somewhat painful process. This guide refers to Unity3d 3.5 but should apply to Unity 4.0 and up.
 tags:
-  - Technology
+  - unity
+  - mac app store
 ---
 
 Submitting a Unity3d game to the Mac App Store is a somewhat painful process. This guide refers to Unity3d 3.5 but should apply to Unity 4.0 and up.
 
-### Building
+## Building
 
 First, build your application for Mac and make sure that you uncheck Mac App Store Validation in the PlayerSettings Inspector window.
 
@@ -17,7 +19,7 @@ First, build your application for Mac and make sure that you uncheck Mac App Sto
 
 Building your App from Unity will create a .App file. Navigate to this file in Finder and right-click. Choose Show Package Contents from the context menu to open your app as a folder.
 
-### Info.plist
+## Info.plist
 
 Navigate to the Contents directory and open the file Info.plist in your favorite text editor. You will need to make a few changes to this file.
 
@@ -82,7 +84,7 @@ You can get more information about these keys from the Apple developer documenta
 
  [4]: http://developer.apple.com/library/ios/#documentation/general/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html
 
-### Icons
+## Icons
 
 You will need to generate an iconset matching Apple’s [Human Interface Guidelines][5]. The first step is to create all of the required icons. You will need variations of your icon supporting the following resolutions.
 
@@ -109,7 +111,7 @@ iconutil -c icns
 
 will generate a file called icons.icns. You will need to replace the file `UnityPlayer.icns` with this icon file using Finder. The `UnityPlayer.icns` file is located in `Contents -> Resources` within your .App.
 
-### Entitlements
+## Entitlements
 
 All Apps on the Mac App Store must be sandboxed. To sandbox your Unity app you have to provide an entitlements file to use during the code signing process. A fairly minimal entitlements file should look something like this.
 
@@ -128,7 +130,7 @@ You can read more about entitlements at the [Entitlement Key Reference][6].
 
  [6]: http://developer.apple.com/library/mac/#documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/AboutEntitlements.html
 
-### Code Signing
+## Code Signing
 
 Now that we have our iconset and entitlements ready we can codesign our App for delivery to the Mac App Store. We have to drop back to the Terminal to run the codesign application.
 
@@ -150,7 +152,7 @@ codesign --force --sign "3rd Party Mac Developer Application: XXXX" --entitlemen
 
 If you don’t have the required Keychain Access certificates you will need to create these using the Apple Member Center.
 
-### Product Building
+## Product Building
 
 To build your final product run productbuild from the command line.
 
@@ -160,7 +162,7 @@ productbuild --component /YourApp.app /Applications --sign "3rd Party Mac Develo
 
 Where "XXXX" is again from Keychain Access. This time, use the certificate beginning with  "3rd Party Mac Developer Installer".
 
-### Application Loader
+## Application Loader
 
 You are finally ready to submit your App! Before submission you must create your App on iTunes Connect and fill out detailed app information. After your app is created launch Application Loader and click on Deliver Your App. Choose the application you created in iTunes Connect from the drop down menu and follow the prompts to choose your .pkg file that was created with the productbuild  command.
 

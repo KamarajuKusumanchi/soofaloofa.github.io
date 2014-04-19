@@ -2,9 +2,11 @@
 layout: post
 title: How to install the real-time kernel in Ubuntu
 author: Kevin Sookocheff
-date: 2010/10/19
+date: 2010/10/19 15:09:18
+description: To use Ubuntu as an audio production server you need the real-time kernel. This allows applications to have some guarantee of the maximum response time of any task. High priority tasks are given the CPU within a fixed minimum amount of time allowing for processor intensive tasks to actually be completed. Follow along to see how to install the real-time kernel yourself. A vanilla install of most Linux distributions does not enable the real-time kernel, but it is easy enough to install.
 tags:
-  - Technology
+  - ubuntu
+  - real-time
 ---
 
 To use Ubuntu as an audio production server you need the real-time kernel. This allows applications to have some guarantee of the maximum response time of any task. High priority tasks are given the CPU within a fixed minimum amount of time allowing for processor intensive tasks to actually be completed. Follow along to see how to install the real-time kernel yourself. A vanilla install of most Linux distributions does not enable the real-time kernel, but it is easy enough to install. Just type

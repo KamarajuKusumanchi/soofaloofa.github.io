@@ -2,11 +2,10 @@
 layout: post
 title: "New Year, New Domain, New Design"
 author: Kevin Sookocheff
-date: 2014/01/06
+date: 2014/01/06 12:13:14
 tags: 
-  - Design
-  - Domain
-  - Website
+  - design
+  - website
 ---
 
 Well the New Year is upon us and I decided to take a fresh approach to this website. I've migrated to a new domain and re-written the site from the ground up using [DocPad](http://docpad.org/) and [Bootstrap](http://getbootstrap.com/).

@@ -2,9 +2,12 @@
 layout: post
 title: How to monitor a RAID array in Ubuntu server
 author: Kevin Sookocheff
-date: 2010/05/28
+date: 2010/05/28 02:15:45
+description: I’ve been searching for a way to reliably monitor a RAID array.  I found a few resources and decided to compile them in one post.  If you are running Ubuntu Server skip to the bottom for some good news. 
 tags:
-  - Technology
+  - raid
+  - ubuntu
+  - linux
 ---
 
 I’ve been searching for a way to reliably monitor a RAID array.  I found a few resources and decided to compile them in one post.  If you are running Ubuntu Server skip to the bottom for some good news. 

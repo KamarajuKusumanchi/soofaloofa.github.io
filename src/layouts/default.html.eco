@@ -12,7 +12,7 @@
 <meta name="keywords" content="<%= @getPreparedKeywords() %>">
 <meta name="author" content="<%= @site.author %>">
 
-<%- @getBlock("styles").add(["//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css", "/styles/vendor/bootstrap.min.css", "/styles/style.css", "/styles/monokai_sublime.css"]).toHTML() %>
+<%- @getBlock("styles").add(["//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css", "/styles/vendor/bootstrap.min.css", "/styles/style.css", "/styles/monokai_sublime.css", "//fonts.googleapis.com/css?family=Bree+Serif", "//fonts.googleapis.com/css?family=Open+Sans"]).toHTML() %>
 
 <%- @partial("analytics.html") %>
 
@@ -66,15 +66,16 @@
 <%- @content %>
 
 <!-- Footer -->
+
 <div class="container">
-  <hr>
   <footer>
-    <p class="pull-right">
-      <a href="#" class="pull-right">Top</a>
-    </p>
-    <p>
-    <%= @site.copyright %>
-    </p>
+    <div class="row">
+      <div class="col-md-12">
+        <p class="text-center">
+          <%= @site.copyright %> · <a href="#">Top</a>
+        </p>
+      </div>
+    </div>
   </footer>
 </div>
 

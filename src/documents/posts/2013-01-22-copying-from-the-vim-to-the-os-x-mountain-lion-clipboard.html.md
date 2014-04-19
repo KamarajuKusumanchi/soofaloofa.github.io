@@ -2,9 +2,10 @@
 layout: post
 title: Copying from Vim to the OS X Mountain Lion clipboard
 author: Kevin Sookocheff
-date: 2013-01-22
+date: 2013-01-22 08:16:42
 tags:
-  - Technology
+  - vim
+  - osx
 ---
 
 The latest version of OS X (Mountain Lion) broke compatibility with the vim and the OS clipboard. In most cases you can configure vim to use the operating system clipboard by setting `clipboard=unnamed` in your `.vimrc`. Unfortunately this setting does not work in OS X because the default version of vim was not compiled with clipboard support. You can check if your version of vim is compiled with clipboard support by typing `vim –version`  and looking for `clipboard`. A prepended `+` means support is enabled. A prepended `–` means support is disabled.

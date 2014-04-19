@@ -2,9 +2,10 @@
 layout: post
 title: Readability by Arc90
 author: Kevin Sookocheff
-date: 2010/09/04
+date: 2010/09/04 13:13:13
+description: According to Wikipedia, readability is defined as reading ease, especially as it results from a writing style.  Only experience, practice, and hard work can improve a person’s writing style.  Let’s increase readability in a different manner: with typography.
 tags:
-  - Technology
+  - readability
 ---
 
 According to Wikipedia, readability is defined as reading ease, especially as it results from a writing style.  Only experience, practice, and hard work can improve a person’s writing style.  Let’s increase readability in a different manner: with typography.

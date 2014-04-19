@@ -2,9 +2,10 @@
 layout: post
 title: Simply Pomodoro for Windows Phone 7 Released
 author: Kevin Sookocheff
-date: 2011/02/10
+date: 2011/02/10 09:14:23
 tags:
-  - Technology
+  - pomodoro
+  - windows phone
 ---
 
 I just finished my latest application for Windows Phone 7: Simply Pomodoro.

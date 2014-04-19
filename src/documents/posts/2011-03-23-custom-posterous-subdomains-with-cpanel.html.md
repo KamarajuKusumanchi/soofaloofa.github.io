@@ -2,9 +2,10 @@
 layout: post
 title: Custom Posterous Subdomains with CPanel
 author: Kevin Sookocheff
-date: 2011/03/23
+date: 2011/03/23 12:41:18
 tags:
-  - Technology
+  - posterous
+  - cpanel
 ---
 
 I recently started using Posterous and will be converting my WordPress blog to the service.  One thing I wanted was a custom subdomain (i.e., blog.kevinsookocheff.com); I couldn’t easily find clear instructions for  subdomains (just for domains) so I thought I’d share how I did it from a basic cPanel hosting environment.

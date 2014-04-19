@@ -2,10 +2,9 @@
 layout: post
 title: "Photos is the Killer Feature of Google+"
 author: Kevin Sookocheff
-date: 2013/05/16
+date: 2013/05/16 16:17:18
 tags:
-  - Technology
-  - Thoughts
+  - google-plus
 ---
 
 Yesterday's [Google I/O keynote][1] unveiled some new features in Music, Maps and Search. But to me the biggest and most important announcement was the new [Google+ photo features][2]. Full-size high-resolution photos, automatic highlights of entire albums, automatic enhancement and auto-awesome combine to make Google+ *the* most feature packed photo hosting service on the web. Add the ability to share pictures with anyone via e-mail (take that Facebook) and Google+ is now *the* best social network to host and share photos. 

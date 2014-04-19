@@ -2,9 +2,11 @@
 layout: post
 title: Using Leiningen behind a Windows proxy
 author: Kevin Sookocheff
-date: 2011/06/28
+date: 2011/06/28 11:15:08
 tags:
-  - Technology
+  - clojure
+  - leiningen
+  - windows
 ---
 
 I’ve been getting familiar with the [Leiningen][1] build tool for [Clojure][2] but had trouble connecting to the Clojar and Maven repositories behind a proxy.

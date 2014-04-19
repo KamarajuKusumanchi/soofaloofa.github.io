@@ -2,11 +2,10 @@
 layout: post
 title: "Stripe checkout opening in a new tab"
 author: Kevin Sookocheff
-date: 2014/03/25
+date: 2014/03/25 07:23:45
 tags: 
-  - Stripe
-  - Checkout
-  - Debugging
+  - stripe
+  - debugging
 ---
 
 At [VendAsta](http://www.vendasta.com) we've been integrating with the [Stripe](http://stripe.com/checkout) payment system using Stripe Checkout. The experience has been completely painless and surprisingly simple. Then came a hiccup. While demoing the new functionality we found that one particular computer in the office would open the checkout modal dialog in a new browser window. Just one laptop. It was running the same version of Chrome that we were developing on. It was running the same OS as a working test machine. But the dialog would consistently open in a new browser window on just this one laptop. 

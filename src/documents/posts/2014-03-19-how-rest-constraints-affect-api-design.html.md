@@ -2,11 +2,12 @@
 layout: post
 title: "How REST Constraints Affect API Design"
 author: Kevin Sookocheff
-date: 2014/03/19
+date: 2014/03/19 14:11:48
+description: REST was developed and formalized by analyzing the existing Web and extracting the principles that made it work. This set of principles was written down in the [Fielding dissertation](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm) which lays out the set of constraints that, when enforced, will make a generic network system into a resilient network like the Web. This post examines why REST is important for modern APIs.
 tags: 
-  - Hypermedia
-  - REST
-  - API
+  - hypermedia
+  - rest
+  - api
 ---
 
 REST was developed and formalized by analyzing the existing Web and extracting
@@ -20,7 +21,7 @@ dissertation Fielding outlines REST's interface constraints.
 > manipulation of resources using representations; self-descriptive messages;
 > and, hypermedia as the engine of application state. 
 
-#### Why is this important for APIs?
+### Why is this important for APIs?
 
 API design is in an infancy. Each API is designed for a single use case and
 standard. This proliferation of different design ideas results in APIs that each
@@ -34,7 +35,7 @@ provide APIs that form a scalable and resilient network of their own.
 We will take a look at each of the four interface constraints in turn and see
 how they can be used to design an API that developers love to use. 
 
-### 1. Identification of Resources
+## 1. Identification of Resources
 
 A resource is the key abstraction of REST. Anything that can be named is a
 resource -- a video, a document, an image. We identify resources using a
@@ -61,7 +62,7 @@ would have a path including the order number.
 This simple example shows how we can create a URL to uniquely represent each
 resource represented by our API.
 
-### 2. Manipulation of Resources Using Representations
+## 2. Manipulation of Resources Using Representations
 
 When making a request for a resource the server responds with a representation
 of the resource. This representation captures the current state of the resource
@@ -97,7 +98,7 @@ By using content negotiation in your API you can offer new resource
 representations without changing the resources URL or breaking existing clients.
 This keeps your client and server flexibly decoupled.
 
-### 3. Self-Descriptive Messages
+## 3. Self-Descriptive Messages
 
 The representations served by a RESTful system contain all of the data required
 by the client to understand and act on the resource. If any additional
@@ -119,7 +120,7 @@ problem](https://www.w3.org/TR/json-ld/#basic-concepts):
 By linking together the resources offered by your API you can build
 self-descriptive APIs.
 
-### 4. Hypermedia As The Engine Of Application State
+## 4. Hypermedia As The Engine Of Application State
 
 Together, the first three REST constraints imply the fourth and most important --
 hypermedia as the engine of application state. By uniquely identifying

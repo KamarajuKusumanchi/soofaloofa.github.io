@@ -2,9 +2,9 @@
 layout: post
 title: Constants in JavaScript
 author: Kevin Sookocheff
-date: 2011/04/20
+date: 2011/04/20 14:11:28
 tags:
-  - Technology
+  - javascript
 ---
 
 How are constants declared in JavaScript?

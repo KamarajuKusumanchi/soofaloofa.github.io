@@ -2,17 +2,18 @@
 layout: post
 title: "How to Version a REST API"
 author: Kevin Sookocheff
-date: 2014/04/01
+date: 2014/04/01 14:16:18
+description: API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients. 
 tags: 
-  - Hypermedia
-  - REST
-  - API
-  - Versioning
+  - hypermedia
+  - rest
+  - api
+  - versioning
 ---
 
 API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients. 
 
-### 1) Versioned URL
+## 1) Versioned URL
 
 URL versioning inserts a version number directly in the URL of the resource. As an example,  version one of the API could be accessed through the `v1` URL.
 
@@ -36,15 +37,15 @@ http://sookocheff.com/api/users/
 
 Once this mapping is in place you can safely deprecate old URLs by redirecting to the non-versioned URL -- notifying the client to use the latest version. At all times the non-versioned URL represents the latest version of that resource.
 
-#### Pros:
+### Pros:
 - Easy to implement.
 - Easy to understand.
 - Direct path to deprecation.
 
-#### Cons:
+### Cons:
 - Violates REST principle of unique URLs for a resource.
 
-### 2) Versioned Media Type
+## 2) Versioned Media Type
 
 When making an HTTP request the client can request a specific MIME type (or list of MIME types) that it is willing to accept using an `Accept` header. For example, an HTML client may use the following `Accept` header to request an HTML representation of the resource.
 
@@ -74,16 +75,16 @@ This method assumes we have defined a custom media type to represent every resou
 
 Versioning the media type does adhere to strict REST principles but causes problems in other ways. First, you need a custom media type for every resource returned by your API. This is not only reinventing the wheel -- [perfectly good][schema] [media types][iana] [already exist][mimelist] -- it also creates a media type so specific to your API that it cannot be reused elsewhere. Lastly, it is unclear whether the version parameter applies to the version of the media type or to the version of your API.
 
-#### Pros:
+### Pros:
 - Adheres to REST principles.
 
-#### Cons:
+### Cons:
 - Custom media type for every resource.
 - Binds your media type to your API.
 - Unclear versioning.
 - Requires sophisticated API client.
 
-### 3) Versioned HTTP Header
+## 3) Versioned HTTP Header
 
 The [HTTP specification][httpheader] states that unknown HTTP headers MUST be forwarded on to the recipient. This means that custom HTTP headers can be set by our client and received by our API.
 
@@ -98,26 +99,26 @@ A server receiving this request can parse the header to ascertain the version nu
 
 This method requires that your API client is able to modify the HTTP headers of its requests. If the client is unable to provide a version number with the HTTP header you can assume that a request is made for the latest API version.
 
-#### Pros:
+### Pros:
 - Adheres to REST principles.
 
-#### Cons:
+### Cons:
 - Requires sophisticated API client.
 
-### 4) Versioned Resources
+## 4) Versioned Resources
 
 The last versioning method is to set the version number in the response itself. This places the burden of versioning with the client rather than the server. A client receiving a response from a known version number can parse it and act appropriately. It would be up to the client how to handle an unknown version number.
 
 This method is only appropriate if you as the developer have direct control over both the server and the client being deployed.
 
-#### Pros:
+### Pros:
 - Simplified server.
 
-#### Cons:
+### Cons:
 - Complex client.
 - Tightly couples server to client.
 
-### What to do?
+## What to do?
 
 By following [REST principles][sookocheffrest] we can guide our API versioning practices while being pragmatic about our choices so that our API can work in the real world.
 
@@ -130,7 +131,7 @@ My recommendation is to combine versioned URLs with custom HTTP headers using th
 	- This header specifies both major **and** minor version numbers.
 	- The non-versioned URL returns the appropriate version of the resource when specified by the HTTP header.
 
-### References
+## References
 
 [Vinay Sahni][1] has collected a long list of best practices for pragmatic API design, including versioning. 
 

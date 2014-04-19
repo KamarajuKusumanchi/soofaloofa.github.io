@@ -5,11 +5,47 @@ img {
   max-width: 100%;
 }
 
-/* No underline for font icon links */
-a:hover i[class^="fa"],
-a:hover i[class*="fa"] {
-  text-decoration: none;
+/* Increase spacing between paragraphs and lines */
+p {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  line-height: 1.4em;
+  font-size: 16px;
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
 }
+
+body {
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+	background: url(/img/bg.png);
+}
+
+h1 {
+  font-family: 'Bree Serif', Georgia, Times, serif;
+}
+
+h2 {
+  font-family: 'Bree Serif', Georgia, Times, serif;
+}
+
+h3 {
+  font-family: 'Bree Serif', Georgia, Times, serif;
+}
+
+
+.page-container {
+  background-color: #ffffff;
+  border-radius: 15px;
+}
+
+.box-container {
+  background-color: #ffffff;
+}
+
+.landing-header {
+	height: 650px;
+	background: url(/img/header-bg.jpg) center center no-repeat;
+}
+
 
 .landing-header {
 	height: 650px;
@@ -19,6 +55,7 @@ a:hover i[class*="fa"] {
 }
 
 .headline {
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
   padding-top: 80px;
   margin-top: 2em;
   font-size: 400%;
@@ -34,11 +71,6 @@ a:hover i[class*="fa"] {
   background-color: #f8f8f8;
   border-radius: 15px;
 }
-p {
-  margin-top: 1em;
-  margin-bottom: 1em;
-  line-height: 1.4em;
-  font-size: 16px;
-}
+
 
 

@@ -2,9 +2,9 @@
 layout: post
 title: Simple IE 9 Speed Hack
 author: Kevin Sookocheff
-date: 2011/03/22
+date: 2011/03/22 10:12:34
 tags:
-  - Technology
+  - ie
 ---
 
 This morning I noticed that hovering over links in IE 9 causes slight mouse lag on low-powered computers.  The culprit?  A pop-up notification at the bottom left of the window displaying the link target.  The fix?  Permanently display the Status bar by right-clicking an open space to the right of the New tab button, and selecting Status bar.

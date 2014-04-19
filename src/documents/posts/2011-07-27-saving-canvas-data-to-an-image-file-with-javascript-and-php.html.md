@@ -2,14 +2,17 @@
 layout: post
 title: Saving canvas data to an image file with JavaScript and PHP
 author: Kevin Sookocheff
-date: 2011/07/27
+date: 2011/07/27 10:08:42
+description: Saving HTML canvas element data to an image in a user friendly manner is a tricky problem. Let's look at one way to solve it.
 tags:
-  - Technology
+  - javascript
+  - php
+  - canvas
 ---
 
 Saving HTML canvas element data to an image in a user friendly manner is a tricky problem.
 
-### First Attempt
+## First Attempt
 
 We could always open our canvas in a new browser tab (or window) with the `toDataURL` JavaScript method.
 
@@ -17,13 +20,13 @@ We could always open our canvas in a new browser tab (or window) with the `toDat
 
 Unfortunately this requires the user to use the file menu or the right-click button to save the image from the newly opened browser tab. I wouldn’t call this user friendly.
 
-### Second Attempt
+## Second Attempt
 
 After some investigation I came across Nihilogic’s [`Canvas2Image`][1] JavaScript package. This package presents a Dialog Box to the user allowing them to save the image. This would solve my problem except the downloaded filename has the format 8iqALWM5.part . If my mom encountered a filename like that she wouldn’t know what to do with it. Still not user friendly.
 
  [1]: http://www.nihilogic.dk/labs/canvas2image/
 
-### Final Attempt
+## Final Attempt
 
 What to do? Enter PHP.
 
@@ -31,7 +34,7 @@ What to do? Enter PHP.
 
  [2]: http://www.permadi.com/blog/2010/10/html5-saving-canvas-image-data-using-php-and-ajax/
 
-### save.php
+## save.php
 
 The first PHP file saves the passed in canvas data to the server at a random location determined by the md5(uniqid())  method.
 
@@ -51,7 +54,7 @@ We would call this via JQuery with the $.post method, filling the data paramete
 
     $.post("save.php", {data: canvas.toDataURL("image/png")})
 
-### download.php
+## download.php
 
 Now we can use PHP to force the download of the saved image data. You can read more about this in the [PHP Manual][3].
 

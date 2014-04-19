@@ -2,9 +2,11 @@
 layout: post
 title: 'Book Review: Start Small, Stay Small'
 author: Kevin Sookocheff
-date: 2011/04/23
+date: 2011/04/23 12:31:47
+description: <t render="markdown">*[Start Small, Stay Small](http://www.startupbook.net)* by serial micropreneur Rob Walling is possibly the best book on lean startup marketing you could find. It is a short book — coming in at only 134 pages — yet very word, every sentence and every paragraph [tells](http://www.bartleby.com/141/).</t>
 tags:
-  - Business
+  - business 
+  - book review
 ---
 
 *[Start Small, Stay Small][1]* by serial micropreneur Rob Walling is possibly the best book on lean startup marketing you could find. It is a short book — coming in at only 134 pages — yet very word, every sentence and every paragraph [tells][2].

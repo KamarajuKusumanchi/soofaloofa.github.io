@@ -3,22 +3,24 @@ layout: post
 title: Understanding Closures in JavaScript
 author: Kevin Sookocheff
 date: 2011/01/19
+description: Closures are easy. There I said it. Invest a little bit of time, and you will say it too. Follow along with me as I attempt to explain what closures are and how they are used.
 tags:
-  - Technology
+  - javascript
+  - closure
 ---
 
 Closures are easy. There I said it. Invest a little bit of time, and you will say it too. Follow along with me as I attempt to explain what closures are and how they are used.
 
-### Scope
+## Scope
 
 The first pre-requisite in fully understanding closures is JavaScript’s implementation of scope. JavaScript’s C-style syntax may lead you to believe that anything between the “curly braces” defines a block where variables defined within that block are private to that region of code. This is false. JavaScript does not define block scope. Any variables defined within a block are available outside that block. With one exception: functions. JavaScript has function scope where variables defined within a function are private to that function. This is very important.
 
-#### Summary
+### Summary
 
 *   JavaScript has function scope.
 *   All variables defined within a function are private to that function.
 
-### Inner Functions
+## Inner Functions
 
 Inner functions are functions defined within another function. It’s easier to demonstrate than to explain, so here goes.
 
@@ -36,12 +38,12 @@ Inner functions are functions defined within another function. It’s easier to 
 
 You will get a pop-up window showing that the variable secrets now holds a reference to the function inner.
 
-#### Summary
+### Summary
 
 *   Inner functions are defined within other functions (and this can nest arbitrarily).
 *   Inner functions can be returned “fully formed” from outer functions.
 
-### Closures
+## Closures
 
 In one sentence, closure means that an inner function has access to the context of its outer function, even when the outer function no longer exists. OK. Let’s do that example one time more.
 
@@ -61,7 +63,7 @@ Notice the difference? This time we are executing the inner function through the
 
 You’ve just created a closure!
 
-#### Summary
+### Summary
 
 *   Closures are easy.
 *   You’ve just scratched the surface.

@@ -2,12 +2,14 @@
 layout: post
 title: "On choosing a hypermedia type for your API - HAL, JSON-LD, Collection+JSON, SIREN, Oh My!"
 author: Kevin Sookocheff
-date: 2014/03/11
+date: 2014/03/11 15:15:15
 updated: 2014/03/13
+description: In recent years REST has been at the forefront of modern API design. This has led to APIs with manageable URLs that respect the HTTP verbs (GET, POST, PUT [and the rest](http://www.w3.org/Protocols/rfc2616/rfc2616.html)), producing an intuitive model for client developers. Unfortunately, there are two problems that REST doesn't solve alone.
 tags: 
-  - Hypermedia
-  - REST
-  - API
+  - hypermedia
+  - rest
+  - api
+  - json
 ---
 
 In recent years REST has been at the forefront of modern API 
@@ -45,7 +47,7 @@ In this post I will evaluate a few mature hypermedia types for APIs,
 offering a side-by-side comparison of their strengths and weaknesses. If you
 are impatient for the final result you can [jump straight to the code](https://gist.github.com/soofaloofa/9350847). 
 
-### The Model
+## The Model
 
 To drive this discussion let's use a hypothetical API for managing a `Player`
 resource derived from the [`GKPlayer`
@@ -96,7 +98,7 @@ GET https://api.example.com/player/1234567890/friends
 
 Let's take a look at how this API can be represented using hypermedia types.
 
-### JSON-LD
+## JSON-LD
 
 We'll start by looking at JSON for Linked Documents (JSON-LD). JSON-LD is a well
 supported media type endorsed by the [World Wide Web
@@ -349,7 +351,7 @@ paged collections. For more details on HYDRA's reserved properties you can read
 the full
 [documentation](http://www.markus-lanthaler.com/hydra/spec/latest/core/#properties).
 
-### HAL
+## HAL
 
 HAL is a lightweight media type that uses the idea of *Resources* and *Links* to
 model your JSON responses. *Resources* can contain *State* defined by key-value
@@ -360,7 +362,7 @@ convenience.
 HAL is simple to use and easy to understand. These virtues have lead HAL to
 become one of the leading hypermedia types in modern APIs.
 
-#### State
+### State
 
 State is the traditional JSON key-value pairs defining the current state of the
 resource.
@@ -378,7 +380,7 @@ GET https://api.example.com/player/1234567890
 }
 ```
 
-#### Links
+### Links
 
 Links in HAL are identified as a JSON object named `_links`. Keys within
 `_links` are the name of the link and should describe the relationship between
@@ -422,7 +424,7 @@ GET https://api.example.com/player/1234567890
 }
 ```
 
-#### Embedded Resources
+### Embedded Resources
 
 Making a GET request to the `Friends` link would return a full list of
 `Player` resources. Each `Player` returned is embedded in the representation
@@ -473,7 +475,7 @@ In this response we've added a `next` link to represent a paged collection and
 provide a reference to get the next set of friends in the list. The embedded
 resources are a list contained within the `player` property. 
 
-#### Curies
+### Curies
 
 An important point about HAL is that each link relation points to a URL with
 documentation about that relation. This makes the API discoverable by always
@@ -526,7 +528,7 @@ and users. For more information on HAL you can refer to the draft standard that
 has been submitted to the [Network Working
 Group](https://tools.ietf.org/html/draft-kelly-json-hal-06). 
 
-### Collection+JSON
+## Collection+JSON
 
 The Collection+JSON standard is a media type that standardizes the reading,
 writing and querying of items in a collection. Although geared to handling
@@ -549,7 +551,7 @@ GET https://api.example.com/player/1234567890
 }
 ```
 
-#### Returning Data
+### Returning Data
 
 Typically, the response would include a list of items in the collection. For a
 single resource, this collection would be a list of a single element. The
@@ -579,7 +581,7 @@ GET https://api.example.com/player/1234567890
 }
 ```
 
-#### Links
+### Links
 
 Links can be a property of the collection or of individual items in the
 collection. Links may may also include a `name` and a `prompt` which can be
@@ -614,7 +616,7 @@ GET https://api.example.com/player/1234567890
 }
 ```
 
-#### Templates
+### Templates
 
 As the name would imply, Collection+JSON is uniquely suited to handling
 collections. Templates are one aspect of this. A template is an object that
@@ -680,7 +682,7 @@ To add a friend to this collection you would POST the data specified by the
 template to the `href` link defined by the collection
 (`https://api.example.com/player/1234567890/friends`).
 
-#### Queries
+### Queries
 
 The final piece of Collecion+JSON is the `queries` property. Queries, as the
 name implies, define the queries that are supported by this collection. Here the
@@ -752,14 +754,14 @@ APIs using the Collection+JSON media type. Collection+JSON was designed by [Mike
 Amundsen](https://amundsen.com). You can find detailed examples, the full spec
 and sample code [on his website](https://amundsen.com/media-types/collection/).
 
-### SIREN
+## SIREN
 
 The last media type we'll look at is
 [SIREN](https://github.com/kevinswiber/siren). SIREN aims to represent generic
 entities along with actions for modifying those entities and links for client
 navigation.
 
-#### Entities
+### Entities
 
 Each SIREN entity may have an optional class that describes the nature of the
 entity. This class defines the type of resource being returned by the API.
@@ -777,7 +779,7 @@ GET https://api.example.com/player/1234567890
 }
 ```
 
-#### Properties
+### Properties
 
 The state of the entity is reflected as key-value pairs in a `properties` object.
 
@@ -793,7 +795,7 @@ The state of the entity is reflected as key-value pairs in a `properties` object
 }
 ```
 
-#### Links
+### Links
 
 Links are used in the same sense we've already seen in other media types --
 navigating to related resources. With SIREN links have a relation and a URL.
@@ -818,7 +820,7 @@ GET https://api.example.com/player/1234567890
 }
 ```
 
-#### Actions
+### Actions
 
 One of the biggest pieces missing from common Hypermedia types is the ability to
 dictate what requests can be made to alter the application state. SIREN
@@ -883,21 +885,21 @@ GET https://api.example.com/player/1234567890/friends
 }
 ```
 
-#### Entities
+### Entities
 
 The previous example also introduces `entities` to the response.  Any related
 entities that you wish to embed in the current representation are entered as a
 list of `entities`. Entities are nested. Each entity in this list can have a
 class, properties and additional entities.
 
-### Conclusions
+## Conclusions
 
 I've create a [Gist](https://gist.github.com/soofaloofa/9350847) comparing each
 of the media types discussed in this post. 
 
 After going through this exercise I've come to a few conclusions. 
 
-#### JSON-LD
+### JSON-LD
 
 JSON-LD is great for augmenting existing APIs without introducing
 breaking changes. This augmentation mostly serves as a way to self document your
@@ -906,7 +908,7 @@ HYDRA adds a vocabulary for communicating using the JSON-LD specification. This
 is an interesting choice as it decouples the API serialization format from the
 communication format.
 
-#### HAL
+### HAL
 
 The light weight syntax and semantics of HAL is appealing in a lot of contexts.
 HAL is a minimal representation that offers most of the benefits of using a
@@ -914,7 +916,7 @@ hypermedia type without adding too much complexity to the implementation. One
 area where HAL falters is, like JSON-LD, the lack of support for specifying
 actions.
 
-#### Collection+JSON
+### Collection+JSON
 
 Don't be fooled by the name. Collection+JSON can be used to represent single
 items as well and it does this quite well. Of course it shines when representing
@@ -922,14 +924,14 @@ data collections. Particularly appealing is the ability to list queries that
 your collection supports and templates that clients can use to alter your
 collection. For publishing user editable data Collection+JSON shines.
 
-#### SIREN
+### SIREN
 
 SIREN attempts to represent generic classes of items and overcome the main
 drawback of HAL -- support for actions. It does this admirably well and also
 introduces the concept of classes to your model bringing a sense of type
 information to your API responses.
 
-#### And the winner is?
+### And the winner is?
 
 Unfortunately, there is no clear winner. It depends on the contraints in place
 on your API. However, I will offer some suggestions.

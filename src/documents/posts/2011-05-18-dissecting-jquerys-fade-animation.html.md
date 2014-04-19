@@ -2,9 +2,10 @@
 layout: post
 title: "Dissecting jQuery's Fade Animation"
 author: Kevin Sookocheff
-date: 2011/05/18
+date: 2011/05/18 15:16:17
 tags:
-  - Technology
+  - javascript
+  - jquery
 ---
 
 Fade animations are a standard tool in any jQuery developer’s toolbox. But how do they really work? Let’s create a small function that encapsulates solely the fade functionality and find out.

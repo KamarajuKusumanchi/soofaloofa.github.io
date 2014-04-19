@@ -38,7 +38,7 @@ layout: page
         <p>
           <%- @partial('blurb.html') %>
           <ul class="list-inline">
-            <li>Me on the web:</li>
+            <li>On the web:</li>
             <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
             <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
             <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>

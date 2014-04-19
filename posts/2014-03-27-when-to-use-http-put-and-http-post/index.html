@@ -8,11 +8,11 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<meta name="description" content="Tinker. Tailor. Soldier. Sailor.">
+<meta name="description" content="&lt;t render=&quot;markdown&quot;&gt; The HTTP protocol defines two methods for updating a resource -- `PUT` and `POST`. Both `PUT` and `POST` are used to modify a resource and this semantic similarity can confuse API developers. This confusion has led most developers to use `POST` for any action which may modify the state of a resource, ignoring `PUT` entirely. This article attempts to explain the semantics behind the `PUT` and `POST` methods and offers clear suggestions on when to use each method.&lt;/t&gt;">
 <meta name="keywords" content="">
 <meta name="author" content="Kevin Sookocheff">
 
-<link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" />
+<link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" /><link  rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif" /><link  rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" />
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -69,7 +69,7 @@
 
 <!-- Default Content -->
 <!-- Page Container -->
-<div class="container">
+<div class="container page-container">
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <section class="page">
@@ -96,7 +96,7 @@ use <code>POST</code> for any action which may modify the state of a resource, i
 <code>PUT</code> entirely.</p>
 <p>This article attempts to explain the semantics behind the <code>PUT</code> and <code>POST</code>
 methods and offers clear suggestions on when to use each method.</p>
-<h3 id="put">PUT</h3>
+<h2 id="put">PUT</h2>
 <p>Let&#39;s go <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.html">straight to the HTTP/1.1 RFC</a> for the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6">definition of PUT</a>.</p>
 <blockquote>
 <p>The PUT method requests that the enclosed entity be stored under the supplied
@@ -132,7 +132,7 @@ This example updates the user&#39;s website.</p>
 </span></code></pre><p>In general the HTTP PUT method replaces the resource at the current URL with the
 resource contained within the request. PUT is used to both create and update the
 state of a resource on the server. </p>
-<h3 id="post">POST</h3>
+<h2 id="post">POST</h2>
 <p>Let&#39;s go <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.html">back to the HTTP/1.1 RFC</a> for the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.5">definition of POST</a>.</p>
 <blockquote>
 <p>The POST method is used to request that the origin server accept the entity
@@ -185,23 +185,36 @@ client developers.</p>
   <p>
     
 
-Share this post: 
 
-<a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post&amp;text=When to Use HTTP PUT and HTTP POST&amp;via=soofaloofa">
-  <i class="fa fa-twitter fa-lg"></i>
-</a>
-<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post">
-  <i class="fa fa-facebook fa-lg"></i>
-</a>
-<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post">
-  <i class="fa fa-google-plus fa-lg"></i>
-</a>
-<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post">
-  <i class="fa fa-linkedin fa-lg"></i>
-</a>
-<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post">
-  <i class="fa fa-envelope fa-lg"></i>
-</a>
+<ul class="list-inline">
+  <li>Share this post:</li>
+  <li>
+    <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post&amp;text=When to Use HTTP PUT and HTTP POST&amp;via=soofaloofa">
+      <i class="fa fa-twitter fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post">
+      <i class="fa fa-facebook fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post">
+      <i class="fa fa-google-plus fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post">
+      <i class="fa fa-linkedin fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post">
+      <i class="fa fa-envelope fa-lg"></i>
+    </a>
+  </li>
+</ul>
+
 
   </p>
 
@@ -231,27 +244,15 @@ Share this post:
 
     <div class="row">
       <div class="col-md-offset-4 col-md-6">
-        <p>
-          Me on the web:
-          <a href="http://www.twitter.com/soofaloofa">
-            <i class="fa fa-twitter-square fa-lg"></i>
-          </a>
-          <a href="http://www.facebook.com/kevin.sookocheff">
-            <i class="fa fa-facebook-square fa-lg"></i>
-          </a>
-          <a href="http://www.linkedin.com/in/kevinsookocheff">
-            <i class="fa fa-linkedin-square fa-lg"></i>
-          </a>
-          <a href="https://plus.google.com/+KevinSookocheff">
-            <i class="fa fa-google-plus-square fa-lg"></i>
-          </a>
-          <a href="https://github.com/soofaloofa">
-            <i class="fa fa-github-square fa-lg"></i>
-          </a>
-          <a href="http://sookocheff.com/rss.xml">
-            <i class="fa fa-rss-square fa-lg"></i>
-          </a>
-        </p>
+        <ul class="list-inline">
+          <li>Me on the web:</li>
+          <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+          <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+          <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+          <li><a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square fa-lg"></i></a></li>
+          <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+          <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+        </ul>
       </div>
     </div>
   </div>
@@ -282,15 +283,16 @@ Share this post:
 </div>
 
 <!-- Footer -->
+
 <div class="container">
-  <hr>
   <footer>
-    <p class="pull-right">
-      <a href="#" class="pull-right">Top</a>
-    </p>
-    <p>
-    © Kevin Sookocheff
-    </p>
+    <div class="row">
+      <div class="col-md-12">
+        <p class="text-center">
+          © Kevin Sookocheff · <a href="#">Top</a>
+        </p>
+      </div>
+    </div>
   </footer>
 </div>
 

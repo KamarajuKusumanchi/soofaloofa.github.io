@@ -8,11 +8,11 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<meta name="description" content="Tinker. Tailor. Soldier. Sailor.">
+<meta name="description" content="Submitting a Unity3d game to the Mac App Store is a somewhat painful process. This guide refers to Unity3d 3.5 but should apply to Unity 4.0 and up.">
 <meta name="keywords" content="">
 <meta name="author" content="Kevin Sookocheff">
 
-<link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" />
+<link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" /><link  rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif" /><link  rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" />
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -69,7 +69,7 @@
 
 <!-- Default Content -->
 <!-- Page Container -->
-<div class="container">
+<div class="container page-container">
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <section class="page">
@@ -82,7 +82,7 @@
           <article class="post">
   <p>
     <small class="text-muted">
-      Posted on Monday, April 08, 2013.
+      Posted on Tuesday, April 09, 2013.
 
 
     </small>
@@ -90,11 +90,11 @@
 
   <div class=".post-content">
     <p>Submitting a Unity3d game to the Mac App Store is a somewhat painful process. This guide refers to Unity3d 3.5 but should apply to Unity 4.0 and up.</p>
-<h3 id="building">Building</h3>
+<h2 id="building">Building</h2>
 <p>First, build your application for Mac and make sure that you uncheck Mac App Store Validation in the PlayerSettings Inspector window.</p>
 <p><img src="/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/player-settings.png" alt="PlayerSettings" title="PlayerSettings"></p>
 <p>Building your App from Unity will create a .App file. Navigate to this file in Finder and right-click. Choose Show Package Contents from the context menu to open your app as a folder.</p>
-<h3 id="info-plist">Info.plist</h3>
+<h2 id="info-plist">Info.plist</h2>
 <p>Navigate to the Contents directory and open the file Info.plist in your favorite text editor. You will need to make a few changes to this file.</p>
 <p><img src="/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/info-plist.png" alt="Info.plist" title="Info.plist"></p>
 <p>Specifically, you will need to edit the following entries to correspond to your specific application.</p>
@@ -146,7 +146,7 @@ LSApplicationCategoryType: The category of your application.
 <span class="hljs-tag">&lt;/<span class="hljs-title">dict</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-title">plist</span>&gt;</span>
 </code></pre><p>You can get more information about these keys from the Apple developer documentation. The most notable key in need of changing is the LSApplicationCategoryType which must correspond to an actual category on the Mac App Store. You can find the LS keys documentation <a href="http://developer.apple.com/library/ios/#documentation/general/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html">here</a>.</p>
-<h3 id="icons">Icons</h3>
+<h2 id="icons">Icons</h2>
 <p>You will need to generate an iconset matching Apple’s <a href="https://developer.apple.com/library/mac/#documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/Optimizing/Optimizing.html#//apple_ref/doc/uid/TP40012302-CH7-SW2">Human Interface Guidelines</a>. The first step is to create all of the required icons. You will need variations of your icon supporting the following resolutions.</p>
 <pre class="highlight"><code class="hljs avrasm">icon_16x16<span class="hljs-preprocessor">.png</span>
 icon_16x16<span class="hljs-localvars">@2</span><span class="hljs-built_in">x</span><span class="hljs-preprocessor">.png</span>
@@ -162,7 +162,7 @@ icon_512x512<span class="hljs-localvars">@2</span><span class="hljs-built_in">x<
 <pre class="highlight"><code class="hljs bash">iconutil -c icns
 </code></pre>
 <p>will generate a file called icons.icns. You will need to replace the file <code>UnityPlayer.icns</code> with this icon file using Finder. The <code>UnityPlayer.icns</code> file is located in <code>Contents -&gt; Resources</code> within your .App.</p>
-<h3 id="entitlements">Entitlements</h3>
+<h2 id="entitlements">Entitlements</h2>
 <p>All Apps on the Mac App Store must be sandboxed. To sandbox your Unity app you have to provide an entitlements file to use during the code signing process. A fairly minimal entitlements file should look something like this.</p>
 <pre class="highlight"><code class="hljs xml"><span class="hljs-pi">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span class="hljs-doctype">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span>
@@ -173,7 +173,7 @@ icon_512x512<span class="hljs-localvars">@2</span><span class="hljs-built_in">x<
 <span class="hljs-tag">&lt;/<span class="hljs-title">dict</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-title">plist</span>&gt;</span>
 </code></pre><p>You can read more about entitlements at the <a href="http://developer.apple.com/library/mac/#documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/AboutEntitlements.html">Entitlement Key Reference</a>.</p>
-<h3 id="code-signing">Code Signing</h3>
+<h2 id="code-signing">Code Signing</h2>
 <p>Now that we have our iconset and entitlements ready we can codesign our App for delivery to the Mac App Store. We have to drop back to the Terminal to run the codesign application.</p>
 <pre class="highlight"><code class="hljs bash">codesign --force --sign <span class="hljs-string">"3rd Party Mac Developer Application: XXXX"</span> --entitlements yourapp.entitlements YourApp.app
 </code></pre>
@@ -183,12 +183,12 @@ icon_512x512<span class="hljs-localvars">@2</span><span class="hljs-built_in">x<
 <pre class="highlight"><code class="hljs bash">codesign --force --sign <span class="hljs-string">"3rd Party Mac Developer Application: XXXX"</span> --entitlements yourapp.entitlements YourApp.app/Contents/Frameworks/MonoEmbedRuntime/osx/libmono.<span class="hljs-number">0</span>.dylib
 </code></pre>
 <p>If you don’t have the required Keychain Access certificates you will need to create these using the Apple Member Center.</p>
-<h3 id="product-building">Product Building</h3>
+<h2 id="product-building">Product Building</h2>
 <p>To build your final product run productbuild from the command line.</p>
 <pre class="highlight"><code class="hljs bash">productbuild --component /YourApp.app /Applications --sign <span class="hljs-string">"3rd Party Mac Developer Installer: XXXX"</span> YourApp.pkg
 </code></pre>
 <p>Where &quot;XXXX&quot; is again from Keychain Access. This time, use the certificate beginning with  &quot;3rd Party Mac Developer Installer&quot;.</p>
-<h3 id="application-loader">Application Loader</h3>
+<h2 id="application-loader">Application Loader</h2>
 <p>You are finally ready to submit your App! Before submission you must create your App on iTunes Connect and fill out detailed app information. After your app is created launch Application Loader and click on Deliver Your App. Choose the application you created in iTunes Connect from the drop down menu and follow the prompts to choose your .pkg file that was created with the productbuild  command.</p>
 <p>Your done! Click submit and, if all went well, you will see your app will be delivered to the App Store and be ready for review.</p>
 
@@ -199,23 +199,36 @@ icon_512x512<span class="hljs-localvars">@2</span><span class="hljs-built_in">x<
   <p>
     
 
-Share this post: 
 
-<a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store&amp;text=Submitting a Unity3d Game to the Mac App Store&amp;via=soofaloofa">
-  <i class="fa fa-twitter fa-lg"></i>
-</a>
-<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store">
-  <i class="fa fa-facebook fa-lg"></i>
-</a>
-<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store">
-  <i class="fa fa-google-plus fa-lg"></i>
-</a>
-<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store">
-  <i class="fa fa-linkedin fa-lg"></i>
-</a>
-<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store">
-  <i class="fa fa-envelope fa-lg"></i>
-</a>
+<ul class="list-inline">
+  <li>Share this post:</li>
+  <li>
+    <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store&amp;text=Submitting a Unity3d Game to the Mac App Store&amp;via=soofaloofa">
+      <i class="fa fa-twitter fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store">
+      <i class="fa fa-facebook fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store">
+      <i class="fa fa-google-plus fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store">
+      <i class="fa fa-linkedin fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store">
+      <i class="fa fa-envelope fa-lg"></i>
+    </a>
+  </li>
+</ul>
+
 
   </p>
 
@@ -245,27 +258,15 @@ Share this post:
 
     <div class="row">
       <div class="col-md-offset-4 col-md-6">
-        <p>
-          Me on the web:
-          <a href="http://www.twitter.com/soofaloofa">
-            <i class="fa fa-twitter-square fa-lg"></i>
-          </a>
-          <a href="http://www.facebook.com/kevin.sookocheff">
-            <i class="fa fa-facebook-square fa-lg"></i>
-          </a>
-          <a href="http://www.linkedin.com/in/kevinsookocheff">
-            <i class="fa fa-linkedin-square fa-lg"></i>
-          </a>
-          <a href="https://plus.google.com/+KevinSookocheff">
-            <i class="fa fa-google-plus-square fa-lg"></i>
-          </a>
-          <a href="https://github.com/soofaloofa">
-            <i class="fa fa-github-square fa-lg"></i>
-          </a>
-          <a href="http://sookocheff.com/rss.xml">
-            <i class="fa fa-rss-square fa-lg"></i>
-          </a>
-        </p>
+        <ul class="list-inline">
+          <li>Me on the web:</li>
+          <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+          <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+          <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+          <li><a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square fa-lg"></i></a></li>
+          <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+          <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+        </ul>
       </div>
     </div>
   </div>
@@ -296,15 +297,16 @@ Share this post:
 </div>
 
 <!-- Footer -->
+
 <div class="container">
-  <hr>
   <footer>
-    <p class="pull-right">
-      <a href="#" class="pull-right">Top</a>
-    </p>
-    <p>
-    © Kevin Sookocheff
-    </p>
+    <div class="row">
+      <div class="col-md-12">
+        <p class="text-center">
+          © Kevin Sookocheff · <a href="#">Top</a>
+        </p>
+      </div>
+    </div>
   </footer>
 </div>
 

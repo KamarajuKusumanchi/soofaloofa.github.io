@@ -8,11 +8,11 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<meta name="description" content="Tinker. Tailor. Soldier. Sailor.">
+<meta name="description" content="Closures are easy. There I said it. Invest a little bit of time, and you will say it too. Follow along with me as I attempt to explain what closures are and how they are used.">
 <meta name="keywords" content="">
 <meta name="author" content="Kevin Sookocheff">
 
-<link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" />
+<link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" /><link  rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif" /><link  rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" />
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -69,7 +69,7 @@
 
 <!-- Default Content -->
 <!-- Page Container -->
-<div class="container">
+<div class="container page-container">
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <section class="page">
@@ -90,14 +90,14 @@
 
   <div class=".post-content">
     <p>Closures are easy. There I said it. Invest a little bit of time, and you will say it too. Follow along with me as I attempt to explain what closures are and how they are used.</p>
-<h3 id="scope">Scope</h3>
+<h2 id="scope">Scope</h2>
 <p>The first pre-requisite in fully understanding closures is JavaScript’s implementation of scope. JavaScript’s C-style syntax may lead you to believe that anything between the “curly braces” defines a block where variables defined within that block are private to that region of code. This is false. JavaScript does not define block scope. Any variables defined within a block are available outside that block. With one exception: functions. JavaScript has function scope where variables defined within a function are private to that function. This is very important.</p>
-<h4 id="summary">Summary</h4>
+<h3 id="summary">Summary</h3>
 <ul>
 <li>JavaScript has function scope.</li>
 <li>All variables defined within a function are private to that function.</li>
 </ul>
-<h3 id="inner-functions">Inner Functions</h3>
+<h2 id="inner-functions">Inner Functions</h2>
 <p>Inner functions are functions defined within another function. It’s easier to demonstrate than to explain, so here goes.</p>
 <pre class="highlight"><code class="hljs javascript"><span class="hljs-keyword">var</span> outer = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
   <span class="hljs-keyword">var</span> secrets = <span class="hljs-number">3</span>;
@@ -111,12 +111,12 @@
 output = outer();
 alert(output);
 </code></pre><p>You will get a pop-up window showing that the variable secrets now holds a reference to the function inner.</p>
-<h4 id="summary">Summary</h4>
+<h3 id="summary">Summary</h3>
 <ul>
 <li>Inner functions are defined within other functions (and this can nest arbitrarily).</li>
 <li>Inner functions can be returned “fully formed” from outer functions.</li>
 </ul>
-<h3 id="closures">Closures</h3>
+<h2 id="closures">Closures</h2>
 <p>In one sentence, closure means that an inner function has access to the context of its outer function, even when the outer function no longer exists. OK. Let’s do that example one time more.</p>
 <pre class="highlight"><code class="hljs javascript"><span class="hljs-keyword">var</span> outer = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
   <span class="hljs-keyword">var</span> secrets = <span class="hljs-number">3</span>;
@@ -131,7 +131,7 @@ output = outer();
 alert(output());
 </code></pre><p>Notice the difference? This time we are executing the inner function through the statement output(). Now you will get a pop-up window showing that the variable secrets is still available to the inner function, even when the outer function no longer exists.</p>
 <p>You’ve just created a closure!</p>
-<h4 id="summary">Summary</h4>
+<h3 id="summary">Summary</h3>
 <ul>
 <li>Closures are easy.</li>
 <li>You’ve just scratched the surface.</li>
@@ -149,23 +149,36 @@ alert(output());
   <p>
     
 
-Share this post: 
 
-<a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript&amp;text=Understanding Closures in JavaScript&amp;via=soofaloofa">
-  <i class="fa fa-twitter fa-lg"></i>
-</a>
-<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript">
-  <i class="fa fa-facebook fa-lg"></i>
-</a>
-<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript">
-  <i class="fa fa-google-plus fa-lg"></i>
-</a>
-<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript">
-  <i class="fa fa-linkedin fa-lg"></i>
-</a>
-<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript">
-  <i class="fa fa-envelope fa-lg"></i>
-</a>
+<ul class="list-inline">
+  <li>Share this post:</li>
+  <li>
+    <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript&amp;text=Understanding Closures in JavaScript&amp;via=soofaloofa">
+      <i class="fa fa-twitter fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript">
+      <i class="fa fa-facebook fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript">
+      <i class="fa fa-google-plus fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript">
+      <i class="fa fa-linkedin fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript">
+      <i class="fa fa-envelope fa-lg"></i>
+    </a>
+  </li>
+</ul>
+
 
   </p>
 
@@ -195,27 +208,15 @@ Share this post:
 
     <div class="row">
       <div class="col-md-offset-4 col-md-6">
-        <p>
-          Me on the web:
-          <a href="http://www.twitter.com/soofaloofa">
-            <i class="fa fa-twitter-square fa-lg"></i>
-          </a>
-          <a href="http://www.facebook.com/kevin.sookocheff">
-            <i class="fa fa-facebook-square fa-lg"></i>
-          </a>
-          <a href="http://www.linkedin.com/in/kevinsookocheff">
-            <i class="fa fa-linkedin-square fa-lg"></i>
-          </a>
-          <a href="https://plus.google.com/+KevinSookocheff">
-            <i class="fa fa-google-plus-square fa-lg"></i>
-          </a>
-          <a href="https://github.com/soofaloofa">
-            <i class="fa fa-github-square fa-lg"></i>
-          </a>
-          <a href="http://sookocheff.com/rss.xml">
-            <i class="fa fa-rss-square fa-lg"></i>
-          </a>
-        </p>
+        <ul class="list-inline">
+          <li>Me on the web:</li>
+          <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+          <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+          <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+          <li><a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square fa-lg"></i></a></li>
+          <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+          <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+        </ul>
       </div>
     </div>
   </div>
@@ -246,15 +247,16 @@ Share this post:
 </div>
 
 <!-- Footer -->
+
 <div class="container">
-  <hr>
   <footer>
-    <p class="pull-right">
-      <a href="#" class="pull-right">Top</a>
-    </p>
-    <p>
-    © Kevin Sookocheff
-    </p>
+    <div class="row">
+      <div class="col-md-12">
+        <p class="text-center">
+          © Kevin Sookocheff · <a href="#">Top</a>
+        </p>
+      </div>
+    </div>
   </footer>
 </div>
 

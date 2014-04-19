@@ -8,11 +8,11 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<meta name="description" content="Tinker. Tailor. Soldier. Sailor.">
+<meta name="description" content="Saving HTML canvas element data to an image in a user friendly manner is a tricky problem. Let's look at one way to solve it.">
 <meta name="keywords" content="">
 <meta name="author" content="Kevin Sookocheff">
 
-<link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" />
+<link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" /><link  rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif" /><link  rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" />
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -69,7 +69,7 @@
 
 <!-- Default Content -->
 <!-- Page Container -->
-<div class="container">
+<div class="container page-container">
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <section class="page">
@@ -90,16 +90,16 @@
 
   <div class=".post-content">
     <p>Saving HTML canvas element data to an image in a user friendly manner is a tricky problem.</p>
-<h3 id="first-attempt">First Attempt</h3>
+<h2 id="first-attempt">First Attempt</h2>
 <p>We could always open our canvas in a new browser tab (or window) with the <code>toDataURL</code> JavaScript method.</p>
 <pre class="highlight"><code class="hljs avrasm">window<span class="hljs-preprocessor">.location</span><span class="hljs-preprocessor">.href</span> = canvas<span class="hljs-preprocessor">.toDataURL</span>(<span class="hljs-string">"image/png"</span>)<span class="hljs-comment">;</span>
 </code></pre><p>Unfortunately this requires the user to use the file menu or the right-click button to save the image from the newly opened browser tab. I wouldn’t call this user friendly.</p>
-<h3 id="second-attempt">Second Attempt</h3>
+<h2 id="second-attempt">Second Attempt</h2>
 <p>After some investigation I came across Nihilogic’s <a href="http://www.nihilogic.dk/labs/canvas2image/"><code>Canvas2Image</code></a> JavaScript package. This package presents a Dialog Box to the user allowing them to save the image. This would solve my problem except the downloaded filename has the format 8iqALWM5.part . If my mom encountered a filename like that she wouldn’t know what to do with it. Still not user friendly.</p>
-<h3 id="final-attempt">Final Attempt</h3>
+<h2 id="final-attempt">Final Attempt</h2>
 <p>What to do? Enter PHP.</p>
 <p><a href="http://www.permadi.com/blog/2010/10/html5-saving-canvas-image-data-using-php-and-ajax/">Permadi</a> presents a technique using PHP and AJAX that is exactly what I need. After some tweaking here’s what I came up with.</p>
-<h3 id="save-php">save.php</h3>
+<h2 id="save-php">save.php</h2>
 <p>The first PHP file saves the passed in canvas data to the server at a random location determined by the md5(uniqid())  method.</p>
 <pre class="highlight"><code class="hljs ruby"><span class="hljs-variable">$data</span> = <span class="hljs-variable">$_POST</span>[<span class="hljs-string">'data'</span>];
 <span class="hljs-variable">$file</span> = md5(uniqid()) . <span class="hljs-string">'.png'</span>;
@@ -114,7 +114,7 @@ file_put_contents(<span class="hljs-variable">$file</span>, base64_decode(<span 
 echo json_encode(<span class="hljs-variable">$file</span>);
 </code></pre><p>We would call this via JQuery with the $.post method, filling the data parameter using the <code>toDataURL</code> method.</p>
 <pre class="highlight"><code class="hljs css">$<span class="hljs-class">.post</span>("<span class="hljs-tag">save</span><span class="hljs-class">.php</span>", <span class="hljs-rules">{<span class="hljs-rule"><span class="hljs-attribute">data</span>:<span class="hljs-value"> canvas.<span class="hljs-function">toDataURL(<span class="hljs-string">"image/png"</span>)</span></span></span></span>})
-</code></pre><h3 id="download-php">download.php</h3>
+</code></pre><h2 id="download-php">download.php</h2>
 <p>Now we can use PHP to force the download of the saved image data. You can read more about this in the <a href="http://php.net/manual/en/function.readfile.php">PHP Manual</a>.</p>
 <pre class="highlight"><code class="hljs bash"><span class="hljs-variable">$file</span> = trim(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">'path'</span>]);
 
@@ -151,23 +151,36 @@ echo json_encode(<span class="hljs-variable">$file</span>);
   <p>
     
 
-Share this post: 
 
-<a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php&amp;text=Saving canvas data to an image file with JavaScript and PHP&amp;via=soofaloofa">
-  <i class="fa fa-twitter fa-lg"></i>
-</a>
-<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php">
-  <i class="fa fa-facebook fa-lg"></i>
-</a>
-<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php">
-  <i class="fa fa-google-plus fa-lg"></i>
-</a>
-<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php">
-  <i class="fa fa-linkedin fa-lg"></i>
-</a>
-<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php">
-  <i class="fa fa-envelope fa-lg"></i>
-</a>
+<ul class="list-inline">
+  <li>Share this post:</li>
+  <li>
+    <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php&amp;text=Saving canvas data to an image file with JavaScript and PHP&amp;via=soofaloofa">
+      <i class="fa fa-twitter fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php">
+      <i class="fa fa-facebook fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php">
+      <i class="fa fa-google-plus fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php">
+      <i class="fa fa-linkedin fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php">
+      <i class="fa fa-envelope fa-lg"></i>
+    </a>
+  </li>
+</ul>
+
 
   </p>
 
@@ -197,27 +210,15 @@ Share this post:
 
     <div class="row">
       <div class="col-md-offset-4 col-md-6">
-        <p>
-          Me on the web:
-          <a href="http://www.twitter.com/soofaloofa">
-            <i class="fa fa-twitter-square fa-lg"></i>
-          </a>
-          <a href="http://www.facebook.com/kevin.sookocheff">
-            <i class="fa fa-facebook-square fa-lg"></i>
-          </a>
-          <a href="http://www.linkedin.com/in/kevinsookocheff">
-            <i class="fa fa-linkedin-square fa-lg"></i>
-          </a>
-          <a href="https://plus.google.com/+KevinSookocheff">
-            <i class="fa fa-google-plus-square fa-lg"></i>
-          </a>
-          <a href="https://github.com/soofaloofa">
-            <i class="fa fa-github-square fa-lg"></i>
-          </a>
-          <a href="http://sookocheff.com/rss.xml">
-            <i class="fa fa-rss-square fa-lg"></i>
-          </a>
-        </p>
+        <ul class="list-inline">
+          <li>Me on the web:</li>
+          <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+          <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+          <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+          <li><a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square fa-lg"></i></a></li>
+          <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+          <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+        </ul>
       </div>
     </div>
   </div>
@@ -248,15 +249,16 @@ Share this post:
 </div>
 
 <!-- Footer -->
+
 <div class="container">
-  <hr>
   <footer>
-    <p class="pull-right">
-      <a href="#" class="pull-right">Top</a>
-    </p>
-    <p>
-    © Kevin Sookocheff
-    </p>
+    <div class="row">
+      <div class="col-md-12">
+        <p class="text-center">
+          © Kevin Sookocheff · <a href="#">Top</a>
+        </p>
+      </div>
+    </div>
   </footer>
 </div>
 

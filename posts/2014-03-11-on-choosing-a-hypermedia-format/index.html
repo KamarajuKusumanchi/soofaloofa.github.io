@@ -8,11 +8,11 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<meta name="description" content="Tinker. Tailor. Soldier. Sailor.">
+<meta name="description" content="In recent years REST has been at the forefront of modern API design. This has led to APIs with manageable URLs that respect the HTTP verbs (GET, POST, PUT [and the rest](http://www.w3.org/Protocols/rfc2616/rfc2616.html)), producing an intuitive model for client developers. Unfortunately, there are two problems that REST doesn't solve alone.">
 <meta name="keywords" content="">
 <meta name="author" content="Kevin Sookocheff">
 
-<link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" />
+<link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" /><link  rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif" /><link  rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" />
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -69,7 +69,7 @@
 
 <!-- Default Content -->
 <!-- Page Container -->
-<div class="container">
+<div class="container page-container">
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <section class="page">
@@ -121,7 +121,7 @@ another API and communicate with minimal duplicated effort.</p>
 <p>In this post I will evaluate a few mature hypermedia types for APIs,
 offering a side-by-side comparison of their strengths and weaknesses. If you
 are impatient for the final result you can <a href="https://gist.github.com/soofaloofa/9350847">jump straight to the code</a>. </p>
-<h3 id="the-model">The Model</h3>
+<h2 id="the-model">The Model</h2>
 <p>To drive this discussion let&#39;s use a hypothetical API for managing a <code>Player</code>
 resource derived from the <a href="https://developer.apple.com/library/ios/documentation/GameKit/Reference/GKPlayer_Ref/Reference/Reference.html#//apple_ref/occ/cl/GKPlayer"><code>GKPlayer</code>
 class</a>
@@ -158,7 +158,7 @@ following.</p>
 ]
 </code></pre>
 <p>Let&#39;s take a look at how this API can be represented using hypermedia types.</p>
-<h3 id="json-ld">JSON-LD</h3>
+<h2 id="json-ld">JSON-LD</h2>
 <p>We&#39;ll start by looking at JSON for Linked Documents (JSON-LD). JSON-LD is a well
 supported media type endorsed by the <a href="https://www.w3.org">World Wide Web
 Consortium</a>.</p>
@@ -365,7 +365,7 @@ our friends directly within the resource as a list. </p>
 paged collections. For more details on HYDRA&#39;s reserved properties you can read
 the full
 <a href="http://www.markus-lanthaler.com/hydra/spec/latest/core/#properties">documentation</a>.</p>
-<h3 id="hal">HAL</h3>
+<h2 id="hal">HAL</h2>
 <p>HAL is a lightweight media type that uses the idea of <em>Resources</em> and <em>Links</em> to
 model your JSON responses. <em>Resources</em> can contain <em>State</em> defined by key-value
 pairs of data, <em>Links</em> leading to additional resources and <em>Embedded Resources</em>
@@ -373,7 +373,7 @@ which are children of the current resource embedded in the representation for
 convenience.</p>
 <p>HAL is simple to use and easy to understand. These virtues have lead HAL to
 become one of the leading hypermedia types in modern APIs.</p>
-<h4 id="state">State</h4>
+<h3 id="state">State</h3>
 <p>State is the traditional JSON key-value pairs defining the current state of the
 resource.</p>
 <pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>
@@ -385,7 +385,7 @@ resource.</p>
     "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/avatar.png"</span>
 </span>}
 </code></pre>
-<h4 id="links">Links</h4>
+<h3 id="links">Links</h3>
 <p>Links in HAL are identified as a JSON object named <code>_links</code>. Keys within
 <code>_links</code> are the name of the link and should describe the relationship between
 the current resource and the link. At a minimum the <code>_links</code> property should
@@ -418,7 +418,7 @@ the full list.</p>
     "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/avatar.png"</span>
 </span>}
 </code></pre>
-<h4 id="embedded-resources">Embedded Resources</h4>
+<h3 id="embedded-resources">Embedded Resources</h3>
 <p>Making a GET request to the <code>Friends</code> link would return a full list of
 <code>Player</code> resources. Each <code>Player</code> returned is embedded in the representation
 as an <em>Embedded Resource</em>. <em>Embedded Resources</em> augment the current resource
@@ -462,7 +462,7 @@ list of items.</p>
 <p>In this response we&#39;ve added a <code>next</code> link to represent a paged collection and
 provide a reference to get the next set of friends in the list. The embedded
 resources are a list contained within the <code>player</code> property. </p>
-<h4 id="curies">Curies</h4>
+<h3 id="curies">Curies</h3>
 <p>An important point about HAL is that each link relation points to a URL with
 documentation about that relation. This makes the API discoverable by always
 providing documentation about the links available from the current resource. In
@@ -503,7 +503,7 @@ the curie name with a <code>:</code> followed by the name of the resource.</p>
 and users. For more information on HAL you can refer to the draft standard that
 has been submitted to the <a href="https://tools.ietf.org/html/draft-kelly-json-hal-06">Network Working
 Group</a>. </p>
-<h3 id="collection-json">Collection+JSON</h3>
+<h2 id="collection-json">Collection+JSON</h2>
 <p>The Collection+JSON standard is a media type that standardizes the reading,
 writing and querying of items in a collection. Although geared to handling
 collections, by representing a single item as a collection of one element,
@@ -519,7 +519,7 @@ a <code>version</code> and a URI pointing to itself.</p>
     </span>}
 </span>}
 </code></pre>
-<h4 id="returning-data">Returning Data</h4>
+<h3 id="returning-data">Returning Data</h3>
 <p>Typically, the response would include a list of items in the collection. For a
 single resource, this collection would be a list of a single element. The
 properties of each element are given by explicit name/value pairs within a
@@ -543,7 +543,7 @@ properties of each element are given by explicit name/value pairs within a
     </span>}
 </span>}
 </code></pre>
-<h4 id="links">Links</h4>
+<h3 id="links">Links</h3>
 <p>Links can be a property of the collection or of individual items in the
 collection. Links may may also include a <code>name</code> and a <code>prompt</code> which can be
 useful when creating HTML forms to reference the collection or item.</p>
@@ -571,7 +571,7 @@ useful when creating HTML forms to reference the collection or item.</p>
     </span>}
 </span>}
 </code></pre>
-<h4 id="templates">Templates</h4>
+<h3 id="templates">Templates</h3>
 <p>As the name would imply, Collection+JSON is uniquely suited to handling
 collections. Templates are one aspect of this. A template is an object that
 represents an item in the collection. The client can then fill in this template
@@ -629,7 +629,7 @@ item.</p>
 <p>To add a friend to this collection you would POST the data specified by the
 template to the <code>href</code> link defined by the collection
 (<code>https://api.example.com/player/1234567890/friends</code>).</p>
-<h4 id="queries">Queries</h4>
+<h3 id="queries">Queries</h3>
 <p>The final piece of Collecion+JSON is the <code>queries</code> property. Queries, as the
 name implies, define the queries that are supported by this collection. Here the
 <code>data</code> object specifies the query parameters supported by the server.</p>
@@ -694,12 +694,12 @@ full meaning of the API. It also provides a level of interoperability between
 APIs using the Collection+JSON media type. Collection+JSON was designed by <a href="https://amundsen.com">Mike
 Amundsen</a>. You can find detailed examples, the full spec
 and sample code <a href="https://amundsen.com/media-types/collection/">on his website</a>.</p>
-<h3 id="siren">SIREN</h3>
+<h2 id="siren">SIREN</h2>
 <p>The last media type we&#39;ll look at is
 <a href="https://github.com/kevinswiber/siren">SIREN</a>. SIREN aims to represent generic
 entities along with actions for modifying those entities and links for client
 navigation.</p>
-<h4 id="entities">Entities</h4>
+<h3 id="entities">Entities</h3>
 <p>Each SIREN entity may have an optional class that describes the nature of the
 entity. This class defines the type of resource being returned by the API.
 Think of this as a data model for your API. By defining our response as
@@ -711,7 +711,7 @@ data being returned.</p>
     "<span class="hljs-attribute">class</span>": <span class="hljs-value"><span class="hljs-string">"player"</span>
 </span>}
 </code></pre>
-<h4 id="properties">Properties</h4>
+<h3 id="properties">Properties</h3>
 <p>The state of the entity is reflected as key-value pairs in a <code>properties</code> object.</p>
 <pre class="highlight"><code class="hljs json">{
     "<span class="hljs-attribute">class</span>": <span class="hljs-value"><span class="hljs-string">"player"</span></span>,
@@ -722,7 +722,7 @@ data being returned.</p>
         "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/avatar.png"</span>
     </span>}
 </span>}
-</code></pre><h4 id="links">Links</h4>
+</code></pre><h3 id="links">Links</h3>
 <p>Links are used in the same sense we&#39;ve already seen in other media types --
 navigating to related resources. With SIREN links have a relation and a URL.</p>
 <pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>
@@ -741,7 +741,7 @@ navigating to related resources. With SIREN links have a relation and a URL.</p>
     </span>}
 </span>}
 </code></pre>
-<h4 id="actions">Actions</h4>
+<h3 id="actions">Actions</h3>
 <p>One of the biggest pieces missing from common Hypermedia types is the ability to
 dictate what requests can be made to alter the application state. SIREN
 facilitates this by defining <code>actions</code> that a client can take on the given
@@ -799,40 +799,40 @@ friend to the list, or search for a friend.</p>
     ]
 </span>}
 </code></pre>
-<h4 id="entities">Entities</h4>
+<h3 id="entities">Entities</h3>
 <p>The previous example also introduces <code>entities</code> to the response.  Any related
 entities that you wish to embed in the current representation are entered as a
 list of <code>entities</code>. Entities are nested. Each entity in this list can have a
 class, properties and additional entities.</p>
-<h3 id="conclusions">Conclusions</h3>
+<h2 id="conclusions">Conclusions</h2>
 <p>I&#39;ve create a <a href="https://gist.github.com/soofaloofa/9350847">Gist</a> comparing each
 of the media types discussed in this post. </p>
 <p>After going through this exercise I&#39;ve come to a few conclusions. </p>
-<h4 id="json-ld">JSON-LD</h4>
+<h3 id="json-ld">JSON-LD</h3>
 <p>JSON-LD is great for augmenting existing APIs without introducing
 breaking changes. This augmentation mostly serves as a way to self document your
 API. If you are looking to add operations to a JSON-LD response look to HYDRA.
 HYDRA adds a vocabulary for communicating using the JSON-LD specification. This
 is an interesting choice as it decouples the API serialization format from the
 communication format.</p>
-<h4 id="hal">HAL</h4>
+<h3 id="hal">HAL</h3>
 <p>The light weight syntax and semantics of HAL is appealing in a lot of contexts.
 HAL is a minimal representation that offers most of the benefits of using a
 hypermedia type without adding too much complexity to the implementation. One
 area where HAL falters is, like JSON-LD, the lack of support for specifying
 actions.</p>
-<h4 id="collection-json">Collection+JSON</h4>
+<h3 id="collection-json">Collection+JSON</h3>
 <p>Don&#39;t be fooled by the name. Collection+JSON can be used to represent single
 items as well and it does this quite well. Of course it shines when representing
 data collections. Particularly appealing is the ability to list queries that
 your collection supports and templates that clients can use to alter your
 collection. For publishing user editable data Collection+JSON shines.</p>
-<h4 id="siren">SIREN</h4>
+<h3 id="siren">SIREN</h3>
 <p>SIREN attempts to represent generic classes of items and overcome the main
 drawback of HAL -- support for actions. It does this admirably well and also
 introduces the concept of classes to your model bringing a sense of type
 information to your API responses.</p>
-<h4 id="and-the-winner-is-">And the winner is?</h4>
+<h3 id="and-the-winner-is-">And the winner is?</h3>
 <p>Unfortunately, there is no clear winner. It depends on the contraints in place
 on your API. However, I will offer some suggestions.</p>
 <p>If you are augmenting existing API responses choose JSON-LD.
@@ -848,23 +848,36 @@ comments!</p>
   <p>
     
 
-Share this post: 
 
-<a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format&amp;text=On choosing a hypermedia type for your API - HAL, JSON-LD, Collection+JSON, SIREN, Oh My!&amp;via=soofaloofa">
-  <i class="fa fa-twitter fa-lg"></i>
-</a>
-<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format">
-  <i class="fa fa-facebook fa-lg"></i>
-</a>
-<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format">
-  <i class="fa fa-google-plus fa-lg"></i>
-</a>
-<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format">
-  <i class="fa fa-linkedin fa-lg"></i>
-</a>
-<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format">
-  <i class="fa fa-envelope fa-lg"></i>
-</a>
+<ul class="list-inline">
+  <li>Share this post:</li>
+  <li>
+    <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format&amp;text=On choosing a hypermedia type for your API - HAL, JSON-LD, Collection+JSON, SIREN, Oh My!&amp;via=soofaloofa">
+      <i class="fa fa-twitter fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format">
+      <i class="fa fa-facebook fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format">
+      <i class="fa fa-google-plus fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format">
+      <i class="fa fa-linkedin fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format">
+      <i class="fa fa-envelope fa-lg"></i>
+    </a>
+  </li>
+</ul>
+
 
   </p>
 
@@ -894,27 +907,15 @@ Share this post:
 
     <div class="row">
       <div class="col-md-offset-4 col-md-6">
-        <p>
-          Me on the web:
-          <a href="http://www.twitter.com/soofaloofa">
-            <i class="fa fa-twitter-square fa-lg"></i>
-          </a>
-          <a href="http://www.facebook.com/kevin.sookocheff">
-            <i class="fa fa-facebook-square fa-lg"></i>
-          </a>
-          <a href="http://www.linkedin.com/in/kevinsookocheff">
-            <i class="fa fa-linkedin-square fa-lg"></i>
-          </a>
-          <a href="https://plus.google.com/+KevinSookocheff">
-            <i class="fa fa-google-plus-square fa-lg"></i>
-          </a>
-          <a href="https://github.com/soofaloofa">
-            <i class="fa fa-github-square fa-lg"></i>
-          </a>
-          <a href="http://sookocheff.com/rss.xml">
-            <i class="fa fa-rss-square fa-lg"></i>
-          </a>
-        </p>
+        <ul class="list-inline">
+          <li>Me on the web:</li>
+          <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+          <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+          <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+          <li><a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square fa-lg"></i></a></li>
+          <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+          <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+        </ul>
       </div>
     </div>
   </div>
@@ -945,15 +946,16 @@ Share this post:
 </div>
 
 <!-- Footer -->
+
 <div class="container">
-  <hr>
   <footer>
-    <p class="pull-right">
-      <a href="#" class="pull-right">Top</a>
-    </p>
-    <p>
-    © Kevin Sookocheff
-    </p>
+    <div class="row">
+      <div class="col-md-12">
+        <p class="text-center">
+          © Kevin Sookocheff · <a href="#">Top</a>
+        </p>
+      </div>
+    </div>
   </footer>
 </div>
 

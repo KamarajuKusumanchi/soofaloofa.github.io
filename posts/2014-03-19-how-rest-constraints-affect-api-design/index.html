@@ -8,11 +8,11 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<meta name="description" content="Tinker. Tailor. Soldier. Sailor.">
+<meta name="description" content="REST was developed and formalized by analyzing the existing Web and extracting the principles that made it work. This set of principles was written down in the [Fielding dissertation](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm) which lays out the set of constraints that, when enforced, will make a generic network system into a resilient network like the Web. This post examines why REST is important for modern APIs.">
 <meta name="keywords" content="">
 <meta name="author" content="Kevin Sookocheff">
 
-<link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" />
+<link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" /><link  rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif" /><link  rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" />
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -69,7 +69,7 @@
 
 <!-- Default Content -->
 <!-- Page Container -->
-<div class="container">
+<div class="container page-container">
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <section class="page">
@@ -100,7 +100,7 @@ dissertation Fielding outlines REST&#39;s interface constraints.</p>
 manipulation of resources using representations; self-descriptive messages;
 and, hypermedia as the engine of application state. </p>
 </blockquote>
-<h4 id="why-is-this-important-for-apis-">Why is this important for APIs?</h4>
+<h3 id="why-is-this-important-for-apis-">Why is this important for APIs?</h3>
 <p>API design is in an infancy. Each API is designed for a single use case and
 standard. This proliferation of different design ideas results in APIs that each
 have their own specification and semantics. Interoperability between APIs is
@@ -111,7 +111,7 @@ constraints in our APIs we can take advantage of this foundational work to
 provide APIs that form a scalable and resilient network of their own.</p>
 <p>We will take a look at each of the four interface constraints in turn and see
 how they can be used to design an API that developers love to use. </p>
-<h3 id="1-identification-of-resources">1. Identification of Resources</h3>
+<h2 id="1-identification-of-resources">1. Identification of Resources</h2>
 <p>A resource is the key abstraction of REST. Anything that can be named is a
 resource -- a video, a document, an image. We identify resources using a
 unique identifier called the Uniform Resource Identifier (URI). When discussing
@@ -128,7 +128,7 @@ would have a path including the order number.</p>
 <pre class="highlight"><code class="hljs undefined">/orders/12345
 </code></pre><p>This simple example shows how we can create a URL to uniquely represent each
 resource represented by our API.</p>
-<h3 id="2-manipulation-of-resources-using-representations">2. Manipulation of Resources Using Representations</h3>
+<h2 id="2-manipulation-of-resources-using-representations">2. Manipulation of Resources Using Representations</h2>
 <p>When making a request for a resource the server responds with a representation
 of the resource. This representation captures the current state of the resource
 in a format that the client can understand and manipulate. Abstractly the
@@ -153,7 +153,7 @@ Accept: application/json
 </code></pre><p>By using content negotiation in your API you can offer new resource
 representations without changing the resources URL or breaking existing clients.
 This keeps your client and server flexibly decoupled.</p>
-<h3 id="3-self-descriptive-messages">3. Self-Descriptive Messages</h3>
+<h2 id="3-self-descriptive-messages">3. Self-Descriptive Messages</h2>
 <p>The representations served by a RESTful system contain all of the data required
 by the client to understand and act on the resource. If any additional
 information is needed but not contained in the response a link to that
@@ -172,7 +172,7 @@ block on the Web. </p>
 </blockquote>
 <p>By linking together the resources offered by your API you can build
 self-descriptive APIs.</p>
-<h3 id="4-hypermedia-as-the-engine-of-application-state">4. Hypermedia As The Engine Of Application State</h3>
+<h2 id="4-hypermedia-as-the-engine-of-application-state">4. Hypermedia As The Engine Of Application State</h2>
 <p>Together, the first three REST constraints imply the fourth and most important --
 hypermedia as the engine of application state. By uniquely identifying
 resources, using representations to communicate resource state and using
@@ -192,23 +192,36 @@ resilient APIs.</p>
   <p>
     
 
-Share this post: 
 
-<a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design&amp;text=How REST Constraints Affect API Design&amp;via=soofaloofa">
-  <i class="fa fa-twitter fa-lg"></i>
-</a>
-<a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design">
-  <i class="fa fa-facebook fa-lg"></i>
-</a>
-<a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design">
-  <i class="fa fa-google-plus fa-lg"></i>
-</a>
-<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design">
-  <i class="fa fa-linkedin fa-lg"></i>
-</a>
-<a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design">
-  <i class="fa fa-envelope fa-lg"></i>
-</a>
+<ul class="list-inline">
+  <li>Share this post:</li>
+  <li>
+    <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design&amp;text=How REST Constraints Affect API Design&amp;via=soofaloofa">
+      <i class="fa fa-twitter fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design">
+      <i class="fa fa-facebook fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design">
+      <i class="fa fa-google-plus fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design">
+      <i class="fa fa-linkedin fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design">
+      <i class="fa fa-envelope fa-lg"></i>
+    </a>
+  </li>
+</ul>
+
 
   </p>
 
@@ -238,27 +251,15 @@ Share this post:
 
     <div class="row">
       <div class="col-md-offset-4 col-md-6">
-        <p>
-          Me on the web:
-          <a href="http://www.twitter.com/soofaloofa">
-            <i class="fa fa-twitter-square fa-lg"></i>
-          </a>
-          <a href="http://www.facebook.com/kevin.sookocheff">
-            <i class="fa fa-facebook-square fa-lg"></i>
-          </a>
-          <a href="http://www.linkedin.com/in/kevinsookocheff">
-            <i class="fa fa-linkedin-square fa-lg"></i>
-          </a>
-          <a href="https://plus.google.com/+KevinSookocheff">
-            <i class="fa fa-google-plus-square fa-lg"></i>
-          </a>
-          <a href="https://github.com/soofaloofa">
-            <i class="fa fa-github-square fa-lg"></i>
-          </a>
-          <a href="http://sookocheff.com/rss.xml">
-            <i class="fa fa-rss-square fa-lg"></i>
-          </a>
-        </p>
+        <ul class="list-inline">
+          <li>Me on the web:</li>
+          <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+          <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+          <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+          <li><a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square fa-lg"></i></a></li>
+          <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+          <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+        </ul>
       </div>
     </div>
   </div>
@@ -289,15 +290,16 @@ Share this post:
 </div>
 
 <!-- Footer -->
+
 <div class="container">
-  <hr>
   <footer>
-    <p class="pull-right">
-      <a href="#" class="pull-right">Top</a>
-    </p>
-    <p>
-    © Kevin Sookocheff
-    </p>
+    <div class="row">
+      <div class="col-md-12">
+        <p class="text-center">
+          © Kevin Sookocheff · <a href="#">Top</a>
+        </p>
+      </div>
+    </div>
   </footer>
 </div>
 

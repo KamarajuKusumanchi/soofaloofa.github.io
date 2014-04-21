@@ -3,8 +3,8 @@ layout: post
 title: "On choosing a hypermedia type for your API - HAL, JSON-LD, Collection+JSON, SIREN, Oh My!"
 author: Kevin Sookocheff
 date: 2014/03/11 15:15:15
-updated: 2014/03/13
-description: In recent years REST has been at the forefront of modern API design. This has led to APIs with manageable URLs that respect the HTTP verbs (GET, POST, PUT [and the rest](http://www.w3.org/Protocols/rfc2616/rfc2616.html)), producing an intuitive model for client developers. Unfortunately, there are two problems that REST doesn't solve alone.
+updated: 2014/03/13 09:08:48
+description: <t render="markdown">In recent years REST has been at the forefront of modern API design. This has led to APIs with manageable URLs that respect the HTTP verbs (GET, POST, PUT [and the rest](http://www.w3.org/Protocols/rfc2616/rfc2616.html)), producing an intuitive model for client developers. Unfortunately, there are two problems that REST doesn't solve alone.</t>
 tags: 
   - hypermedia
   - rest

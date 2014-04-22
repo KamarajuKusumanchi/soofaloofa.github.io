@@ -14,7 +14,7 @@ tags:
 ## MapReduce API Series
 
 * [Part 1: The Basics](http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/)
-* [Part 2: Running a MapReduce Job Using mapreduce.yaml](http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml.html.md)
+* [Part 2: Running a MapReduce Job Using mapreduce.yaml](http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/)
 
 [Last time](http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/) we looked at an overview of how MapReduce works. In this article we'll be getting our hands dirty writing some code to handle the Map Stage. If you'll recall, the Map Stage is composed of two separate components: an InputReader and a `map` function. We'll look at each of these in turn.
 

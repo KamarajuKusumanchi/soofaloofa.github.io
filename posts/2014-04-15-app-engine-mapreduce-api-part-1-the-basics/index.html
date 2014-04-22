@@ -34,7 +34,7 @@
 <body>
 
 <!-- Navbar-->
-<div class="navbar navbar-default">
+<div class="navbar navbar-default" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
@@ -84,19 +84,26 @@
     <small class="text-muted">
       Posted on Tuesday, April 15, 2014.
 
+  Updated on Tuesday, April 22, 2014.
+
 
     </small>
   </p>
 
   <div class=".post-content">
-    <p>This article provides an overview of the <a href="https://developers.google.com/appengine/docs/python/dataprocessing/">App Engine MapReduce
+    <h2 id="mapreduce-api-series">MapReduce API Series</h2>
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml.html.md">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+</ul>
+<p>The first arcticle in this series provides an overview of the <a href="https://developers.google.com/appengine/docs/python/dataprocessing/">App Engine MapReduce
 API</a>. We
 will give a basic overview of what MapReduce is and how it is used to do
 parallel and distributed processing of large datasets.</p>
-<h2 id="1-the-map-and-reduce-functions">1. The Map and Reduce Functions</h2>
+<h2 id="the-map-and-reduce-functions">The Map and Reduce Functions</h2>
 <p>MapReduce is based on the <code>map</code> and <code>reduce</code> functions that are commonly used in
 lazily-evaluated functional programming languages. Let&#39;s look at <code>map</code> first.</p>
-<h3 id="1-1-map">1.1 map</h3>
+<h3 id="map">map</h3>
 <p>A <code>map</code> function is a way to apply a transformation to every element in a list.
 Using Clojure as the example functional language we can use the <code>map</code> function
 to increment every number in a list by <code>1</code>.</p>
@@ -106,7 +113,7 @@ to increment every number in a list by <code>1</code>.</p>
 generally, you can apply any function <code>fn</code> to all elements of a list by passing
 it to the map function.</p>
 <pre class="highlight"><code class="hljs haml">=<span class="ruby">&gt; (map fn [<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span>])
-</span></code></pre><h3 id="1-2-reduce">1.2 reduce</h3>
+</span></code></pre><h3 id="reduce">reduce</h3>
 <p>Reduce applying a function <code>fn</code> of two arguments to a sequence of parameters.
 Each iteration of the function call uses the value of the previous call as an
 input parameter of the function. In this example we start with a base value of 0
@@ -121,7 +128,7 @@ and iteratively add to that base value to sum a list of numbers.</p>
 evaluated -- meaning that each operation can be performed only when it is
 needed. With MapReduce, lazy evaluation allows you to work with large datasets
 by processing data only when needed. </p>
-<h2 id="2-mapreduce-stages">2. MapReduce Stages</h2>
+<h2 id="mapreduce-stages">MapReduce Stages</h2>
 <p>The App Engine MapReduce API provides a method for operating over large datasets
 via a parallel and distributed system of lazy evaluation. In contrast to the
 <code>map</code> and <code>reduce</code> functions a MapReduce job may output a single value or a list
@@ -129,7 +136,7 @@ of values depending on the job requirements. </p>
 <p>A MapReduce job is made up of stages. Each stage completes before the next stage
 begins and any intermediate data is stored in temporary storage between the
 stages. MapReduce has three stages: map, shuffle and reduce.</p>
-<h3 id="2-1-map">2.1 Map</h3>
+<h3 id="map">Map</h3>
 <p>The map stage has two components -- an <em>InputReader</em> and a <em>map</em> function. The
 InputReader&#39;s job is to deliver data one record at a time to the <em>map</em> function.
 The <em>map</em> function is applied to each record individually and a key-value pair
@@ -167,7 +174,7 @@ future <span class="hljs-number">1</span>
 pinterest <span class="hljs-number">1</span>
 forage <span class="hljs-number">1</span>
 quinoa <span class="hljs-number">1</span>
-</code></pre><h3 id="2-2-shuffle">2.2 Shuffle</h3>
+</code></pre><h3 id="shuffle">Shuffle</h3>
 <p>The shuffle stage is done in two steps. First, the data emitted by the map stage
 is sorted. Entries with the same key are grouped together. </p>
 <pre class="highlight"><code class="hljs clojure"><span class="hljs-list">(<span class="hljs-title">diy</span>,<span class="hljs-number"> 1</span>)</span>
@@ -191,7 +198,7 @@ values are stored in temporary storage for processing by the next stage.</p>
 <span class="hljs-list">(<span class="hljs-title">pinterest</span>, <span class="hljs-collection">[1,<span class="hljs-number"> 1</span>]</span>)</span>
 <span class="hljs-list">(<span class="hljs-title">quinoa</span>, <span class="hljs-collection">[1,<span class="hljs-number"> 1</span>]</span>)</span>
 <span class="hljs-list">(<span class="hljs-title">typewriter</span>, <span class="hljs-collection">[1]</span>)</span>
-</code></pre><h3 id="2-3-reduce">2.3 Reduce</h3>
+</code></pre><h3 id="reduce">Reduce</h3>
 <p>The reduce stage has two components -- a <em>reduce</em> function and an
 <em>OutputWriter</em>. The reduce function is called for each unique key in the
 shuffled temporary data. The <em>reduce</em> function emits a final value based on its
@@ -213,17 +220,17 @@ look like this.</p>
 <span class="hljs-list">(<span class="hljs-title">quinoa</span>,<span class="hljs-number"> 2</span>)</span>
 <span class="hljs-list">(<span class="hljs-title">typewriter</span>,<span class="hljs-number"> 1</span>)</span>
 </code></pre><p>This output is passed to the <em>OutputWriter</em> which writes the data to permanent storage.</p>
-<h2 id="3-the-benefits-of-mapreduce">3. The Benefits of MapReduce</h2>
+<h2 id="the-benefits-of-mapreduce">The Benefits of MapReduce</h2>
 <p>MapReduce performs parallel and distributed operations by partitioning the data
 to be processed both spatially and temporally. The spatial partitioning is done
 via <em>sharding</em> while the temporal partitioning is done via <em>slicing</em>.</p>
-<h3 id="3-1-sharding-parallel-processing">3.1 Sharding: Parallel Processing</h3>
+<h3 id="sharding-parallel-processing">Sharding: Parallel Processing</h3>
 <p>The input data is divided into multiple smaller datasets called <em>shards</em>. Each
 of these shards are processed in parallel. A shard is processed by an individual
 instance of the map function with its own input reader that feeds it data
 reserved for this shard. Likewise for the reduce function.</p>
 <p>The benefit of sharding is that each shard can be processed in parallel.</p>
-<h3 id="3-2-slicing-fault-tolerance">3.2 Slicing: Fault Tolerance</h3>
+<h3 id="slicing-fault-tolerance">Slicing: Fault Tolerance</h3>
 <p>The data in a shard is processed sequentially. Each shard is assigned a task and
 that task iterates over all data in the shard using an App Engine Task Queue.
 When a task is run it iterates over as much data from the shard as it can in 15
@@ -232,7 +239,7 @@ and the process repeats until all data in the shard has been processed.</p>
 <p>The benefit of slicing is fault tolerance. If an error occurs during the run of
 a slice, that particular slice can be run again without affecting the processing
 of previous or subsequent slices.</p>
-<h2 id="4-conclusions">4. Conclusions</h2>
+<h2 id="conclusions">Conclusions</h2>
 <p>MapReduce provides a convenient programming model for operating on large
 datasets. In our next article we look at how to use the Python MapReduce API for
 App Engine to process entities from the datastore.</p>
@@ -298,7 +305,7 @@ App Engine to process entities from the datastore.</p>
 <a href="http://redfinchsoftware.com">Red Finch Software</a>. You can find me online as <a href="https://twitter.com/soofaloofa">soofaloofa</a>. I love to teach, learn, speak and write about business and software.
 
           <ul class="list-inline">
-            <li>Me on the web:</li>
+            <li>On the web:</li>
             <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
             <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
             <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>

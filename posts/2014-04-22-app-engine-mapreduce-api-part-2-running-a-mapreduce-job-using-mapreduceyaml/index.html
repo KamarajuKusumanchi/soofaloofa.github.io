@@ -193,15 +193,15 @@
 <img src="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/edit-parameters.png" alt="Editing job parameters">
 </a></p>
 <p>Let&#39;s add an additional parameter for the map function that will only touch the entity if it is older than a specific date.</p>
-<pre class="highlight"><code class="hljs avrasm">- name: Touch all entity_kind Models
-  mapper:
-    input_reader: mapreduce<span class="hljs-preprocessor">.input</span>_readers<span class="hljs-preprocessor">.DatastoreInputReader</span>
-    handler: app<span class="hljs-preprocessor">.pipelines</span><span class="hljs-preprocessor">.touch</span>
+<pre class="highlight"><code class="hljs haml">-<span class="ruby"> <span class="hljs-symbol">name:</span> <span class="hljs-constant">Touch</span> all entity_kind <span class="hljs-constant">Models</span>
+</span>  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: app.pipelines.touch
     params:
-    - name: entity_kind
-      default: app<span class="hljs-preprocessor">.models</span><span class="hljs-preprocessor">.partner</span><span class="hljs-preprocessor">.Partner</span>
-    - name: if_older_than
-      default:
+    -<span class="ruby"> <span class="hljs-symbol">name:</span> entity_kind
+</span>      default: app.models.UserModel
+    -<span class="ruby"> <span class="hljs-symbol">name:</span> if_older_than
+</span>      default:
 </code></pre>
 <p>The mapreduce context holds the specifation for the job as defined by the <code>mapreduce.yaml</code> file. Within this context we can access our parameters.</p>
 <pre class="highlight"><code class="hljs python"><span class="hljs-keyword">from</span> mapreduce <span class="hljs-keyword">import</span> operation <span class="hljs-keyword">as</span> op, context
@@ -228,7 +228,7 @@
     handler: app<span class="hljs-preprocessor">.pipelines</span><span class="hljs-preprocessor">.touch</span>
     params:
     - name: entity_kind
-      default: app<span class="hljs-preprocessor">.models</span><span class="hljs-preprocessor">.partner</span><span class="hljs-preprocessor">.Partner</span>
+      default: app<span class="hljs-preprocessor">.models</span><span class="hljs-preprocessor">.UserModel</span>
     - name: if_older_than
       default: Jun <span class="hljs-number">1</span> <span class="hljs-number">2014</span>
     params_validator: app<span class="hljs-preprocessor">.pipelines</span><span class="hljs-preprocessor">.touch</span>_validator
@@ -246,19 +246,19 @@
 <p>If parameter validation fails the MapReduce job is not started and no entities are passed from our InputReader to the map function.  </p>
 <h2 id="callbacks">Callbacks</h2>
 <p>The MapReduce library allows you to specify a callback function that is called after the MapReduce completes. This can be used for logging purposes or to trigger a specific event in code. The callback is specified in your <code>mapreduce.yaml</code> file as <code>done_callback</code> and points to a user specified function. This is a parameter of the MapReduce itself and not the map function -- note the independent entry in <code>mapreduce.yaml</code>.</p>
-<pre class="highlight"><code class="hljs avrasm">- name: Touch all entity_kind Models
-  params:
-  - name: done_callback
-    value: /done_touch
+<pre class="highlight"><code class="hljs haml">-<span class="ruby"> <span class="hljs-symbol">name:</span> <span class="hljs-constant">Touch</span> all entity_kind <span class="hljs-constant">Models</span>
+</span>  params:
+  -<span class="ruby"> <span class="hljs-symbol">name:</span> done_callback
+</span>    value: /done_touch
   mapper:
-    input_reader: mapreduce<span class="hljs-preprocessor">.input</span>_readers<span class="hljs-preprocessor">.DatastoreInputReader</span>
-    handler: app<span class="hljs-preprocessor">.pipelines</span><span class="hljs-preprocessor">.touch</span>
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: app.pipelines.touch
     params:
-    - name: entity_kind
-      default: app<span class="hljs-preprocessor">.models</span><span class="hljs-preprocessor">.partner</span><span class="hljs-preprocessor">.Partner</span>
-    - name: if_older_than
-      default: Jun <span class="hljs-number">1</span> <span class="hljs-number">2014</span>
-    params_validator: app<span class="hljs-preprocessor">.pipelines</span><span class="hljs-preprocessor">.touch</span>_validator
+    -<span class="ruby"> <span class="hljs-symbol">name:</span> entity_kind
+</span>      default: app.models.UserModel
+    -<span class="ruby"> <span class="hljs-symbol">name:</span> if_older_than
+</span>      default: Jun 1 2014
+    params_validator: app.pipelines.touch_validator
 </code></pre>
 <p>Upon completion a POST request is made to the URL given by the <code>done_callback</code> parameter. The MapReduce library sets a custom header in this request with the jobs <code>Mapreduce-Id</code>. You can use this header to retrieve details on the job that just completed. This is also a great place to do any cleanup such as deleting temporary files. In our example we will just log the original specification for this job that we set via <code>mapreduce.yaml</code></p>
 <pre class="highlight"><code class="hljs python"><span class="hljs-keyword">import</span> webapp2

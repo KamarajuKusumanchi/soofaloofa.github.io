@@ -169,7 +169,7 @@ Let's add an additional parameter for the map function that will only touch the 
     handler: app.pipelines.touch
     params:
     - name: entity_kind
-      default: app.models.partner.Partner
+      default: app.models.UserModel
     - name: if_older_than
       default:
 ```
@@ -206,7 +206,7 @@ The MapReduce library also provides a method to do parameter validation. In our 
     handler: app.pipelines.touch
     params:
     - name: entity_kind
-      default: app.models.partner.Partner
+      default: app.models.UserModel
     - name: if_older_than
       default: Jun 1 2014
     params_validator: app.pipelines.touch_validator
@@ -245,7 +245,7 @@ The MapReduce library allows you to specify a callback function that is called a
     handler: app.pipelines.touch
     params:
     - name: entity_kind
-      default: app.models.partner.Partner
+      default: app.models.UserModel
     - name: if_older_than
       default: Jun 1 2014
     params_validator: app.pipelines.touch_validator

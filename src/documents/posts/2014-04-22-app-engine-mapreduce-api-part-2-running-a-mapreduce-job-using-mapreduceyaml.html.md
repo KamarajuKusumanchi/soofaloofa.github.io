@@ -166,7 +166,7 @@ Let's add an additional parameter for the map function that will only touch the 
 - name: Touch all entity_kind Models
   mapper:
     input_reader: mapreduce.input_readers.DatastoreInputReader
-    handler: app.pipelines.account_group.touch
+    handler: app.pipelines.touch
     params:
     - name: entity_kind
       default: app.models.partner.Partner
@@ -203,7 +203,7 @@ The MapReduce library also provides a method to do parameter validation. In our 
 - name: Touch all entity_kind Models
   mapper:
     input_reader: mapreduce.input_readers.DatastoreInputReader
-    handler: app.pipelines.account_group.touch
+    handler: app.pipelines.touch
     params:
     - name: entity_kind
       default: app.models.partner.Partner
@@ -242,13 +242,13 @@ The MapReduce library allows you to specify a callback function that is called a
     value: /done_touch
   mapper:
     input_reader: mapreduce.input_readers.DatastoreInputReader
-    handler: app.pipelines.account_group.touch
+    handler: app.pipelines.touch
     params:
     - name: entity_kind
       default: app.models.partner.Partner
     - name: if_older_than
       default: Jun 1 2014
-    params_validator: app.pipelines.account_group.touch_validator
+    params_validator: app.pipelines.touch_validator
 ```
 
 Upon completion a POST request is made to the URL given by the `done_callback` parameter. The MapReduce library sets a custom header in this request with the jobs `Mapreduce-Id`. You can use this header to retrieve details on the job that just completed. This is also a great place to do any cleanup such as deleting temporary files. In our example we will just log the original specification for this job that we set via `mapreduce.yaml`

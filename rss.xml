@@ -5,10 +5,10 @@
         <description><![CDATA[Tinker. Tailor. Soldier. Sailor.]]></description>
         <link>http://sookocheff.com</link>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Tue, 22 Apr 2014 15:41:02 GMT</lastBuildDate>
+        <lastBuildDate>Wed, 23 Apr 2014 15:40:19 GMT</lastBuildDate>
         <atom:link href="http://sookocheff.com/rss.xml" rel="self" type="application/rss+xml"/>
         <author><![CDATA[Kevin Sookocheff]]></author>
-        <pubDate>Tue, 22 Apr 2014 15:40:35 GMT</pubDate>
+        <pubDate>Wed, 23 Apr 2014 15:39:50 GMT</pubDate>
         <item>
             <title><![CDATA[App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml]]></title>
             <description><![CDATA[<h2 id="mapreduce-api-series">MapReduce API Series</h2>
@@ -118,7 +118,7 @@
 <pre class="highlight"><code class="hljs avrasm">- name: Touch all entity_kind Models
   mapper:
     input_reader: mapreduce<span class="hljs-preprocessor">.input</span>_readers<span class="hljs-preprocessor">.DatastoreInputReader</span>
-    handler: app<span class="hljs-preprocessor">.pipelines</span><span class="hljs-preprocessor">.account</span>_group<span class="hljs-preprocessor">.touch</span>
+    handler: app<span class="hljs-preprocessor">.pipelines</span><span class="hljs-preprocessor">.touch</span>
     params:
     - name: entity_kind
       default: app<span class="hljs-preprocessor">.models</span><span class="hljs-preprocessor">.partner</span><span class="hljs-preprocessor">.Partner</span>
@@ -147,7 +147,7 @@
 <pre class="highlight"><code class="hljs avrasm">- name: Touch all entity_kind Models
   mapper:
     input_reader: mapreduce<span class="hljs-preprocessor">.input</span>_readers<span class="hljs-preprocessor">.DatastoreInputReader</span>
-    handler: app<span class="hljs-preprocessor">.pipelines</span><span class="hljs-preprocessor">.account</span>_group<span class="hljs-preprocessor">.touch</span>
+    handler: app<span class="hljs-preprocessor">.pipelines</span><span class="hljs-preprocessor">.touch</span>
     params:
     - name: entity_kind
       default: app<span class="hljs-preprocessor">.models</span><span class="hljs-preprocessor">.partner</span><span class="hljs-preprocessor">.Partner</span>
@@ -174,13 +174,13 @@
     value: /done_touch
   mapper:
     input_reader: mapreduce<span class="hljs-preprocessor">.input</span>_readers<span class="hljs-preprocessor">.DatastoreInputReader</span>
-    handler: app<span class="hljs-preprocessor">.pipelines</span><span class="hljs-preprocessor">.account</span>_group<span class="hljs-preprocessor">.touch</span>
+    handler: app<span class="hljs-preprocessor">.pipelines</span><span class="hljs-preprocessor">.touch</span>
     params:
     - name: entity_kind
       default: app<span class="hljs-preprocessor">.models</span><span class="hljs-preprocessor">.partner</span><span class="hljs-preprocessor">.Partner</span>
     - name: if_older_than
       default: Jun <span class="hljs-number">1</span> <span class="hljs-number">2014</span>
-    params_validator: app<span class="hljs-preprocessor">.pipelines</span><span class="hljs-preprocessor">.account</span>_group<span class="hljs-preprocessor">.touch</span>_validator
+    params_validator: app<span class="hljs-preprocessor">.pipelines</span><span class="hljs-preprocessor">.touch</span>_validator
 </code></pre>
 <p>Upon completion a POST request is made to the URL given by the <code>done_callback</code> parameter. The MapReduce library sets a custom header in this request with the jobs <code>Mapreduce-Id</code>. You can use this header to retrieve details on the job that just completed. This is also a great place to do any cleanup such as deleting temporary files. In our example we will just log the original specification for this job that we set via <code>mapreduce.yaml</code></p>
 <pre class="highlight"><code class="hljs python"><span class="hljs-keyword">import</span> webapp2

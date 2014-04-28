@@ -15,6 +15,7 @@ tags:
 
 * [Part 1: The Basics](http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/)
 * [Part 2: Running a MapReduce Job Using mapreduce.yaml](http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/)
+* [Part 3: Programmatic MapReduce using Pipelines](http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/)
 
 [Last time](http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/) we looked at an overview of how MapReduce works. In this article we'll be getting our hands dirty writing some code to handle the Map Stage. If you'll recall, the Map Stage is composed of two separate components: an InputReader and a `map` function. We'll look at each of these in turn.
 
@@ -461,7 +462,7 @@ Reads a list of Files API files in records format.
 ## Conclusions
 
 Defining a MapReduce job via `mapreduce.yaml` provides a convenient way to
-iterate of large datasets and run a function on each unit of work.
+iterate over large datasets and run a function on each unit of work.
 Unfortunately, running a MapDeduce job this way has a few limitations.
 First, there is no way to specify a reduce phase, limiting the type of jobs we
 can perform. Second, you cannot start a MapReduce job programmatically. 

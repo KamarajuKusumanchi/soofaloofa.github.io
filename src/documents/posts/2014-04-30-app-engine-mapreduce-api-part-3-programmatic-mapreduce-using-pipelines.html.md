@@ -3,7 +3,7 @@ layout: post
 standalone: true
 title: "App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines"
 author: Kevin Sookocheff
-date: 2014/04/30 10:15:22
+date: 2014/04/28 21:51:22
 description: <t render="markdown">In this article we will take our exploration of MapReduce a step further by looking at how to run a MapReduce job programmatically using the App Engine Pipeline API.</t>
 tags: 
   - app engine

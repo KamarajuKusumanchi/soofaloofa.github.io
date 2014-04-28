@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<title>App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines | Kevin Sookocheff</title>
+
+<meta charset="utf-8">
+<meta http-equiv="content-type", content="text/html; charset=utf-8">
+<meta name="viewport", content="width=device-width, initial-scale=1.0">
+
+<meta name="description" content="&lt;t render=&quot;markdown&quot;&gt;In this article we will take our exploration of MapReduce a step further by looking at how to run a MapReduce job programmatically using the App Engine Pipeline API.&lt;/t&gt;">
+<meta name="keywords" content="">
+<meta name="author" content="Kevin Sookocheff">
+
+<link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" /><link  rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif" /><link  rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" />
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-20611089-6', 'sookocheff.com');
+  ga('send', 'pageview');
+</script>
+
+
+<!--[if lt IE 9]>
+<script async src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.2.0/respond.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+<!-- Navbar-->
+<div class="navbar navbar-default" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand">Kevin Sookocheff</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        
+        <li class="inactive">
+          <a href="/blog/">Blog</a>
+        </li>
+        <li class="inactive">
+          <a href="/archives/">Archives</a>
+        </li>
+        <li class="dropdown">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+            Subscribe <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="http://eepurl.com/KJE01">email</a></li>
+            <li><a href="http://sookocheff.com/rss.xml">RSS</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Default Content -->
+<!-- Page Container -->
+<div class="container page-container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <section class="page">
+        <div class="page-header">
+        
+          <h1>App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines</h1>
+        
+        </div>
+        <div class="page-content">
+          <article class="post">
+  <p>
+    <small class="text-muted">
+      Posted on Monday, April 28, 2014.
+
+
+    </small>
+  </p>
+
+  <div class=".post-content">
+    <h2 id="mapreduce-api-series">MapReduce API Series</h2>
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+</ul>
+<p><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">In the last article</a> we examined how to run one-off tasks that operate on a large dataset using a <code>mapreduce.yaml</code> configuration file. This article will take us a step further and look at how to run a MapReduce job programmatically using the App Engine Pipeline API.</p>
+<h2 id="running-a-mapper-job-using-the-app-engine-pipeline-api">Running a Mapper Job Using the App Engine Pipeline API</h2>
+<p>MapReduce jobs are based on the <a href="https://code.google.com/p/appengine-pipeline/">App Engine Pipeline API</a> for connecting together time-consuming or complex workflows. We can define a pipeline for our MapReduce job to connect each stage of the MapReduce flow to one another. Let&#39;s start by defining a pipeline for our simple <code>Touch</code> job that will update the timestamp of every entity Kind we specify.</p>
+<p>To create a pipeline we inherit from the <code>Pipeline</code> object.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">from</span> mapreduce.lib <span class="hljs-keyword">import</span> pipeline
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TouchPipeline</span><span class="hljs-params">(pipeline.Pipeline)</span>:</span>
+    <span class="hljs-string">"""
+    Pipeline to update the timestamp of entities.
+    """</span>
+    <span class="hljs-keyword">pass</span>
+</code></pre>
+<p>Our pipeline requires a single <code>run</code> method. Within this method we set the specification of our <code>map</code> function and yield a <code>Pipeline</code> object.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">from</span> mapreduce.lib <span class="hljs-keyword">import</span> pipeline
+<span class="hljs-keyword">from</span> mapreduce <span class="hljs-keyword">import</span> mapreduce_pipeline
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TouchPipeline</span><span class="hljs-params">(pipeline.Pipeline)</span>:</span>
+    <span class="hljs-string">"""
+    Pipeline to update the timestamp of entities.
+    """</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(self, *args, **kwargs)</span>:</span>
+        <span class="hljs-string">""" run """</span>
+        mapper_params = {
+            <span class="hljs-string">"entity_kind"</span>: <span class="hljs-string">"app.models.user.UserModel"</span>,
+        }
+        <span class="hljs-keyword">yield</span> mapreduce_pipeline.MapperPipeline(
+            <span class="hljs-string">"Touch all entities"</span>,
+            handler_spec=<span class="hljs-string">"app.pipelines.touch"</span>,
+            input_reader_spec=<span class="hljs-string">"mapreduce.input_readers.DatastoreInputReader"</span>,
+            params=mapper_params,
+            shards=<span class="hljs-number">64</span>)
+</code></pre><p>In this piece of code we define a MapperPipeline and pass it the parameters used to initialize the pipeline. The map function is specified by the<code>handler_spec</code> parameter and our InputReader is given by the <code>input_reader_spec</code> parameter.  You&#39;ll notice from our <a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">previous article on running a MapReduce job using mapreduce.yaml</a> that the parameters passed here match the specification supplied by the <code>mapreduce.yaml</code> file in that article. In effect, we are looking at two different ways to define the same specification for a MapReduce job. The benefit of the pipelined approach here is that we can easily start our job programmatically by instantiating our <code>Pipeline</code> object and executing the <code>start()</code> method.</p>
+<pre class="highlight"><code class="hljs python">pipeline = TouchPipeline()
+pipeline.start()
+</code></pre>
+<p>Executing this code will start the MapReduce job. You can view the progress at the URL <code>/mapreduce</code>, analagous to when starting the MapReduce job through the UI using <code>mapreduce.yaml</code>.</p>
+<h2 id="adding-a-reduce-step-to-our-mapreduce-job">Adding a Reduce Step to Our MapReduce Job</h2>
+<p>The previous example uses a <code>MapperPipeline</code> to define a job that executes a map function on every entity of a certain Kind. What about reduce? For this we turn to the <code>MapreducePipeline</code> object. This object accepts parameters for a <code>mapper_spec</code> and a <code>reducer_spec</code>. We can use this pipeline to perform a full MapReduce job. To make this discussion concrete and generate some useable code let&#39;s use a feature built in to the MapReduce library especially for testing, the <code>RandomStringInputReader</code>.</p>
+<p>The <code>RandomStringInputReader</code> generates <code>x</code> random strings of <code>y</code> length. <code>x</code> and <code>y</code> are both parameters we can use to control the reader.  We can use this reader to create an example application that counts the number of occurrences of each character found in a random string.</p>
+<p>For example, given ten random strings 20 characters in length</p>
+<pre class="highlight"><code class="hljs undefined">nzkeasmekjwewmvxgdre
+pczrbnzpacpwxpmiffgw
+kwsufcunznnzwqmfbszu
+gmmfhvikvexnamjorxod
+hpaedhjzuziouxaplnmp
+thurvybxiuxaskoxjvco
+ovwbokvfjiuoawyavpbs
+hymsucnolibdivisotrt
+durcotpoydwvkvtyyudl
+fujkmdenoexximucikfv
+</code></pre><p>we want to find the total occurrences of each character.</p>
+<pre class="highlight"><code class="hljs undefined">(n, 9)
+(z, 8)
+(k, 9)
+etc.
+</code></pre><p>Performing this calculation using MapReduce implies a two step process. First, the map function will count the number of occurrences of each letter in a given string. Second, the reduce function will sum these numbers for all strings to find the final result.</p>
+<p>Let&#39;s start by setting up a <code>MapreducePipeline</code> object using the <code>RandomStringInputReader</code> reader as our <code>input_reader_spec</code> along with a skeleton <code>map</code> and <code>reduce</code> function. </p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">from</span> mapreduce.lib <span class="hljs-keyword">import</span> pipeline
+<span class="hljs-keyword">from</span> mapreduce <span class="hljs-keyword">import</span> mapreduce_pipeline
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">character_count_map</span><span class="hljs-params">(random_string)</span>:</span>
+    <span class="hljs-keyword">pass</span>
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">character_count_reduce</span><span class="hljs-params">(key, values)</span>:</span>
+    <span class="hljs-keyword">pass</span>
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CountCharactersPipeline</span><span class="hljs-params">(pipeline.Pipeline)</span>:</span>
+    <span class="hljs-string">""" Count the number of occurrences of a character. """</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(self, *args, **kwargs)</span>:</span>
+        <span class="hljs-string">""" run """</span>
+        mapper_params = {
+            <span class="hljs-string">"count"</span>: <span class="hljs-number">100</span>,
+            <span class="hljs-string">"string_length"</span>: <span class="hljs-number">20</span>,
+        }
+        <span class="hljs-keyword">yield</span> mapreduce_pipeline.MapreducePipeline(
+            <span class="hljs-string">"character_count"</span>,
+            mapper_spec=<span class="hljs-string">"app.pipelines.character_count_map"</span>,
+            mapper_params=mapper_params,
+            reducer_spec=<span class="hljs-string">"app.pipelines.character_count_reduce"</span>,
+            input_reader_spec=<span class="hljs-string">"mapreduce.input_readers.RandomStringInputReader"</span>,
+            shards=<span class="hljs-number">16</span>)
+</code></pre>
+<p>We can use a standard <code>RequestHandler</code> to execute our mock MapReduce Pipeline.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">import</span> webapp2
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CountCharacters</span><span class="hljs-params">(webapp2.RequestHandler)</span>:</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get</span><span class="hljs-params">(self)</span>:</span>
+        pipeline = CountCharactersPipeline()
+        pipeline.start()
+</code></pre>
+<p>Let&#39;s flesh out our MapReduce template it actually count the characters in a string. To do so our map function will yield a tuple of <code>(character, count)</code> for each character encountered in our string and the number of times it was encountered. So for our input string <code>nzkeasmekjwewmvxgdre</code> we would yield <code>(n, 1)</code>, <code>(z, 1)</code>, <code>(k, 2)</code>, and so on. We update our <code>map</code> function to do this work.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">import</span> collections
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">character_count_map</span><span class="hljs-params">(random_string)</span>:</span>
+    counter = collections.Counter(random_string)
+    <span class="hljs-keyword">for</span> character <span class="hljs-keyword">in</span> counter.elements():
+        <span class="hljs-keyword">yield</span> (character, counter[character])
+</code></pre>
+<p>Each tuple returned by our <code>map</code> will be fed to the Shuffle stage of the MapReduce job. The Shuffle stage groups all the values having the same key before passing the result to the <code>reduce</code> function. For example, if we yielded <code>(n, 1)</code> during one execution of our <code>map</code> function and <code>(n, 4)</code> in another execution, the Shuffle stage would group these and pass <code>n, [1, 4]</code> as the parameters to our <code>reduce</code> function (for more information on Shuffle refer to <a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1 of this guide</a>).</p>
+<p>Our reduce function takes the list of values returned by the Shuffle stage and
+sums them.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">character_count_reduce</span><span class="hljs-params">(key, values)</span>:</span>
+    <span class="hljs-keyword">yield</span> (key, sum([int(i) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> values]))
+</code></pre>
+<p>We now have a full MapReduce job that will count the occurrence of each character for a set of random strings. Running our pipeline shows the map, shuffle and reduce stages operating over our dataset.</p>
+<p><a class="thumbnail" href="http://sookocheff.com/img/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/skeleton-job.png">
+<img src="http://sookocheff.com/img/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/skeleton-job.png" alt="Skeleton MapReduce job.">
+</a></p>
+<h2 id="where-is-my-data-">Where Is My Data?</h2>
+<p>How does the output of the <code>map</code> function arrive at the <code>reduce</code> function? If you look at the application logs you will see periodic writes to the blobstore.</p>
+<pre class="highlight"><code class="hljs bash">Shard <span class="hljs-number">1578130350583</span>CAC16BCF-<span class="hljs-number">11</span> finalized blobstore file /blobstore/writable:RDlESEY4Q1U2UkRXT0pCVUpUTFQySlQ5VEJaTkJGUEpQS0RITVgzQ1lVREtKSzVUWTJVRlhTQjYwWFAzSE02OQ==.
+Finalized name is /blobstore/<span class="hljs-number">7</span>BpFYTPsvNp95XA2uS1MlBm1DsVegjTEO9EP6TAbXZAtsxV5C7HjuZmYnqPuXdJC.
+</code></pre>
+<p>These writes provide the blobstore location of the intermediate results from our calculation. A <em>master</em> MapReduce task coordinates with the individual <code>map</code>, <code>shuffle</code> and <code>reduce</code> shards to share these results via blobstore keys.</p>
+<h2 id="writing-our-results-with-outputwriters">Writing our Results with OutputWriters</h2>
+<p>The last thing we need to finish our MapReduce job is outputting the result. To do so we add an <code>output_writer_spec</code> to our MapReduce initialization.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CountCharactersPipeline</span><span class="hljs-params">(pipeline.Pipeline)</span>:</span>
+    <span class="hljs-string">""" Count the number of occurrences of a character. """</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(self, *args, **kwargs)</span>:</span>
+        <span class="hljs-string">""" run """</span>
+        mapper_params = {
+            <span class="hljs-string">"count"</span>: <span class="hljs-number">100</span>,
+            <span class="hljs-string">"string_length"</span>: <span class="hljs-number">20</span>,
+        }
+        <span class="hljs-keyword">yield</span> mapreduce_pipeline.MapreducePipeline(
+            <span class="hljs-string">"character_count"</span>,
+            mapper_spec=<span class="hljs-string">"app.pipelines.character_count_map"</span>,
+            mapper_params=mapper_params,
+            reducer_spec=<span class="hljs-string">"app.pipelines.character_count_reduce"</span>,
+            input_reader_spec=<span class="hljs-string">"mapreduce.input_readers.RandomStringInputReader"</span>,
+            output_writer_spec=<span class="hljs-string">"mapreduce.output_writers.BlobstoreOutputWriter"</span>,
+            shards=<span class="hljs-number">16</span>)
+</code></pre>
+<p>Unfortunately we don&#39;t know where the <code>BlobstoreOutputWriter</code> saves our result. To access this we can capture the output of the <code>MapreducePipeline</code>.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CountCharactersPipeline</span><span class="hljs-params">(pipeline.Pipeline)</span>:</span>
+    <span class="hljs-string">""" Count the number of occurrences of a character. """</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(self, *args, **kwargs)</span>:</span>
+        <span class="hljs-string">""" run """</span>
+        mapper_params = {
+            <span class="hljs-string">"count"</span>: <span class="hljs-number">100</span>,
+            <span class="hljs-string">"string_length"</span>: <span class="hljs-number">20</span>,
+        }
+        output = <span class="hljs-keyword">yield</span> mapreduce_pipeline.MapreducePipeline(
+            <span class="hljs-string">"character_count"</span>,
+            mapper_spec=<span class="hljs-string">"app.pipelines.character_count_map"</span>,
+            mapper_params=mapper_params,
+            reducer_spec=<span class="hljs-string">"app.pipelines.character_count_reduce"</span>,
+            input_reader_spec=<span class="hljs-string">"mapreduce.input_readers.RandomStringInputReader"</span>,
+            output_writer_spec=<span class="hljs-string">"mapreduce.output_writers.BlobstoreOutputWriter"</span>,
+            shards=<span class="hljs-number">16</span>)
+
+        <span class="hljs-keyword">yield</span> StoreOutput(output)
+</code></pre>
+<p><code>output</code> is a <code>PipelineFuture</code> object -- a generator that takes on a value after the execution of the <code>MapreducePipeline</code> is complete. We can access the value of this generator from within a second pipeline object that writes the location of the blobkey to the datastore for future retrievals..</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CharacterCounter</span><span class="hljs-params">(ndb.Model)</span>:</span>
+    count = ndb.StringProperty(required=<span class="hljs-keyword">True</span>)
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">StoreOutput</span><span class="hljs-params">(pipeline.Pipeline)</span>:</span>
+    <span class="hljs-string">"""A pipeline to store the result of the MapReduce job in the database. """</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(self, output)</span>:</span>
+        counter = CharacterCounter(count=output[<span class="hljs-number">0</span>])
+        counter.put()
+</code></pre>
+<p>This is a simplified version of the StoreOutput pipeline provided by the <a href="https://code.google.com/p/appengine-mapreduce/source/browse/trunk/python/demo/main.py#333">MapReduce Made Easy demo application</a>.</p>
+<h2 id="conclusions">Conclusions</h2>
+<p>In this article we&#39;ve shown how to perform a full MapReduce job using the Google App Engine MapReduce API for Python. MapReduce is a powerful abstraction to use when processing large datasets. This article should provide a good starting point for defining and running your own MapReduce jobs. For reference here is the full source code used in this post.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-string">"""
+app.mapreduce
+"""</span>
+<span class="hljs-keyword">import</span> webapp2
+<span class="hljs-keyword">import</span> collections
+
+<span class="hljs-keyword">from</span> google.appengine.ext <span class="hljs-keyword">import</span> ndb
+
+<span class="hljs-keyword">from</span> mapreduce.lib <span class="hljs-keyword">import</span> pipeline
+<span class="hljs-keyword">from</span> mapreduce <span class="hljs-keyword">import</span> mapreduce_pipeline
+
+<span class="hljs-comment">###</span>
+<span class="hljs-comment">### Entities</span>
+<span class="hljs-comment">###</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CharacterCounter</span><span class="hljs-params">(ndb.Model)</span>:</span>
+    <span class="hljs-string">""" A simple model to sotre the link to the blob storing our MapReduce output. """</span>
+    count_link = ndb.StringProperty(required=<span class="hljs-keyword">True</span>)
+
+<span class="hljs-comment">###</span>
+<span class="hljs-comment">### MapReduce Pipeline</span>
+<span class="hljs-comment">###</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">character_count_map</span><span class="hljs-params">(random_string)</span>:</span>
+    <span class="hljs-string">""" yield the number of occurrences of each character in random_string. """</span>
+    counter = collections.Counter(random_string)
+    <span class="hljs-keyword">for</span> character <span class="hljs-keyword">in</span> counter.elements():
+        <span class="hljs-keyword">yield</span> (character, counter[character])
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">character_count_reduce</span><span class="hljs-params">(key, values)</span>:</span>
+    <span class="hljs-string">""" sum the number of characters found for the key. """</span>
+    <span class="hljs-keyword">yield</span> (key, sum([int(i) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> values]))
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CountCharactersPipeline</span><span class="hljs-params">(pipeline.Pipeline)</span>:</span>
+    <span class="hljs-string">""" Count the number of occurrences of a character in a set of strings. """</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(self, *args, **kwargs)</span>:</span>
+        <span class="hljs-string">""" run """</span>
+        mapper_params = {
+            <span class="hljs-string">"count"</span>: <span class="hljs-number">100</span>,
+            <span class="hljs-string">"string_length"</span>: <span class="hljs-number">20</span>,
+        }
+        reducer_params = {
+            <span class="hljs-string">"mime_type"</span>: <span class="hljs-string">"text/plain"</span>
+        }
+        output = <span class="hljs-keyword">yield</span> mapreduce_pipeline.MapreducePipeline(
+            <span class="hljs-string">"character_count"</span>,
+            mapper_spec=<span class="hljs-string">"app.pipelines.character_count_map"</span>,
+            mapper_params=mapper_params,
+            reducer_spec=<span class="hljs-string">"app.pipelines.character_count_reduce"</span>,
+            reducer_params=reducer_params,
+            input_reader_spec=<span class="hljs-string">"mapreduce.input_readers.RandomStringInputReader"</span>,
+            output_writer_spec=<span class="hljs-string">"mapreduce.output_writers.BlobstoreOutputWriter"</span>,
+            shards=<span class="hljs-number">16</span>)
+
+        <span class="hljs-keyword">yield</span> StoreOutput(output)
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">StoreOutput</span><span class="hljs-params">(pipeline.Pipeline)</span>:</span>
+    <span class="hljs-string">""" A pipeline to store the result of the MapReduce job in the database. """</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(self, output)</span>:</span>
+        <span class="hljs-string">""" run """</span>
+        counter = CharacterCounter(count_link=output[<span class="hljs-number">0</span>])
+        counter.put()
+
+<span class="hljs-comment">###</span>
+<span class="hljs-comment">### Handlers</span>
+<span class="hljs-comment">###</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CountCharacters</span><span class="hljs-params">(webapp2.RequestHandler)</span>:</span>
+    <span class="hljs-string">""" A handler to start the map reduce pipeline. """</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get</span><span class="hljs-params">(self)</span>:</span>
+        <span class="hljs-string">""" get """</span>
+        counter = CountCharactersPipeline()
+        counter.start()
+
+        redirect_url = <span class="hljs-string">"%s/status?root=%s"</span> % (counter.base_path, counter.pipeline_id)
+        self.redirect(redirect_url)
+</code></pre>
+
+  </div>
+
+  <hr>
+
+  <p>
+    
+
+
+<ul class="list-inline">
+  <li>Share this post:</li>
+  <li>
+    <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines&amp;text=App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines&amp;via=soofaloofa">
+      <i class="fa fa-twitter fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines">
+      <i class="fa fa-facebook fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines">
+      <i class="fa fa-google-plus fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines">
+      <i class="fa fa-linkedin fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines">
+      <i class="fa fa-envelope fa-lg"></i>
+    </a>
+  </li>
+</ul>
+
+
+  </p>
+
+  <hr>
+
+  <div class="blurb">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <h4 class="text-center">About Kevin Sookocheff</h4>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4 col-md-offset-1">
+        <p>
+          <img class="img-circle center-block" src="/img/profile.png">
+        </p>
+      </div>
+      <div class="col-md-6">
+        <p>
+          I am a Software Developer. I work at <a href="http://www.vendasta.com">VendAsta</a> with a bunch of great people. I run a business as 
+<a href="http://redfinchsoftware.com">Red Finch Software</a>. You can find me online as <a href="https://twitter.com/soofaloofa">soofaloofa</a>. I love to teach, learn, speak and write about business and software.
+
+          <ul class="list-inline">
+            <li>On the web:</li>
+            <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+            <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+            <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+            <li><a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square fa-lg"></i></a></li>
+            <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+            <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'kevinsookocheff'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</article>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+
+<div class="container">
+  <footer>
+    <div class="row">
+      <div class="col-md-12">
+        <p class="text-center">
+          © Kevin Sookocheff · <a href="#">Top</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script defer="defer"  src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script defer="defer"  src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script><script defer="defer"  src="/js/vendor/retina.min.js"></script>
+</body>
+</html>

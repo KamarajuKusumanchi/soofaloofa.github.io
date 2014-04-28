@@ -82,6 +82,36 @@
           <!-- Page Content -->
 
   <article>
+    <h2><a href="/posts/2011-03-23-custom-posterous-subdomains-with-cpanel">Custom Posterous Subdomains with CPanel</a></h2>
+    <small class="text-muted">
+      Posted on Wednesday, March 23, 2011.
+
+
+    </small>
+
+    
+      <p>I recently started using Posterous and will be converting my WordPress blog to the service.  One thing I wanted was a custom subdomain (i.e., blog.kevinsookocheff.com); I couldn’t easily find clear instructions for  subdomains (just for domains) so I thought I’d share how I did it from a basic cPanel hosting environment.</p>
+<ol>
+<li>Login to your cPanel account.</li>
+<li>Under the Domains heading, select Simple DNS Zone Editor.</li>
+<li>Select your domain from the drop-down list.</li>
+<li>Under Add a CNAME Record fill in the following (using blog here as your subdomain). <ol>
+<li>Name: blog</li>
+<li>CNAME: posterous.com</li>
+</ol>
+</li>
+<li>Click the button to Add CNAME Record.</li>
+</ol>
+<p>You will have to wait a few hours for the change to propagate.  Then navigate to yoursubdomain.domain.com.  You will end up at a posterous.com 404 page.  This is because Posterous does not know to link your subdomain to your Posterous yet. Head over to posterous.com and log in.  From here click on your site settings link and enter yoursubdomain.domain.com as the custom domain for you Posterous.</p>
+
+    
+
+    
+
+    <hr>
+  </article>
+
+  <article>
     <h2><a href="/posts/2011-03-22-simple-ie-9-speed-hack">Simple IE 9 Speed Hack</a></h2>
     <small class="text-muted">
       Posted on Tuesday, March 22, 2011.
@@ -277,29 +307,6 @@
     
     <p class="text-center">
       <a href="/posts/2010-09-28-how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards"><button type="button" class="btn btn-primary">Read More</button></a>
-    </p>
-    
-
-    <hr>
-  </article>
-
-  <article>
-    <h2><a href="/posts/2010-09-04-readability-by-arc90">Readability by Arc90</a></h2>
-    <small class="text-muted">
-      Posted on Saturday, September 04, 2010.
-
-
-    </small>
-
-    
-      <p>
-        According to Wikipedia, readability is defined as reading ease, especially as it results from a writing style.  Only experience, practice, and hard work can improve a person’s writing style.  Let’s increase readability in a different manner: with typography. 
-      </p>
-    
-
-    
-    <p class="text-center">
-      <a href="/posts/2010-09-04-readability-by-arc90"><button type="button" class="btn btn-primary">Read More</button></a>
     </p>
     
 

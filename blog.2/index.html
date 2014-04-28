@@ -82,6 +82,25 @@
           <!-- Page Content -->
 
   <article>
+    <h2><a href="/posts/2012-10-08-using-unity3d-with-version-control">Using Unity3d with Version Control</a></h2>
+    <small class="text-muted">
+      Posted on Monday, October 08, 2012.
+
+
+    </small>
+
+    
+      <p>I had a tough time finding this page. The steps to get Unity set up with version control aren’t that difficult but it is one of those problems that you need to be told how to solve.</p>
+<p><a href="http://docs.unity3d.com/Documentation/Manual/ExternalVersionControlSystemSupport.html">Unity – Using External Version Control Systems with Unity [docs.unity3d.com]</a>.</p>
+
+    
+
+    
+
+    <hr>
+  </article>
+
+  <article>
     <h2><a href="/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php">Saving canvas data to an image file with JavaScript and PHP</a></h2>
     <small class="text-muted">
       Posted on Wednesday, July 27, 2011.
@@ -354,36 +373,6 @@ alert(<span class="hljs-string">'PI: '</span>   CONSTANTS.<span class="hljs-keyw
   pi : 3.14
 };
 </span></code></pre><p>This strikes me as a good compromise between the ALL CAPS convention and the over engineered module pattern solution.  What do you think?</p>
-
-    
-
-    
-
-    <hr>
-  </article>
-
-  <article>
-    <h2><a href="/posts/2011-03-23-custom-posterous-subdomains-with-cpanel">Custom Posterous Subdomains with CPanel</a></h2>
-    <small class="text-muted">
-      Posted on Wednesday, March 23, 2011.
-
-
-    </small>
-
-    
-      <p>I recently started using Posterous and will be converting my WordPress blog to the service.  One thing I wanted was a custom subdomain (i.e., blog.kevinsookocheff.com); I couldn’t easily find clear instructions for  subdomains (just for domains) so I thought I’d share how I did it from a basic cPanel hosting environment.</p>
-<ol>
-<li>Login to your cPanel account.</li>
-<li>Under the Domains heading, select Simple DNS Zone Editor.</li>
-<li>Select your domain from the drop-down list.</li>
-<li>Under Add a CNAME Record fill in the following (using blog here as your subdomain). <ol>
-<li>Name: blog</li>
-<li>CNAME: posterous.com</li>
-</ol>
-</li>
-<li>Click the button to Add CNAME Record.</li>
-</ol>
-<p>You will have to wait a few hours for the change to propagate.  Then navigate to yoursubdomain.domain.com.  You will end up at a posterous.com 404 page.  This is because Posterous does not know to link your subdomain to your Posterous yet. Head over to posterous.com and log in.  From here click on your site settings link and enter yoursubdomain.domain.com as the custom domain for you Posterous.</p>
 
     
 

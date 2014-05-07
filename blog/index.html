@@ -82,6 +82,34 @@
           <!-- Page Content -->
 
   <article>
+    <h2><a href="/posts/2014-05-07-installing-lxml-on-os-x-mavericks">Installing lxml on OS X Mavericks</a></h2>
+    <small class="text-muted">
+      Posted on Saturday, June 07, 2014.
+
+
+    </small>
+
+    
+      <p>I recently tried installing lxml for use within an App Engine project on OS X
+Mavericks only to be hit with an error message from <code>clang</code>.</p>
+<pre class="highlight"><code class="hljs http"><span class="hljs-attribute">clang</span>: <span class="hljs-string">error: unknown argument: '-mno-fused-madd' [-Wunused-command-line-argument-hard-error-in-future]</span>
+
+<span class="livecodeserver">clang: note: this will be <span class="hljs-operator">a</span> hard error (cannot be downgraded <span class="hljs-built_in">to</span> <span class="hljs-operator">a</span> warning) <span class="hljs-operator">in</span> <span class="hljs-operator">the</span> future
+
+error: <span class="hljs-command"><span class="hljs-keyword">command</span> <span class="hljs-string">'cc'</span> <span class="hljs-title">failed</span> <span class="hljs-title">with</span> <span class="hljs-title">exit</span> <span class="hljs-title">status</span> <span class="hljs-title">1</span></span>
+</span></code></pre><p>The <code>clang</code> compiler distributed with version 5.1 of Xcode tightened up some
+restrictions and turned compiler warnings into hard errors. To disable this you need to
+add a specific flag to ingore these warnings when installing affected packages.</p>
+<pre class="highlight"><code class="hljs lasso">ARCHFLAGS<span class="hljs-subst">=-</span>Wno<span class="hljs-attribute">-error</span><span class="hljs-subst">=</span>unused<span class="hljs-attribute">-command</span><span class="hljs-attribute">-line</span><span class="hljs-attribute">-argument</span><span class="hljs-attribute">-hard</span><span class="hljs-attribute">-error</span><span class="hljs-attribute">-in</span><span class="hljs-attribute">-future</span> pip install lxml
+</code></pre>
+    
+
+    
+
+    <hr>
+  </article>
+
+  <article>
     <h2><a href="/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines">App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines</a></h2>
     <small class="text-muted">
       Posted on Monday, April 28, 2014.
@@ -291,25 +319,6 @@
     <p class="text-center">
       <a href="/posts/2014-03-11-on-choosing-a-hypermedia-format"><button type="button" class="btn btn-primary">Read More</button></a>
     </p>
-    
-
-    <hr>
-  </article>
-
-  <article>
-    <h2><a href="/posts/2014-01-06-new-year-new-domain-new-design">New Year, New Domain, New Design</a></h2>
-    <small class="text-muted">
-      Posted on Monday, January 06, 2014.
-
-
-    </small>
-
-    
-      <p>Well the New Year is upon us and I decided to take a fresh approach to this website. I&#39;ve migrated to a new domain and re-written the site from the ground up using <a href="http://docpad.org/">DocPad</a> and <a href="http://getbootstrap.com/">Bootstrap</a>.</p>
-<p>I&#39;ve migrated the existing comments (and maybe lost a few) but haven&#39;t bothered to redirect any old posts to their new home. I&#39;m definitely starting fresh!</p>
-
-    
-
     
 
     <hr>

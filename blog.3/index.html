@@ -82,6 +82,50 @@
           <!-- Page Content -->
 
   <article>
+    <h2><a href="/posts/2011-04-20-constants-in-javascript">Constants in JavaScript</a></h2>
+    <small class="text-muted">
+      Posted on Wednesday, April 20, 2011.
+
+
+    </small>
+
+    
+      <p>How are constants declared in JavaScript?</p>
+<p>You could use the const keyword like so.</p>
+<pre class="highlight"><code class="hljs coffeescript"><span class="hljs-reserved">const</span> pi = <span class="hljs-number">3.14</span>;
+<span class="hljs-built_in">document</span>.writeln(<span class="hljs-string">"pi is roughly"</span>   pi   <span class="hljs-string">"."</span>);
+</code></pre><p>But watch out!  The MDN’s <a href="https://developer.mozilla.org/en/JavaScript/Reference/Statements/const">JavaScript Reference</a> says that</p>
+<blockquote>
+<p><code>const</code> is a <strong>Mozilla-specific extension</strong>.</p>
+</blockquote>
+<p>Constants are actually not part of the JavaScript specification and we’ll have to roll our own solution.  We could use the <a href="http://www.yuiblog.com/blog/2007/06/12/module-pattern/">module  pattern</a> and create accessor functions to our constant data like this.</p>
+<pre class="highlight"><code class="hljs actionscript"><span class="hljs-keyword">var</span> CONSTANTS = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">var</span> <span class="hljs-keyword">private</span> = {
+    <span class="hljs-string">'PI'</span> : <span class="hljs-string">'3.14'</span>,
+  };
+
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-keyword">get</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span> {</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">private</span>[name]; }
+  };
+})();
+
+alert(<span class="hljs-string">'PI: '</span>   CONSTANTS.<span class="hljs-keyword">get</span>(<span class="hljs-string">'PI'</span>));
+</code></pre><p>This prevents write access to our data and allows read access through a bit of extra syntax.  Another method is to simply use a convention such as ALL CAPS to define constants. Most programmers know this convention and will respect it.</p>
+<pre class="highlight"><code class="hljs fix"><span class="hljs-attribute">var PI </span>=<span class="hljs-string"> 3.14;
+</span></code></pre><p>The solution I use is to place all constants in an object literal.</p>
+<pre class="highlight"><code class="hljs fix"><span class="hljs-attribute">var CONSTANTS </span>=<span class="hljs-string"> {
+  pi : 3.14
+};
+</span></code></pre><p>This strikes me as a good compromise between the ALL CAPS convention and the over engineered module pattern solution.  What do you think?</p>
+
+    
+
+    
+
+    <hr>
+  </article>
+
+  <article>
     <h2><a href="/posts/2011-03-23-custom-posterous-subdomains-with-cpanel">Custom Posterous Subdomains with CPanel</a></h2>
     <small class="text-muted">
       Posted on Wednesday, March 23, 2011.
@@ -284,29 +328,6 @@
     
     <p class="text-center">
       <a href="/posts/2010-10-19-how-to-install-the-real-time-kernel-in-ubuntu"><button type="button" class="btn btn-primary">Read More</button></a>
-    </p>
-    
-
-    <hr>
-  </article>
-
-  <article>
-    <h2><a href="/posts/2010-09-28-how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards">How to get Pulse Audio to recognize your Delta 44 (and other ICE1712 cards)</a></h2>
-    <small class="text-muted">
-      Posted on Tuesday, September 28, 2010.
-
-
-    </small>
-
-    
-      <p>
-        I bought a used Delta 44 soundcard with the intention of recording my guitar playing. Pairing this with Rockit 5 powered monitors, a Mackie 802-VLZ3 mixer and the classic Shure SM57 microphone made for a good quality, inexpensive home studio. Using the PCI-based Delta 44 meant that any old computer would work and my idea was to use vanilla Ubuntu and install the Ardour digital audio workstation to push costs even further down. So far so good. Now the only issue is getting everything up and running. Ubuntu is a fairly mature distribution; you can expect a certain level of quality with each release. Unfortunately, this has not been the case with PulseAudio. I won’t go into details; suffice it to say it had a tumultuous upbringing and many of the kinks have since been worked out. Anyways, I quickly discovered that PulseAudio does not recognize the Delta 44. Don’t worry, this is a known problem and a workaround exists. Finding the workaround, however, did take some time. 
-      </p>
-    
-
-    
-    <p class="text-center">
-      <a href="/posts/2010-09-28-how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards"><button type="button" class="btn btn-primary">Read More</button></a>
     </p>
     
 

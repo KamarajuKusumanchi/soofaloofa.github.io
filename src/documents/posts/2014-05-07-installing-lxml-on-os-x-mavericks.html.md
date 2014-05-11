@@ -3,7 +3,7 @@ layout: post
 standalone: true
 title: "Installing lxml on OS X Mavericks"
 author: Kevin Sookocheff
-date: 2014/06/07 10:26:45
+date: 2014/05/07 10:26:45
 tags: 
   - os x
   - lxml

@@ -5,10 +5,10 @@
         <description><![CDATA[Tinker. Tailor. Soldier. Sailor.]]></description>
         <link>http://sookocheff.com</link>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Wed, 07 May 2014 16:40:54 GMT</lastBuildDate>
+        <lastBuildDate>Sun, 11 May 2014 18:03:18 GMT</lastBuildDate>
         <atom:link href="http://sookocheff.com/rss.xml" rel="self" type="application/rss+xml"/>
         <author><![CDATA[Kevin Sookocheff]]></author>
-        <pubDate>Wed, 07 May 2014 16:40:24 GMT</pubDate>
+        <pubDate>Sun, 11 May 2014 18:02:52 GMT</pubDate>
         <item>
             <title><![CDATA[Installing lxml on OS X Mavericks]]></title>
             <description><![CDATA[<p>I recently tried installing lxml for use within an App Engine project on OS X
@@ -26,7 +26,7 @@ add a specific flag to ingore these warnings when installing affected packages.<
             <link>http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks</link>
             <guid isPermaLink="true">http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks</guid>
             <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
-            <pubDate>Sat, 07 Jun 2014 16:26:45 GMT</pubDate>
+            <pubDate>Wed, 07 May 2014 16:26:45 GMT</pubDate>
         </item>
         <item>
             <title><![CDATA[App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines]]></title>

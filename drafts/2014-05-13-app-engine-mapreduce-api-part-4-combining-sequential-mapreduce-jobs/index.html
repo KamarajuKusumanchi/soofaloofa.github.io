@@ -1,0 +1,84 @@
+<h1 id="mapreduce-part-4-combining-sequential-mapreduce-jobs">MapReduce Part 4: Combining Sequential MapReduce Jobs</h1>
+<h2 id="mapreduce-api-series">MapReduce API Series</h2>
+<ul>
+<li>-
+-
+-</li>
+</ul>
+<p><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Last time</a> we looked at how to run a full MapReduce Pipeline to count the number of occurrences of a character within each string. In this post we will see how to chain multiple MapReduce Pipelines together to perform sequential tasks.</p>
+<p>As a contrived example (as all examples are) let&#39;s imagine a scenario where we want to clean up some data by deleting a business entity from the datastore. Each business has employees stored as a different entity that also need to be deleted. Our simplified models look like this.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">from</span> google.appengine.ext <span class="hljs-keyword">import</span> ndb
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Business</span><span class="hljs-params">(ndb.model)</span>:</span>
+    <span class="hljs-string">"""
+    Model representing a business which will have employees
+    """</span>
+    name = ndb.StringProperty(required=<span class="hljs-keyword">True</span>)
+    address = ndb.StringProperty()
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Employee</span><span class="hljs-params">(ndb.model)</span>:</span>
+    <span class="hljs-string">"""
+    Model representing a business which will have employees
+    """</span>
+    name = ndb.StringProperty(required=<span class="hljs-keyword">True</span>)
+    business = ndb.StringProperty(required=<span class="hljs-keyword">True</span>)
+</code></pre>
+<p>Let&#39;s create a pipeline that will iterate over every business with a matching <code>name</code> and delete all the employees from that business. We can take advantage of the <code>filters</code> parameter of the <code>DatastoreInputReader</code> to find all employees working at a business with a matching name.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">delete_employee</span><span class="hljs-params">(entity)</span>:</span>
+    <span class="hljs-string">""" Delete an employee entity. """</span>
+    <span class="hljs-keyword">yield</span> op.db.Delete(entity)
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DeleteBusinessPipeline</span><span class="hljs-params">(pipeline.Pipeline)</span>:</span>
+    <span class="hljs-string">""" Count the number of occurrences of a character in a set of strings. """</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(self, business_name, **kwargs)</span>:</span>
+        <span class="hljs-string">""" run """</span>
+        employee_params = {
+            <span class="hljs-string">"entity_kind"</span>: <span class="hljs-string">"app.pipelines.Employee"</span>,
+            <span class="hljs-string">"filters"</span>: [(<span class="hljs-string">'business'</span>, <span class="hljs-string">'='</span>, business_name)],
+        }
+        <span class="hljs-keyword">yield</span> mapreduce_pipeline.MapperPipeline(
+            <span class="hljs-string">"delete_employee"</span>,
+            handler_spec=app.pipelines.delete_employee,
+            input_reader_spec=<span class="hljs-string">"mapreduce.input_readers.DatastoreInputReader"</span>,
+            params=employee_params,
+            shards=<span class="hljs-number">2</span>)
+</code></pre>
+<p>This simple pipeline will delete all of the employees. We can add a second pipeline to our execution that will delete the business by simply yielding the pipeline back to the Pipeline API.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">delete_employee</span><span class="hljs-params">(entity)</span>:</span>
+    <span class="hljs-string">""" Delete an employee entity. """</span>
+    <span class="hljs-keyword">yield</span> op.db.Delete(entity)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">delete_business</span><span class="hljs-params">(entity)</span>:</span>
+    <span class="hljs-string">""" Sum the number of characters found for the key. """</span>
+    <span class="hljs-keyword">yield</span> op.db.Delete(entity)
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DeleteBusinessPipeline</span><span class="hljs-params">(pipeline.Pipeline)</span>:</span>
+    <span class="hljs-string">""" Count the number of occurrences of a character in a set of strings. """</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(self, business_name, **kwargs)</span>:</span>
+        <span class="hljs-string">""" run """</span>
+        employee_params = {
+            <span class="hljs-string">"entity_kind"</span>: <span class="hljs-string">"app.pipelines.Employee"</span>,
+            <span class="hljs-string">"filters"</span>: [(<span class="hljs-string">'business'</span>, <span class="hljs-string">'='</span>, business_name)],
+        }
+        <span class="hljs-keyword">yield</span> mapreduce_pipeline.MapperPipeline(
+            <span class="hljs-string">"delete_employee"</span>,
+            handler_spec=app.pipelines.delete_employee,
+            input_reader_spec=<span class="hljs-string">"mapreduce.input_readers.DatastoreInputReader"</span>,
+            params=employee_params,
+            shards=<span class="hljs-number">2</span>)
+
+        business_params = {
+            <span class="hljs-string">"entity_kind"</span>: <span class="hljs-string">"app.pipelines.Business"</span>,
+            <span class="hljs-string">"filters"</span>: [(<span class="hljs-string">'name'</span>, <span class="hljs-string">'='</span>, business_name)],
+        }
+        <span class="hljs-keyword">yield</span> mapreduce_pipeline.MapperPipeline(
+            <span class="hljs-string">"delete_business"</span>,
+            handler_spec=app.pipelines.delete_business,
+            input_reader_spec=<span class="hljs-string">"mapreduce.input_readers.DatastoreInputReader"</span>,
+            params=business_params,
+            shards=<span class="hljs-number">2</span>)
+</code></pre>
+<p>The return value of the MapperPipeline call is a <code>PipelineFuture</code> object. This future will be executed once the previous future has completed. In this case our employee deletion pipeline will complete and the business deletion future will execute.</p>
+<p>And that&#39;s all it takes to run two sequential MapReduce jobs!</p>

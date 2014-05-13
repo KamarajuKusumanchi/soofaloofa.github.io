@@ -5,10 +5,118 @@
         <description><![CDATA[Tinker. Tailor. Soldier. Sailor.]]></description>
         <link>http://sookocheff.com</link>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Sun, 11 May 2014 18:03:18 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 13 May 2014 17:03:37 GMT</lastBuildDate>
         <atom:link href="http://sookocheff.com/rss.xml" rel="self" type="application/rss+xml"/>
         <author><![CDATA[Kevin Sookocheff]]></author>
-        <pubDate>Sun, 11 May 2014 18:02:52 GMT</pubDate>
+        <pubDate>Tue, 13 May 2014 17:03:10 GMT</pubDate>
+        <item>
+            <title><![CDATA[App Engine MapReduce API - Part 4: Combining Sequential MapReduce Jobs]]></title>
+            <description><![CDATA[<h2 id="mapreduce-api-series">MapReduce API Series</h2>
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs.html.md/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+</ul>
+<p><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Last
+time</a>
+we looked at how to run a full MapReduce Pipeline to count the number of
+occurrences of a character within each string. In this post we will see how to
+chain multiple MapReduce Pipelines together to perform sequential tasks.</p>
+<h2 id="combining-sequential-mapreduce-jobs">Combining Sequential MapReduce Jobs</h2>
+<p>As a contrived example (as all examples are) let&#39;s imagine a scenario where we
+want to clean up some data by deleting a business entity from the datastore.
+Each business has employees stored that also need to be deleted. Our simplified
+models look like this.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">from</span> google.appengine.ext <span class="hljs-keyword">import</span> ndb
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Business</span><span class="hljs-params">(ndb.model)</span>:</span>
+    <span class="hljs-string">"""
+    Model representing a business which will have employees.
+    """</span>
+    name = ndb.StringProperty(required=<span class="hljs-keyword">True</span>)
+    address = ndb.StringProperty()
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Employee</span><span class="hljs-params">(ndb.model)</span>:</span>
+    <span class="hljs-string">"""
+    Model representing employees of a business.
+    """</span>
+    name = ndb.StringProperty(required=<span class="hljs-keyword">True</span>)
+    business = ndb.StringProperty(required=<span class="hljs-keyword">True</span>)
+</code></pre>
+<p>Let&#39;s create a pipeline that will iterate over every business with a matching
+<code>name</code> and delete all the employees from that business. We can take advantage of
+the <code>filters</code> parameter of the <code>DatastoreInputReader</code> to find all employees
+working at a business with a matching name.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">delete_employee</span><span class="hljs-params">(entity)</span>:</span>
+    <span class="hljs-string">""" Delete an employee entity. """</span>
+    <span class="hljs-keyword">yield</span> op.db.Delete(entity)
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DeleteBusinessPipeline</span><span class="hljs-params">(pipeline.Pipeline)</span>:</span>
+    <span class="hljs-string">""" Delete a business. """</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(self, business_name, **kwargs)</span>:</span>
+        <span class="hljs-string">""" run """</span>
+        employee_params = {
+            <span class="hljs-string">"entity_kind"</span>: <span class="hljs-string">"app.pipelines.Employee"</span>,
+            <span class="hljs-string">"filters"</span>: [(<span class="hljs-string">'business'</span>, <span class="hljs-string">'='</span>, business_name)],
+        }
+        <span class="hljs-keyword">yield</span> mapreduce_pipeline.MapperPipeline(
+            <span class="hljs-string">"delete_employee"</span>,
+            handler_spec=app.pipelines.delete_employee,
+            input_reader_spec=<span class="hljs-string">"mapreduce.input_readers.DatastoreInputReader"</span>,
+            params=employee_params,
+            shards=<span class="hljs-number">2</span>)
+</code></pre>
+<p>This simple pipeline will delete all of the employees. We can add a second
+pipeline to our execution that will delete the business by simply yielding the
+return value of the first pipeline to the Pipeline API.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">delete_employee</span><span class="hljs-params">(entity)</span>:</span>
+    <span class="hljs-string">""" Delete an employee entity. """</span>
+    <span class="hljs-keyword">yield</span> op.db.Delete(entity)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">delete_business</span><span class="hljs-params">(entity)</span>:</span>
+    <span class="hljs-string">""" Delete a business entity. """</span>
+    <span class="hljs-keyword">yield</span> op.db.Delete(entity)
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DeleteBusinessPipeline</span><span class="hljs-params">(pipeline.Pipeline)</span>:</span>
+    <span class="hljs-string">""" Delete a business. """</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(self, business_name, **kwargs)</span>:</span>
+        <span class="hljs-string">""" run """</span>
+        employee_params = {
+            <span class="hljs-string">"entity_kind"</span>: <span class="hljs-string">"app.pipelines.Employee"</span>,
+            <span class="hljs-string">"filters"</span>: [(<span class="hljs-string">'business'</span>, <span class="hljs-string">'='</span>, business_name)],
+        }
+        <span class="hljs-keyword">yield</span> mapreduce_pipeline.MapperPipeline(
+            <span class="hljs-string">"delete_employee"</span>,
+            handler_spec=app.pipelines.delete_employee,
+            input_reader_spec=<span class="hljs-string">"mapreduce.input_readers.DatastoreInputReader"</span>,
+            params=employee_params,
+            shards=<span class="hljs-number">2</span>)
+
+        business_params = {
+            <span class="hljs-string">"entity_kind"</span>: <span class="hljs-string">"app.pipelines.Business"</span>,
+            <span class="hljs-string">"filters"</span>: [(<span class="hljs-string">'name'</span>, <span class="hljs-string">'='</span>, business_name)],
+        }
+        <span class="hljs-keyword">yield</span> mapreduce_pipeline.MapperPipeline(
+            <span class="hljs-string">"delete_business"</span>,
+            handler_spec=app.pipelines.delete_business,
+            input_reader_spec=<span class="hljs-string">"mapreduce.input_readers.DatastoreInputReader"</span>,
+            params=business_params,
+            shards=<span class="hljs-number">2</span>)
+</code></pre>
+<p>The return value of the MapperPipeline call is a <code>PipelineFuture</code> object. This
+future will be executed once the previous future has completed. In this case our
+employee deletion pipeline will complete and the business deletion future will
+execute.</p>
+<p>And that&#39;s all it takes to run two sequential MapReduce jobs!</p>
+]]></description>
+            <link>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs</link>
+            <guid isPermaLink="true">http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs</guid>
+            <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
+            <pubDate>Tue, 13 May 2014 16:40:38 GMT</pubDate>
+        </item>
         <item>
             <title><![CDATA[Installing lxml on OS X Mavericks]]></title>
             <description><![CDATA[<p>I recently tried installing lxml for use within an App Engine project on OS X
@@ -35,6 +143,7 @@ add a specific flag to ingore these warnings when installing affected packages.<
 <li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
 <li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
 <li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs.html.md/">Part 4: Combining Sequential MapReduce Jobs</a></li>
 </ul>
 <p><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">In the last article</a> we examined how to run one-off tasks that operate on a large dataset using a <code>mapreduce.yaml</code> configuration file. This article will take us a step further and look at how to run a MapReduce job programmatically using the App Engine Pipeline API.</p>
 <h2 id="running-a-mapper-job-using-the-app-engine-pipeline-api">Running a Mapper Job Using the App Engine Pipeline API</h2>
@@ -298,6 +407,7 @@ app.mapreduce
 <li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
 <li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
 <li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs.html.md/">Part 4: Combining Sequential MapReduce Jobs</a></li>
 </ul>
 <p><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Last time</a> we looked at an overview of how MapReduce works. In this article we&#39;ll be getting our hands dirty writing some code to handle the Map Stage. If you&#39;ll recall, the Map Stage is composed of two separate components: an InputReader and a <code>map</code> function. We&#39;ll look at each of these in turn.</p>
 <h2 id="getting-started-installation">Getting Started: Installation</h2>
@@ -664,6 +774,7 @@ using MapReduce Pipelines to programmatically control your API.</p>
 <li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
 <li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
 <li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs.html.md/">Part 4: Combining Sequential MapReduce Jobs</a></li>
 </ul>
 <p>The first arcticle in this series provides an overview of the <a href="https://developers.google.com/appengine/docs/python/dataprocessing/">App Engine MapReduce
 API</a>. We
@@ -1282,763 +1393,6 @@ resilient APIs.</p>
             <guid isPermaLink="true">http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</guid>
             <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
             <pubDate>Wed, 19 Mar 2014 20:11:48 GMT</pubDate>
-        </item>
-        <item>
-            <title><![CDATA[On choosing a hypermedia type for your API - HAL, JSON-LD, Collection+JSON, SIREN, Oh My!]]></title>
-            <description><![CDATA[<p>In recent years REST has been at the forefront of modern API 
-design. This has led to APIs with manageable URLs that respect the HTTP verbs
-(GET, POST, PUT <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.html">and the
- rest</a>), producing an
-intuitive model for client developers. Unfortunately, there are two problems
-that REST doesn&#39;t solve alone.</p>
-<p>The first problem is standardized responses. Most every enterprise has defined
-their own custom API format, usually a JSON response that maps neatly to their
-own data model. A Facebook API client cannot communicate with a Twitter API and
-vice versa. This leads to a proliferation of API clients that do almost -- but
-not quite -- the same thing. Duplication of effort abounds.</p>
-<p>The second problem is linking. As the <a href="https://www.w3.org/TR/json-ld/#basic-concepts">W3C puts it</a>:</p>
-<blockquote>
-<p>JSON has no built-in support for hyperlinks, which are a fundamental building
-block on the Web. </p>
-</blockquote>
-<p>The drawback of this is that two API endpoints are only linked together by API
-documentation. As a user you are forced to scour through walls of API
-documentation to understand the relationships between API endpoints and grasp
-exactly what actions you can and cannot take against a given resource.</p>
-<p>To solve these problems we can look at how we structure our API responses. By
-using <em>hypermedia</em> in our responses we can offer links between API endpoints and
-documentation, potential actions, and related endpoints. This allows for
-<em>discoverable</em> APIs where it is clear from the API response the set of next
-actions that a client may want to take. Furthermore, by <em>standardizing</em> on a
-hypermedia type clients developed for one API can understand the format of
-another API and communicate with minimal duplicated effort.</p>
-<p>In this post I will evaluate a few mature hypermedia types for APIs,
-offering a side-by-side comparison of their strengths and weaknesses. If you
-are impatient for the final result you can <a href="https://gist.github.com/soofaloofa/9350847">jump straight to the code</a>. </p>
-<h2 id="the-model">The Model</h2>
-<p>To drive this discussion let&#39;s use a hypothetical API for managing a <code>Player</code>
-resource derived from the <a href="https://developer.apple.com/library/ios/documentation/GameKit/Reference/GKPlayer_Ref/Reference/Reference.html#//apple_ref/occ/cl/GKPlayer"><code>GKPlayer</code>
-class</a>
-used by Apple&#39;s GameCenter API. The <code>Player</code> resource can be expressed with this
-simple diagram.</p>
-<p><img src="/img/2014-02-06-on-choosing-a-hypermedia-format/player-model.png" alt="PlayerResource" title="Player Resource"></p>
-<p>Representing this as a typical JSON response would yield something like the
-following.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"1234567890"</span></span>,
-    "<span class="hljs-attribute">alias</span>": <span class="hljs-value"><span class="hljs-string">"soofaloofa"</span></span>,
-    "<span class="hljs-attribute">displayName</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>,
-    "<span class="hljs-attribute">profilePhotoUrl</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/avatar.png"</span>
-</span>}
-</code></pre>
-<p>And the list of this player&#39;s friends could be retrieved with a separate API call.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>/friends
-</code></pre>
-<pre class="highlight"><code class="hljs json">[
-{
-    "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"1895638109"</span></span>,
-    "<span class="hljs-attribute">alias</span>": <span class="hljs-value"><span class="hljs-string">"sdong"</span></span>,
-    "<span class="hljs-attribute">displayName</span>": <span class="hljs-value"><span class="hljs-string">"Sheldon Dong"</span></span>,
-    "<span class="hljs-attribute">profilePhotoUrl</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109/avatar.png"</span>
-</span>},
-{
-    "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"8371023509"</span></span>,
-    "<span class="hljs-attribute">alias</span>": <span class="hljs-value"><span class="hljs-string">"mliu"</span></span>,
-    "<span class="hljs-attribute">displayName</span>": <span class="hljs-value"><span class="hljs-string">"Martin Liu"</span></span>,
-    "<span class="hljs-attribute">profilePhotoUrl</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509/avatar.png"</span>
-</span>}
-]
-</code></pre>
-<p>Let&#39;s take a look at how this API can be represented using hypermedia types.</p>
-<h2 id="json-ld">JSON-LD</h2>
-<p>We&#39;ll start by looking at JSON for Linked Documents (JSON-LD). JSON-LD is a well
-supported media type endorsed by the <a href="https://www.w3.org">World Wide Web
-Consortium</a>.</p>
-<p>The selling point of JSON-LD is that you can adopt the standard without
-introducing breaking changes to your API. The syntax is designed to not disturb
-already deployed systems and to provide a smooth migration path from JSON to
-JSON with added semantics. </p>
-<p>JSON-LD introduces keywords that augment an existing response with additional
-information. The most important augmentation is the <em>context</em>. A context in
-JSON-LD defines a set of terms that are scoped and valid within the
-representation being discussed. A context is assigned to a JSON response using
-the <code>@context</code> keyword.</p>
-<pre class="highlight"><code class="hljs json">{
-  "<span class="hljs-attribute">@context</span>": <span class="hljs-value">{}
-</span>}
-</code></pre>
-<p>Within the context properties are assigned to a URL that provides documentation
-about the meaning of that property.</p>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">@context</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">displayName</span>": <span class="hljs-value"><span class="hljs-string">"https://schema.org/name"</span>
-    </span>}</span>,
-    "<span class="hljs-attribute">displayName</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span>
-</span>}
-</code></pre>
-<p>It&#39;s a good idea to use standard naming for our APIs so we can go ahead and
-rename <code>displayName</code> to <code>name</code>.</p>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">@context</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"https://schema.org/name"</span>
-    </span>}</span>,
-    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span>
-</span>}
-</code></pre>
-<p>At this point we have an unambiguous definition of what the property <code>name</code>
-means within the API response by visiting <code>https://schema.org/name</code> to read the
-semantics of this property. We can go further and add context to the rest of the
-properties. To be consistent with existent naming we will change
-<code>profilePhotoUrl</code> to <code>image</code> and <code>alias</code> to <code>alternateName</code>.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">@context</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"https://schema.org/name"</span></span>,
-        "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"https://schema.org/alternateName"</span></span>,
-        "<span class="hljs-attribute">image</span>": <span class="hljs-value">{
-            "<span class="hljs-attribute">@id</span>": <span class="hljs-value"><span class="hljs-string">"https://schema.org/image"</span></span>,
-            "<span class="hljs-attribute">@type</span>": <span class="hljs-value"><span class="hljs-string">"@id"</span>
-        </span>}
-    </span>}</span>,
-    "<span class="hljs-attribute">@id</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890"</span></span>,
-    "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"1234567890"</span></span>,
-    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>,
-    "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"soofaloofa"</span></span>,
-    "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/avatar.png"</span>
-</span>}
-</code></pre>
-<p>In this example we&#39;ve added the <code>@id</code> annotation. <code>@id</code> signifies <em>identifiers</em>.
-Identifiers allow unique external references to any resource, providing similar
-semantcis to URLs. In JSON-LD terminology every distinct resource is a node in
-the JSON-LD graph. These distinct nodes should have identifiers that can be used
-to retrieve a representation of that node. </p>
-<p>The last element from our model that is missing from our JSON-LD response is the
-list of friends. With JSON-LD unordered lists can be specified using simple
-array notation.  In this example we will represent friends by the identifiers
-that point to their resources. An HTTP GET request to those URLs would return
-the full representation of each friend.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">@context</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"https://schema.org/name"</span></span>,
-        "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"https://schema.org/alternateName"</span></span>,
-        "<span class="hljs-attribute">image</span>": <span class="hljs-value">{
-            "<span class="hljs-attribute">@id</span>": <span class="hljs-value"><span class="hljs-string">"https://schema.org/image"</span></span>,
-            "<span class="hljs-attribute">@type</span>": <span class="hljs-value"><span class="hljs-string">"@id"</span>
-        </span>}</span>,
-        "<span class="hljs-attribute">friends</span>": <span class="hljs-value">{
-            "<span class="hljs-attribute">@container</span>": <span class="hljs-value"><span class="hljs-string">"@set"</span>
-         </span>}
-    </span>}</span>,
-    "<span class="hljs-attribute">@id</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890"</span></span>,
-    "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"1234567890"</span></span>,
-    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>,
-    "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"soofaloofa"</span></span>,
-    "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/avatar.png"</span></span>,
-    "<span class="hljs-attribute">friends</span>": <span class="hljs-value">[ 
-        {
-            "<span class="hljs-attribute">@id</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109"</span>
-        </span>},
-        {
-            "<span class="hljs-attribute">@id</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509"</span>
-        </span>}
-    ]
-</span>}
-</code></pre>
-<p>This gives us the representation of our <code>Player</code> resource in JSON-LD. This
-example doesn&#39;t cover all of JSON-LD but should give you a flavour of how the
-format can be used. </p>
-<p>Thanks to <a href="https://twitter.com/markuslanthaler">Markus Lanthaler</a> for offering
-suggestions on how to simplify this even more. In this example we define a
-<code>@vocab</code> for our context that encompasses the terms that we use within our
-response. Our list of friends is provided as a simple link to a separate
-endpoint.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">@context</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">@vocab</span>": <span class="hljs-value"><span class="hljs-string">"https://schema.org/"</span></span>,
-        "<span class="hljs-attribute">image</span>": <span class="hljs-value">{ "<span class="hljs-attribute">@type</span>": <span class="hljs-value"><span class="hljs-string">"@id"</span> </span>}</span>,
-        "<span class="hljs-attribute">friends</span>": <span class="hljs-value">{ "<span class="hljs-attribute">@type</span>": <span class="hljs-value"><span class="hljs-string">"@id"</span> </span>}
-    </span>}</span>,
-    "<span class="hljs-attribute">@id</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890"</span></span>,
-    "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"1234567890"</span></span>,
-    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>,
-    "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"soofaloofa"</span></span>,
-    "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/avatar.png"</span></span>,
-    "<span class="hljs-attribute">friends</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends"</span>
-</span>}
-</code></pre><p>If you want to dive fully into JSON-LD you can always read
-the <a href="https://www.w3.org/TR/json-ld/">specification</a>.</p>
-<p>JSON-LD lacks support for specifying the actions you can take on a resource. To
-address this short-coming <a href="http://www.markus-lanthaler.com/hydra/">HYDRA</a>
-provides a vocabulary allowing client-server communication using the JSON-LD
-message format.</p>
-<p>To specify the actions available on a resource we would use the <code>operation</code>
-property.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>/friends
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">@context</span>": <span class="hljs-value">[
-        <span class="hljs-string">"http://www.w3.org/ns/hydra/core"</span>,
-        {
-            "<span class="hljs-attribute">@vocab</span>": <span class="hljs-value"><span class="hljs-string">"https://schema.org/"</span></span>,
-            "<span class="hljs-attribute">image</span>": <span class="hljs-value">{ "<span class="hljs-attribute">@type</span>": <span class="hljs-value"><span class="hljs-string">"@id"</span> </span>}</span>,
-            "<span class="hljs-attribute">friends</span>": <span class="hljs-value">{ "<span class="hljs-attribute">@type</span>": <span class="hljs-value"><span class="hljs-string">"@id"</span> </span>}
-        </span>}
-    ]</span>,
-    "<span class="hljs-attribute">@id</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends"</span></span>,
-    "<span class="hljs-attribute">operation</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">@type</span>": <span class="hljs-value"><span class="hljs-string">"BefriendAction"</span></span>,
-        "<span class="hljs-attribute">method</span>": <span class="hljs-value"><span class="hljs-string">"POST"</span></span>,
-        "<span class="hljs-attribute">expects</span>": <span class="hljs-value">{
-            "<span class="hljs-attribute">@id</span>": <span class="hljs-value"><span class="hljs-string">"http://schema.org/Person"</span></span>,
-            "<span class="hljs-attribute">supportedProperty</span>": <span class="hljs-value">[
-                { "<span class="hljs-attribute">property</span>": <span class="hljs-value"><span class="hljs-string">"name"</span></span>, "<span class="hljs-attribute">range</span>": <span class="hljs-value"><span class="hljs-string">"Text"</span> </span>},
-                { "<span class="hljs-attribute">property</span>": <span class="hljs-value"><span class="hljs-string">"alternateName"</span></span>, "<span class="hljs-attribute">range</span>": <span class="hljs-value"><span class="hljs-string">"Text"</span> </span>},
-                { "<span class="hljs-attribute">property</span>": <span class="hljs-value"><span class="hljs-string">"image"</span></span>, "<span class="hljs-attribute">range</span>": <span class="hljs-value"><span class="hljs-string">"URL"</span> </span>}
-            ]
-        </span>}
-    </span>}
-</span>}
-</code></pre>
-<p>The <code>operation</code> property defines a <code>method</code> term that specifies the HTTP method
-that the endpoint allows. HYDRA also provides a template of the expected
-properties and their data types. In our example a POST request to
-<code>https://api.example.com/player/1234567890/friends</code> (the resource&#39;s URL) will
-add a new friend to our user&#39;s friend list.</p>
-<p>HYDRA also provides a <code>member</code> property that allows us to embed additional
-resources within our current representations. In the following example we embed
-our friends directly within the resource as a list. </p>
-<pre class="highlight"><code class="hljs ruby"><span class="hljs-constant">GET</span> <span class="hljs-symbol">https:</span>/<span class="hljs-regexp">/api.example.com/player</span><span class="hljs-regexp">/1234567890/friends</span>
-</code></pre><pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">@context</span>": <span class="hljs-value">[
-        <span class="hljs-string">"http://www.w3.org/ns/hydra/core"</span>,
-        {
-            "<span class="hljs-attribute">@vocab</span>": <span class="hljs-value"><span class="hljs-string">"https://schema.org/"</span></span>,
-            "<span class="hljs-attribute">image</span>": <span class="hljs-value">{ "<span class="hljs-attribute">@type</span>": <span class="hljs-value"><span class="hljs-string">"@id"</span> </span>}</span>,
-            "<span class="hljs-attribute">friends</span>": <span class="hljs-value">{ "<span class="hljs-attribute">@type</span>": <span class="hljs-value"><span class="hljs-string">"@id"</span> </span>}
-        </span>}
-    ]</span>,
-    "<span class="hljs-attribute">@id</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends"</span></span>,
-    "<span class="hljs-attribute">operation</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">@type</span>": <span class="hljs-value"><span class="hljs-string">"BefriendAction"</span></span>,
-        "<span class="hljs-attribute">method</span>": <span class="hljs-value"><span class="hljs-string">"POST"</span></span>,
-        "<span class="hljs-attribute">expects</span>": <span class="hljs-value">{
-            "<span class="hljs-attribute">@id</span>": <span class="hljs-value"><span class="hljs-string">"http://schema.org/Person"</span></span>,
-            "<span class="hljs-attribute">supportedProperty</span>": <span class="hljs-value">[
-                { "<span class="hljs-attribute">property</span>": <span class="hljs-value"><span class="hljs-string">"name"</span></span>, "<span class="hljs-attribute">range</span>": <span class="hljs-value"><span class="hljs-string">"Text"</span> </span>},
-                { "<span class="hljs-attribute">property</span>": <span class="hljs-value"><span class="hljs-string">"alternateName"</span></span>, "<span class="hljs-attribute">range</span>": <span class="hljs-value"><span class="hljs-string">"Text"</span> </span>},
-                { "<span class="hljs-attribute">property</span>": <span class="hljs-value"><span class="hljs-string">"image"</span></span>, "<span class="hljs-attribute">range</span>": <span class="hljs-value"><span class="hljs-string">"URL"</span> </span>}
-            ]
-        </span>}
-    </span>}</span>,
-    "<span class="hljs-attribute">member</span>": <span class="hljs-value">[
-            {
-                "<span class="hljs-attribute">@id</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109"</span></span>,
-                "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Sheldon Dong"</span></span>,
-                "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"sdong"</span></span>,
-                "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109/avatar.png"</span></span>,
-                "<span class="hljs-attribute">friends</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109/friends"</span>
-            </span>},
-            {
-                "<span class="hljs-attribute">@id</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509"</span></span>,
-                "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Martin Liu"</span></span>,
-                "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"mliu"</span></span>,
-                "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509/avatar.png"</span></span>,
-                "<span class="hljs-attribute">friends</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509/friends"</span>
-            </span>}
-        ]</span>,
-    "<span class="hljs-attribute">nextPage</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends?page=2"</span>
-</span>}
-</code></pre><p>We&#39;ve also added a <code>nextPage</code> property which is a property defined by HYDRA for
-paged collections. For more details on HYDRA&#39;s reserved properties you can read
-the full
-<a href="http://www.markus-lanthaler.com/hydra/spec/latest/core/#properties">documentation</a>.</p>
-<h2 id="hal">HAL</h2>
-<p>HAL is a lightweight media type that uses the idea of <em>Resources</em> and <em>Links</em> to
-model your JSON responses. <em>Resources</em> can contain <em>State</em> defined by key-value
-pairs of data, <em>Links</em> leading to additional resources and <em>Embedded Resources</em>
-which are children of the current resource embedded in the representation for
-convenience.</p>
-<p>HAL is simple to use and easy to understand. These virtues have lead HAL to
-become one of the leading hypermedia types in modern APIs.</p>
-<h3 id="state">State</h3>
-<p>State is the traditional JSON key-value pairs defining the current state of the
-resource.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"1234567890"</span></span>,
-    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>,
-    "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"soofaloofa"</span></span>,
-    "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/avatar.png"</span>
-</span>}
-</code></pre>
-<h3 id="links">Links</h3>
-<p>Links in HAL are identified as a JSON object named <code>_links</code>. Keys within
-<code>_links</code> are the name of the link and should describe the relationship between
-the current resource and the link. At a minimum the <code>_links</code> property should
-contain a <code>self</code> entry pointing to the current resource.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">_links</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">self</span>": <span class="hljs-value">{ "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890"</span> </span>}
-    </span>}</span>,
-    "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"1234567890"</span></span>,
-    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>,
-    "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"soofaloofa"</span></span>,
-    "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/avatar.png"</span>
-</span>}
-</code></pre>
-<p>We can easily add a link to the <code>Friends</code> resource which can be used to retrieve
-the full list.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-
-    "<span class="hljs-attribute">_links</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">self</span>": <span class="hljs-value">{ "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890"</span> </span>}</span>,
-        "<span class="hljs-attribute">friends</span>": <span class="hljs-value">{ "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends"</span> </span>}
-    </span>}</span>,
-    "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"1234567890"</span></span>,
-    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>,
-    "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"soofaloofa"</span></span>,
-    "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/avatar.png"</span>
-</span>}
-</code></pre>
-<h3 id="embedded-resources">Embedded Resources</h3>
-<p>Making a GET request to the <code>Friends</code> link would return a full list of
-<code>Player</code> resources. Each <code>Player</code> returned is embedded in the representation
-as an <em>Embedded Resource</em>. <em>Embedded Resources</em> augment the current resource
-state with additional, related resources. These resources are provided as a
-convenience to the client application and can be easily used to represent a
-list of items.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>/friends
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">_links</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">self</span>": <span class="hljs-value">{ "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends"</span> </span>}</span>,
-        "<span class="hljs-attribute">next</span>": <span class="hljs-value">{ "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends?page=2"</span> </span>}
-    </span>}</span>,
-    "<span class="hljs-attribute">size</span>": <span class="hljs-value"><span class="hljs-string">"2"</span></span>,
-    "<span class="hljs-attribute">_embedded</span>": <span class="hljs-value">{ 
-        "<span class="hljs-attribute">player</span>": <span class="hljs-value">[
-            { 
-                "<span class="hljs-attribute">_links</span>": <span class="hljs-value">{ 
-                    "<span class="hljs-attribute">self</span>": <span class="hljs-value">{ "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109"</span> </span>}</span>,
-                    "<span class="hljs-attribute">friends</span>": <span class="hljs-value">{ "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109/friends"</span> </span>}
-                </span>}</span>,
-                "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"1895638109"</span></span>,
-                "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Sheldon Dong"</span></span>,
-                "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"sdong"</span></span>,
-                "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109/avatar.png"</span>
-            </span>},
-            { 
-                "<span class="hljs-attribute">_links</span>": <span class="hljs-value">{ 
-                    "<span class="hljs-attribute">self</span>": <span class="hljs-value">{ "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509"</span> </span>}</span>,
-                    "<span class="hljs-attribute">friends</span>": <span class="hljs-value">{ "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509/friends"</span> </span>}
-                </span>}</span>,
-                "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"8371023509"</span></span>,
-                "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Martin Liu"</span></span>,
-                "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"mliu"</span></span>,
-                "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509/avatar.png"</span>
-            </span>}
-        ]
-    </span>}
-</span>}
-</code></pre>
-<p>In this response we&#39;ve added a <code>next</code> link to represent a paged collection and
-provide a reference to get the next set of friends in the list. The embedded
-resources are a list contained within the <code>player</code> property. </p>
-<h3 id="curies">Curies</h3>
-<p>An important point about HAL is that each link relation points to a URL with
-documentation about that relation. This makes the API discoverable by always
-providing documentation about the links available from the current resource. In
-the next example a URL for <code>friends</code> points to documentation about that resource.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">_links</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">self</span>": <span class="hljs-value">{ "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890"</span> </span>}</span>,
-        "<span class="hljs-attribute">https://api.example.com/docs/rels/friends</span>": <span class="hljs-value">{ "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends"</span> </span>}
-    </span>}</span>,
-    "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"1234567890"</span></span>,
-    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>,
-    "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"soofaloofa"</span></span>,
-    "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/avatar.png"</span>
-</span>}
-</code></pre>
-<p>Since URLs are long and unwieldy, HAL provides <code>curies</code>. <code>Curies</code> are a reserved
-link relation acting as a base URL that is expanded upon by each term. In this
-example we will define a <code>curie</code> <code>ex</code> that references the <code>URI</code> 
-<code>https://api.example.com/docs/rels/{rel}</code>. <code>Curies</code> are expanded by postfixing
-the curie name with a <code>:</code> followed by the name of the resource.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">_links</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">self</span>": <span class="hljs-value">{ "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890"</span> </span>}</span>,
-        "<span class="hljs-attribute">curies</span>": <span class="hljs-value">[{ "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"ex"</span></span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/docs/rels/{rel}"</span></span>, "<span class="hljs-attribute">templated</span>": <span class="hljs-value"><span class="hljs-literal">true</span> </span>}]</span>,
-        "<span class="hljs-attribute">ex:friends</span>": <span class="hljs-value">{ "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends"</span> </span>}
-    </span>}</span>,
-    "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"1234567890"</span></span>,
-    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>,
-    "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"soofaloofa"</span></span>,
-    "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/avatar.png"</span>
-</span>}
-</code></pre>
-<p>HAL&#39;s lightweight syntax and model make it a popular choice for API developers
-and users. For more information on HAL you can refer to the draft standard that
-has been submitted to the <a href="https://tools.ietf.org/html/draft-kelly-json-hal-06">Network Working
-Group</a>. </p>
-<h2 id="collection-json">Collection+JSON</h2>
-<p>The Collection+JSON standard is a media type that standardizes the reading,
-writing and querying of items in a collection. Although geared to handling
-collections, by representing a single item as a collection of one element,
-Collection+JSON can elegantly handle most API responses.</p>
-<p>At a minimum a Collection+JSON response must contain a <code>collection</code> object with
-a <code>version</code> and a URI pointing to itself.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">collection</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">version</span>": <span class="hljs-value"><span class="hljs-string">"1.0"</span></span>,
-        "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890"</span>
-    </span>}
-</span>}
-</code></pre>
-<h3 id="returning-data">Returning Data</h3>
-<p>Typically, the response would include a list of items in the collection. For a
-single resource, this collection would be a list of a single element. The
-properties of each element are given by explicit name/value pairs within a
-<code>data</code> attribute as in the following example.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">collection</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">version</span>": <span class="hljs-value"><span class="hljs-string">"1.0"</span></span>,
-        "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player"</span></span>,
-        "<span class="hljs-attribute">items</span>": <span class="hljs-value">[
-            {
-                "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890"</span></span>,
-                "<span class="hljs-attribute">data</span>": <span class="hljs-value">[
-                      { "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"playerId"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"1234567890"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Identifier"</span> </span>},
-                      { "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"name"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Full Name"</span> </span>},
-                      { "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"alternateName"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"soofaloofa"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Alias"</span> </span>}
-                ]
-            </span>}
-        ]
-    </span>}
-</span>}
-</code></pre>
-<h3 id="links">Links</h3>
-<p>Links can be a property of the collection or of individual items in the
-collection. Links may may also include a <code>name</code> and a <code>prompt</code> which can be
-useful when creating HTML forms to reference the collection or item.</p>
-<p>In this example we will add links for the <code>Players</code> avatar and friends.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">collection</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">version</span>": <span class="hljs-value"><span class="hljs-string">"1.0"</span></span>,
-        "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player"</span></span>,
-        "<span class="hljs-attribute">items</span>": <span class="hljs-value">[
-            {
-                "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890"</span></span>,
-                "<span class="hljs-attribute">data</span>": <span class="hljs-value">[
-                      {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"playerId"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"1234567890"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Identifier"</span></span>},
-                      {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"name"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Full Name"</span></span>},
-                      {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"alternateName"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"soofaloofa"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Alias"</span></span>}
-                ]</span>,
-                "<span class="hljs-attribute">links</span>": <span class="hljs-value">[
-                    {"<span class="hljs-attribute">rel</span>": <span class="hljs-value"><span class="hljs-string">"image"</span></span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/avatar.png"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Avatar"</span></span>, "<span class="hljs-attribute">render</span>": <span class="hljs-value"><span class="hljs-string">"image"</span> </span>},
-                    {"<span class="hljs-attribute">rel</span>": <span class="hljs-value"><span class="hljs-string">"friends"</span></span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Friends"</span> </span>}
-                ]
-            </span>}
-        ]
-    </span>}
-</span>}
-</code></pre>
-<h3 id="templates">Templates</h3>
-<p>As the name would imply, Collection+JSON is uniquely suited to handling
-collections. Templates are one aspect of this. A template is an object that
-represents an item in the collection. The client can then fill in this template
-and POST it to the collection to add an element, or PUT it to update an existing
-item.</p>
-<p>In this example we define a template for adding to the user&#39;s list of friends.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>/friends
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">collection</span>":
-    <span class="hljs-value">{
-        "<span class="hljs-attribute">version</span>": <span class="hljs-value"><span class="hljs-string">"1.0"</span></span>,
-        "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends"</span></span>,
-        "<span class="hljs-attribute">links</span>": <span class="hljs-value">[
-            {"<span class="hljs-attribute">rel</span>": <span class="hljs-value"><span class="hljs-string">"next"</span></span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends?page=2"</span></span>}
-        ]</span>,
-        "<span class="hljs-attribute">items</span>": <span class="hljs-value">[
-            {
-                "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109"</span></span>,
-                "<span class="hljs-attribute">data</span>": <span class="hljs-value">[
-                      {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"playerId"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"1895638109"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Identifier"</span></span>},
-                      {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"name"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"Sheldon Dong"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Full Name"</span></span>},
-                      {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"alternateName"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"sdong"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Alias"</span></span>}
-                ]</span>,
-                "<span class="hljs-attribute">links</span>": <span class="hljs-value">[
-                    {"<span class="hljs-attribute">rel</span>": <span class="hljs-value"><span class="hljs-string">"image"</span></span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109/avatar.png"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Avatar"</span></span>, "<span class="hljs-attribute">render</span>": <span class="hljs-value"><span class="hljs-string">"image"</span> </span>},
-                    {"<span class="hljs-attribute">rel</span>": <span class="hljs-value"><span class="hljs-string">"friends"</span></span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109/friends"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Friends"</span> </span>}
-                ]
-            </span>},
-            {
-                "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509"</span></span>,
-                "<span class="hljs-attribute">data</span>": <span class="hljs-value">[
-                      {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"playerId"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"8371023509"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Identifier"</span></span>},
-                      {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"name"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"Martin Liu"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Full Name"</span></span>},
-                      {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"alternateName"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"mliu"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Alias"</span></span>}
-                ]</span>,
-                "<span class="hljs-attribute">links</span>": <span class="hljs-value">[
-                    {"<span class="hljs-attribute">rel</span>": <span class="hljs-value"><span class="hljs-string">"image"</span></span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509/avatar.png"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Avatar"</span></span>, "<span class="hljs-attribute">render</span>": <span class="hljs-value"><span class="hljs-string">"image"</span> </span>},
-                    {"<span class="hljs-attribute">rel</span>": <span class="hljs-value"><span class="hljs-string">"friends"</span></span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509/friends"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Friends"</span> </span>}
-                ]
-            </span>}
-        ]</span>,
-        "<span class="hljs-attribute">template</span>": <span class="hljs-value">{
-            "<span class="hljs-attribute">data</span>": <span class="hljs-value">[
-                {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"playerId"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Identifier"</span></span>},
-                {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"name"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Full Name"</span></span>},
-                {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"alternateName"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Alias"</span></span>},
-                {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"image"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Avatar"</span></span>}
-            ]
-        </span>}
-
-    </span>}
-</span>}
-</code></pre>
-<p>To add a friend to this collection you would POST the data specified by the
-template to the <code>href</code> link defined by the collection
-(<code>https://api.example.com/player/1234567890/friends</code>).</p>
-<h3 id="queries">Queries</h3>
-<p>The final piece of Collecion+JSON is the <code>queries</code> property. Queries, as the
-name implies, define the queries that are supported by this collection. Here the
-<code>data</code> object specifies the query parameters supported by the server.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>/friends
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">collection</span>":
-    <span class="hljs-value">{
-        "<span class="hljs-attribute">version</span>": <span class="hljs-value"><span class="hljs-string">"1.0"</span></span>,
-        "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends"</span></span>,
-        "<span class="hljs-attribute">links</span>": <span class="hljs-value">[
-            {"<span class="hljs-attribute">rel</span>": <span class="hljs-value"><span class="hljs-string">"next"</span></span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends?page=2"</span></span>}
-        ]</span>,
-        "<span class="hljs-attribute">items</span>": <span class="hljs-value">[
-            {
-                "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109"</span></span>,
-                "<span class="hljs-attribute">data</span>": <span class="hljs-value">[
-                      {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"playerId"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"1895638109"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Identifier"</span></span>},
-                      {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"name"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"Sheldon Dong"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Full Name"</span></span>},
-                      {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"alternateName"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"sdong"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Alias"</span></span>}
-                ]</span>,
-                "<span class="hljs-attribute">links</span>": <span class="hljs-value">[
-                    {"<span class="hljs-attribute">rel</span>": <span class="hljs-value"><span class="hljs-string">"image"</span></span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109/avatar.png"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Avatar"</span></span>, "<span class="hljs-attribute">render</span>": <span class="hljs-value"><span class="hljs-string">"image"</span> </span>},
-                    {"<span class="hljs-attribute">rel</span>": <span class="hljs-value"><span class="hljs-string">"friends"</span></span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109/friends"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Friends"</span> </span>}
-                ]
-            </span>},
-            {
-                "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509"</span></span>,
-                "<span class="hljs-attribute">data</span>": <span class="hljs-value">[
-                      {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"playerId"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"8371023509"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Identifier"</span></span>},
-                      {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"name"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"Martin Liu"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Full Name"</span></span>},
-                      {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"alternateName"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"mliu"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Alias"</span></span>}
-                ]</span>,
-                "<span class="hljs-attribute">links</span>": <span class="hljs-value">[
-                    {"<span class="hljs-attribute">rel</span>": <span class="hljs-value"><span class="hljs-string">"image"</span></span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509/avatar.png"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Avatar"</span></span>, "<span class="hljs-attribute">render</span>": <span class="hljs-value"><span class="hljs-string">"image"</span> </span>},
-                    {"<span class="hljs-attribute">rel</span>": <span class="hljs-value"><span class="hljs-string">"friends"</span></span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509/friends"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Friends"</span> </span>}
-                ]
-            </span>}
-        ]</span>,
-        "<span class="hljs-attribute">queries</span>": <span class="hljs-value">[
-            {
-                "<span class="hljs-attribute">rel</span>": <span class="hljs-value"><span class="hljs-string">"search"</span></span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends/search"</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Search"</span></span>,
-                "<span class="hljs-attribute">data</span>": <span class="hljs-value">[
-                    {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"search"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>}
-                ]
-            </span>}
-        ]</span>,
-        "<span class="hljs-attribute">template</span>": <span class="hljs-value">{
-            "<span class="hljs-attribute">data</span>": <span class="hljs-value">[
-                {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"playerId"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Identifier"</span> </span>},
-                {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"name"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Full Name"</span></span>},
-                {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"alternateName"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Alias"</span></span>},
-                {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"image"</span></span>, "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>, "<span class="hljs-attribute">prompt</span>": <span class="hljs-value"><span class="hljs-string">"Avatar"</span></span>}
-            ]
-        </span>}
-    </span>}
-</span>}
-</code></pre>
-<p>By defining the template and queries within the response Collection+JSON makes
-navigation by a new API user relatively simple without needing to understand the
-full meaning of the API. It also provides a level of interoperability between
-APIs using the Collection+JSON media type. Collection+JSON was designed by <a href="https://amundsen.com">Mike
-Amundsen</a>. You can find detailed examples, the full spec
-and sample code <a href="https://amundsen.com/media-types/collection/">on his website</a>.</p>
-<h2 id="siren">SIREN</h2>
-<p>The last media type we&#39;ll look at is
-<a href="https://github.com/kevinswiber/siren">SIREN</a>. SIREN aims to represent generic
-entities along with actions for modifying those entities and links for client
-navigation.</p>
-<h3 id="entities">Entities</h3>
-<p>Each SIREN entity may have an optional class that describes the nature of the
-entity. This class defines the type of resource being returned by the API.
-Think of this as a data model for your API. By defining our response as
-returning a <code>player</code> class the API user can immediately gain insight about the
-data being returned.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">class</span>": <span class="hljs-value"><span class="hljs-string">"player"</span>
-</span>}
-</code></pre>
-<h3 id="properties">Properties</h3>
-<p>The state of the entity is reflected as key-value pairs in a <code>properties</code> object.</p>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">class</span>": <span class="hljs-value"><span class="hljs-string">"player"</span></span>,
-    "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"1234567890"</span></span>,
-        "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>,
-        "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"soofaloofa"</span></span>,
-        "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/avatar.png"</span>
-    </span>}
-</span>}
-</code></pre><h3 id="links">Links</h3>
-<p>Links are used in the same sense we&#39;ve already seen in other media types --
-navigating to related resources. With SIREN links have a relation and a URL.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">class</span>": <span class="hljs-value"><span class="hljs-string">"player"</span></span>,
-    "<span class="hljs-attribute">links</span>": <span class="hljs-value">[
-        { "<span class="hljs-attribute">rel</span>": <span class="hljs-value">[ <span class="hljs-string">"self"</span> ]</span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890"</span> </span>},
-        { "<span class="hljs-attribute">rel</span>": <span class="hljs-value">[ <span class="hljs-string">"friends"</span> ]</span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends"</span> </span>}
-    ]</span>,
-    "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"1234567890"</span></span>,
-        "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>,
-        "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"soofaloofa"</span></span>,
-        "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/avatar.png"</span>
-    </span>}
-</span>}
-</code></pre>
-<h3 id="actions">Actions</h3>
-<p>One of the biggest pieces missing from common Hypermedia types is the ability to
-dictate what requests can be made to alter the application state. SIREN
-facilitates this by defining <code>actions</code> that a client can take on the given
-resource.</p>
-<p>SIREN actions show the available HTTP request method and includes the URL for
-the request along with fields or variables that the URL accepts. As an example,
-our resource for listing a players friends can offer an action to add a
-friend to the list, or search for a friend.</p>
-<pre class="highlight"><code class="hljs bash">GET https://api.example.com/player/<span class="hljs-number">1234567890</span>/friends
-</code></pre>
-<pre class="highlight"><code class="hljs json">{
-    "<span class="hljs-attribute">class</span>": <span class="hljs-value"><span class="hljs-string">"player"</span></span>,
-    "<span class="hljs-attribute">links</span>": <span class="hljs-value">[
-        {"<span class="hljs-attribute">rel</span>": <span class="hljs-value">[ <span class="hljs-string">"self"</span> ]</span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends"</span></span>},
-        {"<span class="hljs-attribute">rel</span>": <span class="hljs-value">[ <span class="hljs-string">"next"</span> ]</span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends?page=2"</span></span>}
-    ]</span>,
-    "<span class="hljs-attribute">actions</span>": <span class="hljs-value">[{
-        "<span class="hljs-attribute">class</span>": <span class="hljs-value"><span class="hljs-string">"add-friend"</span></span>,
-        "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1234567890/friends"</span></span>,
-        "<span class="hljs-attribute">method</span>": <span class="hljs-value"><span class="hljs-string">"POST"</span></span>,
-        "<span class="hljs-attribute">fields</span>": <span class="hljs-value">[
-            {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"name"</span></span>, "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>},
-            {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"alternateName"</span></span>, "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>},
-            {"<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"image"</span></span>, "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"href"</span></span>}
-        ]
-    </span>}]</span>,
-    "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">size</span>": <span class="hljs-value"><span class="hljs-string">"2"</span>
-    </span>}</span>,
-    "<span class="hljs-attribute">entities</span>": <span class="hljs-value">[
-        { 
-            "<span class="hljs-attribute">links</span>": <span class="hljs-value">[ 
-                {"<span class="hljs-attribute">rel</span>": <span class="hljs-value">[ <span class="hljs-string">"self"</span> ]</span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109"</span></span>},
-                {"<span class="hljs-attribute">rel</span>": <span class="hljs-value">[ <span class="hljs-string">"friends"</span> ]</span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109/friends"</span></span>}
-            ]</span>,
-            "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
-                "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"1895638109"</span></span>,
-                "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Sheldon Dong"</span></span>,
-                "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"sdong"</span></span>,
-                "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/1895638109/avatar.png"</span>
-            </span>}
-        </span>},
-        { 
-            "<span class="hljs-attribute">links</span>": <span class="hljs-value">[
-                {"<span class="hljs-attribute">rel</span>": <span class="hljs-value">[ <span class="hljs-string">"self"</span> ]</span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509"</span></span>},
-                {"<span class="hljs-attribute">rel</span>": <span class="hljs-value">[ <span class="hljs-string">"friends"</span> ]</span>, "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509/friends"</span> </span>}
-            ]</span>,
-            "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
-                "<span class="hljs-attribute">playerId</span>": <span class="hljs-value"><span class="hljs-string">"8371023509"</span></span>,
-                "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Martin Liu"</span></span>,
-                "<span class="hljs-attribute">alternateName</span>": <span class="hljs-value"><span class="hljs-string">"mliu"</span></span>,
-                "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"https://api.example.com/player/8371023509/avatar.png"</span>
-            </span>}
-        </span>}
-    ]
-</span>}
-</code></pre>
-<h3 id="entities">Entities</h3>
-<p>The previous example also introduces <code>entities</code> to the response.  Any related
-entities that you wish to embed in the current representation are entered as a
-list of <code>entities</code>. Entities are nested. Each entity in this list can have a
-class, properties and additional entities.</p>
-<h2 id="conclusions">Conclusions</h2>
-<p>I&#39;ve create a <a href="https://gist.github.com/soofaloofa/9350847">Gist</a> comparing each
-of the media types discussed in this post. </p>
-<p>After going through this exercise I&#39;ve come to a few conclusions. </p>
-<h3 id="json-ld">JSON-LD</h3>
-<p>JSON-LD is great for augmenting existing APIs without introducing
-breaking changes. This augmentation mostly serves as a way to self document your
-API. If you are looking to add operations to a JSON-LD response look to HYDRA.
-HYDRA adds a vocabulary for communicating using the JSON-LD specification. This
-is an interesting choice as it decouples the API serialization format from the
-communication format.</p>
-<h3 id="hal">HAL</h3>
-<p>The light weight syntax and semantics of HAL is appealing in a lot of contexts.
-HAL is a minimal representation that offers most of the benefits of using a
-hypermedia type without adding too much complexity to the implementation. One
-area where HAL falters is, like JSON-LD, the lack of support for specifying
-actions.</p>
-<h3 id="collection-json">Collection+JSON</h3>
-<p>Don&#39;t be fooled by the name. Collection+JSON can be used to represent single
-items as well and it does this quite well. Of course it shines when representing
-data collections. Particularly appealing is the ability to list queries that
-your collection supports and templates that clients can use to alter your
-collection. For publishing user editable data Collection+JSON shines.</p>
-<h3 id="siren">SIREN</h3>
-<p>SIREN attempts to represent generic classes of items and overcome the main
-drawback of HAL -- support for actions. It does this admirably well and also
-introduces the concept of classes to your model bringing a sense of type
-information to your API responses.</p>
-<h3 id="and-the-winner-is-">And the winner is?</h3>
-<p>Unfortunately, there is no clear winner. It depends on the contraints in place
-on your API. However, I will offer some suggestions.</p>
-<p>If you are augmenting existing API responses choose JSON-LD.
-If you are keeping it simple choose HAL.
-If you are looking for a full featured media type choose Collection+JSON.</p>
-<p>Did I cover all the bases? Completely miss the mark? Let me know in the
-comments!</p>
-]]></description>
-            <link>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format</link>
-            <guid isPermaLink="true">http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format</guid>
-            <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
-            <pubDate>Tue, 11 Mar 2014 21:15:15 GMT</pubDate>
         </item>
     </channel>
 </rss>

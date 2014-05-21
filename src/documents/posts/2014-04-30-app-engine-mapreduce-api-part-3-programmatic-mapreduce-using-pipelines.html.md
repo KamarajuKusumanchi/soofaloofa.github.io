@@ -17,6 +17,7 @@ tags:
 * [Part 2: Running a MapReduce Job Using mapreduce.yaml](http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/)
 * [Part 3: Programmatic MapReduce using Pipelines](http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/)
 * [Part 4: Combining Sequential MapReduce Jobs](http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs.html/)
+* [Part 5: Using Combiners to Reduce Data Throughput](http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput.html)
 
 [In the last article](http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/) we examined how to run one-off tasks that operate on a large dataset using a `mapreduce.yaml` configuration file. This article will take us a step further and look at how to run a MapReduce job programmatically using the App Engine Pipeline API.
 
@@ -143,7 +144,7 @@ class CountCharacters(webapp2.RequestHandler):
         pipeline.start()
 ```
 
-Let's flesh out our MapReduce template it actually count the characters in a string. To do so our map function will yield a tuple of `(character, count)` for each character encountered in our string and the number of times it was encountered. So for our input string `nzkeasmekjwewmvxgdre` we would yield `(n, 1)`, `(z, 1)`, `(k, 2)`, and so on. We update our `map` function to do this work.
+Let's flesh out our MapReduce template to actually count the characters in a string. To do so our map function will yield a tuple of `(character, count)` for each character encountered in our string and the number of times it was encountered. So for our input string `nzkeasmekjwewmvxgdre` we would yield `(n, 1)`, `(z, 1)`, `(k, 2)`, and so on. We update our `map` function to do this work.
 
 ```python
 import collections

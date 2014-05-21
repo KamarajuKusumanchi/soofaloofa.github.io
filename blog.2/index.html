@@ -82,6 +82,25 @@
           <!-- Page Content -->
 
   <article>
+    <h2><a href="/posts/2013-02-12-development-post-mortem-up-now-on-boardgamegeek-com">Development Post-Mortem up now on BoardGameGeek.com</a></h2>
+    <small class="text-muted">
+      Posted on Tuesday, February 12, 2013.
+
+
+    </small>
+
+    
+      <p>I recently published a full development post-mortem at BoardGameGeek.com. Give it a read and let me know what you think!</p>
+<p><a href="http://boardgamegeek.com/blogpost/16843/developer-post-mortem-phantom-leader">Developer Post-Mortem: Phantom Leader for iPad</a>.</p>
+
+    
+
+    
+
+    <hr>
+  </article>
+
+  <article>
     <h2><a href="/posts/2013-01-22-copying-from-the-vim-to-the-os-x-mountain-lion-clipboard">Copying from Vim to the OS X Mountain Lion clipboard</a></h2>
     <small class="text-muted">
       Posted on Tuesday, January 22, 2013.
@@ -310,46 +329,6 @@
 <p>When the world wide web was in its infancy view source was the best tool for wannabe webmasters learning their craft. Sure, bad designs and bad decisions propagated quickly. But good designs and good decisions propagated too. Those who really wanted to learn found best of breed web sites and quickly copied, edited and pasted their way to a beautiful site, learning much about web design in the process.</p>
 <p>I would argue that JavaScript is still in its infancy. Developers are building complex web applications and in the process distilling years of hacking experience in to solid design. And we are hiding all this knowledge from the public for performance gains. The irony is that the JavaScript developers writing the best code are the JavaScript developers that minify. In effect we are hiding the best public source of information on JavaScript web development behind nebulous performance gains.</p>
 <p>Is it worth it? Google serves billions of pages a day. Do you?</p>
-
-    
-
-    
-
-    <hr>
-  </article>
-
-  <article>
-    <h2><a href="/posts/2011-05-06-how-to-display-html5-notifications">How to Display HTML5 Notifications</a></h2>
-    <small class="text-muted">
-      Posted on Friday, May 06, 2011.
-
-
-    </small>
-
-    
-      <p>Chrome recently introduced support for HTML Notifications.</p>
-<p>Following the brief tutorial at <a href="http://www.html5rocks.com/tutorials/notifications/quick/">HTML5 Rocks</a> I was able to implement this in a matter of minutes and I couldn’t be happier with the results.</p>
-<p>The first step towards implementation is to check if the Notifications API is implemented by the browser. We do this by checking for the existence of the webkitNotifications object.</p>
-<pre class="highlight"><code class="hljs coffeescript"><span class="hljs-regexp">//</span> check <span class="hljs-keyword">for</span> notifications support
-<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">window</span>.webkitNotifications) {
-    alert(<span class="hljs-string">'Your browser does not support the Notifications API'</span>);
-}
-</code></pre><p>As a means of preventing unwanted notifications we request permission from the user before displaying anything. The method <code>webkitNotifications.checkPermission()</code> will return zero if permission has previously been granted. If it returns non-zero we can request permission with the method <code>webkitNotifications.requestPermission()</code>.</p>
-<pre class="highlight"><code class="hljs mel"><span class="hljs-comment">// request permission to use notifications</span>
-  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">window</span>.webkitNotifications) {
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">window</span>.webkitNotifications.checkPermission() &gt; <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">window</span>.webkitNotifications.requestPermission();
-    }
-}
-</code></pre><p>Now that we have requested permission we can display our notification. We use the function <code>webkitNotifications.createNotification()</code> to create a Notification object. This function takes three parameters: an icon to display, a title and text. We then call the <code>show()</code> method on our Notification object to display our notification.</p>
-<pre class="highlight"><code class="hljs mel"><span class="hljs-comment">// display a notification</span>
-<span class="hljs-keyword">if</span> (<span class="hljs-keyword">window</span>.webkitNotifications &amp;&amp; <span class="hljs-keyword">window</span>.webkitNotifications.checkPermission() == <span class="hljs-number">0</span>) {
-    <span class="hljs-keyword">window</span>.webkitNotifications.createNotification(
-        <span class="hljs-string">'apple-touch-icon.png'</span>,
-        <span class="hljs-string">'Awesome!'</span>,
-        <span class="hljs-string">"You've completed a Pomodoro!"</span>).show();
-}
-</code></pre><p>The Notifications specification is currently in Draft format and has been submitted to the HTML working group for standardization. You can see the current spec through the <a href="http://www.chromium.org/developers/design-documents/desktop-notifications/api-specification">Chromium documentation</a>.</p>
 
     
 

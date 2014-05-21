@@ -5,10 +5,136 @@
         <description><![CDATA[Tinker. Tailor. Soldier. Sailor.]]></description>
         <link>http://sookocheff.com</link>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Fri, 16 May 2014 22:16:13 GMT</lastBuildDate>
+        <lastBuildDate>Wed, 21 May 2014 15:01:56 GMT</lastBuildDate>
         <atom:link href="http://sookocheff.com/rss.xml" rel="self" type="application/rss+xml"/>
         <author><![CDATA[Kevin Sookocheff]]></author>
-        <pubDate>Fri, 16 May 2014 22:15:44 GMT</pubDate>
+        <pubDate>Wed, 21 May 2014 15:01:28 GMT</pubDate>
+        <item>
+            <title><![CDATA[App Engine MapReduce API - Part 5: Using Combiners to Reduce Data Throughput]]></title>
+            <description><![CDATA[<h2 id="mapreduce-api-series">MapReduce API Series</h2>
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs.html/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput.html">Part 5: Using Combiners to Reduce Data Throughput</a></li>
+</ul>
+<p>So far we&#39;ve looked at using MapReduce pipelines to perform calculations over
+large data sets and combined multiple pipelines in succession. In this article
+we will look at how to reduce the amount of data transfer by using a combiner.</p>
+<h2 id="what-is-a-combiner-">What is a combiner?</h2>
+<p>A combiner is a function that takes the output of a series of map calls as input and outputs a value of the same format to be processed by the reducer. The combiner is run just before the output of the mapper is written to disk. In fact, the combiner may not be run at all if the data can reside completely in memory and so your algorithm must be able to complete with our without the combiner. By reducing the amount of data that needs to be written to disk you can increase performance of the reduce stage. </p>
+<h2 id="example">Example</h2>
+<p>Let&#39;s look at an example that uses a combiner to reduce data throughput. To drive this discussion we will use an example that counts the number of occurrences of a character in a string. We originally looked at this example <a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">here</a>. In this version we will only include the character or characters that occur the most. The operation will work like this: the mapper function will count the occurrence of each character in a string. The combiner will take these (key, value) pairs and output only the character or characters that appear the most. Finally, the reducer will sum those values to find our result. This contrived problem will provide a working example of a combiner.</p>
+<p>Let&#39;s start with the MapReduce job from our previous example.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-string">"""
+app.pipelines
+"""</span>
+<span class="hljs-keyword">import</span> collections
+
+<span class="hljs-keyword">from</span> mapreduce.lib <span class="hljs-keyword">import</span> pipeline
+<span class="hljs-keyword">from</span> mapreduce <span class="hljs-keyword">import</span> mapreduce_pipeline
+
+<span class="hljs-comment">###</span>
+<span class="hljs-comment">### MapReduce Pipeline</span>
+<span class="hljs-comment">###</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">character_count_map</span><span class="hljs-params">(random_string)</span>:</span>
+    <span class="hljs-string">""" yield the number of occurrences of each character in random_string. """</span>
+    counter = collections.Counter(random_string)
+    <span class="hljs-keyword">for</span> character <span class="hljs-keyword">in</span> counter.elements():
+        <span class="hljs-keyword">yield</span> (character, counter[character])
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">character_count_reduce</span><span class="hljs-params">(key, values)</span>:</span>
+    <span class="hljs-string">""" sum the number of characters found for the key. """</span>
+    <span class="hljs-keyword">yield</span> (key, sum([int(i) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> values]))
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CountCharactersPipeline</span><span class="hljs-params">(pipeline.Pipeline)</span>:</span>
+    <span class="hljs-string">""" Count the number of occurrences of a character in a set of strings. """</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(self, *args, **kwargs)</span>:</span>
+        <span class="hljs-string">""" run """</span>
+        mapper_params = {
+            <span class="hljs-string">"count"</span>: <span class="hljs-number">100</span>,
+            <span class="hljs-string">"string_length"</span>: <span class="hljs-number">20</span>,
+        }
+        reducer_params = {
+            <span class="hljs-string">"mime_type"</span>: <span class="hljs-string">"text/plain"</span>
+        }
+        output = <span class="hljs-keyword">yield</span> mapreduce_pipeline.MapreducePipeline(
+            <span class="hljs-string">"character_count"</span>,
+            mapper_spec=<span class="hljs-string">"app.pipelines.character_count_map"</span>,
+            mapper_params=mapper_params,
+            reducer_spec=<span class="hljs-string">"app.pipelines.character_count_reduce"</span>,
+            reducer_params=reducer_params,
+            input_reader_spec=<span class="hljs-string">"mapreduce.input_readers.RandomStringInputReader"</span>,
+            output_writer_spec=<span class="hljs-string">"mapreduce.output_writers.BlobstoreOutputWriter"</span>,
+            shards=<span class="hljs-number">16</span>)
+</code></pre><p>Given this base we add a combiner step to the <code>MapreducePipeline</code> by passing the <code>combiner_spec</code> argument to the initialization.</p>
+<pre class="highlight"><code class="hljs cs">       output = <span class="hljs-keyword">yield</span> mapreduce_pipeline.MapreducePipeline(
+            <span class="hljs-string">"character_count"</span>,
+            mapper_spec=<span class="hljs-string">"app.pipelines.character_count_map"</span>,
+            mapper_params=mapper_params,
+            reducer_spec=<span class="hljs-string">"app.pipelines.character_count_reduce"</span>,
+            reducer_params=reducer_params,
+            combiner_spec=<span class="hljs-string">"app.pipelines.character_count_combine"</span>,
+            input_reader_spec=<span class="hljs-string">"mapreduce.input_readers.RandomStringInputReader"</span>,
+            output_writer_spec=<span class="hljs-string">"mapreduce.output_writers.BlobstoreOutputWriter"</span>,
+            shards=<span class="hljs-number">16</span>)
+</code></pre><p>Our combine function accepts a few parameters the key, a list of values for that key and a list of previously combined results. The combiner function yields combined values that might be processed by another combiner call and that will eventually end up in the reducer function.</p>
+<p>Let&#39;s write our simple combiner function. We yield only a value instead of a <code>(key, value)</code> tuple because the key is assumed to stay the same.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">character_count_combine</span><span class="hljs-params">(key, values, previously_combined_values)</span>:</span>
+    <span class="hljs-string">""" emit the maximum value in values and previously_combined_values """</span>
+    <span class="hljs-keyword">yield</span> max(values + previously_combined_values)
+</code></pre><p>Our combiner function is not guaranteed to run so we need to update our reduce function to take the maximum of the list of values as well.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">character_count_reduce</span><span class="hljs-params">(key, values)</span>:</span>
+    <span class="hljs-string">""" sum the number of characters found for the key. """</span>
+    <span class="hljs-keyword">yield</span> (key, max(values))
+</code></pre><p>This gives us our final pipeline using map, reduce and combine.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-comment">###</span>
+<span class="hljs-comment">### MapReduce Pipeline</span>
+<span class="hljs-comment">###</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">character_count_map</span><span class="hljs-params">(random_string)</span>:</span>
+    <span class="hljs-string">""" yield the number of occurrences of each character in random_string. """</span>
+    counter = collections.Counter(random_string)
+    <span class="hljs-keyword">for</span> character <span class="hljs-keyword">in</span> counter.elements():
+        <span class="hljs-keyword">yield</span> (character, counter[character])
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">character_count_reduce</span><span class="hljs-params">(key, values)</span>:</span>
+    <span class="hljs-string">""" sum the number of characters found for the key. """</span>
+    <span class="hljs-keyword">yield</span> (key, max(values))
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">character_count_combine</span><span class="hljs-params">(key, values, previously_combined_values)</span>:</span>
+    <span class="hljs-string">""" emit the maximum value in values and previously_combined_values """</span>
+    <span class="hljs-keyword">yield</span> max(values + previously_combined_values)
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CountCharactersPipeline</span><span class="hljs-params">(pipeline.Pipeline)</span>:</span>
+    <span class="hljs-string">""" Count the number of occurrences of a character in a set of strings. """</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(self, *args, **kwargs)</span>:</span>
+        <span class="hljs-string">""" run """</span>
+        mapper_params = {
+            <span class="hljs-string">"count"</span>: <span class="hljs-number">100</span>,
+            <span class="hljs-string">"string_length"</span>: <span class="hljs-number">20</span>,
+        }
+        reducer_params = {
+            <span class="hljs-string">"mime_type"</span>: <span class="hljs-string">"text/plain"</span>
+        }
+        output = <span class="hljs-keyword">yield</span> mapreduce_pipeline.MapreducePipeline(
+            <span class="hljs-string">"character_count"</span>,
+            mapper_spec=<span class="hljs-string">"app.pipelines.character_count_map"</span>,
+            mapper_params=mapper_params,
+            reducer_spec=<span class="hljs-string">"app.pipelines.character_count_reduce"</span>,
+            reducer_params=reducer_params,
+            combiner_spec=<span class="hljs-string">"app.pipelines.character_count_combine"</span>,
+            input_reader_spec=<span class="hljs-string">"mapreduce.input_readers.RandomStringInputReader"</span>,
+            output_writer_spec=<span class="hljs-string">"mapreduce.output_writers.BlobstoreOutputWriter"</span>,
+            shards=<span class="hljs-number">16</span>)
+</code></pre>]]></description>
+            <link>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</link>
+            <guid isPermaLink="true">http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</guid>
+            <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
+            <pubDate>Tue, 20 May 2014 14:54:12 GMT</pubDate>
+        </item>
         <item>
             <title><![CDATA[App Engine MapReduce API - Part 4: Combining Sequential MapReduce Jobs]]></title>
             <description><![CDATA[<h2 id="mapreduce-api-series">MapReduce API Series</h2>
@@ -17,6 +143,7 @@
 <li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
 <li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
 <li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs.html/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput.html">Part 5: Using Combiners to Reduce Data Throughput</a></li>
 </ul>
 <p><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Last
 time</a>
@@ -144,6 +271,7 @@ add a specific flag to ingore these warnings when installing affected packages.<
 <li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
 <li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
 <li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs.html/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput.html">Part 5: Using Combiners to Reduce Data Throughput</a></li>
 </ul>
 <p><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">In the last article</a> we examined how to run one-off tasks that operate on a large dataset using a <code>mapreduce.yaml</code> configuration file. This article will take us a step further and look at how to run a MapReduce job programmatically using the App Engine Pipeline API.</p>
 <h2 id="running-a-mapper-job-using-the-app-engine-pipeline-api">Running a Mapper Job Using the App Engine Pipeline API</h2>
@@ -238,7 +366,7 @@ etc.
         pipeline = CountCharactersPipeline()
         pipeline.start()
 </code></pre>
-<p>Let&#39;s flesh out our MapReduce template it actually count the characters in a string. To do so our map function will yield a tuple of <code>(character, count)</code> for each character encountered in our string and the number of times it was encountered. So for our input string <code>nzkeasmekjwewmvxgdre</code> we would yield <code>(n, 1)</code>, <code>(z, 1)</code>, <code>(k, 2)</code>, and so on. We update our <code>map</code> function to do this work.</p>
+<p>Let&#39;s flesh out our MapReduce template to actually count the characters in a string. To do so our map function will yield a tuple of <code>(character, count)</code> for each character encountered in our string and the number of times it was encountered. So for our input string <code>nzkeasmekjwewmvxgdre</code> we would yield <code>(n, 1)</code>, <code>(z, 1)</code>, <code>(k, 2)</code>, and so on. We update our <code>map</code> function to do this work.</p>
 <pre class="highlight"><code class="hljs python"><span class="hljs-keyword">import</span> collections
 
 <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">character_count_map</span><span class="hljs-params">(random_string)</span>:</span>
@@ -408,6 +536,7 @@ app.mapreduce
 <li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
 <li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
 <li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs.html/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput.html">Part 5: Using Combiners to Reduce Data Throughput</a></li>
 </ul>
 <p><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Last time</a> we looked at an overview of how MapReduce works. In this article we&#39;ll be getting our hands dirty writing some code to handle the Map Stage. If you&#39;ll recall, the Map Stage is composed of two separate components: an InputReader and a <code>map</code> function. We&#39;ll look at each of these in turn.</p>
 <h2 id="getting-started-installation">Getting Started: Installation</h2>
@@ -775,6 +904,7 @@ using MapReduce Pipelines to programmatically control your API.</p>
 <li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
 <li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
 <li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs.html/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput.html">Part 5: Using Combiners to Reduce Data Throughput</a></li>
 </ul>
 <p>The first arcticle in this series provides an overview of the <a href="https://developers.google.com/appengine/docs/python/dataprocessing/">App Engine MapReduce
 API</a>. We
@@ -1290,109 +1420,6 @@ client developers.</p>
             <guid isPermaLink="true">http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab</guid>
             <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
             <pubDate>Tue, 25 Mar 2014 13:23:45 GMT</pubDate>
-        </item>
-        <item>
-            <title><![CDATA[How REST Constraints Affect API Design]]></title>
-            <description><![CDATA[<p>REST was developed and formalized by analyzing the existing Web and extracting
-the principles that made it work. This set of principles was written down in the
-<a href="https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm">Fielding dissertation</a>
-which lays out the set of constraints that, when enforced, will make a generic
-network system into a resilient network like the Web. In Chapter 5 of the
-dissertation Fielding outlines REST&#39;s interface constraints.</p>
-<blockquote>
-<p>REST is defined by four interface constraints: identification of resources;
-manipulation of resources using representations; self-descriptive messages;
-and, hypermedia as the engine of application state. </p>
-</blockquote>
-<h3 id="why-is-this-important-for-apis-">Why is this important for APIs?</h3>
-<p>API design is in an infancy. Each API is designed for a single use case and
-standard. This proliferation of different design ideas results in APIs that each
-have their own specification and semantics. Interoperability between APIs is
-nonexistent. In the early 1990s the Web was facing this exact problem and as a
-result the principles of REST were formalized and adopted. The result was a
-scalable, resilient and ultimately successful system. By adopting the REST
-constraints in our APIs we can take advantage of this foundational work to
-provide APIs that form a scalable and resilient network of their own.</p>
-<p>We will take a look at each of the four interface constraints in turn and see
-how they can be used to design an API that developers love to use. </p>
-<h2 id="1-identification-of-resources">1. Identification of Resources</h2>
-<p>A resource is the key abstraction of REST. Anything that can be named is a
-resource -- a video, a document, an image. We identify resources using a
-unique identifier called the Uniform Resource Identifier (URI). When discussing
-the Web we almost always use a more specific form of URI called a Uniform
-Resource Locator (URL). A URL is what we are all accustomed to when accessing
-sites through HTTP.</p>
-<pre class="highlight"><code class="hljs avrasm"><span class="hljs-label">http:</span>//sookocheff<span class="hljs-preprocessor">.com</span>
-</code></pre><p>By building REST APIs over HTTP we can use URLs to identify resources accessed
-by our API. To satisfy the REST constraint each URL should map to a single
-resource and all access to this resource is done through that URL. As an
-example, if I want to offer an API for a shipping application I might have a
-resource representing an order. A URL for the individual order numbered <code>12345</code>
-would have a path including the order number.</p>
-<pre class="highlight"><code class="hljs undefined">/orders/12345
-</code></pre><p>This simple example shows how we can create a URL to uniquely represent each
-resource represented by our API.</p>
-<h2 id="2-manipulation-of-resources-using-representations">2. Manipulation of Resources Using Representations</h2>
-<p>When making a request for a resource the server responds with a representation
-of the resource. This representation captures the current state of the resource
-in a format that the client can understand and manipulate. Abstractly the
-representation is a sequence of bytes along with metadata describing those
-bytes. This metadata is known as the media type of the representation. Typical
-API examples are HTML, JSON, and XML. Because the server sends a representation
-of the resource it is possible for the client to request a specific
-representation that fits the client&#39;s needs. For example, a client can ask for
-the JSON representation of a resource or the XML representation of the resource.
-The server may provide this representation if it is capable of doing so. This
-concept is called <em>content negotiation</em>. You can use content negotiation in your
-API to allow multiple clients to access a different representations of the
-resource from the same URL. </p>
-<p>The way that a client asks for a specific representation is through the HTTP
-<code>Accepts</code> header. The following request is asking for a plain text
-representation of the order.</p>
-<pre class="highlight"><code class="hljs vbnet"><span class="hljs-keyword">GET</span> /orders/<span class="hljs-number">12345</span>
-Accept: <span class="hljs-keyword">text</span>/plain
-</code></pre><p>Whereas the following request is asking for a JSON representation.</p>
-<pre class="highlight"><code class="hljs vbnet"><span class="hljs-keyword">GET</span> /orders/<span class="hljs-number">12345</span>
-Accept: application/json
-</code></pre><p>By using content negotiation in your API you can offer new resource
-representations without changing the resources URL or breaking existing clients.
-This keeps your client and server flexibly decoupled.</p>
-<h2 id="3-self-descriptive-messages">3. Self-Descriptive Messages</h2>
-<p>The representations served by a RESTful system contain all of the data required
-by the client to understand and act on the resource. If any additional
-information is needed but not contained in the response a link to that
-information should be provided within the response. This means that the media
-type you choose to respond with should be self documenting and should list any
-related resources or actions that the client may be interested in. Specific
-media types already exist for JSON APIS. These include HAL, JSON-LD,
-Collection+JSON and JSONAPI. For a detailed discussion see my post <a href="http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format/">on
-choosing a hypermedia
-type</a></p>
-<p>Each of these formats are aiming to solve the <a href="https://www.w3.org/TR/json-ld/#basic-concepts">same
-problem</a>:</p>
-<blockquote>
-<p>JSON has no built-in support for hyperlinks, which are a fundamental building
-block on the Web. </p>
-</blockquote>
-<p>By linking together the resources offered by your API you can build
-self-descriptive APIs.</p>
-<h2 id="4-hypermedia-as-the-engine-of-application-state">4. Hypermedia As The Engine Of Application State</h2>
-<p>Together, the first three REST constraints imply the fourth and most important --
-hypermedia as the engine of application state. By uniquely identifying
-resources, using representations to communicate resource state and using
-self-descriptive messages via media types all application state stays with the
-client. </p>
-<p>By keeping all application state with the client a direct connection between the
-client and the server is not necessary, allowing the server to scale to serve
-many clients with minimal resources. This ability to scale has led to the Web&#39;s
-scalable and resilient nature. </p>
-<p>By designing our APIs with the REST constraints we can build scalable and
-resilient APIs.</p>
-]]></description>
-            <link>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</link>
-            <guid isPermaLink="true">http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</guid>
-            <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
-            <pubDate>Wed, 19 Mar 2014 20:11:48 GMT</pubDate>
         </item>
     </channel>
 </rss>

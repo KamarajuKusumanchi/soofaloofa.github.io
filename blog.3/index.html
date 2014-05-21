@@ -82,6 +82,46 @@
           <!-- Page Content -->
 
   <article>
+    <h2><a href="/posts/2011-05-06-how-to-display-html5-notifications">How to Display HTML5 Notifications</a></h2>
+    <small class="text-muted">
+      Posted on Friday, May 06, 2011.
+
+
+    </small>
+
+    
+      <p>Chrome recently introduced support for HTML Notifications.</p>
+<p>Following the brief tutorial at <a href="http://www.html5rocks.com/tutorials/notifications/quick/">HTML5 Rocks</a> I was able to implement this in a matter of minutes and I couldn’t be happier with the results.</p>
+<p>The first step towards implementation is to check if the Notifications API is implemented by the browser. We do this by checking for the existence of the webkitNotifications object.</p>
+<pre class="highlight"><code class="hljs coffeescript"><span class="hljs-regexp">//</span> check <span class="hljs-keyword">for</span> notifications support
+<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">window</span>.webkitNotifications) {
+    alert(<span class="hljs-string">'Your browser does not support the Notifications API'</span>);
+}
+</code></pre><p>As a means of preventing unwanted notifications we request permission from the user before displaying anything. The method <code>webkitNotifications.checkPermission()</code> will return zero if permission has previously been granted. If it returns non-zero we can request permission with the method <code>webkitNotifications.requestPermission()</code>.</p>
+<pre class="highlight"><code class="hljs mel"><span class="hljs-comment">// request permission to use notifications</span>
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">window</span>.webkitNotifications) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">window</span>.webkitNotifications.checkPermission() &gt; <span class="hljs-number">0</span>) {
+            <span class="hljs-keyword">window</span>.webkitNotifications.requestPermission();
+    }
+}
+</code></pre><p>Now that we have requested permission we can display our notification. We use the function <code>webkitNotifications.createNotification()</code> to create a Notification object. This function takes three parameters: an icon to display, a title and text. We then call the <code>show()</code> method on our Notification object to display our notification.</p>
+<pre class="highlight"><code class="hljs mel"><span class="hljs-comment">// display a notification</span>
+<span class="hljs-keyword">if</span> (<span class="hljs-keyword">window</span>.webkitNotifications &amp;&amp; <span class="hljs-keyword">window</span>.webkitNotifications.checkPermission() == <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">window</span>.webkitNotifications.createNotification(
+        <span class="hljs-string">'apple-touch-icon.png'</span>,
+        <span class="hljs-string">'Awesome!'</span>,
+        <span class="hljs-string">"You've completed a Pomodoro!"</span>).show();
+}
+</code></pre><p>The Notifications specification is currently in Draft format and has been submitted to the HTML working group for standardization. You can see the current spec through the <a href="http://www.chromium.org/developers/design-documents/desktop-notifications/api-specification">Chromium documentation</a>.</p>
+
+    
+
+    
+
+    <hr>
+  </article>
+
+  <article>
     <h2><a href="/posts/2011-04-23-book-review-start-small-stay-small">Book Review: Start Small, Stay Small</a></h2>
     <small class="text-muted">
       Posted on Saturday, April 23, 2011.
@@ -312,24 +352,6 @@ alert(<span class="hljs-string">'PI: '</span>   CONSTANTS.<span class="hljs-keyw
     <p class="text-center">
       <a href="/posts/2011-01-11-a-cheap-home-server"><button type="button" class="btn btn-primary">Read More</button></a>
     </p>
-    
-
-    <hr>
-  </article>
-
-  <article>
-    <h2><a href="/posts/2011-01-06-and-the-winner-is-google-chrome">And the winner is - Google Chrome!</a></h2>
-    <small class="text-muted">
-      Posted on Thursday, January 06, 2011.
-
-
-    </small>
-
-    
-      <p>Google gets it. I recently switched to Google Chrome as my primary web browser and will stick with it for one essential reason.  Speed.  Application launch speed, page loading speed, Javascript speed.  Just plain old speed. When a user opens a browser they are usually expecting to do a few things at the top of their priority list.  Check e-mail, maybe Facebook, check the news headlines and get out. In Firefox there is a significant delay between clicking on the app icon and actually beginning to browse the web.  With Chrome, application launch is almost instantaneous and the difference in user experience is immediately noticeable.  This is a huge win for me and I imagine it will be a huge win for other users who give Chrome a try. Google spends a huge amount of resources in creating efficient algorithms with minimal HTML and Javascript for their flagship products: the search engine, Gmail, and Google Docs.  This attention to efficiency is also paying dividends with Google Chrome and we will continue to see the same gains with Google Chrome OS and Android. Google gets it.</p>
-
-    
-
     
 
     <hr>

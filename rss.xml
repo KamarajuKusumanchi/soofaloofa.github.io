@@ -5,10 +5,10 @@
         <description><![CDATA[Tinker. Tailor. Soldier. Sailor.]]></description>
         <link>http://sookocheff.com</link>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Tue, 27 May 2014 13:25:46 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 27 May 2014 13:32:09 GMT</lastBuildDate>
         <atom:link href="http://sookocheff.com/rss.xml" rel="self" type="application/rss+xml"/>
         <author><![CDATA[Kevin Sookocheff]]></author>
-        <pubDate>Tue, 27 May 2014 13:25:17 GMT</pubDate>
+        <pubDate>Tue, 27 May 2014 13:31:40 GMT</pubDate>
         <item>
             <title><![CDATA[App Engine MapReduce API - Part 5: Using Combiners to Reduce Data Throughput]]></title>
             <description><![CDATA[<h2 id="mapreduce-api-series">MapReduce API Series</h2>

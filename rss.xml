@@ -5,10 +5,62 @@
         <description><![CDATA[Tinker. Tailor. Soldier. Sailor.]]></description>
         <link>http://sookocheff.com</link>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Tue, 27 May 2014 13:32:09 GMT</lastBuildDate>
+        <lastBuildDate>Wed, 28 May 2014 12:45:08 GMT</lastBuildDate>
         <atom:link href="http://sookocheff.com/rss.xml" rel="self" type="application/rss+xml"/>
         <author><![CDATA[Kevin Sookocheff]]></author>
-        <pubDate>Tue, 27 May 2014 13:31:40 GMT</pubDate>
+        <pubDate>Wed, 28 May 2014 12:44:38 GMT</pubDate>
+        <item>
+            <title><![CDATA[How to bypass the auto_now property option during an ndb put]]></title>
+            <description><![CDATA[<p>In App Engine the <code>auto_now</code> option sets a property to the current date/time
+whenever the entity is created or updated. This is a great feature for tracking
+the time when an entity was last updated. However, sometimes you may want to put
+an entity without updating an <code>auto_now</code> timestamp. This article will show you
+how.</p>
+<p>First, let&#39;s start with a very basic ndb model with an <code>updated</code> property having
+the <code>auto_now</code> option set to <code>True</code>.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">from</span> google.appengine.ext <span class="hljs-keyword">import</span> ndb
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Article</span><span class="hljs-params">(ndb.model)</span>:</span>
+    title = ndb.model.StringProperty()
+    updated = ndb.model.DateTimeProperty(auto_now=<span class="hljs-keyword">True</span>)
+</code></pre>
+<p>Now, let&#39;s put the entity to the datastore <em>without updating the timestamp</em> and
+<em>completely bypassing the <code>auto_now</code> option</em>.</p>
+<pre class="highlight"><code class="hljs python">article = Article(title=<span class="hljs-string">'Python versus Ruby'</span>)
+article._properties[<span class="hljs-string">'updated'</span>]._auto_now = <span class="hljs-keyword">False</span>
+article.put()
+</code></pre>
+<p>It&#39;s pretty simple, but with caveats. Putting the entity using the code above
+will store the updated entity in the instance cache (and memcache). If we get
+the entity it will be retrieved from the instance cache with the <code>auto_now</code>
+property still set to <code>False</code>. This can have unwanted side-effects because
+subsequent updates to the entity will not trigger the <code>auto_now</code> functionality.</p>
+<pre class="highlight"><code class="hljs python">article = Article(title=<span class="hljs-string">'Python versus Ruby'</span>)
+article._properties[<span class="hljs-string">'updated'</span>]._auto_now = <span class="hljs-keyword">False</span>
+key = article.put() <span class="hljs-comment"># Put the entity with the auto_now option set to False</span>
+
+article = key.get() <span class="hljs-comment"># Get the entity from instance cache</span>
+article.title = <span class="hljs-string">'Python versus Go'</span>
+article.put() <span class="hljs-comment"># Put the entity with the auto_now option *still* set to False</span>
+</code></pre>
+<p>You can set the <code>auto_now</code> option to <code>True</code> again to re-enable the functionality.</p>
+<pre class="highlight"><code class="hljs python">article = Article(title=<span class="hljs-string">'Python versus Ruby'</span>)
+article._properties[<span class="hljs-string">'updated'</span>]._auto_now = <span class="hljs-keyword">False</span>
+key = article.put()
+
+article._properties[<span class="hljs-string">'updated'</span>]._auto_now = <span class="hljs-keyword">True</span>
+article = key.get() <span class="hljs-comment"># Get the entity from instance cache</span>
+article.title = <span class="hljs-string">'Python versus Go'</span>
+article.put() <span class="hljs-comment"># Puts the entity with the auto_now option set to True</span>
+</code></pre>
+<p>For more information on ndb caching <a href="https://developers.google.com/appengine/docs/python/ndb/cache">refer to the
+documentation</a>.</p>
+]]></description>
+            <link>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</link>
+            <guid isPermaLink="true">http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</guid>
+            <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
+            <pubDate>Wed, 28 May 2014 11:55:48 GMT</pubDate>
+        </item>
         <item>
             <title><![CDATA[App Engine MapReduce API - Part 5: Using Combiners to Reduce Data Throughput]]></title>
             <description><![CDATA[<h2 id="mapreduce-api-series">MapReduce API Series</h2>
@@ -1408,18 +1460,6 @@ client developers.</p>
             <guid isPermaLink="true">http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</guid>
             <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
             <pubDate>Thu, 27 Mar 2014 13:23:34 GMT</pubDate>
-        </item>
-        <item>
-            <title><![CDATA[Stripe checkout opening in a new tab]]></title>
-            <description><![CDATA[<p>At <a href="http://www.vendasta.com">VendAsta</a> we&#39;ve been integrating with the <a href="http://stripe.com/checkout">Stripe</a> payment system using Stripe Checkout. The experience has been completely painless and surprisingly simple. Then came a hiccup. While demoing the new functionality we found that one particular computer in the office would open the checkout modal dialog in a new browser window. Just one laptop. It was running the same version of Chrome that we were developing on. It was running the same OS as a working test machine. But the dialog would consistently open in a new browser window on just this one laptop. </p>
-<p>After a Friday afternoon debugging session our Product Owner decided to jump onto IRC and chat directly with the Stripe developers. They were quickly able to diagnose our problem: touch. The troublesome laptop was a Windows 8 machine with a touch display — and Stripe Checkout will open in a new browser window when used on a tablet.</p>
-<p>This episode was a great reminder of how the first step in debugging is often to <a href="http://www.hanselman.com/blog/BackToBasicsAssertYourAssumptionsAndDiffYourSourceCode.aspx">find the difference between the working and non-working system</a>. Hopefully this post will help someone else with the same problem. </p>
-<p>P.S. Kudos to Stripe for their prompt help via IRC.</p>
-]]></description>
-            <link>http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab</link>
-            <guid isPermaLink="true">http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab</guid>
-            <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
-            <pubDate>Tue, 25 Mar 2014 13:23:45 GMT</pubDate>
         </item>
     </channel>
 </rss>

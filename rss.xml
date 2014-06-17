@@ -5,10 +5,155 @@
         <description><![CDATA[Tinker. Tailor. Soldier. Sailor.]]></description>
         <link>http://sookocheff.com</link>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Wed, 28 May 2014 12:45:08 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 17 Jun 2014 12:39:12 GMT</lastBuildDate>
         <atom:link href="http://sookocheff.com/rss.xml" rel="self" type="application/rss+xml"/>
         <author><![CDATA[Kevin Sookocheff]]></author>
-        <pubDate>Wed, 28 May 2014 12:44:38 GMT</pubDate>
+        <pubDate>Tue, 17 Jun 2014 12:38:41 GMT</pubDate>
+        <item>
+            <title><![CDATA[Downloading directories of code from Github using the Github API]]></title>
+            <description><![CDATA[<p>At <a href="http://www.vendAsta.com">VendAsta</a> we frequently share libraries of code
+between projects. To make it easier to share this code I&#39;ve developed a small
+package manager that downloads code within a directory from Github to be copied
+in to your current project. It&#39;s a quick and dirty alternative to cloning an
+entire repository, grabbing the set of files you want and placing them in your
+project.</p>
+<p>We&#39;ll use the <a href="https://github.com/jacquev6/PyGithub">PyGithub</a> Python library to
+interact with the Github API.</p>
+<h2 id="logging-in-to-github">Logging in to Github</h2>
+<p>The first step is to log in to Github using our credentials. To do this we
+instantiate a new Github object given our username and password and access the
+associated user by calling <code>get_user</code>.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">from</span> github <span class="hljs-keyword">import</span> Github
+
+github = Github(<span class="hljs-string">'soofaloofa'</span>, <span class="hljs-string">'password'</span>)
+user = github.get_user()
+</code></pre>
+<p>This is equivalent to making a <a href="https://developer.github.com/v3/#authentication">basic authentication
+request</a> to get the currently
+<a href="https://developer.github.com/v3/users/#get-the-authenticated-user">authenticated
+user</a> and
+storing the result in a local representation.</p>
+<pre class="highlight"><code class="hljs bash">curl -u soofaloofa https://api.github.com/user
+</code></pre>
+<h2 id="accessing-a-repository">Accessing a repository</h2>
+<p>Now that we have a user we can get a repository for that user by name. To get
+the repository for this website we make a request to <a href="https://developer.github.com/v3/repos/#get">get a repo by
+owner</a>.</p>
+<pre class="highlight"><code class="hljs python">repository = user.get_repo(<span class="hljs-string">'soofaloofa.github.io'</span>)
+</code></pre>
+<h2 id="downloading-a-single-file">Downloading a single file</h2>
+<p>To download a single file from a repository we make a call to <a href="https://developer.github.com/v3/repos/contents/#get-contents">get the contents
+of a file</a>.</p>
+<pre class="highlight"><code class="hljs python">file_content = repository.get_contents(<span class="hljs-string">'README.md'</span>)
+</code></pre>
+<h2 id="referencing-commits">Referencing commits</h2>
+<p>We have all the building blocks to download a resource from Github. The next
+step is to download a resource referenced by a specific commit. The Github API
+expects SHA values to reference a commit. To make this a bit more user friendly
+we can write a function that will search for a SHA given a git tag or branch
+name.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_sha_for_tag</span><span class="hljs-params">(repository, tag)</span>:</span>
+    <span class="hljs-string">"""
+    Returns a commit PyGithub object for the specified repository and tag.
+    """</span>
+    branches = repository.get_branches()
+    matched_branches = [match <span class="hljs-keyword">for</span> match <span class="hljs-keyword">in</span> branches <span class="hljs-keyword">if</span> match.name == tag]
+    <span class="hljs-keyword">if</span> matched_branches:
+        <span class="hljs-keyword">return</span> matched_branches[<span class="hljs-number">0</span>].commit.sha
+
+    tags = repository.get_tags()
+    matched_tags = [match <span class="hljs-keyword">for</span> match <span class="hljs-keyword">in</span> tags <span class="hljs-keyword">if</span> match.name == tag]
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> matched_tags:
+        <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">'No Tag or Branch exists with that name'</span>)
+    <span class="hljs-keyword">return</span> matched_tags[<span class="hljs-number">0</span>].commit.sha
+</code></pre>
+<p>Now we can pass this SHA to the <code>get_contents</code> function to get a file for that
+specific commit.</p>
+<pre class="highlight"><code class="hljs python">sha = get_sha_for_tag(repository, <span class="hljs-string">'develop'</span>)
+file_content = repository.get_contents(<span class="hljs-string">'README.md'</span>, ref=sha)
+</code></pre>
+<h2 id="putting-it-all-together">Putting it all together</h2>
+<p>By putting a bit more polish on this we can easily download entire directories
+of code that reference a single tag or branch and copy them to our local
+environment. The basic workflow is:</p>
+<ol>
+<li>Choose a repository.</li>
+<li>Choose a branch or tag.</li>
+<li>Choose a directory.</li>
+<li>Iteratively download all the files in that directory.</li>
+</ol>
+<p>Let&#39;s make that happen.</p>
+<p>For this code I&#39;ll assume that the Github user belongs to a single organization
+and that this organization is sharing code between repositories.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">from</span> github <span class="hljs-keyword">import</span> Github
+<span class="hljs-keyword">import</span> getpass
+
+username = raw_input(<span class="hljs-string">"Github username: "</span>)
+password = getpass.getpass(<span class="hljs-string">"Github password: "</span>)
+
+github = Github(username, password)
+organization = github.get_user().get_orgs()[<span class="hljs-number">0</span>]
+
+repository_name = raw_input(<span class="hljs-string">"Github repository: "</span>)
+repository = organization.get_repo(repository_name)
+
+branch_or_tag_to_download = raw_input(<span class="hljs-string">"Branch or tag to download: "</span>)
+sha = get_sha_for_tag(repository, branch_or_tag_to_download)
+
+directory_to_download = raw_input(<span class="hljs-string">"Directory to download: "</span>)
+download_directory(repository, sha, directory_to_download)
+</code></pre>
+<p>This piece of code is fairly simple and relies on a couple of helper functions:
+<code>get_sha_for_tag</code> and <code>download_directory</code>. <code>get_sha_for_tag</code> will return the
+SHA commit hash given a branch or tag and <code>download_directory</code> will recursively
+download the files in the given directory.</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_sha_for_tag</span><span class="hljs-params">(repository, tag)</span>:</span>
+    <span class="hljs-string">"""
+    Returns a commit PyGithub object for the specified repository and tag.
+    """</span>
+    branches = repository.get_branches()
+    matched_branches = [match <span class="hljs-keyword">for</span> match <span class="hljs-keyword">in</span> branches <span class="hljs-keyword">if</span> match.name == tag]
+    <span class="hljs-keyword">if</span> matched_branches:
+        <span class="hljs-keyword">return</span> matched_branches[<span class="hljs-number">0</span>].commit.sha
+
+    tags = repository.get_tags()
+    matched_tags = [match <span class="hljs-keyword">for</span> match <span class="hljs-keyword">in</span> tags <span class="hljs-keyword">if</span> match.name == tag]
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> matched_tags:
+        <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">'No Tag or Branch exists with that name'</span>)
+    <span class="hljs-keyword">return</span> matched_tags[<span class="hljs-number">0</span>].commit.sha
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">download_directory</span><span class="hljs-params">(repository, sha, server_path)</span>:</span>
+    <span class="hljs-string">"""
+    Download all contents at server_path with commit tag sha in 
+    the repository.
+    """</span>
+    contents = repository.get_dir_contents(server_path, ref=sha)
+
+    <span class="hljs-keyword">for</span> content <span class="hljs-keyword">in</span> contents:
+        <span class="hljs-keyword">print</span> <span class="hljs-string">"Processing %s"</span> % content.path
+        <span class="hljs-keyword">if</span> content.type == <span class="hljs-string">'dir'</span>:
+            download_directory(repository, sha, content.path)
+        <span class="hljs-keyword">else</span>:
+            <span class="hljs-keyword">try</span>:
+                path = content.path
+                file_content = repository.get_contents(path, ref=sha)
+                file_data = base64.b64decode(file_content.content)
+                file_out = open(content.name, <span class="hljs-string">"w"</span>)
+                file_out.write(file_data)
+                file_out.close()
+            <span class="hljs-keyword">except</span> (GithubException, IOError) <span class="hljs-keyword">as</span> exc:
+                logging.error(<span class="hljs-string">'Error processing %s: %s'</span>, content.path, exc)
+</code></pre>
+<p>We&#39;ve been using a variation of this simple script to share code between Github
+repositories and appreciate it&#39;s flexibility and ease of use. Let me know if you
+find it useful!</p>
+]]></description>
+            <link>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api</link>
+            <guid isPermaLink="true">http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api</guid>
+            <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
+            <pubDate>Tue, 17 Jun 2014 12:14:23 GMT</pubDate>
+        </item>
         <item>
             <title><![CDATA[How to bypass the auto_now property option during an ndb put]]></title>
             <description><![CDATA[<p>In App Engine the <code>auto_now</code> option sets a property to the current date/time
@@ -1364,102 +1509,6 @@ Users-Version: <span class="hljs-number">2</span>
             <guid isPermaLink="true">http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</guid>
             <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
             <pubDate>Tue, 01 Apr 2014 20:16:18 GMT</pubDate>
-        </item>
-        <item>
-            <title><![CDATA[When to Use HTTP PUT and HTTP POST]]></title>
-            <description><![CDATA[<p>The HTTP protocol defines two methods for updating a resource -- <code>PUT</code> and
-<code>POST</code>. Both <code>PUT</code> and <code>POST</code> are used to modify a resource and this semantic
-similarity can confuse API developers. This confusion has led most developers to
-use <code>POST</code> for any action which may modify the state of a resource, ignoring
-<code>PUT</code> entirely.</p>
-<p>This article attempts to explain the semantics behind the <code>PUT</code> and <code>POST</code>
-methods and offers clear suggestions on when to use each method.</p>
-<h2 id="put">PUT</h2>
-<p>Let&#39;s go <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.html">straight to the HTTP/1.1 RFC</a> for the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6">definition of PUT</a>.</p>
-<blockquote>
-<p>The PUT method requests that the enclosed entity be stored under the supplied
-Request-URI. If the Request-URI refers to an already existing resource, the
-enclosed entity SHOULD be considered as a modified version of the one residing
-on the origin server. If the Request-URI does not point to an existing
-resource ... the origin server can create the resource with that URI.</p>
-</blockquote>
-<p>The PUT specification requires that you already know the URL of the resource you
-wish to create or update. On create, if the client chooses the identifier for a
-resource a PUT request will create the new resource at the specified URL.</p>
-<pre class="highlight"><code class="hljs http"><span class="hljs-request">PUT <span class="hljs-string">/user/1234567890</span> HTTP/1.1</span>
-<span class="hljs-attribute">Host</span>: <span class="hljs-string">http://sookocheff.com</span>
-
-<span class="json">{
-    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>,
-    "<span class="hljs-attribute">website</span>": <span class="hljs-value"><span class="hljs-string">"http://kevinsookocheff.com"</span>
-</span>}
-</span></code></pre><p>The server could respond with a <code>201 Created</code> status code and the new resource&#39;s
-location.</p>
-<pre class="highlight"><code class="hljs http"><span class="hljs-status">HTTP/1.1 <span class="hljs-number">201</span> Created</span>
-<span class="hljs-attribute">Location</span>: <span class="hljs-string">/user/1234567890</span>
-</code></pre><p>In addition, if you know that a resource already exists for a URL, you can make
-a PUT request to that URL to replace the state of that resource on the server.
-This example updates the user&#39;s website.</p>
-<pre class="highlight"><code class="hljs http"><span class="hljs-request">PUT <span class="hljs-string">/user/1234567890</span> HTTP/1.1</span>
-<span class="hljs-attribute">Host</span>: <span class="hljs-string">http://sookocheff.com</span>
-
-<span class="json">{
-    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Kevin Sookocheff"</span></span>,
-    "<span class="hljs-attribute">website</span>": <span class="hljs-value"><span class="hljs-string">"http://sookocheff.com"</span>
-</span>}
-</span></code></pre><p>In general the HTTP PUT method replaces the resource at the current URL with the
-resource contained within the request. PUT is used to both create and update the
-state of a resource on the server. </p>
-<h2 id="post">POST</h2>
-<p>Let&#39;s go <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.html">back to the HTTP/1.1 RFC</a> for the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.5">definition of POST</a>.</p>
-<blockquote>
-<p>The POST method is used to request that the origin server accept the entity
-enclosed in the request as a new subordinate of the resource identified by the
-Request-URI ...  The posted entity is subordinate to that URI in the same way
-that a file is subordinate to a directory containing it, a news article is
-subordinate to a newsgroup to which it is posted, or a record is subordinate
-to a database.</p>
-</blockquote>
-<p>Practically speaking, POST is used to append a resource to an existing
-collection. In the following example you do not know the actual URL of the
-resource -- the server decides the location where it is stored under the
-<code>user</code> collection. </p>
-<pre class="highlight"><code class="hljs http"><span class="hljs-request">POST <span class="hljs-string">/user</span> HTTP/1.1</span>
-<span class="hljs-attribute">Host</span>: <span class="hljs-string">http://sookocheff.com</span>
-
-<span class="json">{
-    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Bryan Larson"</span></span>,
-    "<span class="hljs-attribute">website</span>": <span class="hljs-value"><span class="hljs-string">"http://www.bryanlarson.ca"</span>
-</span>}
-</span></code></pre><p>The server could respond with a <code>201 Created</code> status code and the resource&#39;s new
-location.</p>
-<pre class="highlight"><code class="hljs http"><span class="hljs-status">HTTP/1.1 <span class="hljs-number">201</span> Created</span>
-<span class="hljs-attribute">Location</span>: <span class="hljs-string">/user/636363</span>
-</code></pre><p>Subsequent updates to this user would be made through a <code>PUT</code> request to the
-specific URL for the user - <code>/user/636363</code>.</p>
-<p>The book <a href="http://www.amazon.ca/RESTful-Web-APIs-Leonard-Richardson/dp/1449358063">RESTful Web APIs</a>
-classify this behaviour <em>POST-to-append</em> and is the generally recommended way to
-handle a POST request within the context of a specific resource.</p>
-<h2 id="putting-it-together">Putting it Together</h2>
-<p>The <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.html">HTTP/1.1 RFC</a> offers some guidance on <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6">distinguishing between POST and
-PUT</a>.</p>
-<blockquote>
-<p>The fundamental difference between the POST and PUT requests is reflected in
-the different meaning of the Request-URI. The URI in a POST request identifies
-the resource that will handle the enclosed entity ...  In contrast, the URI in
-a PUT request identifies the entity enclosed with the request.</p>
-</blockquote>
-<p>By following the existing semantics of the HTTP PUT and POST methods we can
-begin to take advantage of the <a href="http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/">benefits of REST</a> to write scalable and
-robust APIs. Not only is your API ready to scale and easy to maintain, it is
-easy to understand and use. By consistently following these existing semantics
-you can avoid inserting special cases and &#39;gotchas&#39; into your API that confuse
-client developers.</p>
-]]></description>
-            <link>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</link>
-            <guid isPermaLink="true">http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</guid>
-            <dc:creator><![CDATA[Kevin Sookocheff]]></dc:creator>
-            <pubDate>Thu, 27 Mar 2014 13:23:34 GMT</pubDate>
         </item>
     </channel>
 </rss>

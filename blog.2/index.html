@@ -82,6 +82,25 @@
           <!-- Page Content -->
 
   <article>
+    <h2><a href="/posts/2013-04-19-creating-a-new-file-or-directoryin-vim-using-nerdtree">Creating a new file or directory in Vim using NERDTree</a></h2>
+    <small class="text-muted">
+      Posted on Friday, April 19, 2013.
+
+
+    </small>
+
+    
+      <p>I’m not sure why this was so difficult to discover. For the longest time I was not sure how to create a new file using NERDTree. I finally sat down and figure out how it works.</p>
+<p>First, bring up NERDTree and navigate to the directory where you want to create the new file. Press <code>m</code> to bring up the NERDTree Filesystem Menu. This menu allows you to create, rename, and delete files and directories. Type <code>a</code> to add a child node and then simply enter the filename. You’re done! To create a directory follow the same steps but append a <code>/</code> to the filename.</p>
+
+    
+
+    
+
+    <hr>
+  </article>
+
+  <article>
     <h2><a href="/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store">Submitting a Unity3d Game to the Mac App Store</a></h2>
     <small class="text-muted">
       Posted on Tuesday, April 09, 2013.
@@ -279,66 +298,6 @@
     <hr>
   </article>
 
-  <article>
-    <h2><a href="/posts/2011-05-18-dissecting-jquerys-fade-animation">Dissecting jQuery's Fade Animation</a></h2>
-    <small class="text-muted">
-      Posted on Wednesday, May 18, 2011.
-
-
-    </small>
-
-    
-      <p>Fade animations are a standard tool in any jQuery developer’s toolbox. But how do they really work? Let’s create a small function that encapsulates solely the fade functionality and find out.</p>
-<p>Let’s start with the jQuery <code>$</code> idiom.</p>
-<pre class="highlight"><code class="hljs javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">$</span><span class="hljs-params">(id)</span> {</span>
-    <span class="hljs-keyword">var</span> $ = document.getElementById(id);
-    <span class="hljs-keyword">return</span> $;
-}
-</code></pre><p>This function takes an HTML id as a parameter and returns the element associated with this id. We can call this function with a string to return the particular element we need.</p>
-<pre class="highlight"><code class="hljs ruby"><span class="hljs-variable">$(</span><span class="hljs-string">'img'</span>);
-</code></pre><p>Let’s add a function to our element.</p>
-<pre class="highlight"><code class="hljs javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">$</span><span class="hljs-params">(id)</span> {</span>
-    <span class="hljs-keyword">var</span> $ = document.getElementById(id);
-
-    $.fade = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
-        <span class="hljs-comment">// perform fade here</span>
-    };
-
-    <span class="hljs-keyword">return</span> $;
-}
-</code></pre><p>We can call the function by appending <code>.fade</code> to our element.</p>
-<pre class="highlight"><code class="hljs ruby"><span class="hljs-variable">$(</span><span class="hljs-string">'img'</span>).fade();
-</code></pre><p>Now let’s set up the rest of the function by adding a parameter for the length of the delay and storing a reference to <code>this</code>. In our context <code>this</code> refers to the element we are calling fade from. (For a detailed explanation of how <code>this</code> is set see the <a href="http://javascriptweblog.wordpress.com">JavaScript, JavaScript</a> article <a href="http://javascriptweblog.wordpress.com/.../understanding-javascripts-this/">here</a>). Finally, we set the display style of our element to <code>block</code> to ensure our animation is visible.</p>
-<pre class="highlight"><code class="hljs javascript">$.fade = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(delay)</span> {</span>
-    <span class="hljs-keyword">var</span> _this = <span class="hljs-keyword">this</span>;
-
-    _this.style.display = <span class="hljs-string">'block'</span>;
-
-    <span class="hljs-comment">// perform fade here</span>
-};
-</code></pre><p>We perform the fade by setting the opacity of our element. For this purpose let’s define a new function for setting the opacity of an element <code>elm</code> to <code>v</code>. We divide by 100 to define our fade in terms of a percentage.</p>
-<pre class="highlight"><code class="hljs javascript"><span class="hljs-keyword">var</span> opacityTo = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(elm, v)</span> {</span>
-    elm.style.opacity = v/<span class="hljs-number">100</span>;
-};
-</code></pre><p>We can add a call to this function to our fade method.</p>
-<pre class="highlight"><code class="hljs javascript">$.fade = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(delay)</span> {</span>
-    <span class="hljs-keyword">var</span> _this = <span class="hljs-keyword">this</span>;
-
-    _this.style.display = <span class="hljs-string">'block'</span>;
-
-    <span class="hljs-comment">// set the opacity to 50%</span>
-    opacityTo(_this, <span class="hljs-number">50</span>);
-};
-</code></pre><p>Now the trick is to call this function to fade the element over a period of time. We do this by using the <code>setTimeout(callbk, delay)</code> function to set the opacity to different values at particular moments in time. The method signature defines a callbk parameter as a function to call when delay time has passed. If we call this function 100 times throughout our animation we will have a smooth and fluid result.</p>
-<p>First we set up the <code>for</code> loop to iterate from 1 to 100 and then call an anonymous function sending the index of our loop as a parameter to the function. Our anonymous function then calls <code>setTimeout</code> periodically (100 times in total).</p>
-
-    
-
-    
-
-    <hr>
-  </article>
-
 
 <!-- Page Listing -->
 <div>
@@ -369,7 +328,7 @@
  <div class="footer-above text-center">
    <div class="container">
      <div class="row">
-       <div class="footer-col col-md-4">
+       <div class="footer-col col-md-3">
          <h3>App Engine</h3>
          <ul class="list-unstyled">
            <li>
@@ -377,20 +336,33 @@
            </li>
          </ul>
        </div>
-       <div class="footer-col col-md-4">
+
+       <div class="footer-col col-md-3">
          <h3>APIs</h3>
          <ul class="list-unstyled">
            <li>
              <a href="/posts/2014-03-11-on-choosing-a-hypermedia-format/">On Choosing a Hypermedia Format</a>
            </li>
            <li>
-             <a href="/posts/2014-03-27-when-to-use-http-put-and-http-post/">When to use HTTP Put</a>
+             <a href="/posts/2014-03-27-when-to-use-http-put-and-http-post/">When to use HTTP PUT</a>
            </li>
          </ul>
        </div>
-       <div class="footer-col col-md-4">
-         <h3>Social</h3>
 
+       <div class="footer-col col-md-3">
+         <h3>Popular</h3>
+         <ul class="list-unstyled">
+           <li>
+           <a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/"> Unity3d on the Mac App Store</a>
+           </li>
+           <li>
+             <a href="http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/">Saving Canvas Data to an Image</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Social</h3>
          <ul class="list-unstyled">
            <li><a href="http://www.twitter.com/soofaloofa">Twitter</a></li>
            <li><a href="http://www.facebook.com/kevin.sookocheff">Facebook</a></li>

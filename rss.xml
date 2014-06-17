@@ -5,10 +5,10 @@
         <description><![CDATA[Tinker. Tailor. Soldier. Sailor.]]></description>
         <link>http://sookocheff.com</link>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Tue, 17 Jun 2014 12:39:12 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 17 Jun 2014 15:09:05 GMT</lastBuildDate>
         <atom:link href="http://sookocheff.com/rss.xml" rel="self" type="application/rss+xml"/>
         <author><![CDATA[Kevin Sookocheff]]></author>
-        <pubDate>Tue, 17 Jun 2014 12:38:41 GMT</pubDate>
+        <pubDate>Tue, 17 Jun 2014 15:08:33 GMT</pubDate>
         <item>
             <title><![CDATA[Downloading directories of code from Github using the Github API]]></title>
             <description><![CDATA[<p>At <a href="http://www.vendAsta.com">VendAsta</a> we frequently share libraries of code

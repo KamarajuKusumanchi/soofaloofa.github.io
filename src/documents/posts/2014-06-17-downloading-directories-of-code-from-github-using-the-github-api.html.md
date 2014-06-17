@@ -4,7 +4,7 @@ standalone: true
 title: "Downloading directories of code from Github using the Github API"
 author: Kevin Sookocheff
 date: 2014/06/17 06:14:23
-description: <t render="markdown">At [VendAsta](http://www.vendAsta.com) we frequently share libraries of code between projects. To make it easier to share this code I've developed a small package manager that downloads code within a directory from Github to be copied in to your current project. It's a quick and dirty alternative to cloning an entire repository, grabbing the set of files you want and placing them in your project.</t>
+description: <t render="markdown">At [VendAsta](http://www.vendAsta.com) we frequently share libraries of code between projects. To make it easier to share this code here is a small package manager that downloads code within a directory from Github to be copied in to your current project. It is a quick and dirty alternative to cloning an entire repository, grabbing the set of files you want and placing them in your project.</t>
 tags: 
   - github
   - packaging

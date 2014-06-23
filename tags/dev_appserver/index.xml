@@ -7,12 +7,12 @@
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Tue, 17 Jun 2014 06:14:23 UTC</updated>
+    <updated>Tue, 17 Jun 2014 13:09:42 UTC</updated>
     
     <item>
       <title>Running Multiple App Engine Modules Locally with dev_appserver.py</title>
       <link>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally</link>
-      <pubDate>Tue, 17 Jun 2014 06:14:23 UTC</pubDate>
+      <pubDate>Tue, 17 Jun 2014 13:09:42 UTC</pubDate>
       <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally</guid>
       <description>&lt;p&gt;The recently released &lt;a href=&#34;https://developers.google.com/appengine/docs/python/modules/&#34;&gt;App Engine Modules API&lt;/a&gt; allows developers to compartmentalize their applications into logical units that can share state using the datastore or memcache.&lt;/p&gt;

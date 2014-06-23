@@ -73,6 +73,25 @@
 
         
           <article>
+            <h2><a href="http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally">Running Multiple App Engine Modules Locally with dev_appserver.py</a></h2>
+            <small class="text-muted">
+              Posted on Tuesday, June 17, 2014.
+            </small>
+            
+              <p>
+                <p>The recently released <a href="https://developers.google.com/appengine/docs/python/modules/">App Engine Modules API</a> allows developers to compartmentalize their applications into logical units that can share state using the datastore or memcache.</p>
+
+<p>The documentation for this API is fairly complete but one part is lacking — running multiple modules locally using dev_appserver.py. Thankfully, the solution is not too complicated.  Just pass the list of <code>.yaml</code> files defining your modules to dev_appserver and it will run all of your modules locally.</p>
+
+<pre><code class="bash">dev_appserver.py src/app.yaml src/backend.yaml src/dispatch.yaml
+</code></pre>
+
+              </p>
+            
+            <hr>
+          </article>
+        
+          <article>
             <h2><a href="http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put">How to bypass the auto_now property option during an ndb put</a></h2>
             <small class="text-muted">
               Posted on Wednesday, May 28, 2014.

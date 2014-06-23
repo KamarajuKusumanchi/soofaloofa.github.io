@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<title>How to bypass the auto_now property option during an ndb put : sookocheff.com</title>
+
+<meta charset="utf-8">
+<meta http-equiv="content-type", content="text/html; charset=utf-8">
+<meta name="viewport", content="width=device-width, initial-scale=1.0">
+
+<link rel="canonical" href="http://localhost:1313/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put">
+
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans">
+<link rel="stylesheet" href="//yandex.st/highlightjs/8.0/styles/default.min.css">
+
+<link rel="stylesheet" href="/css/vendor/bootstrap.min.css">
+<link rel="stylesheet" href="/css/vendor/monokai_sublime.css">
+<link rel="stylesheet" href="/css/style.css">
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-20611089-6', 'sookocheff.com');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand">Kevin Sookocheff</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="">
+          <a href="/posts/">Blog</a>
+        </li>
+        <li class="dropdown">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+            Subscribe <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="http://eepurl.com/KJE01">email</a></li>
+            <li><a href="http://sookocheff.com/index.xml">RSS</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="container page-container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <section class="page">
+        <article class="post">
+          <h1>How to bypass the auto_now property option during an ndb put</h1>
+          <p>
+            <small class="text-muted">
+              Posted on Wednesday, May 28, 2014.
+            </small>
+          </p>
+
+          <div class=".post-content">
+            <p>In App Engine the <code>auto_now</code> option sets a property to the current date/time
+whenever the entity is created or updated. This is a great feature for tracking
+the time when an entity was last updated. However, sometimes you may want to put
+an entity without updating an <code>auto_now</code> timestamp. This article will show you
+how.</p>
+
+<p>First, let&rsquo;s start with a very basic ndb model with an <code>updated</code> property having
+the <code>auto_now</code> option set to <code>True</code>.</p>
+
+<pre><code class="python">from google.appengine.ext import ndb
+
+class Article(ndb.model):
+    title = ndb.model.StringProperty()
+    updated = ndb.model.DateTimeProperty(auto_now=True)
+</code></pre>
+
+<p>Now, let&rsquo;s put the entity to the datastore <em>without updating the timestamp</em> and
+<em>completely bypassing the <code>auto_now</code> option</em>.</p>
+
+<pre><code class="python">article = Article(title='Python versus Ruby')
+article._properties['updated']._auto_now = False
+article.put()
+</code></pre>
+
+<p>It&rsquo;s pretty simple, but with caveats. Putting the entity using the code above
+will store the updated entity in the instance cache (and memcache). If we get
+the entity it will be retrieved from the instance cache with the <code>auto_now</code>
+property still set to <code>False</code>. This can have unwanted side-effects because
+subsequent updates to the entity will not trigger the <code>auto_now</code> functionality.</p>
+
+<pre><code class="python">article = Article(title='Python versus Ruby')
+article._properties['updated']._auto_now = False
+key = article.put() # Put the entity with the auto_now option set to False
+
+article = key.get() # Get the entity from instance cache
+article.title = 'Python versus Go'
+article.put() # Put the entity with the auto_now option *still* set to False
+</code></pre>
+
+<p>You can set the <code>auto_now</code> option to <code>True</code> again to re-enable the functionality.</p>
+
+<pre><code class="python">article = Article(title='Python versus Ruby')
+article._properties['updated']._auto_now = False
+key = article.put()
+
+article._properties['updated']._auto_now = True
+article = key.get() # Get the entity from instance cache
+article.title = 'Python versus Go'
+article.put() # Puts the entity with the auto_now option set to True
+</code></pre>
+
+<p>For more information on ndb caching <a href="https://developers.google.com/appengine/docs/python/ndb/cache">refer to the
+documentation</a>.</p>
+ 
+          </div>
+
+          <hr>
+            <ul class="list-inline">
+  <li>Share this post:</li>
+  <li>
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2flocalhost%3a1313%2fposts%2f2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put&text=How%20to%20bypass%20the%20auto_now%20property%20option%20during%20an%20ndb%20put&via=soofaloofa">
+      <i class="fa fa-twitter fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fposts%2f2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put">
+      <i class="fa fa-facebook fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://plus.google.com/share?url=http%3a%2f%2flocalhost%3a1313%2fposts%2f2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put">
+      <i class="fa fa-google-plus fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2flocalhost%3a1313%2fposts%2f2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put">
+      <i class="fa fa-linkedin fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2flocalhost%3a1313%2fposts%2f2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put">
+      <i class="fa fa-envelope fa-lg"></i>
+    </a>
+  </li>
+</ul>
+
+          <hr>
+
+          <div class="blurb">
+            <div class="row">
+              <div class="col-md-10 col-md-offset-1">
+                <h4 class="text-center">About Kevin Sookocheff</h4>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 col-md-offset-1">
+                <p>
+                  <img class="img-circle center-block" src="/img/profile.png">
+                </p>
+              </div>
+              <div class="col-md-6">
+                <p>
+                  I am a Software Developer. I work at <a
+  href="http://www.vendasta.com">VendAsta</a> with a bunch of great people. I
+run a business as <a href="http://redfinchsoftware.com">Red Finch Software</a>.
+You can find me online as <a
+href="https://twitter.com/soofaloofa">soofaloofa</a>. I love to teach, learn,
+speak and write about business and software.
+
+                  <ul class="list-inline">
+                    <li>On the web:</li>
+                    <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+                    <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+                    <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+                    <li><a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square fa-lg"></i></a></li>
+                    <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+                    <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+                  </ul>
+                </p>
+              </div>
+            </div>
+          </div>
+          <hr>
+
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kevinsookocheff';
+    var disqus_identifier = 'http:\/\/localhost:1313\/posts\/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put';
+    var disqus_title = 'How to bypass the auto_now property option during an ndb put';
+    var disqus_url = 'http:\/\/localhost:1313\/posts\/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </article>
+      </section>
+    </div>
+  </div>
+</div>
+
+<footer>
+ <div class="footer-above text-center">
+   <div class="container">
+     <div class="row">
+       <div class="footer-col col-md-3">
+         <h3>App Engine</h3>
+         <ul class="list-unstyled">
+           <li>
+             <a href="/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">MapReduce API</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>APIs</h3>
+         <ul class="list-unstyled">
+           <li>
+             <a href="/posts/2014-03-11-on-choosing-a-hypermedia-format/">On Choosing a Hypermedia Format</a>
+           </li>
+           <li>
+             <a href="/posts/2014-03-27-when-to-use-http-put-and-http-post/">When to use HTTP PUT</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Popular</h3>
+         <ul class="list-unstyled">
+           <li>
+           <a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/"> Unity3d on the Mac App Store</a>
+           </li>
+           <li>
+             <a href="http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/">Saving Canvas Data to an Image</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Social</h3>
+         <ul class="list-unstyled">
+           <li><a href="http://www.twitter.com/soofaloofa">Twitter</a></li>
+           <li><a href="http://www.facebook.com/kevin.sookocheff">Facebook</a></li>
+           <li><a href="http://www.linkedin.com/in/kevinsookocheff">LinkedIn</a></li>
+           <li><a href="https://plus.google.com/+KevinSookocheff">Google+</a></li>
+           <li><a href="https://github.com/soofaloofa">Github</a></li>
+         </ul>
+       </div>
+     </div>
+   </div>
+ </div>
+ <div class="footer-below text-center">
+     <div class="container">
+         <div class="row">
+             <div class="col-lg-12">
+                 &copy; Kevin Sookocheff · <a href="#">Top</a>
+             </div>
+         </div>
+     </div>
+ </div>
+</footer>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="//yandex.st/highlightjs/8.0/highlight.min.js"></script>
+<script src="/js/vendor/retina.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>document.write('<script src="http://'
+        + (location.host || 'localhost').split(':')[0]
+		+ ':1313/livereload.js?mindelay=10"></'
+        + 'script>')</script></body>
+</html>
+

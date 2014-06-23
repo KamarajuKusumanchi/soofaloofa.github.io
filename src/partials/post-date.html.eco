@@ -1,4 +1,0 @@
-Posted on <%= @posted.toLocaleDateString() %>.
-<% if @updated: %>
-  Updated on <%= new Date(@updated).toLocaleDateString() %>.
-<% end %>

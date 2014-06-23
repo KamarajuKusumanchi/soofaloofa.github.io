@@ -1,0 +1,36 @@
+{{ template "partials/header.html" . }}
+{{ template "partials/navbar.html" . }}
+
+<div class="container page-container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <section class="page">
+        <h1>{{ .Title }}</h1>
+
+        {{ range .Data.Pages }}
+          <article>
+            <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+            <small class="text-muted">
+              Posted on {{ .Date.Format "Monday, January 2, 2006." }}
+            </small>
+            {{ if .Description }}
+              <p>
+                {{ .Description }}
+              </p>
+              <p class="text-center">
+                <a href="{{ .Permalink }}"><button type="button" class="btn btn-primary">Read More</button></a>
+              </p>
+            {{ else }}
+              <p>
+                {{ .Content }}
+              </p>
+            {{ end }}
+            <hr>
+          </article>
+        {{ end }}
+      </section>
+    </div>
+  </div>
+</div>
+
+{{ template "partials/footer.html" . }}

@@ -1,0 +1,62 @@
+{{ template "partials/header.html" . }}
+{{ template "partials/navbar.html" . }}
+
+<div class="container page-container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <section class="page">
+        <article class="post">
+          <h1>{{ .Title }}</h1>
+          <p>
+            <small class="text-muted">
+              Posted on {{ .Date.Format "Monday, January 2, 2006." }}
+            </small>
+          </p>
+
+          <div class=".post-content">
+            {{ .Content }} 
+          </div>
+
+          <hr>
+            {{ template "partials/share-this.html" . }}
+          <hr>
+
+          <div class="blurb">
+            <div class="row">
+              <div class="col-md-10 col-md-offset-1">
+                <h4 class="text-center">About Kevin Sookocheff</h4>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 col-md-offset-1">
+                <p>
+                  <img class="img-circle center-block" src="/img/profile.png">
+                </p>
+              </div>
+              <div class="col-md-6">
+                <p>
+                  {{ template "partials/blurb.html" . }}
+                  <ul class="list-inline">
+                    <li>On the web:</li>
+                    <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+                    <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+                    <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+                    <li><a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square fa-lg"></i></a></li>
+                    <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+                    <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+                  </ul>
+                </p>
+              </div>
+            </div>
+          </div>
+          <hr>
+
+          {{ template "_internal/disqus.html" . }}
+        </article>
+      </section>
+    </div>
+  </div>
+</div>
+
+{{ template "partials/footer.html" . }}

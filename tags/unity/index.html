@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<title>Unity : sookocheff.com</title>
+
+<meta charset="utf-8">
+<meta http-equiv="content-type", content="text/html; charset=utf-8">
+<meta name="viewport", content="width=device-width, initial-scale=1.0">
+
+<link rel="canonical" href="http://sookocheff.com/tags/unity">
+
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans">
+<link rel="stylesheet" href="//yandex.st/highlightjs/8.0/styles/default.min.css">
+
+<link rel="stylesheet" href="/css/vendor/bootstrap.min.css">
+<link rel="stylesheet" href="/css/vendor/monokai_sublime.css">
+<link rel="stylesheet" href="/css/style.css">
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-20611089-6', 'sookocheff.com');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand">Kevin Sookocheff</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="">
+          <a href="/posts/">Blog</a>
+        </li>
+        <li class="dropdown">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+            Subscribe <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="http://eepurl.com/KJE01">email</a></li>
+            <li><a href="http://sookocheff.com/index.xml">RSS</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="container page-container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <section class="page">
+        <h1>Unity</h1>
+
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store">Submitting a Unity3d Game to the Mac App Store</a></h2>
+            <small class="text-muted">
+              Posted on Tuesday, April 9, 2013.
+            </small>
+            
+              <p>
+                Submitting a Unity3d game to the Mac App Store is a somewhat painful process. This guide refers to Unity3d 3.5 but should apply to Unity 4.0 and up.
+              </p>
+              <p class="text-center">
+                <a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store"><button type="button" class="btn btn-primary">Read More</button></a>
+              </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2012-11-15-etcetera-plugin-live-alerts-prompts-loading-views-push-localization-and-more">Showing a local webpage in Unity3d using the Prime[31] etcetera plugin.</a></h2>
+            <small class="text-muted">
+              Posted on Thursday, November 15, 2012.
+            </small>
+            
+              <p>
+                <p>I&rsquo;ve been working with Prime31&rsquo;s Etcetera plugin for iOS development with Unity3d. There are a lot of great things in there but some of the documentation is lacking.<br />
+Anyways, if you want to show a local web page with the <code>showWebPage</code> command it is a two step process.</p>
+
+<p>Step 1:</p>
+
+<p>Copy the files you wish to access into a folder called <code>StreamingAssets</code> under your <code>Assets</code> directory.</p>
+
+<p>Step 2:</p>
+
+<p>Call <code>EtceteraBinding</code> as follows:</p>
+
+<pre><code>EtceteraBinding.showWebPage(Application.dataPath + &quot;/Raw/FolderWithHTML/index.html&quot;);
+</code></pre>
+
+<p>where <code>FolderWithHTML</code> is the folder you placed in the <code>StreamingAssets</code> folder.</p>
+
+              </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2012-10-08-using-unity3d-with-version-control">Using Unity3d with Version Control</a></h2>
+            <small class="text-muted">
+              Posted on Monday, October 8, 2012.
+            </small>
+            
+              <p>
+                <p>I had a tough time finding this page. The steps to get Unity set up with version control aren’t that difficult but it is one of those problems that you need to be told how to solve.</p>
+
+<p><a href="http://docs.unity3d.com/Documentation/Manual/ExternalVersionControlSystemSupport.html">Unity – Using External Version Control Systems with Unity [docs.unity3d.com]</a>.</p>
+
+              </p>
+            
+            <hr>
+          </article>
+        
+      </section>
+    </div>
+  </div>
+</div>
+
+<footer>
+ <div class="footer-above text-center">
+   <div class="container">
+     <div class="row">
+       <div class="footer-col col-md-3">
+         <h3>App Engine</h3>
+         <ul class="list-unstyled">
+           <li>
+             <a href="/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">MapReduce API</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>APIs</h3>
+         <ul class="list-unstyled">
+           <li>
+             <a href="/posts/2014-03-11-on-choosing-a-hypermedia-format/">On Choosing a Hypermedia Format</a>
+           </li>
+           <li>
+             <a href="/posts/2014-03-27-when-to-use-http-put-and-http-post/">When to use HTTP PUT</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Popular</h3>
+         <ul class="list-unstyled">
+           <li>
+           <a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/"> Unity3d on the Mac App Store</a>
+           </li>
+           <li>
+             <a href="http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/">Saving Canvas Data to an Image</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Social</h3>
+         <ul class="list-unstyled">
+           <li><a href="http://www.twitter.com/soofaloofa">Twitter</a></li>
+           <li><a href="http://www.facebook.com/kevin.sookocheff">Facebook</a></li>
+           <li><a href="http://www.linkedin.com/in/kevinsookocheff">LinkedIn</a></li>
+           <li><a href="https://plus.google.com/+KevinSookocheff">Google+</a></li>
+           <li><a href="https://github.com/soofaloofa">Github</a></li>
+         </ul>
+       </div>
+     </div>
+   </div>
+ </div>
+ <div class="footer-below text-center">
+     <div class="container">
+         <div class="row">
+             <div class="col-lg-12">
+                 &copy; Kevin Sookocheff · <a href="#">Top</a>
+             </div>
+         </div>
+     </div>
+ </div>
+</footer>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="//yandex.st/highlightjs/8.0/highlight.min.js"></script>
+<script src="/js/vendor/retina.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>
+

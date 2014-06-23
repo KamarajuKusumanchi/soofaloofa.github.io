@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+      <title>Github on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
+    <link>http://sookocheff.com/tags/github/index.xml</link>
+    <language>en-us</language>
+    <author>Kevin Sookocheff</author>
+    <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Tue, 17 Jun 2014 06:14:23 UTC</updated>
+    
+    <item>
+      <title>Downloading directories of code from Github using the Github API</title>
+      <link>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api</link>
+      <pubDate>Tue, 17 Jun 2014 06:14:23 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api</guid>
+      <description>
+
+&lt;p&gt;At &lt;a href=&#34;http://www.vendAsta.com&#34;&gt;VendAsta&lt;/a&gt; we frequently share libraries of code
+between projects. To make it easier to share this code I&amp;rsquo;ve developed a small
+package manager that downloads code within a directory from Github to be copied
+in to your current project. It&amp;rsquo;s a quick and dirty alternative to cloning an
+entire repository, grabbing the set of files you want and placing them in your
+project.&lt;/p&gt;
+
+&lt;p&gt;We&amp;rsquo;ll use the &lt;a href=&#34;https://github.com/jacquev6/PyGithub&#34;&gt;PyGithub&lt;/a&gt; Python library to
+interact with the Github API.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;Logging in to Github&lt;/h2&gt;
+
+&lt;p&gt;The first step is to log in to Github using our credentials. To do this we
+instantiate a new Github object given our username and password and access the
+associated user by calling &lt;code&gt;get_user&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from github import Github
+
+github = Github(&#39;soofaloofa&#39;, &#39;password&#39;)
+user = github.get_user()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is equivalent to making a &lt;a href=&#34;https://developer.github.com/v3/#authentication&#34;&gt;basic authentication
+request&lt;/a&gt; to get the currently
+&lt;a href=&#34;https://developer.github.com/v3/users/#get-the-authenticated-user&#34;&gt;authenticated
+user&lt;/a&gt; and
+storing the result in a local representation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;curl -u soofaloofa https://api.github.com/user
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Accessing a repository&lt;/h2&gt;
+
+&lt;p&gt;Now that we have a user we can get a repository for that user by name. To get
+the repository for this website we make a request to &lt;a href=&#34;https://developer.github.com/v3/repos/#get&#34;&gt;get a repo by
+owner&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;repository = user.get_repo(&#39;soofaloofa.github.io&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;Downloading a single file&lt;/h2&gt;
+
+&lt;p&gt;To download a single file from a repository we make a call to &lt;a href=&#34;https://developer.github.com/v3/repos/contents/#get-contents&#34;&gt;get the contents
+of a file&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;file_content = repository.get_contents(&#39;README.md&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_3&#34;&gt;Referencing commits&lt;/h2&gt;
+
+&lt;p&gt;We have all the building blocks to download a resource from Github. The next
+step is to download a resource referenced by a specific commit. The Github API
+expects SHA values to reference a commit. To make this a bit more user friendly
+we can write a function that will search for a SHA given a git tag or branch
+name.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def get_sha_for_tag(repository, tag):
+    &amp;quot;&amp;quot;&amp;quot;
+    Returns a commit PyGithub object for the specified repository and tag.
+    &amp;quot;&amp;quot;&amp;quot;
+    branches = repository.get_branches()
+    matched_branches = [match for match in branches if match.name == tag]
+    if matched_branches:
+        return matched_branches[0].commit.sha
+
+    tags = repository.get_tags()
+    matched_tags = [match for match in tags if match.name == tag]
+    if not matched_tags:
+        raise ValueError(&#39;No Tag or Branch exists with that name&#39;)
+    return matched_tags[0].commit.sha
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we can pass this SHA to the &lt;code&gt;get_contents&lt;/code&gt; function to get a file for that
+specific commit.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;sha = get_sha_for_tag(repository, &#39;develop&#39;)
+file_content = repository.get_contents(&#39;README.md&#39;, ref=sha)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_4&#34;&gt;Putting it all together&lt;/h2&gt;
+
+&lt;p&gt;By putting a bit more polish on this we can easily download entire directories
+of code that reference a single tag or branch and copy them to our local
+environment. The basic workflow is:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Choose a repository.&lt;/li&gt;
+&lt;li&gt;Choose a branch or tag.&lt;/li&gt;
+&lt;li&gt;Choose a directory.&lt;/li&gt;
+&lt;li&gt;Iteratively download all the files in that directory.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Let&amp;rsquo;s make that happen.&lt;/p&gt;
+
+&lt;p&gt;For this code I&amp;rsquo;ll assume that the Github user belongs to a single organization
+and that this organization is sharing code between repositories.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from github import Github
+import getpass
+
+username = raw_input(&amp;quot;Github username: &amp;quot;)
+password = getpass.getpass(&amp;quot;Github password: &amp;quot;)
+
+github = Github(username, password)
+organization = github.get_user().get_orgs()[0]
+
+repository_name = raw_input(&amp;quot;Github repository: &amp;quot;)
+repository = organization.get_repo(repository_name)
+
+branch_or_tag_to_download = raw_input(&amp;quot;Branch or tag to download: &amp;quot;)
+sha = get_sha_for_tag(repository, branch_or_tag_to_download)
+
+directory_to_download = raw_input(&amp;quot;Directory to download: &amp;quot;)
+download_directory(repository, sha, directory_to_download)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This piece of code is fairly simple and relies on a couple of helper functions:
+&lt;code&gt;get_sha_for_tag&lt;/code&gt; and &lt;code&gt;download_directory&lt;/code&gt;. &lt;code&gt;get_sha_for_tag&lt;/code&gt; will return the
+SHA commit hash given a branch or tag and &lt;code&gt;download_directory&lt;/code&gt; will recursively
+download the files in the given directory.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def get_sha_for_tag(repository, tag):
+    &amp;quot;&amp;quot;&amp;quot;
+    Returns a commit PyGithub object for the specified repository and tag.
+    &amp;quot;&amp;quot;&amp;quot;
+    branches = repository.get_branches()
+    matched_branches = [match for match in branches if match.name == tag]
+    if matched_branches:
+        return matched_branches[0].commit.sha
+
+    tags = repository.get_tags()
+    matched_tags = [match for match in tags if match.name == tag]
+    if not matched_tags:
+        raise ValueError(&#39;No Tag or Branch exists with that name&#39;)
+    return matched_tags[0].commit.sha
+
+
+def download_directory(repository, sha, server_path):
+    &amp;quot;&amp;quot;&amp;quot;
+    Download all contents at server_path with commit tag sha in 
+    the repository.
+    &amp;quot;&amp;quot;&amp;quot;
+    contents = repository.get_dir_contents(server_path, ref=sha)
+
+    for content in contents:
+        print &amp;quot;Processing %s&amp;quot; % content.path
+        if content.type == &#39;dir&#39;:
+            download_directory(repository, sha, content.path)
+        else:
+            try:
+                path = content.path
+                file_content = repository.get_contents(path, ref=sha)
+                file_data = base64.b64decode(file_content.content)
+                file_out = open(content.name, &amp;quot;w&amp;quot;)
+                file_out.write(file_data)
+                file_out.close()
+            except (GithubException, IOError) as exc:
+                logging.error(&#39;Error processing %s: %s&#39;, content.path, exc)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We&amp;rsquo;ve been using a variation of this simple script to share code between Github
+repositories and appreciate it&amp;rsquo;s flexibility and ease of use. Let me know if you
+find it useful!&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

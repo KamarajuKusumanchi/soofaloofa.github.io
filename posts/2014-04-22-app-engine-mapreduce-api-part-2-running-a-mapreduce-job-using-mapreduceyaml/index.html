@@ -2,17 +2,22 @@
 <html lang="en">
 <head>
 
-<title>App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml | Kevin Sookocheff</title>
+<title>App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml : sookocheff.com</title>
 
 <meta charset="utf-8">
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<meta name="description" content="&lt;t render=&quot;markdown&quot;&gt;In this article we'll be getting our hands dirty writing some code to handle the Map Stage. The Map Stage is composed of two separate components: an InputReader and a `map` function. We'll look at each of these in turn and show how to run some basic MapReduce jobs using the App Engine API.&lt;/t&gt;">
-<meta name="keywords" content="">
-<meta name="author" content="Kevin Sookocheff">
+<link rel="canonical" href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml">
 
-<link  rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" /><link  rel="stylesheet" href="/styles/vendor/bootstrap.min.css" /><link  rel="stylesheet" href="/styles/style.css" /><link  rel="stylesheet" href="/styles/monokai_sublime.css" /><link  rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif" /><link  rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" />
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans">
+<link rel="stylesheet" href="//yandex.st/highlightjs/8.0/styles/default.min.css">
+
+<link rel="stylesheet" href="/css/vendor/bootstrap.min.css">
+<link rel="stylesheet" href="/css/vendor/monokai_sublime.css">
+<link rel="stylesheet" href="/css/style.css">
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -25,15 +30,11 @@
 </script>
 
 
-<!--[if lt IE 9]>
-<script async src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-<script async src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.2.0/respond.js"></script>
-<![endif]-->
+
 
 </head>
 <body>
 
-<!-- Navbar-->
 <div class="navbar navbar-default" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -46,12 +47,8 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
-        
-        <li class="inactive">
-          <a href="/blog/">Blog</a>
-        </li>
-        <li class="inactive">
-          <a href="/archives/">Archives</a>
+        <li class="">
+          <a href="/posts/">Blog</a>
         </li>
         <li class="dropdown">
           <a href="#" data-toggle="dropdown" class="dropdown-toggle">
@@ -59,7 +56,7 @@
           </a>
           <ul class="dropdown-menu">
             <li><a href="http://eepurl.com/KJE01">email</a></li>
-            <li><a href="http://sookocheff.com/rss.xml">RSS</a></li>
+            <li><a href="http://sookocheff.com/index.xml">RSS</a></li>
           </ul>
         </li>
       </ul>
@@ -67,29 +64,24 @@
   </div>
 </div>
 
-<!-- Default Content -->
-<!-- Page Container -->
+
 <div class="container page-container">
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <section class="page">
-        <div class="page-header">
-        
+        <article class="post">
           <h1>App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml</h1>
-        
-        </div>
-        <div class="page-content">
-          <article class="post">
-  <p>
-    <small class="text-muted">
-      Posted on Tuesday, April 22, 2014.
+          <p>
+            <small class="text-muted">
+              Posted on Tuesday, April 22, 2014.
+            </small>
+          </p>
 
+          <div class=".post-content">
+            
 
-    </small>
-  </p>
+<h2 id="toc_0">MapReduce API Series</h2>
 
-  <div class=".post-content">
-    <h2 id="mapreduce-api-series">MapReduce API Series</h2>
 <ul>
 <li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
 <li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
@@ -97,192 +89,253 @@
 <li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
 <li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
 </ul>
-<p><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Last time</a> we looked at an overview of how MapReduce works. In this article we&#39;ll be getting our hands dirty writing some code to handle the Map Stage. If you&#39;ll recall, the Map Stage is composed of two separate components: an InputReader and a <code>map</code> function. We&#39;ll look at each of these in turn.</p>
-<h2 id="getting-started-installation">Getting Started: Installation</h2>
-<p>First, let&#39;s install the MapReduce API for Python. The API is constantly changing so the best way to install the latest version is to checkout the code directly from the <a href="https://code.google.com/p/appengine-mapreduce/">SVN repository</a>.</p>
-<pre class="highlight"><code class="hljs bash">svn checkout http://appengine-mapreduce.googlecode.com/svn/trunk/python/src/mapreduce
-</code></pre>
-<p>Place the <code>mapreduce</code> folder into your application root directory and add the mapreduce handler to your <code>app.yaml</code> file.</p>
-<pre class="highlight"><code class="hljs avrasm"><span class="hljs-label">includes:</span>
-- lib/mapreduce/include<span class="hljs-preprocessor">.yaml</span>
 
-<span class="hljs-label">handlers:</span>
+<p><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Last time</a> we looked at an overview of how MapReduce works. In this article we&rsquo;ll be getting our hands dirty writing some code to handle the Map Stage. If you&rsquo;ll recall, the Map Stage is composed of two separate components: an InputReader and a <code>map</code> function. We&rsquo;ll look at each of these in turn.</p>
+
+<h2 id="toc_1">Getting Started: Installation</h2>
+
+<p>First, let&rsquo;s install the MapReduce API for Python. The API is constantly changing so the best way to install the latest version is to checkout the code directly from the <a href="https://code.google.com/p/appengine-mapreduce/">SVN repository</a>.</p>
+
+<pre><code class="bash">svn checkout http://appengine-mapreduce.googlecode.com/svn/trunk/python/src/mapreduce
+</code></pre>
+
+<p>Place the <code>mapreduce</code> folder into your application root directory and add the mapreduce handler to your <code>app.yaml</code> file.</p>
+
+<pre><code class="yaml">includes:
+- lib/mapreduce/include.yaml
+
+handlers:
 - url: /_ah/pipeline.*
-  script: mapreduce<span class="hljs-preprocessor">.lib</span><span class="hljs-preprocessor">.pipeline</span><span class="hljs-preprocessor">.handlers</span>._APP
+  script: mapreduce.lib.pipeline.handlers._APP
   login: admin
 </code></pre>
-<p>You can verify your installation by going to the <code>/mapreduce</code> URL in your app. You&#39;ll see a UI listing the status of any MapReduce jobs. You&#39;ll also see a notice that the UI could not find the file <code>mapreduce.yaml</code>. You can ignore that notice for now.</p>
+
+<p>You can verify your installation by going to the <code>/mapreduce</code> URL in your app. You&rsquo;ll see a UI listing the status of any MapReduce jobs. You&rsquo;ll also see a notice that the UI could not find the file <code>mapreduce.yaml</code>. You can ignore that notice for now.</p>
+
 <p><a class="thumbnail" href="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/could-not-find-mapreduce.png">
 <img src="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/could-not-find-mapreduce.png" alt="Could not find mapreduce.yaml">
 </a></p>
+
 <p>To get a proper view of the data you will also need to add two indexes to your <code>index.yaml</code> file to allow the MapReduce library to query for MapReduce jobs that are run via Pipelines and display them in the GUI.</p>
-<pre class="highlight"><code class="hljs haml">indexes:
--<span class="ruby"> <span class="hljs-symbol">kind:</span> _AE_Pipeline_Record
-</span>  properties:
-  -<span class="ruby"> <span class="hljs-symbol">name:</span> is_root_pipeline
-</span>  -<span class="ruby"> <span class="hljs-symbol">name:</span> start_time
-</span>    direction: desc
--<span class="ruby"> <span class="hljs-symbol">kind:</span> _AE_Pipeline_Record
-</span>  properties:
-  -<span class="ruby"> <span class="hljs-symbol">name:</span> class_path
-</span>  -<span class="ruby"> <span class="hljs-symbol">name:</span> start_time
-</span>    direction: desc
+
+<pre><code class="yaml">indexes:
+- kind: _AE_Pipeline_Record
+  properties:
+  - name: is_root_pipeline
+  - name: start_time
+    direction: desc
+- kind: _AE_Pipeline_Record
+  properties:
+  - name: class_path
+  - name: start_time
+    direction: desc
 </code></pre>
-<h2 id="running-your-first-mapreduce-job">Running Your First MapReduce Job</h2>
-<p>The easiest way to get started with MapReduce is to use the <code>mapreduce.yaml</code> file. This file allows you define a <code>mapper</code> function that will be executed for each entity passed to it. Let&#39;s go straight to an example and  create a <code>mapreduce.yaml</code> file (in your applications root directory) that will iterate over all entities of a certain Kind and put them to the datastore (updating their timestamp).</p>
-<pre class="highlight"><code class="hljs avrasm"><span class="hljs-label">mapreduce:</span>
+
+<h2 id="toc_2">Running Your First MapReduce Job</h2>
+
+<p>The easiest way to get started with MapReduce is to use the <code>mapreduce.yaml</code> file. This file allows you define a <code>mapper</code> function that will be executed for each entity passed to it. Let&rsquo;s go straight to an example and  create a <code>mapreduce.yaml</code> file (in your applications root directory) that will iterate over all entities of a certain Kind and put them to the datastore (updating their timestamp).</p>
+
+<pre><code class="yaml">mapreduce:
 - name: Touch all entity_kind Models
   mapper:
-    input_reader: mapreduce<span class="hljs-preprocessor">.input</span>_readers<span class="hljs-preprocessor">.DatastoreInputReader</span>
-    handler: path_to_my<span class="hljs-preprocessor">.touch</span>
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: path_to_my.touch
     params:
     - name: entity_kind
-      default: path_to_my<span class="hljs-preprocessor">.MyModel</span>
+      default: path_to_my.MyModel
 </code></pre>
-<p>Go to the <code>/mapreduce</code> URL in your app and you should see the <em>Touch all entity_kind Models</em> job selectable under the Launch job setting. </p>
+
+<p>Go to the <code>/mapreduce</code> URL in your app and you should see the <em>Touch all entity_kind Models</em> job selectable under the Launch job setting.</p>
+
 <p><a class="thumbnail" href="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/select-first-mapreduce.png">
 <img src="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/select-first-mapreduce.png" alt="Select first mapreduce to Launch">
 </a></p>
-<p>Go ahead and select this job and click <code>Run</code>. You will get an error saying that <em>MyModel</em> could not be found. </p>
+
+<p>Go ahead and select this job and click <code>Run</code>. You will get an error saying that <em>MyModel</em> could not be found.</p>
+
 <p><a class="thumbnail" href="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/could-not-find-my-model.png">
 <img src="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/could-not-find-my-model.png" alt="Could not find a Model">
 </a></p>
+
 <p>This is a great time to edit your yaml file point to an actual model in your application to continue with this tutorial. Now that our InputReader is pointing to a model we can define the <code>map</code> function specified by our yaml files <code>handler</code> parameter. The <code>map</code> function is iteratively passed entities from our InputReader and we can take actions on those entities.</p>
-<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">touch</span><span class="hljs-params">(entity)</span>:</span>
-    <span class="hljs-string">"""
+
+<pre><code class="python">def touch(entity):
+    &quot;&quot;&quot;
     Update the entities timestamp.
-    """</span>
+    &quot;&quot;&quot;
     entity.put()
 </code></pre>
+
 <p>Go back to the <code>/mapreduce</code> URL in your app and run the job again. Refresh the page (if it does not auto-refresh) and you can see your job running.</p>
+
 <p><a class="thumbnail" href="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/running-first-job.png">
 <img src="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/running-first-job.png" alt="Running your first mapreduce job">
 </a></p>
+
 <p>You can click on the <code>Detail</code> link to get full details on the MapReduce job. This view gives you the status of individual shards in the MapReduce job and an overview of the processing time that was required.</p>
+
 <p><a class="thumbnail" href="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png">
 <img src="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png" alt="Running job details">
 </a></p>
-<p>We&#39;ve ran our first MapReduce job!</p>
-<h2 id="the-mutationpool">The MutationPool</h2>
-<p>In our <code>touch</code> function we put our entity to the datastore once for each entity. This is wasteful when the datastore allows putting multiple items at a time. To take advantage of this feature the MapReduce library offers a MutationPool that collects datastore operations to be performed in batches. </p>
+
+<p>We&rsquo;ve ran our first MapReduce job!</p>
+
+<h2 id="toc_3">The MutationPool</h2>
+
+<p>In our <code>touch</code> function we put our entity to the datastore once for each entity. This is wasteful when the datastore allows putting multiple items at a time. To take advantage of this feature the MapReduce library offers a MutationPool that collects datastore operations to be performed in batches.</p>
+
 <p>We can re-write our map function to take advantage of the MutationPool by yielding a database operation from within our map function. If you are unfamiliar with <code>yield</code> you can think of it as returning a value to the MapReduce job. You can have multiple <code>yield</code> statements in a function that will all return values to be handled by the MapReduce job.</p>
-<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">from</span> mapreduce <span class="hljs-keyword">import</span> operation <span class="hljs-keyword">as</span> op
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">touch</span><span class="hljs-params">(entity)</span>:</span>
-    <span class="hljs-string">"""
+<pre><code class="python">from mapreduce import operation as op
+
+def touch(entity):
+    &quot;&quot;&quot;
     Update the entities timestamp.
-    """</span>
-    <span class="hljs-keyword">yield</span> op.db.Put(entity)
+    &quot;&quot;&quot;
+    yield op.db.Put(entity)
 </code></pre>
-<p> You can run the MapReduce job again and see that the job works correctly using datastore operations via the MutationPool.</p>
-<p>The source code for MapReduce operations can be found in the <code>mapreduce.operation</code> module.  The <code>mapreduce.operation.db</code> module currently supports two operations via the MutationPool <code>Put</code> and <code>Delete</code>.</p>
-<h2 id="counters">Counters</h2>
-<p>The MapReduce library also provides counters that can be incremented when a condition is met. In our example we can count the number of entities that were touched by incrementing a counter.</p>
-<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">from</span> mapreduce <span class="hljs-keyword">import</span> operation <span class="hljs-keyword">as</span> op
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">touch</span><span class="hljs-params">(entity)</span>:</span>
-    <span class="hljs-string">"""
+<p>You can run the MapReduce job again and see that the job works correctly using datastore operations via the MutationPool.</p>
+
+<p>The source code for MapReduce operations can be found in the <code>mapreduce.operation</code> module.  The <code>mapreduce.operation.db</code> module currently supports two operations via the MutationPool <code>Put</code> and <code>Delete</code>.</p>
+
+<h2 id="toc_4">Counters</h2>
+
+<p>The MapReduce library also provides counters that can be incremented when a condition is met. In our example we can count the number of entities that were touched by incrementing a counter.</p>
+
+<pre><code>from mapreduce import operation as op
+
+def touch(entity):
+    &quot;&quot;&quot;
     Update the entities timestamp.
-    """</span>
-    <span class="hljs-keyword">yield</span> op.db.Put(entity)
-    <span class="hljs-keyword">yield</span> op.db.Increment(<span class="hljs-string">'touched'</span>)
-</code></pre><p> All the counters that were incremented during operation of the job are listed with the job details summary.</p>
+    &quot;&quot;&quot;
+    yield op.db.Put(entity)
+    yield op.db.Increment('touched')
+</code></pre>
+
+<p>All the counters that were incremented during operation of the job are listed with the job details summary.</p>
+
 <p><a class="thumbnail" href="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png">
 <img src="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png" alt="Incrementing a custom counter">
 </a></p>
-<h2 id="passing-parameters-to-the-map-function">Passing Parameters to the Map Function</h2>
+
+<h2 id="toc_5">Passing Parameters to the Map Function</h2>
+
 <p>We can pass additional parameters to our map function by specifying them in <code>mapreduce.yaml</code>. Parameters are passed to both our InputReader and to our map handler function. In our example, we listed <code>entity_kind</code> and this parameter was expected by our InputReader and used to specify the datastore Kind processed by our InputReader. On the MapReduce status page (<code>/mapreduce</code>) we can type in a new value for this parameter to specify a different Kind before running the job.</p>
+
 <p><a class="thumbnail" href="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/edit-parameters.png">
 <img src="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/edit-parameters.png" alt="Editing job parameters">
 </a></p>
-<p>Let&#39;s add an additional parameter for the map function that will only touch the entity if it is older than a specific date.</p>
-<pre class="highlight"><code class="hljs haml">-<span class="ruby"> <span class="hljs-symbol">name:</span> <span class="hljs-constant">Touch</span> all entity_kind <span class="hljs-constant">Models</span>
-</span>  mapper:
+
+<p>Let&rsquo;s add an additional parameter for the map function that will only touch the entity if it is older than a specific date.</p>
+
+<pre><code class="yaml">- name: Touch all entity_kind Models
+  mapper:
     input_reader: mapreduce.input_readers.DatastoreInputReader
     handler: app.pipelines.touch
     params:
-    -<span class="ruby"> <span class="hljs-symbol">name:</span> entity_kind
-</span>      default: app.models.UserModel
-    -<span class="ruby"> <span class="hljs-symbol">name:</span> if_older_than
-</span>      default:
+    - name: entity_kind
+      default: app.models.UserModel
+    - name: if_older_than
+      default:
 </code></pre>
+
 <p>The mapreduce context holds the specifation for the job as defined by the <code>mapreduce.yaml</code> file. Within this context we can access our parameters.</p>
-<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">from</span> mapreduce <span class="hljs-keyword">import</span> operation <span class="hljs-keyword">as</span> op, context
-<span class="hljs-keyword">from</span> datetime <span class="hljs-keyword">import</span> datetime
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">touch</span><span class="hljs-params">(entity)</span>:</span>
-    <span class="hljs-string">"""
+<pre><code class="python">from mapreduce import operation as op, context
+from datetime import datetime
+
+def touch(entity):
+    &quot;&quot;&quot;
     Update the entities timestamp if not updated since if_older_than.
-    """</span>
+    &quot;&quot;&quot;
     params = context.get().mapreduce_spec.mapper.params
-    if_older_than = params.get(<span class="hljs-string">'if_older_than'</span>)
-    older_than = datetime.strptime(if_older_than, <span class="hljs-string">'%b %d %Y'</span>) <span class="hljs-keyword">if</span> if_older_than <span class="hljs-keyword">else</span> datetime.now()
+    if_older_than = params.get('if_older_than')
+    older_than = datetime.strptime(if_older_than, '%b %d %Y') if if_older_than else datetime.now()
 
-    <span class="hljs-keyword">if</span> entity.updated &lt; older_than:
-        <span class="hljs-keyword">yield</span> op.db.Put(entity)
-        <span class="hljs-keyword">yield</span> op.counters.Increment(<span class="hljs-string">'touched'</span>)
+    if entity.updated &lt; older_than:
+        yield op.db.Put(entity)
+        yield op.counters.Increment('touched')
 </code></pre>
+
 <p>Now our map function will operate on entities that have been updated previous to our <code>if_older_than</code> parameter.</p>
-<h2 id="parameter-validation">Parameter Validation</h2>
+
+<h2 id="toc_6">Parameter Validation</h2>
+
 <p>The MapReduce library also provides a method to do parameter validation. In our previous example we passed a date to our map function as a string. We can use a validator to validate that parameter and modify it as necessary. To use a validator function, specify it in <code>mapreduce.yaml</code> as <code>params_validator</code>.</p>
-<pre class="highlight"><code class="hljs avrasm">- name: Touch all entity_kind Models
+
+<pre><code>- name: Touch all entity_kind Models
   mapper:
-    input_reader: mapreduce<span class="hljs-preprocessor">.input</span>_readers<span class="hljs-preprocessor">.DatastoreInputReader</span>
-    handler: app<span class="hljs-preprocessor">.pipelines</span><span class="hljs-preprocessor">.touch</span>
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: app.pipelines.touch
     params:
     - name: entity_kind
-      default: app<span class="hljs-preprocessor">.models</span><span class="hljs-preprocessor">.UserModel</span>
+      default: app.models.UserModel
     - name: if_older_than
-      default: Jun <span class="hljs-number">1</span> <span class="hljs-number">2014</span>
-    params_validator: app<span class="hljs-preprocessor">.pipelines</span><span class="hljs-preprocessor">.touch</span>_validator
-</code></pre><p>The validator function accepts a single argument, a dictionary of parameters. The function can modify this dictionary and any modifications will be made available to the map function. In our example we can use the validator to attempt converting our input date into a datetime object. The <code>strptime</code> function returns a <code>ValueError</code> if it cannot convert a string to the datetime.</p>
-<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">touch_validator</span><span class="hljs-params">(user_params)</span>:</span>
-    <span class="hljs-string">"""
+      default: Jun 1 2014
+    params_validator: app.pipelines.touch_validator
+</code></pre>
+
+<p>The validator function accepts a single argument, a dictionary of parameters. The function can modify this dictionary and any modifications will be made available to the map function. In our example we can use the validator to attempt converting our input date into a datetime object. The <code>strptime</code> function returns a <code>ValueError</code> if it cannot convert a string to the datetime.</p>
+
+<pre><code>def touch_validator(user_params):
+    &quot;&quot;&quot;
     Validate the parameters of our map function.
-    """</span>
-    if_older_than = user_params[<span class="hljs-string">'if_older_than'</span>]
-    datetime.strptime(if_older_than, <span class="hljs-string">'%b %d %Y'</span>)
-</code></pre><p>We can trigger the validator to fail by passing in an invalid date format.</p>
+    &quot;&quot;&quot;
+    if_older_than = user_params['if_older_than']
+    datetime.strptime(if_older_than, '%b %d %Y')
+</code></pre>
+
+<p>We can trigger the validator to fail by passing in an invalid date format.</p>
+
 <p><a class="thumbnail" href="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/failed-validator.png">
 <img src="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/failed-validator.png" alt="Passing an invalid paramter">
 </a></p>
-<p>If parameter validation fails the MapReduce job is not started and no entities are passed from our InputReader to the map function.  </p>
-<h2 id="callbacks">Callbacks</h2>
-<p>The MapReduce library allows you to specify a callback function that is called after the MapReduce completes. This can be used for logging purposes or to trigger a specific event in code. The callback is specified in your <code>mapreduce.yaml</code> file as <code>done_callback</code> and points to a user specified function. This is a parameter of the MapReduce itself and not the map function -- note the independent entry in <code>mapreduce.yaml</code>.</p>
-<pre class="highlight"><code class="hljs haml">-<span class="ruby"> <span class="hljs-symbol">name:</span> <span class="hljs-constant">Touch</span> all entity_kind <span class="hljs-constant">Models</span>
-</span>  params:
-  -<span class="ruby"> <span class="hljs-symbol">name:</span> done_callback
-</span>    value: /done_touch
+
+<p>If parameter validation fails the MapReduce job is not started and no entities are passed from our InputReader to the map function.</p>
+
+<h2 id="toc_7">Callbacks</h2>
+
+<p>The MapReduce library allows you to specify a callback function that is called after the MapReduce completes. This can be used for logging purposes or to trigger a specific event in code. The callback is specified in your <code>mapreduce.yaml</code> file as <code>done_callback</code> and points to a user specified function. This is a parameter of the MapReduce itself and not the map function &ndash; note the independent entry in <code>mapreduce.yaml</code>.</p>
+
+<pre><code class="yaml">- name: Touch all entity_kind Models
+  params:
+  - name: done_callback
+    value: /done_touch
   mapper:
     input_reader: mapreduce.input_readers.DatastoreInputReader
     handler: app.pipelines.touch
     params:
-    -<span class="ruby"> <span class="hljs-symbol">name:</span> entity_kind
-</span>      default: app.models.UserModel
-    -<span class="ruby"> <span class="hljs-symbol">name:</span> if_older_than
-</span>      default: Jun 1 2014
+    - name: entity_kind
+      default: app.models.UserModel
+    - name: if_older_than
+      default: Jun 1 2014
     params_validator: app.pipelines.touch_validator
 </code></pre>
+
 <p>Upon completion a POST request is made to the URL given by the <code>done_callback</code> parameter. The MapReduce library sets a custom header in this request with the jobs <code>Mapreduce-Id</code>. You can use this header to retrieve details on the job that just completed. This is also a great place to do any cleanup such as deleting temporary files. In our example we will just log the original specification for this job that we set via <code>mapreduce.yaml</code></p>
-<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">import</span> webapp2
-<span class="hljs-keyword">import</span> logging
-<span class="hljs-keyword">from</span> mapreduce.model <span class="hljs-keyword">import</span> MapreduceState
 
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DoneTouch</span><span class="hljs-params">(webapp2.RequestHandler)</span>:</span>
-    <span class="hljs-string">"""
+<pre><code class="python">import webapp2
+import logging
+from mapreduce.model import MapreduceState
+
+class DoneTouch(webapp2.RequestHandler):
+    &quot;&quot;&quot;
     Callback function upon completion of touch MapReduce job.
-    """</span>
+    &quot;&quot;&quot;
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">post</span><span class="hljs-params">(self)</span>:</span>
-        <span class="hljs-string">"""
+    def post(self):
+        &quot;&quot;&quot;
         Log the MapReduce ID and input parameters.
-        """</span>
-        mapreduce_id =  self.request.headers[<span class="hljs-string">'Mapreduce-Id'</span>]           
+        &quot;&quot;&quot;
+        mapreduce_id =  self.request.headers['Mapreduce-Id']           
         state = MapreduceState.get_by_key_name(mapreduce_id)   
         spec = state.mapreduce_spec
         logging.info(spec)
 </code></pre>
-<h2 id="additional-input-readers">Additional Input Readers</h2>
+
+<h2 id="toc_8">Additional Input Readers</h2>
+
 <p>In addition to the DatastoreInputReader the library includes readers for the
 Blobstore, Files and Google Cloud Storage Buckets. The documentation for these
 readers is scarse but you can consult the <code>mapreduce.input_readers</code> module for
@@ -293,17 +346,22 @@ and from <a href="https://code.google.com/p/appengine-mapreduce/source/browse/tr
 source</a>.
 This should give you enough information to get started with the InputReader of
 your choice.</p>
-<h3 id="input-reader-reference">Input Reader Reference</h3>
+
+<h3 id="toc_9">Input Reader Reference</h3>
+
 <p>As a reference here is a list of InputReaders and their parameters. All
 InputReaders support the <code>namespace</code> parameter for specifying the namespaces to
 iterate over. If no namespace is given then all namespaces are used</p>
+
 <dl class="dl-horizontal">
   <dt>namespace</dt>
   <dd>The list of namespaces that will be searched.</dd>
 </dl>
 
-<h4 id="blobstorelineinputreader">BlobstoreLineInputReader</h4>
+<h4 id="toc_10">BlobstoreLineInputReader</h4>
+
 <p>Input reader for a newline delimited blob in Blobstore.</p>
+
 <dl class="dl-horizontal">
   <dt>blob_key</dt>
   <dd>The BlobKey that this input reader is processing. Either a string
@@ -314,8 +372,10 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>The last line number position to read.</dd>
 </dl>
 
-<h4 id="blobstorezipinputreader">BlobstoreZipInputReader</h4>
-<p>Input reader for files from a zip archive stored in the Blobstore. Iterates over all compressed files in a zipfile in Blobstore. </p>
+<h4 id="toc_11">BlobstoreZipInputReader</h4>
+
+<p>Input reader for files from a zip archive stored in the Blobstore. Iterates over all compressed files in a zipfile in Blobstore.</p>
+
 <dl class="dl-horizontal">
   <dt>blob_key</dt>
   <dd>The BlobKey that this input reader is processing. Either a string
@@ -326,8 +386,10 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>The index of the last file that will not be read.</dd>
 </dl>
 
-<h4 id="blobstoreziplineinputreader">BlobstoreZipLineInputReader</h4>
+<h4 id="toc_12">BlobstoreZipLineInputReader</h4>
+
 <p>Input reader for files from a zip archive stored in the Blobstore. Iterates over all compressed files in a zipfile in Blobstore. Each compressed file is expected to be a newline delimited file.</p>
+
 <dl class="dl-horizontal">
   <dt>blob_key</dt>
   <dd>The BlobKey that this input reader is processing. Either a string
@@ -337,11 +399,13 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dt>end_file_index</dt>
   <dd>the index of the last file that will not be read.</dd>
   <dt>offset</dt>
-  <dd>The by offset with <code>BLOB_KEY.zip[start_file_index]</code> to start reading.</dd>
+  <dd>The by offset with `BLOB_KEY.zip[start_file_index]` to start reading.</dd>
 </dl>
 
-<h4 id="datastoreinputreader">DatastoreInputReader</h4>
+<h4 id="toc_13">DatastoreInputReader</h4>
+
 <p>Iterates over a Model and yields model instances. Supports both db.model and ndb.model.</p>
+
 <dl class="dl-horizontal">
   <dt>entity_kind</dt>
   <dd>the datastore kind to map over.</dd>
@@ -355,8 +419,10 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>Any filters to apply to the datastore query.</dd>
 </dl>
 
-<h4 id="datastorekeyinputreader">DatastoreKeyInputReader</h4>
+<h4 id="toc_14">DatastoreKeyInputReader</h4>
+
 <p>Iterate over an entity kind and yields datastore.Key.</p>
+
 <dl class="dl-horizontal">
   <dt>entity_kind</dt>
   <dd>the datastore kind to map over.</dd>
@@ -370,20 +436,24 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>Any filters to apply to the datastore query.</dd>
 </dl>
 
-<h4 id="fileinputreader">FileInputReader</h4>
+<h4 id="toc_15">FileInputReader</h4>
+
 <p>Iterate over Google Cloud Storage files using the <a href="https://developers.google.com/appengine/docs/python/googlestorage/">Files API</a>.</p>
+
 <dl class="dl-horizontal">
   <dt>files</dt>
   <dd>A list of filenames or globbed filename patterns. The format is
-  <code>/gs/bucket/filename</code> or <code>/gs/bucket/prefix*</code>.</dd>
+  `/gs/bucket/filename` or `/gs/bucket/prefix*`.</dd>
   <dt>format</dt>
-  <dd>One of &quot;lines&quot;, &quot;bytes&quot;, &quot;zip&quot;. &quot;lines&quot; reads the input file line-by-line,
-  &quot;bytes&quot; reads the whole file at once and &quot;zip&quot; iterates over every file within
+  <dd>One of "lines", "bytes", "zip". "lines" reads the input file line-by-line,
+  "bytes" reads the whole file at once and "zip" iterates over every file within
   the zip.</dd>
 </dl>
 
-<h4 id="loginputreader">LogInputReader</h4>
+<h4 id="toc_16">LogInputReader</h4>
+
 <p>Input reader for a time range of logs via the <a href="https://developers.google.com/appengine/docs/python/logs/">Logs API</a>.</p>
+
 <dl class="dl-horizontal">
   <dt>start_time</dt>
   <dd>The earliest request completion or last-update time of logs that should be mapped over, in seconds since the Unix epoch.</dd>
@@ -401,17 +471,21 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>A list of tuples containing a module and version id whose logs should be read. This can not be used with version_ids.</dd>
 </dl>
 
-<h4 id="namespaceinputreader">NamespaceInputReader</h4>
+<h4 id="toc_17">NamespaceInputReader</h4>
+
 <p>An input reader to iterate over namespaces. This reader yields namespace names as string.</p>
+
 <dl class="dl-horizontal">
   <dt>namespace_range</dt>
-  <dd>An alphabetic range for the namespace. As defined by <a href="https://code.google.com/p/appengine-mapreduce/source/browse/trunk/python/src/mapreduce/namespace_range.py">namespace_range.py</a>.</dd>
+  <dd>An alphabetic range for the namespace. As defined by [namespace_range.py](https://code.google.com/p/appengine-mapreduce/source/browse/trunk/python/src/mapreduce/namespace_range.py).</dd>
   <dt>batch_size</dt>
   <dd>The number of namespaces to read with each batch.</dd>
 </dl>
 
-<h4 id="randomstringinputreader">RandomStringInputReader</h4>
+<h4 id="toc_18">RandomStringInputReader</h4>
+
 <p>Yields random strings as output. Useful to populate output with testing entries.</p>
+
 <dl class="dl-horizontal">
   <dt>count</dt>
   <dd>The total number of entries this reader should generate.</dd>
@@ -419,8 +493,10 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>The length of the generated strings.</dd>
 </dl>
 
-<h4 id="rawdatastoreinputreader">RawDatastoreInputReader</h4>
+<h4 id="toc_19">RawDatastoreInputReader</h4>
+
 <p>Exactly the same as DatastoreInputReader but yields a datastore.Entity.</p>
+
 <dl class="dl-horizontal">
   <dt>entity_kind</dt>
   <dd>the datastore kind to map over.</dd>
@@ -434,104 +510,104 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>Any filters to apply to the datastore query.</dd>
 </dl>
 
-<h4 id="recordsreader">RecordsReader</h4>
+<h4 id="toc_20">RecordsReader</h4>
+
 <p>Reads a list of Files API files in records format.</p>
+
 <dl class="dl-horizontal">
   <dt>files</dt>
   <dd>A comma separated string of files to read from.</dd>
 </dl>
 
-<h2 id="conclusions">Conclusions</h2>
+<h2 id="toc_21">Conclusions</h2>
+
 <p>Defining a MapReduce job via <code>mapreduce.yaml</code> provides a convenient way to
 iterate over large datasets and run a function on each unit of work.
 Unfortunately, running a MapDeduce job this way has a few limitations.
 First, there is no way to specify a reduce phase, limiting the type of jobs we
-can perform. Second, you cannot start a MapReduce job programmatically. </p>
+can perform. Second, you cannot start a MapReduce job programmatically.</p>
+
 <p>The next article in this series will show how to overcome these limitations
 using MapReduce Pipelines to programmatically control your API.</p>
+ 
+          </div>
 
-  </div>
-
-  <hr>
-
-  <p>
-    
-
-
-<ul class="list-inline">
+          <hr>
+            <ul class="list-inline">
   <li>Share this post:</li>
   <li>
-    <a href="https://twitter.com/intent/tweet?url=http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml&amp;text=App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml&amp;via=soofaloofa">
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml&text=App%20Engine%20MapReduce%20API%20-%20Part%202%3a%20Running%20a%20MapReduce%20Job%20Using%20mapreduce.yaml&via=soofaloofa">
       <i class="fa fa-twitter fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://facebook.com/sharer.php?u=http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml">
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml">
       <i class="fa fa-facebook fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://plus.google.com/share?url=http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml">
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml">
       <i class="fa fa-google-plus fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml">
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml">
       <i class="fa fa-linkedin fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="mailto:?subject=Check out this link&amp;body=http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml">
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml">
       <i class="fa fa-envelope fa-lg"></i>
     </a>
   </li>
 </ul>
 
+          <hr>
 
-  </p>
+          <div class="blurb">
+            <div class="row">
+              <div class="col-md-10 col-md-offset-1">
+                <h4 class="text-center">About Kevin Sookocheff</h4>
+              </div>
+            </div>
 
-  <hr>
+            <div class="row">
+              <div class="col-md-4 col-md-offset-1">
+                <p>
+                  <img class="img-circle center-block" src="/img/profile.png">
+                </p>
+              </div>
+              <div class="col-md-6">
+                <p>
+                  I am a Software Developer. I work at <a
+  href="http://www.vendasta.com">VendAsta</a> with a bunch of great people. I
+run a business as <a href="http://redfinchsoftware.com">Red Finch Software</a>.
+You can find me online as <a
+href="https://twitter.com/soofaloofa">soofaloofa</a>. I love to teach, learn,
+speak and write about business and software.
 
-  <div class="blurb">
-    <div class="row">
-      <div class="col-md-10 col-md-offset-1">
-        <h4 class="text-center">About Kevin Sookocheff</h4>
-      </div>
-    </div>
+                  <ul class="list-inline">
+                    <li>On the web:</li>
+                    <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+                    <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+                    <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+                    <li><a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square fa-lg"></i></a></li>
+                    <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+                    <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+                  </ul>
+                </p>
+              </div>
+            </div>
+          </div>
+          <hr>
 
-    <div class="row">
-      <div class="col-md-4 col-md-offset-1">
-        <p>
-          <img class="img-circle center-block" src="/img/profile.png">
-        </p>
-      </div>
-      <div class="col-md-6">
-        <p>
-          I am a Software Developer. I work at <a href="http://www.vendasta.com">VendAsta</a> with a bunch of great people. I run a business as 
-<a href="http://redfinchsoftware.com">Red Finch Software</a>. You can find me online as <a href="https://twitter.com/soofaloofa">soofaloofa</a>. I love to teach, learn, speak and write about business and software.
-
-          <ul class="list-inline">
-            <li>On the web:</li>
-            <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
-            <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
-            <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
-            <li><a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square fa-lg"></i></a></li>
-            <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
-            <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
-          </ul>
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <hr>
-
-  <div id="disqus_thread"></div>
+          <div id="disqus_thread"></div>
 <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'kevinsookocheff'; // required: replace example with your forum shortname
+    var disqus_shortname = 'kevinsookocheff';
+    var disqus_identifier = 'http:\/\/sookocheff.com\/posts\/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml';
+    var disqus_title = 'App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml';
+    var disqus_url = 'http:\/\/sookocheff.com\/posts\/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml';
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
@@ -540,16 +616,11 @@ using MapReduce Pipelines to programmatically control your API.</p>
 </script>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-
-</article>
-        </div>
+        </article>
       </section>
     </div>
   </div>
 </div>
-
-<!-- Footer -->
 
 <footer>
  <div class="footer-above text-center">
@@ -601,17 +672,23 @@ using MapReduce Pipelines to programmatically control your API.</p>
      </div>
    </div>
  </div>
- <div class="footer-below text-center"">
+ <div class="footer-below text-center">
      <div class="container">
          <div class="row">
              <div class="col-lg-12">
-                 © Kevin Sookocheff · <a href="#">Top</a>
+                 &copy; Kevin Sookocheff · <a href="#">Top</a>
              </div>
          </div>
      </div>
  </div>
 </footer>
 
-<script defer="defer"  src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script defer="defer"  src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script><script defer="defer"  src="/js/vendor/retina.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="//yandex.st/highlightjs/8.0/highlight.min.js"></script>
+<script src="/js/vendor/retina.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
 </body>
 </html>
+

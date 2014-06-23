@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+      <title>Business on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
+    <link>http://sookocheff.com/tags/business/index.xml</link>
+    <language>en-us</language>
+    <author>Kevin Sookocheff</author>
+    <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Mon, 01 Jan 0001 00:00:00 UTC</updated>
+    
+    <item>
+      <title>Book Review: Start Small, Stay Small</title>
+      <link>http://sookocheff.com/posts/2011-04-23-book-review-start-small-stay-small</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2011-04-23-book-review-start-small-stay-small</guid>
+      <description>&lt;p&gt;&lt;em&gt;&lt;a href=&#34;http://www.startupbook.net&#34;&gt;Start Small, Stay Small&lt;/a&gt;&lt;/em&gt; by serial micropreneur Rob Walling is possibly the best book on lean startup marketing you could find. It is a short book — coming in at only 134 pages — yet very word, every sentence and every paragraph &lt;a href=&#34;http://www.bartleby.com/141/&#34;&gt;tells&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The book starts off with an explanation of its audience: single developers looking for a lifestyle business. It then dives in to the key point.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Product Last. Market First.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This statement sums up Rob’s philosophy towards building small products as a micropreneur. Only build a product &lt;strong&gt;after&lt;/strong&gt; you know a market exists. The value of this book is in showing how to follow this philosophy.&lt;/p&gt;
+
+&lt;p&gt;Rob assumes that the reader knows how to program or could easily outsource programming to a third party. In fact, he suggests that software development is the easy part. Instead of focusing on the product, focus on the market. The product will follow.&lt;/p&gt;
+
+&lt;p&gt;Rob goes on to show how to evaluate an idea and test if a market exists &lt;em&gt;before&lt;/em&gt; any time is spent on development. He discusses how to brainstorm ideas, vet them with real-world users, and evaluate the ideas using keyword analysis. There are a lot of great ideas here and it is all boiled down in to actionable steps with minimal extraneous text. This is the section of the book where I was furiously taking notes and jotting down reminders for the future. Great stuff.&lt;/p&gt;
+
+&lt;p&gt;Rob spends a bit of time explaining how to build a sales website to generate buzz for your product, build a mailing list of potential users, and see if a market exists for your product. The key point is that all of this is done &lt;em&gt;before&lt;/em&gt; any time is spent on development. Do you see a theme here?&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Product Last. Market First.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;From here, the book delves into an explanation of the &lt;a href=&#34;http://www.mindtools.com/pages/article/newLDR_94.htm&#34;&gt;sales funnel&lt;/a&gt; and how to turn browsers into prospects and prospects into buyers. The key tactic is building a source of &lt;em&gt;high quality&lt;/em&gt; leads and getting these leads to trust both you and your product.&lt;/p&gt;
+
+&lt;p&gt;The book closes with an interesting perspective on outsourcing. From a software development perspective there is a strong desire to automate every process in the system during implementation. Rob argues &lt;em&gt;against&lt;/em&gt; this ideal. Why? Automation takes time to develop. Instead, why not outsource simple, repetitive tasks to virtual assistants? Then automate the process only if your sales volume demands it. It may go against our nature, but Rob recommends building bare-bones product features and then scaffolding the rest with a real live human being.&lt;/p&gt;
+
+&lt;p&gt;The take away lesson from the book is that product success is determined first by the market, then by marketing, followed by aesthetic and lastly by function. The product is the least important factor in achieving market success so put your time where it has the biggest payoff: market analysis and marketing.&lt;/p&gt;
+
+&lt;p&gt;In summary, &lt;em&gt;Start Small, Stay Small&lt;/em&gt; is a quick read densely packed with useful information. Rob’s focus on actionable steps and concrete examples is perfect for the software developer looking for an understanding of micropreneurship. I highly recommend it.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

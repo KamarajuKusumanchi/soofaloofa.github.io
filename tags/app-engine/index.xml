@@ -1,0 +1,1345 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+      <title>App-Engine on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
+    <link>http://sookocheff.com/tags/app-engine/index.xml</link>
+    <language>en-us</language>
+    <author>Kevin Sookocheff</author>
+    <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Wed, 28 May 2014 05:55:48 UTC</updated>
+    
+    <item>
+      <title>How to bypass the auto_now property option during an ndb put</title>
+      <link>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</link>
+      <pubDate>Wed, 28 May 2014 05:55:48 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</guid>
+      <description>&lt;p&gt;In App Engine the &lt;code&gt;auto_now&lt;/code&gt; option sets a property to the current date/time
+whenever the entity is created or updated. This is a great feature for tracking
+the time when an entity was last updated. However, sometimes you may want to put
+an entity without updating an &lt;code&gt;auto_now&lt;/code&gt; timestamp. This article will show you
+how.&lt;/p&gt;
+
+&lt;p&gt;First, let&amp;rsquo;s start with a very basic ndb model with an &lt;code&gt;updated&lt;/code&gt; property having
+the &lt;code&gt;auto_now&lt;/code&gt; option set to &lt;code&gt;True&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from google.appengine.ext import ndb
+
+class Article(ndb.model):
+    title = ndb.model.StringProperty()
+    updated = ndb.model.DateTimeProperty(auto_now=True)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, let&amp;rsquo;s put the entity to the datastore &lt;em&gt;without updating the timestamp&lt;/em&gt; and
+&lt;em&gt;completely bypassing the &lt;code&gt;auto_now&lt;/code&gt; option&lt;/em&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
+article._properties[&#39;updated&#39;]._auto_now = False
+article.put()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It&amp;rsquo;s pretty simple, but with caveats. Putting the entity using the code above
+will store the updated entity in the instance cache (and memcache). If we get
+the entity it will be retrieved from the instance cache with the &lt;code&gt;auto_now&lt;/code&gt;
+property still set to &lt;code&gt;False&lt;/code&gt;. This can have unwanted side-effects because
+subsequent updates to the entity will not trigger the &lt;code&gt;auto_now&lt;/code&gt; functionality.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
+article._properties[&#39;updated&#39;]._auto_now = False
+key = article.put() # Put the entity with the auto_now option set to False
+
+article = key.get() # Get the entity from instance cache
+article.title = &#39;Python versus Go&#39;
+article.put() # Put the entity with the auto_now option *still* set to False
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can set the &lt;code&gt;auto_now&lt;/code&gt; option to &lt;code&gt;True&lt;/code&gt; again to re-enable the functionality.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
+article._properties[&#39;updated&#39;]._auto_now = False
+key = article.put()
+
+article._properties[&#39;updated&#39;]._auto_now = True
+article = key.get() # Get the entity from instance cache
+article.title = &#39;Python versus Go&#39;
+article.put() # Puts the entity with the auto_now option set to True
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For more information on ndb caching &lt;a href=&#34;https://developers.google.com/appengine/docs/python/ndb/cache&#34;&gt;refer to the
+documentation&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine MapReduce API - Part 5: Using Combiners to Reduce Data Throughput</title>
+      <link>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</link>
+      <pubDate>Tue, 20 May 2014 08:54:12 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</guid>
+      <description>
+
+&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So far we&amp;rsquo;ve looked at using MapReduce pipelines to perform calculations over
+large data sets and combined multiple pipelines in succession. In this article
+we will look at how to reduce the amount of data transfer by using a combiner.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;What is a combiner?&lt;/h2&gt;
+
+&lt;p&gt;A combiner is a function that takes the output of a series of map calls as input and outputs a value of the same format to be processed by the reducer. The combiner is run just before the output of the mapper is written to disk. In fact, the combiner may not be run at all if the data can reside completely in memory and so your algorithm must be able to complete with our without the combiner. By reducing the amount of data that needs to be written to disk you can increase performance of the reduce stage.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;Example&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s look at an example that uses a combiner to reduce data throughput. To drive this discussion we will use an example that counts the number of occurrences of a character in a string. We originally looked at this example &lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;here&lt;/a&gt;. In this version we will only include the character or characters that occur the most. The operation will work like this: the mapper function will count the occurrence of each character in a string. The combiner will take these (key, value) pairs and output only the character or characters that appear the most. Finally, the reducer will sum those values to find our result. This contrived problem will provide a working example of a combiner.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start with the MapReduce job from our previous example.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;quot;&amp;quot;&amp;quot;
+app.pipelines
+&amp;quot;&amp;quot;&amp;quot;
+import collections
+
+from mapreduce.lib import pipeline
+from mapreduce import mapreduce_pipeline
+
+###
+### MapReduce Pipeline
+###
+def character_count_map(random_string):
+    &amp;quot;&amp;quot;&amp;quot; yield the number of occurrences of each character in random_string. &amp;quot;&amp;quot;&amp;quot;
+    counter = collections.Counter(random_string)
+    for character in counter.elements():
+        yield (character, counter[character])
+
+def character_count_reduce(key, values):
+    &amp;quot;&amp;quot;&amp;quot; sum the number of characters found for the key. &amp;quot;&amp;quot;&amp;quot;
+    yield (key, sum([int(i) for i in values]))
+
+class CountCharactersPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; Count the number of occurrences of a character in a set of strings. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, *args, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        mapper_params = {
+            &amp;quot;count&amp;quot;: 100,
+            &amp;quot;string_length&amp;quot;: 20,
+        }
+        reducer_params = {
+            &amp;quot;mime_type&amp;quot;: &amp;quot;text/plain&amp;quot;
+        }
+        output = yield mapreduce_pipeline.MapreducePipeline(
+            &amp;quot;character_count&amp;quot;,
+            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
+            mapper_params=mapper_params,
+            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
+            reducer_params=reducer_params,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
+            output_writer_spec=&amp;quot;mapreduce.output_writers.BlobstoreOutputWriter&amp;quot;,
+            shards=16)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Given this base we add a combiner step to the &lt;code&gt;MapreducePipeline&lt;/code&gt; by passing the &lt;code&gt;combiner_spec&lt;/code&gt; argument to the initialization.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;       output = yield mapreduce_pipeline.MapreducePipeline(
+            &amp;quot;character_count&amp;quot;,
+            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
+            mapper_params=mapper_params,
+            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
+            reducer_params=reducer_params,
+            combiner_spec=&amp;quot;app.pipelines.character_count_combine&amp;quot;,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
+            output_writer_spec=&amp;quot;mapreduce.output_writers.BlobstoreOutputWriter&amp;quot;,
+            shards=16)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Our combine function accepts a few parameters the key, a list of values for that key and a list of previously combined results. The combiner function yields combined values that might be processed by another combiner call and that will eventually end up in the reducer function.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s write our simple combiner function. We yield only a value instead of a &lt;code&gt;(key, value)&lt;/code&gt; tuple because the key is assumed to stay the same.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;def character_count_combine(key, values, previously_combined_values):
+    &amp;quot;&amp;quot;&amp;quot; emit the maximum value in values and previously_combined_values &amp;quot;&amp;quot;&amp;quot;
+    yield max(values + previously_combined_values)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Our combiner function is not guaranteed to run so we need to update our reduce function to take the maximum of the list of values as well.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;def character_count_reduce(key, values):
+    &amp;quot;&amp;quot;&amp;quot; sum the number of characters found for the key. &amp;quot;&amp;quot;&amp;quot;
+    yield (key, max(values))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This gives us our final pipeline using map, reduce and combine.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;###
+### MapReduce Pipeline
+###
+def character_count_map(random_string):
+    &amp;quot;&amp;quot;&amp;quot; yield the number of occurrences of each character in random_string. &amp;quot;&amp;quot;&amp;quot;
+    counter = collections.Counter(random_string)
+    for character in counter.elements():
+        yield (character, counter[character])
+
+def character_count_reduce(key, values):
+    &amp;quot;&amp;quot;&amp;quot; sum the number of characters found for the key. &amp;quot;&amp;quot;&amp;quot;
+    yield (key, max(values))
+
+def character_count_combine(key, values, previously_combined_values):
+    &amp;quot;&amp;quot;&amp;quot; emit the maximum value in values and previously_combined_values &amp;quot;&amp;quot;&amp;quot;
+    yield max(values + previously_combined_values)
+
+class CountCharactersPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; Count the number of occurrences of a character in a set of strings. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, *args, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        mapper_params = {
+            &amp;quot;count&amp;quot;: 100,
+            &amp;quot;string_length&amp;quot;: 20,
+        }
+        reducer_params = {
+            &amp;quot;mime_type&amp;quot;: &amp;quot;text/plain&amp;quot;
+        }
+        output = yield mapreduce_pipeline.MapreducePipeline(
+            &amp;quot;character_count&amp;quot;,
+            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
+            mapper_params=mapper_params,
+            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
+            reducer_params=reducer_params,
+            combiner_spec=&amp;quot;app.pipelines.character_count_combine&amp;quot;,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
+            output_writer_spec=&amp;quot;mapreduce.output_writers.BlobstoreOutputWriter&amp;quot;,
+            shards=16)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine MapReduce API - Part 4: Combining Sequential MapReduce Jobs</title>
+      <link>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs</link>
+      <pubDate>Tue, 13 May 2014 10:40:38 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs</guid>
+      <description>
+
+&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Last
+time&lt;/a&gt;
+we looked at how to run a full MapReduce Pipeline to count the number of
+occurrences of a character within each string. In this post we will see how to
+chain multiple MapReduce Pipelines together to perform sequential tasks.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Combining Sequential MapReduce Jobs&lt;/h2&gt;
+
+&lt;p&gt;As a contrived example (as all examples are) let&amp;rsquo;s imagine a scenario where we
+want to clean up some data by deleting a business entity from the datastore.
+Each business has employees stored that also need to be deleted. Our simplified
+models look like this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from google.appengine.ext import ndb
+
+class Business(ndb.model):
+    &amp;quot;&amp;quot;&amp;quot;
+    Model representing a business which will have employees.
+    &amp;quot;&amp;quot;&amp;quot;
+    name = ndb.StringProperty(required=True)
+    address = ndb.StringProperty()
+    
+class Employee(ndb.model):
+    &amp;quot;&amp;quot;&amp;quot;
+    Model representing employees of a business.
+    &amp;quot;&amp;quot;&amp;quot;
+    name = ndb.StringProperty(required=True)
+    business = ndb.StringProperty(required=True)    
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let&amp;rsquo;s create a pipeline that will iterate over every business with a matching
+&lt;code&gt;name&lt;/code&gt; and delete all the employees from that business. We can take advantage of
+the &lt;code&gt;filters&lt;/code&gt; parameter of the &lt;code&gt;DatastoreInputReader&lt;/code&gt; to find all employees
+working at a business with a matching name.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def delete_employee(entity):
+    &amp;quot;&amp;quot;&amp;quot; Delete an employee entity. &amp;quot;&amp;quot;&amp;quot;
+    yield op.db.Delete(entity)
+
+class DeleteBusinessPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; Delete a business. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, business_name, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        employee_params = {
+            &amp;quot;entity_kind&amp;quot;: &amp;quot;app.pipelines.Employee&amp;quot;,
+            &amp;quot;filters&amp;quot;: [(&#39;business&#39;, &#39;=&#39;, business_name)],
+        }
+        yield mapreduce_pipeline.MapperPipeline(
+            &amp;quot;delete_employee&amp;quot;,
+            handler_spec=app.pipelines.delete_employee,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.DatastoreInputReader&amp;quot;,
+            params=employee_params,
+            shards=2)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This simple pipeline will delete all of the employees. We can add a second
+pipeline to our execution that will delete the business by simply yielding the
+return value of the first pipeline to the Pipeline API.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def delete_employee(entity):
+    &amp;quot;&amp;quot;&amp;quot; Delete an employee entity. &amp;quot;&amp;quot;&amp;quot;
+    yield op.db.Delete(entity)
+
+def delete_business(entity):
+    &amp;quot;&amp;quot;&amp;quot; Delete a business entity. &amp;quot;&amp;quot;&amp;quot;
+    yield op.db.Delete(entity)
+
+class DeleteBusinessPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; Delete a business. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, business_name, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        employee_params = {
+            &amp;quot;entity_kind&amp;quot;: &amp;quot;app.pipelines.Employee&amp;quot;,
+            &amp;quot;filters&amp;quot;: [(&#39;business&#39;, &#39;=&#39;, business_name)],
+        }
+        yield mapreduce_pipeline.MapperPipeline(
+            &amp;quot;delete_employee&amp;quot;,
+            handler_spec=app.pipelines.delete_employee,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.DatastoreInputReader&amp;quot;,
+            params=employee_params,
+            shards=2)
+
+        business_params = {
+            &amp;quot;entity_kind&amp;quot;: &amp;quot;app.pipelines.Business&amp;quot;,
+            &amp;quot;filters&amp;quot;: [(&#39;name&#39;, &#39;=&#39;, business_name)],
+        }
+        yield mapreduce_pipeline.MapperPipeline(
+            &amp;quot;delete_business&amp;quot;,
+            handler_spec=app.pipelines.delete_business,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.DatastoreInputReader&amp;quot;,
+            params=business_params,
+            shards=2)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The return value of the MapperPipeline call is a &lt;code&gt;PipelineFuture&lt;/code&gt; object. This
+future will be executed once the previous future has completed. In this case our
+employee deletion pipeline will complete and the business deletion future will
+execute.&lt;/p&gt;
+
+&lt;p&gt;And that&amp;rsquo;s all it takes to run two sequential MapReduce jobs!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines</title>
+      <link>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines</link>
+      <pubDate>Mon, 28 Apr 2014 21:51:22 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines</guid>
+      <description>
+
+&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;In the last article&lt;/a&gt; we examined how to run one-off tasks that operate on a large dataset using a &lt;code&gt;mapreduce.yaml&lt;/code&gt; configuration file. This article will take us a step further and look at how to run a MapReduce job programmatically using the App Engine Pipeline API.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Running a Mapper Job Using the App Engine Pipeline API&lt;/h2&gt;
+
+&lt;p&gt;MapReduce jobs are based on the &lt;a href=&#34;https://code.google.com/p/appengine-pipeline/&#34;&gt;App Engine Pipeline API&lt;/a&gt; for connecting together time-consuming or complex workflows. We can define a pipeline for our MapReduce job to connect each stage of the MapReduce flow to one another. Let&amp;rsquo;s start by defining a pipeline for our simple &lt;code&gt;Touch&lt;/code&gt; job that will update the timestamp of every entity Kind we specify.&lt;/p&gt;
+
+&lt;p&gt;To create a pipeline we inherit from the &lt;code&gt;Pipeline&lt;/code&gt; object.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from mapreduce.lib import pipeline
+
+class TouchPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot;
+    Pipeline to update the timestamp of entities.
+    &amp;quot;&amp;quot;&amp;quot;
+    pass
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Our pipeline requires a single &lt;code&gt;run&lt;/code&gt; method. Within this method we set the specification of our &lt;code&gt;map&lt;/code&gt; function and yield a &lt;code&gt;Pipeline&lt;/code&gt; object.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;from mapreduce.lib import pipeline
+from mapreduce import mapreduce_pipeline
+
+class TouchPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot;
+    Pipeline to update the timestamp of entities.
+    &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, *args, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        mapper_params = {
+            &amp;quot;entity_kind&amp;quot;: &amp;quot;app.models.user.UserModel&amp;quot;,
+        }
+        yield mapreduce_pipeline.MapperPipeline(
+            &amp;quot;Touch all entities&amp;quot;,
+            handler_spec=&amp;quot;app.pipelines.touch&amp;quot;,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.DatastoreInputReader&amp;quot;,
+            params=mapper_params,
+            shards=64)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In this piece of code we define a MapperPipeline and pass it the parameters used to initialize the pipeline. The map function is specified by the&lt;code&gt;handler_spec&lt;/code&gt; parameter and our InputReader is given by the &lt;code&gt;input_reader_spec&lt;/code&gt; parameter.  You&amp;rsquo;ll notice from our &lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;previous article on running a MapReduce job using mapreduce.yaml&lt;/a&gt; that the parameters passed here match the specification supplied by the &lt;code&gt;mapreduce.yaml&lt;/code&gt; file in that article. In effect, we are looking at two different ways to define the same specification for a MapReduce job. The benefit of the pipelined approach here is that we can easily start our job programmatically by instantiating our &lt;code&gt;Pipeline&lt;/code&gt; object and executing the &lt;code&gt;start()&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;pipeline = TouchPipeline()
+pipeline.start()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Executing this code will start the MapReduce job. You can view the progress at the URL &lt;code&gt;/mapreduce&lt;/code&gt;, analagous to when starting the MapReduce job through the UI using &lt;code&gt;mapreduce.yaml&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;Adding a Reduce Step to Our MapReduce Job&lt;/h2&gt;
+
+&lt;p&gt;The previous example uses a &lt;code&gt;MapperPipeline&lt;/code&gt; to define a job that executes a map function on every entity of a certain Kind. What about reduce? For this we turn to the &lt;code&gt;MapreducePipeline&lt;/code&gt; object. This object accepts parameters for a &lt;code&gt;mapper_spec&lt;/code&gt; and a &lt;code&gt;reducer_spec&lt;/code&gt;. We can use this pipeline to perform a full MapReduce job. To make this discussion concrete and generate some useable code let&amp;rsquo;s use a feature built in to the MapReduce library especially for testing, the &lt;code&gt;RandomStringInputReader&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;RandomStringInputReader&lt;/code&gt; generates &lt;code&gt;x&lt;/code&gt; random strings of &lt;code&gt;y&lt;/code&gt; length. &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; are both parameters we can use to control the reader.  We can use this reader to create an example application that counts the number of occurrences of each character found in a random string.&lt;/p&gt;
+
+&lt;p&gt;For example, given ten random strings 20 characters in length&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;nzkeasmekjwewmvxgdre
+pczrbnzpacpwxpmiffgw
+kwsufcunznnzwqmfbszu
+gmmfhvikvexnamjorxod
+hpaedhjzuziouxaplnmp
+thurvybxiuxaskoxjvco
+ovwbokvfjiuoawyavpbs
+hymsucnolibdivisotrt
+durcotpoydwvkvtyyudl
+fujkmdenoexximucikfv
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;we want to find the total occurrences of each character.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(n, 9)
+(z, 8)
+(k, 9)
+etc.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Performing this calculation using MapReduce implies a two step process. First, the map function will count the number of occurrences of each letter in a given string. Second, the reduce function will sum these numbers for all strings to find the final result.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start by setting up a &lt;code&gt;MapreducePipeline&lt;/code&gt; object using the &lt;code&gt;RandomStringInputReader&lt;/code&gt; reader as our &lt;code&gt;input_reader_spec&lt;/code&gt; along with a skeleton &lt;code&gt;map&lt;/code&gt; and &lt;code&gt;reduce&lt;/code&gt; function.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from mapreduce.lib import pipeline
+from mapreduce import mapreduce_pipeline
+
+def character_count_map(random_string):
+    pass
+
+def character_count_reduce(key, values):
+    pass
+
+class CountCharactersPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; Count the number of occurrences of a character. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, *args, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        mapper_params = {
+            &amp;quot;count&amp;quot;: 100,
+            &amp;quot;string_length&amp;quot;: 20,
+        }
+        yield mapreduce_pipeline.MapreducePipeline(
+            &amp;quot;character_count&amp;quot;,
+            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
+            mapper_params=mapper_params,
+            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
+            shards=16)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can use a standard &lt;code&gt;RequestHandler&lt;/code&gt; to execute our mock MapReduce Pipeline.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;import webapp2
+
+class CountCharacters(webapp2.RequestHandler):
+
+    def get(self):
+        pipeline = CountCharactersPipeline()
+        pipeline.start()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let&amp;rsquo;s flesh out our MapReduce template to actually count the characters in a string. To do so our map function will yield a tuple of &lt;code&gt;(character, count)&lt;/code&gt; for each character encountered in our string and the number of times it was encountered. So for our input string &lt;code&gt;nzkeasmekjwewmvxgdre&lt;/code&gt; we would yield &lt;code&gt;(n, 1)&lt;/code&gt;, &lt;code&gt;(z, 1)&lt;/code&gt;, &lt;code&gt;(k, 2)&lt;/code&gt;, and so on. We update our &lt;code&gt;map&lt;/code&gt; function to do this work.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;import collections
+
+def character_count_map(random_string):
+    counter = collections.Counter(random_string)
+    for character in counter.elements():
+        yield (character, counter[character])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Each tuple returned by our &lt;code&gt;map&lt;/code&gt; will be fed to the Shuffle stage of the MapReduce job. The Shuffle stage groups all the values having the same key before passing the result to the &lt;code&gt;reduce&lt;/code&gt; function. For example, if we yielded &lt;code&gt;(n, 1)&lt;/code&gt; during one execution of our &lt;code&gt;map&lt;/code&gt; function and &lt;code&gt;(n, 4)&lt;/code&gt; in another execution, the Shuffle stage would group these and pass &lt;code&gt;n, [1, 4]&lt;/code&gt; as the parameters to our &lt;code&gt;reduce&lt;/code&gt; function (for more information on Shuffle refer to &lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1 of this guide&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;Our reduce function takes the list of values returned by the Shuffle stage and
+sums them.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def character_count_reduce(key, values):
+    yield (key, sum([int(i) for i in values]))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We now have a full MapReduce job that will count the occurrence of each character for a set of random strings. Running our pipeline shows the map, shuffle and reduce stages operating over our dataset.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/skeleton-job.png&#34;&gt;
+&lt;img src=&#34;http://sookocheff.com/img/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/skeleton-job.png&#34; alt=&#34;Skeleton MapReduce job.&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_3&#34;&gt;Where Is My Data?&lt;/h2&gt;
+
+&lt;p&gt;How does the output of the &lt;code&gt;map&lt;/code&gt; function arrive at the &lt;code&gt;reduce&lt;/code&gt; function? If you look at the application logs you will see periodic writes to the blobstore.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;Shard 1578130350583CAC16BCF-11 finalized blobstore file /blobstore/writable:RDlESEY4Q1U2UkRXT0pCVUpUTFQySlQ5VEJaTkJGUEpQS0RITVgzQ1lVREtKSzVUWTJVRlhTQjYwWFAzSE02OQ==.
+Finalized name is /blobstore/7BpFYTPsvNp95XA2uS1MlBm1DsVegjTEO9EP6TAbXZAtsxV5C7HjuZmYnqPuXdJC.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;These writes provide the blobstore location of the intermediate results from our calculation. A &lt;em&gt;master&lt;/em&gt; MapReduce task coordinates with the individual &lt;code&gt;map&lt;/code&gt;, &lt;code&gt;shuffle&lt;/code&gt; and &lt;code&gt;reduce&lt;/code&gt; shards to share these results via blobstore keys.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_4&#34;&gt;Writing our Results with OutputWriters&lt;/h2&gt;
+
+&lt;p&gt;The last thing we need to finish our MapReduce job is outputting the result. To do so we add an &lt;code&gt;output_writer_spec&lt;/code&gt; to our MapReduce initialization.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class CountCharactersPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; Count the number of occurrences of a character. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, *args, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        mapper_params = {
+            &amp;quot;count&amp;quot;: 100,
+            &amp;quot;string_length&amp;quot;: 20,
+        }
+        yield mapreduce_pipeline.MapreducePipeline(
+            &amp;quot;character_count&amp;quot;,
+            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
+            mapper_params=mapper_params,
+            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
+            output_writer_spec=&amp;quot;mapreduce.output_writers.BlobstoreOutputWriter&amp;quot;,
+            shards=16)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Unfortunately we don&amp;rsquo;t know where the &lt;code&gt;BlobstoreOutputWriter&lt;/code&gt; saves our result. To access this we can capture the output of the &lt;code&gt;MapreducePipeline&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class CountCharactersPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; Count the number of occurrences of a character. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, *args, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        mapper_params = {
+            &amp;quot;count&amp;quot;: 100,
+            &amp;quot;string_length&amp;quot;: 20,
+        }
+        output = yield mapreduce_pipeline.MapreducePipeline(
+            &amp;quot;character_count&amp;quot;,
+            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
+            mapper_params=mapper_params,
+            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
+            output_writer_spec=&amp;quot;mapreduce.output_writers.BlobstoreOutputWriter&amp;quot;,
+            shards=16)
+
+        yield StoreOutput(output)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;output&lt;/code&gt; is a &lt;code&gt;PipelineFuture&lt;/code&gt; object &amp;ndash; a generator that takes on a value after the execution of the &lt;code&gt;MapreducePipeline&lt;/code&gt; is complete. We can access the value of this generator from within a second pipeline object that writes the location of the blobkey to the datastore for future retrievals..&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class CharacterCounter(ndb.Model):
+    count = ndb.StringProperty(required=True)
+
+class StoreOutput(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot;A pipeline to store the result of the MapReduce job in the database. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, output):
+        counter = CharacterCounter(count=output[0])
+        counter.put()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is a simplified version of the StoreOutput pipeline provided by the &lt;a href=&#34;https://code.google.com/p/appengine-mapreduce/source/browse/trunk/python/demo/main.py#333&#34;&gt;MapReduce Made Easy demo application&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_5&#34;&gt;Conclusions&lt;/h2&gt;
+
+&lt;p&gt;In this article we&amp;rsquo;ve shown how to perform a full MapReduce job using the Google App Engine MapReduce API for Python. MapReduce is a powerful abstraction to use when processing large datasets. This article should provide a good starting point for defining and running your own MapReduce jobs. For reference here is the full source code used in this post.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;&amp;quot;&amp;quot;&amp;quot;
+app.mapreduce
+&amp;quot;&amp;quot;&amp;quot;
+import webapp2
+import collections
+
+from google.appengine.ext import ndb
+
+from mapreduce.lib import pipeline
+from mapreduce import mapreduce_pipeline
+
+###
+### Entities
+###
+class CharacterCounter(ndb.Model):
+    &amp;quot;&amp;quot;&amp;quot; A simple model to sotre the link to the blob storing our MapReduce output. &amp;quot;&amp;quot;&amp;quot;
+    count_link = ndb.StringProperty(required=True)
+
+###
+### MapReduce Pipeline
+###
+def character_count_map(random_string):
+    &amp;quot;&amp;quot;&amp;quot; yield the number of occurrences of each character in random_string. &amp;quot;&amp;quot;&amp;quot;
+    counter = collections.Counter(random_string)
+    for character in counter.elements():
+        yield (character, counter[character])
+
+def character_count_reduce(key, values):
+    &amp;quot;&amp;quot;&amp;quot; sum the number of characters found for the key. &amp;quot;&amp;quot;&amp;quot;
+    yield (key, sum([int(i) for i in values]))
+
+class CountCharactersPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; Count the number of occurrences of a character in a set of strings. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, *args, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        mapper_params = {
+            &amp;quot;count&amp;quot;: 100,
+            &amp;quot;string_length&amp;quot;: 20,
+        }
+        reducer_params = {
+            &amp;quot;mime_type&amp;quot;: &amp;quot;text/plain&amp;quot;
+        }
+        output = yield mapreduce_pipeline.MapreducePipeline(
+            &amp;quot;character_count&amp;quot;,
+            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
+            mapper_params=mapper_params,
+            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
+            reducer_params=reducer_params,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
+            output_writer_spec=&amp;quot;mapreduce.output_writers.BlobstoreOutputWriter&amp;quot;,
+            shards=16)
+
+        yield StoreOutput(output)
+
+class StoreOutput(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; A pipeline to store the result of the MapReduce job in the database. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, output):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        counter = CharacterCounter(count_link=output[0])
+        counter.put()
+
+###
+### Handlers
+###
+class CountCharacters(webapp2.RequestHandler):
+    &amp;quot;&amp;quot;&amp;quot; A handler to start the map reduce pipeline. &amp;quot;&amp;quot;&amp;quot;
+
+    def get(self):
+        &amp;quot;&amp;quot;&amp;quot; get &amp;quot;&amp;quot;&amp;quot;
+        counter = CountCharactersPipeline()
+        counter.start()
+
+        redirect_url = &amp;quot;%s/status?root=%s&amp;quot; % (counter.base_path, counter.pipeline_id)
+        self.redirect(redirect_url)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml</title>
+      <link>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml</link>
+      <pubDate>Tue, 22 Apr 2014 06:48:36 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml</guid>
+      <description>
+
+&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Last time&lt;/a&gt; we looked at an overview of how MapReduce works. In this article we&amp;rsquo;ll be getting our hands dirty writing some code to handle the Map Stage. If you&amp;rsquo;ll recall, the Map Stage is composed of two separate components: an InputReader and a &lt;code&gt;map&lt;/code&gt; function. We&amp;rsquo;ll look at each of these in turn.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Getting Started: Installation&lt;/h2&gt;
+
+&lt;p&gt;First, let&amp;rsquo;s install the MapReduce API for Python. The API is constantly changing so the best way to install the latest version is to checkout the code directly from the &lt;a href=&#34;https://code.google.com/p/appengine-mapreduce/&#34;&gt;SVN repository&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;svn checkout http://appengine-mapreduce.googlecode.com/svn/trunk/python/src/mapreduce
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Place the &lt;code&gt;mapreduce&lt;/code&gt; folder into your application root directory and add the mapreduce handler to your &lt;code&gt;app.yaml&lt;/code&gt; file.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;includes:
+- lib/mapreduce/include.yaml
+
+handlers:
+- url: /_ah/pipeline.*
+  script: mapreduce.lib.pipeline.handlers._APP
+  login: admin
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can verify your installation by going to the &lt;code&gt;/mapreduce&lt;/code&gt; URL in your app. You&amp;rsquo;ll see a UI listing the status of any MapReduce jobs. You&amp;rsquo;ll also see a notice that the UI could not find the file &lt;code&gt;mapreduce.yaml&lt;/code&gt;. You can ignore that notice for now.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/could-not-find-mapreduce.png&#34;&gt;
+&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/could-not-find-mapreduce.png&#34; alt=&#34;Could not find mapreduce.yaml&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;To get a proper view of the data you will also need to add two indexes to your &lt;code&gt;index.yaml&lt;/code&gt; file to allow the MapReduce library to query for MapReduce jobs that are run via Pipelines and display them in the GUI.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;indexes:
+- kind: _AE_Pipeline_Record
+  properties:
+  - name: is_root_pipeline
+  - name: start_time
+    direction: desc
+- kind: _AE_Pipeline_Record
+  properties:
+  - name: class_path
+  - name: start_time
+    direction: desc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;Running Your First MapReduce Job&lt;/h2&gt;
+
+&lt;p&gt;The easiest way to get started with MapReduce is to use the &lt;code&gt;mapreduce.yaml&lt;/code&gt; file. This file allows you define a &lt;code&gt;mapper&lt;/code&gt; function that will be executed for each entity passed to it. Let&amp;rsquo;s go straight to an example and  create a &lt;code&gt;mapreduce.yaml&lt;/code&gt; file (in your applications root directory) that will iterate over all entities of a certain Kind and put them to the datastore (updating their timestamp).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;mapreduce:
+- name: Touch all entity_kind Models
+  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: path_to_my.touch
+    params:
+    - name: entity_kind
+      default: path_to_my.MyModel
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Go to the &lt;code&gt;/mapreduce&lt;/code&gt; URL in your app and you should see the &lt;em&gt;Touch all entity_kind Models&lt;/em&gt; job selectable under the Launch job setting.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/select-first-mapreduce.png&#34;&gt;
+&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/select-first-mapreduce.png&#34; alt=&#34;Select first mapreduce to Launch&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Go ahead and select this job and click &lt;code&gt;Run&lt;/code&gt;. You will get an error saying that &lt;em&gt;MyModel&lt;/em&gt; could not be found.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/could-not-find-my-model.png&#34;&gt;
+&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/could-not-find-my-model.png&#34; alt=&#34;Could not find a Model&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;This is a great time to edit your yaml file point to an actual model in your application to continue with this tutorial. Now that our InputReader is pointing to a model we can define the &lt;code&gt;map&lt;/code&gt; function specified by our yaml files &lt;code&gt;handler&lt;/code&gt; parameter. The &lt;code&gt;map&lt;/code&gt; function is iteratively passed entities from our InputReader and we can take actions on those entities.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def touch(entity):
+    &amp;quot;&amp;quot;&amp;quot;
+    Update the entities timestamp.
+    &amp;quot;&amp;quot;&amp;quot;
+    entity.put()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Go back to the &lt;code&gt;/mapreduce&lt;/code&gt; URL in your app and run the job again. Refresh the page (if it does not auto-refresh) and you can see your job running.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/running-first-job.png&#34;&gt;
+&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/running-first-job.png&#34; alt=&#34;Running your first mapreduce job&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;You can click on the &lt;code&gt;Detail&lt;/code&gt; link to get full details on the MapReduce job. This view gives you the status of individual shards in the MapReduce job and an overview of the processing time that was required.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png&#34;&gt;
+&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png&#34; alt=&#34;Running job details&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;We&amp;rsquo;ve ran our first MapReduce job!&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_3&#34;&gt;The MutationPool&lt;/h2&gt;
+
+&lt;p&gt;In our &lt;code&gt;touch&lt;/code&gt; function we put our entity to the datastore once for each entity. This is wasteful when the datastore allows putting multiple items at a time. To take advantage of this feature the MapReduce library offers a MutationPool that collects datastore operations to be performed in batches.&lt;/p&gt;
+
+&lt;p&gt;We can re-write our map function to take advantage of the MutationPool by yielding a database operation from within our map function. If you are unfamiliar with &lt;code&gt;yield&lt;/code&gt; you can think of it as returning a value to the MapReduce job. You can have multiple &lt;code&gt;yield&lt;/code&gt; statements in a function that will all return values to be handled by the MapReduce job.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from mapreduce import operation as op
+
+def touch(entity):
+    &amp;quot;&amp;quot;&amp;quot;
+    Update the entities timestamp.
+    &amp;quot;&amp;quot;&amp;quot;
+    yield op.db.Put(entity)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can run the MapReduce job again and see that the job works correctly using datastore operations via the MutationPool.&lt;/p&gt;
+
+&lt;p&gt;The source code for MapReduce operations can be found in the &lt;code&gt;mapreduce.operation&lt;/code&gt; module.  The &lt;code&gt;mapreduce.operation.db&lt;/code&gt; module currently supports two operations via the MutationPool &lt;code&gt;Put&lt;/code&gt; and &lt;code&gt;Delete&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_4&#34;&gt;Counters&lt;/h2&gt;
+
+&lt;p&gt;The MapReduce library also provides counters that can be incremented when a condition is met. In our example we can count the number of entities that were touched by incrementing a counter.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;from mapreduce import operation as op
+
+def touch(entity):
+    &amp;quot;&amp;quot;&amp;quot;
+    Update the entities timestamp.
+    &amp;quot;&amp;quot;&amp;quot;
+    yield op.db.Put(entity)
+    yield op.db.Increment(&#39;touched&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;All the counters that were incremented during operation of the job are listed with the job details summary.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png&#34;&gt;
+&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png&#34; alt=&#34;Incrementing a custom counter&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_5&#34;&gt;Passing Parameters to the Map Function&lt;/h2&gt;
+
+&lt;p&gt;We can pass additional parameters to our map function by specifying them in &lt;code&gt;mapreduce.yaml&lt;/code&gt;. Parameters are passed to both our InputReader and to our map handler function. In our example, we listed &lt;code&gt;entity_kind&lt;/code&gt; and this parameter was expected by our InputReader and used to specify the datastore Kind processed by our InputReader. On the MapReduce status page (&lt;code&gt;/mapreduce&lt;/code&gt;) we can type in a new value for this parameter to specify a different Kind before running the job.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/edit-parameters.png&#34;&gt;
+&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/edit-parameters.png&#34; alt=&#34;Editing job parameters&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s add an additional parameter for the map function that will only touch the entity if it is older than a specific date.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;- name: Touch all entity_kind Models
+  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: app.pipelines.touch
+    params:
+    - name: entity_kind
+      default: app.models.UserModel
+    - name: if_older_than
+      default:
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The mapreduce context holds the specifation for the job as defined by the &lt;code&gt;mapreduce.yaml&lt;/code&gt; file. Within this context we can access our parameters.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from mapreduce import operation as op, context
+from datetime import datetime
+
+def touch(entity):
+    &amp;quot;&amp;quot;&amp;quot;
+    Update the entities timestamp if not updated since if_older_than.
+    &amp;quot;&amp;quot;&amp;quot;
+    params = context.get().mapreduce_spec.mapper.params
+    if_older_than = params.get(&#39;if_older_than&#39;)
+    older_than = datetime.strptime(if_older_than, &#39;%b %d %Y&#39;) if if_older_than else datetime.now()
+
+    if entity.updated &amp;lt; older_than:
+        yield op.db.Put(entity)
+        yield op.counters.Increment(&#39;touched&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now our map function will operate on entities that have been updated previous to our &lt;code&gt;if_older_than&lt;/code&gt; parameter.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_6&#34;&gt;Parameter Validation&lt;/h2&gt;
+
+&lt;p&gt;The MapReduce library also provides a method to do parameter validation. In our previous example we passed a date to our map function as a string. We can use a validator to validate that parameter and modify it as necessary. To use a validator function, specify it in &lt;code&gt;mapreduce.yaml&lt;/code&gt; as &lt;code&gt;params_validator&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;- name: Touch all entity_kind Models
+  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: app.pipelines.touch
+    params:
+    - name: entity_kind
+      default: app.models.UserModel
+    - name: if_older_than
+      default: Jun 1 2014
+    params_validator: app.pipelines.touch_validator
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The validator function accepts a single argument, a dictionary of parameters. The function can modify this dictionary and any modifications will be made available to the map function. In our example we can use the validator to attempt converting our input date into a datetime object. The &lt;code&gt;strptime&lt;/code&gt; function returns a &lt;code&gt;ValueError&lt;/code&gt; if it cannot convert a string to the datetime.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;def touch_validator(user_params):
+    &amp;quot;&amp;quot;&amp;quot;
+    Validate the parameters of our map function.
+    &amp;quot;&amp;quot;&amp;quot;
+    if_older_than = user_params[&#39;if_older_than&#39;]
+    datetime.strptime(if_older_than, &#39;%b %d %Y&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can trigger the validator to fail by passing in an invalid date format.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/failed-validator.png&#34;&gt;
+&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/failed-validator.png&#34; alt=&#34;Passing an invalid paramter&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;If parameter validation fails the MapReduce job is not started and no entities are passed from our InputReader to the map function.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_7&#34;&gt;Callbacks&lt;/h2&gt;
+
+&lt;p&gt;The MapReduce library allows you to specify a callback function that is called after the MapReduce completes. This can be used for logging purposes or to trigger a specific event in code. The callback is specified in your &lt;code&gt;mapreduce.yaml&lt;/code&gt; file as &lt;code&gt;done_callback&lt;/code&gt; and points to a user specified function. This is a parameter of the MapReduce itself and not the map function &amp;ndash; note the independent entry in &lt;code&gt;mapreduce.yaml&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;- name: Touch all entity_kind Models
+  params:
+  - name: done_callback
+    value: /done_touch
+  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: app.pipelines.touch
+    params:
+    - name: entity_kind
+      default: app.models.UserModel
+    - name: if_older_than
+      default: Jun 1 2014
+    params_validator: app.pipelines.touch_validator
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Upon completion a POST request is made to the URL given by the &lt;code&gt;done_callback&lt;/code&gt; parameter. The MapReduce library sets a custom header in this request with the jobs &lt;code&gt;Mapreduce-Id&lt;/code&gt;. You can use this header to retrieve details on the job that just completed. This is also a great place to do any cleanup such as deleting temporary files. In our example we will just log the original specification for this job that we set via &lt;code&gt;mapreduce.yaml&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;import webapp2
+import logging
+from mapreduce.model import MapreduceState
+
+class DoneTouch(webapp2.RequestHandler):
+    &amp;quot;&amp;quot;&amp;quot;
+    Callback function upon completion of touch MapReduce job.
+    &amp;quot;&amp;quot;&amp;quot;
+
+    def post(self):
+        &amp;quot;&amp;quot;&amp;quot;
+        Log the MapReduce ID and input parameters.
+        &amp;quot;&amp;quot;&amp;quot;
+        mapreduce_id =  self.request.headers[&#39;Mapreduce-Id&#39;]           
+        state = MapreduceState.get_by_key_name(mapreduce_id)   
+        spec = state.mapreduce_spec
+        logging.info(spec)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_8&#34;&gt;Additional Input Readers&lt;/h2&gt;
+
+&lt;p&gt;In addition to the DatastoreInputReader the library includes readers for the
+Blobstore, Files and Google Cloud Storage Buckets. The documentation for these
+readers is scarse but you can consult the &lt;code&gt;mapreduce.input_readers&lt;/code&gt; module for
+more information on the expected parameters for these readers. This information
+was gathered from a combination of the offical &lt;a href=&#34;https://code.google.com/p/appengine-mapreduce/wiki/UserGuidePython#Specifying_readers&#34;&gt;Python Users
+Guide&lt;/a&gt;
+and from &lt;a href=&#34;https://code.google.com/p/appengine-mapreduce/source/browse/trunk/python/src/mapreduce/input_readers.py&#34;&gt;reading the
+source&lt;/a&gt;.
+This should give you enough information to get started with the InputReader of
+your choice.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_9&#34;&gt;Input Reader Reference&lt;/h3&gt;
+
+&lt;p&gt;As a reference here is a list of InputReaders and their parameters. All
+InputReaders support the &lt;code&gt;namespace&lt;/code&gt; parameter for specifying the namespaces to
+iterate over. If no namespace is given then all namespaces are used&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;namespace&lt;/dt&gt;
+  &lt;dd&gt;The list of namespaces that will be searched.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_10&#34;&gt;BlobstoreLineInputReader&lt;/h4&gt;
+
+&lt;p&gt;Input reader for a newline delimited blob in Blobstore.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;blob_key&lt;/dt&gt;
+  &lt;dd&gt;The BlobKey that this input reader is processing. Either a string
+  containing a single key or a list of blob key strings.&lt;/dd&gt;
+  &lt;dt&gt;start_position&lt;/dt&gt;
+  &lt;dd&gt;the line number position to start reading at.&lt;/dd&gt;
+  &lt;dt&gt;end_position&lt;/dt&gt;
+  &lt;dd&gt;The last line number position to read.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_11&#34;&gt;BlobstoreZipInputReader&lt;/h4&gt;
+
+&lt;p&gt;Input reader for files from a zip archive stored in the Blobstore. Iterates over all compressed files in a zipfile in Blobstore.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;blob_key&lt;/dt&gt;
+  &lt;dd&gt;The BlobKey that this input reader is processing. Either a string
+  containing a single key or a list of blob key strings.&lt;/dd&gt;
+  &lt;dt&gt;start_index&lt;/dt&gt;
+  &lt;dd&gt;the index of the first file to read.&lt;/dd&gt;
+  &lt;dt&gt;end_index&lt;/dt&gt;
+  &lt;dd&gt;The index of the last file that will not be read.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_12&#34;&gt;BlobstoreZipLineInputReader&lt;/h4&gt;
+
+&lt;p&gt;Input reader for files from a zip archive stored in the Blobstore. Iterates over all compressed files in a zipfile in Blobstore. Each compressed file is expected to be a newline delimited file.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;blob_key&lt;/dt&gt;
+  &lt;dd&gt;The BlobKey that this input reader is processing. Either a string
+  containing a single key or a list of blob key strings.&lt;/dd&gt;
+  &lt;dt&gt;start_file_index&lt;/dt&gt;
+  &lt;dd&gt;the index of the first file to read within the zip.&lt;/dd&gt;
+  &lt;dt&gt;end_file_index&lt;/dt&gt;
+  &lt;dd&gt;the index of the last file that will not be read.&lt;/dd&gt;
+  &lt;dt&gt;offset&lt;/dt&gt;
+  &lt;dd&gt;The by offset with `BLOB_KEY.zip[start_file_index]` to start reading.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_13&#34;&gt;DatastoreInputReader&lt;/h4&gt;
+
+&lt;p&gt;Iterates over a Model and yields model instances. Supports both db.model and ndb.model.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;entity_kind&lt;/dt&gt;
+  &lt;dd&gt;the datastore kind to map over.&lt;/dd&gt;
+  &lt;dt&gt;keys_only&lt;/dt&gt;
+  &lt;dd&gt;use a keys_only query.&lt;/dd&gt;
+  &lt;dt&gt;batch_size&lt;/dt&gt;
+  &lt;dd&gt;the number of entities to read from the datastore with each batch get.&lt;/dd&gt;
+  &lt;dt&gt;key_range&lt;/dt&gt;
+  &lt;dd&gt;a range of keys to return from your query&lt;/dd&gt;
+  &lt;dt&gt;filters&lt;/dt&gt;
+  &lt;dd&gt;Any filters to apply to the datastore query.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_14&#34;&gt;DatastoreKeyInputReader&lt;/h4&gt;
+
+&lt;p&gt;Iterate over an entity kind and yields datastore.Key.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;entity_kind&lt;/dt&gt;
+  &lt;dd&gt;the datastore kind to map over.&lt;/dd&gt;
+  &lt;dt&gt;keys_only&lt;/dt&gt;
+  &lt;dd&gt;use a keys_only query.&lt;/dd&gt;
+  &lt;dt&gt;batch_size&lt;/dt&gt;
+  &lt;dd&gt;the number of entities to read from the datastore with each batch get.&lt;/dd&gt;
+  &lt;dt&gt;key_range&lt;/dt&gt;
+  &lt;dd&gt;a range of keys to return from your query&lt;/dd&gt;
+  &lt;dt&gt;filters&lt;/dt&gt;
+  &lt;dd&gt;Any filters to apply to the datastore query.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_15&#34;&gt;FileInputReader&lt;/h4&gt;
+
+&lt;p&gt;Iterate over Google Cloud Storage files using the &lt;a href=&#34;https://developers.google.com/appengine/docs/python/googlestorage/&#34;&gt;Files API&lt;/a&gt;.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;files&lt;/dt&gt;
+  &lt;dd&gt;A list of filenames or globbed filename patterns. The format is
+  `/gs/bucket/filename` or `/gs/bucket/prefix*`.&lt;/dd&gt;
+  &lt;dt&gt;format&lt;/dt&gt;
+  &lt;dd&gt;One of &#34;lines&#34;, &#34;bytes&#34;, &#34;zip&#34;. &#34;lines&#34; reads the input file line-by-line,
+  &#34;bytes&#34; reads the whole file at once and &#34;zip&#34; iterates over every file within
+  the zip.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_16&#34;&gt;LogInputReader&lt;/h4&gt;
+
+&lt;p&gt;Input reader for a time range of logs via the &lt;a href=&#34;https://developers.google.com/appengine/docs/python/logs/&#34;&gt;Logs API&lt;/a&gt;.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;start_time&lt;/dt&gt;
+  &lt;dd&gt;The earliest request completion or last-update time of logs that should be mapped over, in seconds since the Unix epoch.&lt;/dd&gt;
+  &lt;dt&gt;end_time&lt;/dt&gt;
+  &lt;dd&gt;The latest request completion or last-update time that logs should be mapped over, in seconds since the Unix epoch.&lt;/dd&gt;
+  &lt;dt&gt;minimum_log_level&lt;/dt&gt;
+  &lt;dd&gt;An application log level which serves as a filter on the requests mapped over.&lt;/dd&gt;
+  &lt;dt&gt;include_incomplete&lt;/dt&gt;
+  &lt;dd&gt;Whether or not to include requests that have started but not yet finished, as a boolean.&lt;/dd&gt;
+  &lt;dt&gt;include_app_logs&lt;/dt&gt;
+  &lt;dd&gt;Whether or not to include application level logs in the mapped logs, as a boolean.&lt;/dd&gt;
+  &lt;dt&gt;version_ids&lt;/dt&gt;
+  &lt;dd&gt;A list of version ids whose logs should be read. This can not be used with module_versions&lt;/dd&gt;
+  &lt;dt&gt;module_versions&lt;/dt&gt;
+  &lt;dd&gt;A list of tuples containing a module and version id whose logs should be read. This can not be used with version_ids.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_17&#34;&gt;NamespaceInputReader&lt;/h4&gt;
+
+&lt;p&gt;An input reader to iterate over namespaces. This reader yields namespace names as string.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;namespace_range&lt;/dt&gt;
+  &lt;dd&gt;An alphabetic range for the namespace. As defined by [namespace_range.py](https://code.google.com/p/appengine-mapreduce/source/browse/trunk/python/src/mapreduce/namespace_range.py).&lt;/dd&gt;
+  &lt;dt&gt;batch_size&lt;/dt&gt;
+  &lt;dd&gt;The number of namespaces to read with each batch.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_18&#34;&gt;RandomStringInputReader&lt;/h4&gt;
+
+&lt;p&gt;Yields random strings as output. Useful to populate output with testing entries.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;count&lt;/dt&gt;
+  &lt;dd&gt;The total number of entries this reader should generate.&lt;/dd&gt;
+  &lt;dt&gt;string_length&lt;/dt&gt;
+  &lt;dd&gt;The length of the generated strings.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_19&#34;&gt;RawDatastoreInputReader&lt;/h4&gt;
+
+&lt;p&gt;Exactly the same as DatastoreInputReader but yields a datastore.Entity.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;entity_kind&lt;/dt&gt;
+  &lt;dd&gt;the datastore kind to map over.&lt;/dd&gt;
+  &lt;dt&gt;keys_only&lt;/dt&gt;
+  &lt;dd&gt;use a keys_only query.&lt;/dd&gt;
+  &lt;dt&gt;batch_size&lt;/dt&gt;
+  &lt;dd&gt;the number of entities to read from the datastore with each batch get.&lt;/dd&gt;
+  &lt;dt&gt;key_range&lt;/dt&gt;
+  &lt;dd&gt;a range of keys to return from your query&lt;/dd&gt;
+  &lt;dt&gt;filters&lt;/dt&gt;
+  &lt;dd&gt;Any filters to apply to the datastore query.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_20&#34;&gt;RecordsReader&lt;/h4&gt;
+
+&lt;p&gt;Reads a list of Files API files in records format.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;files&lt;/dt&gt;
+  &lt;dd&gt;A comma separated string of files to read from.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h2 id=&#34;toc_21&#34;&gt;Conclusions&lt;/h2&gt;
+
+&lt;p&gt;Defining a MapReduce job via &lt;code&gt;mapreduce.yaml&lt;/code&gt; provides a convenient way to
+iterate over large datasets and run a function on each unit of work.
+Unfortunately, running a MapDeduce job this way has a few limitations.
+First, there is no way to specify a reduce phase, limiting the type of jobs we
+can perform. Second, you cannot start a MapReduce job programmatically.&lt;/p&gt;
+
+&lt;p&gt;The next article in this series will show how to overcome these limitations
+using MapReduce Pipelines to programmatically control your API.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine MapReduce API - Part 1: The Basics</title>
+      <link>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</link>
+      <pubDate>Tue, 15 Apr 2014 12:09:36 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</guid>
+      <description>
+
+&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The first arcticle in this series provides an overview of the &lt;a href=&#34;https://developers.google.com/appengine/docs/python/dataprocessing/&#34;&gt;App Engine MapReduce
+API&lt;/a&gt;. We
+will give a basic overview of what MapReduce is and how it is used to do
+parallel and distributed processing of large datasets.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;The Map and Reduce Functions&lt;/h2&gt;
+
+&lt;p&gt;MapReduce is based on the &lt;code&gt;map&lt;/code&gt; and &lt;code&gt;reduce&lt;/code&gt; functions that are commonly used in
+lazily-evaluated functional programming languages. Let&amp;rsquo;s look at &lt;code&gt;map&lt;/code&gt; first.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_2&#34;&gt;map&lt;/h3&gt;
+
+&lt;p&gt;A &lt;code&gt;map&lt;/code&gt; function is a way to apply a transformation to every element in a list.
+Using Clojure as the example functional language we can use the &lt;code&gt;map&lt;/code&gt; function
+to increment every number in a list by &lt;code&gt;1&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;=&amp;gt; (map inc [1 2 3 4 5])
+(2 3 4 5 6)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In this example &lt;code&gt;inc&lt;/code&gt; is the increment function where &lt;code&gt;inc(x) = x+1&lt;/code&gt;. More
+generally, you can apply any function &lt;code&gt;fn&lt;/code&gt; to all elements of a list by passing
+it to the map function.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;=&amp;gt; (map fn [1 2 3 4 5])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_3&#34;&gt;reduce&lt;/h3&gt;
+
+&lt;p&gt;Reduce applying a function &lt;code&gt;fn&lt;/code&gt; of two arguments to a sequence of parameters.
+Each iteration of the function call uses the value of the previous call as an
+input parameter of the function. In this example we start with a base value of 0
+and iteratively add to that base value to sum a list of numbers.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;=&amp;gt; (reduce + 0 [1 2 3 4 5])
+=&amp;gt; (reduce + 1 [2 3 4 5])
+=&amp;gt; (reduce + 3 [3 4 5])
+=&amp;gt; (reduce + 6 [4 5])
+=&amp;gt; (reduce + 10 [5])
+15
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;An interesting feature of both map and reduce is that they can be lazily
+evaluated &amp;ndash; meaning that each operation can be performed only when it is
+needed. With MapReduce, lazy evaluation allows you to work with large datasets
+by processing data only when needed.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_4&#34;&gt;MapReduce Stages&lt;/h2&gt;
+
+&lt;p&gt;The App Engine MapReduce API provides a method for operating over large datasets
+via a parallel and distributed system of lazy evaluation. In contrast to the
+&lt;code&gt;map&lt;/code&gt; and &lt;code&gt;reduce&lt;/code&gt; functions a MapReduce job may output a single value or a list
+of values depending on the job requirements.&lt;/p&gt;
+
+&lt;p&gt;A MapReduce job is made up of stages. Each stage completes before the next stage
+begins and any intermediate data is stored in temporary storage between the
+stages. MapReduce has three stages: map, shuffle and reduce.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_5&#34;&gt;Map&lt;/h3&gt;
+
+&lt;p&gt;The map stage has two components &amp;ndash; an &lt;em&gt;InputReader&lt;/em&gt; and a &lt;em&gt;map&lt;/em&gt; function. The
+InputReader&amp;rsquo;s job is to deliver data one record at a time to the &lt;em&gt;map&lt;/em&gt; function.
+The &lt;em&gt;map&lt;/em&gt; function is applied to each record individually and a key-value pair
+is emitted. The data emitted by the &lt;em&gt;map&lt;/em&gt; function is stored in temporary
+storage for processing by the next stage.&lt;/p&gt;
+
+&lt;p&gt;The prototypical MapReduce example counts the number of each words in a set of
+documents. For example, assume the input is a document database containing a
+document id and the text of that document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;14877 DIY Pinterest narwhal forage typewriter, quinoa Odd Future. Fap hashtag 
+88390 chillwave, paleo post-ironic squid fanny pack yr PBR&amp;amp;B High Life. Put a bird on it
+73205 gastropub leggings ennui PBR&amp;amp;B. Vice Pinterest 8-bit chambray. Dreamcatcher
+95782 letterpress 3 wolf moon, mustache craft beer Pitchfork yr trust fund Tonx 77865 collie lassie
+75093 Portland skateboard bespoke kitsch. Seitan irony mustache messenger bag,
+24798 skateboard hashtag pickled tote bag try-hard meggings actually Vice quinoa
+13334 plaid. Biodiesel Echo Park fashion axe direct trade, forage Neutra try-hard
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Using the App Engine MapReduce API we can define a map function to output a
+key-value pair for each occurrence of a word in the document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def map(document):
+    &amp;quot;&amp;quot;&amp;quot;
+    Count the occurrence of each word in a document.
+    &amp;quot;&amp;quot;&amp;quot;
+    for word in document:
+        yield (word.lower(), 1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Our output would record each time a word was encountered within a document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;diy 1
+pinterest 1
+narwhal 1
+forage 1
+typewriter 1
+quinoa 1
+odd 1
+future 1
+... more records ...
+pinterest 1
+forage 1
+quinoa 1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_6&#34;&gt;Shuffle&lt;/h3&gt;
+
+&lt;p&gt;The shuffle stage is done in two steps. First, the data emitted by the map stage
+is sorted. Entries with the same key are grouped together.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(diy, 1)
+(forage, 1)
+(forage, 1)
+(future, 1)
+(narwhal, 1)
+(odd, 1)
+(pinterest, 1)
+(pinterest, 1)
+(quinoa, 1)
+(quinoa, 1)
+(typewriter, 1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Second, entries for each key are condensed into a single list of values. These
+values are stored in temporary storage for processing by the next stage.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(diy, [1])
+(forage, [1, 1])
+(future, [1])
+(narwhal, [1])
+(odd, [1])
+(pinterest, [1, 1])
+(quinoa, [1, 1])
+(typewriter, [1])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_7&#34;&gt;Reduce&lt;/h3&gt;
+
+&lt;p&gt;The reduce stage has two components &amp;ndash; a &lt;em&gt;reduce&lt;/em&gt; function and an
+&lt;em&gt;OutputWriter&lt;/em&gt;. The reduce function is called for each unique key in the
+shuffled temporary data. The &lt;em&gt;reduce&lt;/em&gt; function emits a final value based on its
+input. To count the number of occurrences of a word our reduce function will
+look like this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def reduce(key, values):
+   &amp;quot;&amp;quot;&amp;quot;
+    Sum the list of values.
+    &amp;quot;&amp;quot;&amp;quot;
+    yield (key, sum(values))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Applying this reducing function to our data would give the following output.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(diy, 1)
+(forage, 2)
+(future, 1)
+(narwhal, 1)
+(odd, 1)
+(pinterest, 2)
+(quinoa, 2)
+(typewriter, 1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This output is passed to the &lt;em&gt;OutputWriter&lt;/em&gt; which writes the data to permanent storage.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_8&#34;&gt;The Benefits of MapReduce&lt;/h2&gt;
+
+&lt;p&gt;MapReduce performs parallel and distributed operations by partitioning the data
+to be processed both spatially and temporally. The spatial partitioning is done
+via &lt;em&gt;sharding&lt;/em&gt; while the temporal partitioning is done via &lt;em&gt;slicing&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_9&#34;&gt;Sharding: Parallel Processing&lt;/h3&gt;
+
+&lt;p&gt;The input data is divided into multiple smaller datasets called &lt;em&gt;shards&lt;/em&gt;. Each
+of these shards are processed in parallel. A shard is processed by an individual
+instance of the map function with its own input reader that feeds it data
+reserved for this shard. Likewise for the reduce function.&lt;/p&gt;
+
+&lt;p&gt;The benefit of sharding is that each shard can be processed in parallel.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_10&#34;&gt;Slicing: Fault Tolerance&lt;/h3&gt;
+
+&lt;p&gt;The data in a shard is processed sequentially. Each shard is assigned a task and
+that task iterates over all data in the shard using an App Engine Task Queue.
+When a task is run it iterates over as much data from the shard as it can in 15
+seconds (configurable). After this time period expires a new slice is created
+and the process repeats until all data in the shard has been processed.&lt;/p&gt;
+
+&lt;p&gt;The benefit of slicing is fault tolerance. If an error occurs during the run of
+a slice, that particular slice can be run again without affecting the processing
+of previous or subsequent slices.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_11&#34;&gt;Conclusions&lt;/h2&gt;
+
+&lt;p&gt;MapReduce provides a convenient programming model for operating on large
+datasets. In our next article we look at how to use the Python MapReduce API for
+App Engine to process entities from the datastore.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

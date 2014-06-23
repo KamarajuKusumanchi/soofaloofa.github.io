@@ -1,0 +1,3111 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+      <title>Posts on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
+    <link>http://sookocheff.com/posts/index.xml</link>
+    <language>en-us</language>
+    <author>Kevin Sookocheff</author>
+    <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Tue, 17 Jun 2014 06:14:23 UTC</updated>
+    
+    <item>
+      <title>Downloading directories of code from Github using the Github API</title>
+      <link>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api</link>
+      <pubDate>Tue, 17 Jun 2014 06:14:23 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api</guid>
+      <description>
+
+&lt;p&gt;At &lt;a href=&#34;http://www.vendAsta.com&#34;&gt;VendAsta&lt;/a&gt; we frequently share libraries of code
+between projects. To make it easier to share this code I&amp;rsquo;ve developed a small
+package manager that downloads code within a directory from Github to be copied
+in to your current project. It&amp;rsquo;s a quick and dirty alternative to cloning an
+entire repository, grabbing the set of files you want and placing them in your
+project.&lt;/p&gt;
+
+&lt;p&gt;We&amp;rsquo;ll use the &lt;a href=&#34;https://github.com/jacquev6/PyGithub&#34;&gt;PyGithub&lt;/a&gt; Python library to
+interact with the Github API.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;Logging in to Github&lt;/h2&gt;
+
+&lt;p&gt;The first step is to log in to Github using our credentials. To do this we
+instantiate a new Github object given our username and password and access the
+associated user by calling &lt;code&gt;get_user&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from github import Github
+
+github = Github(&#39;soofaloofa&#39;, &#39;password&#39;)
+user = github.get_user()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is equivalent to making a &lt;a href=&#34;https://developer.github.com/v3/#authentication&#34;&gt;basic authentication
+request&lt;/a&gt; to get the currently
+&lt;a href=&#34;https://developer.github.com/v3/users/#get-the-authenticated-user&#34;&gt;authenticated
+user&lt;/a&gt; and
+storing the result in a local representation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;curl -u soofaloofa https://api.github.com/user
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Accessing a repository&lt;/h2&gt;
+
+&lt;p&gt;Now that we have a user we can get a repository for that user by name. To get
+the repository for this website we make a request to &lt;a href=&#34;https://developer.github.com/v3/repos/#get&#34;&gt;get a repo by
+owner&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;repository = user.get_repo(&#39;soofaloofa.github.io&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;Downloading a single file&lt;/h2&gt;
+
+&lt;p&gt;To download a single file from a repository we make a call to &lt;a href=&#34;https://developer.github.com/v3/repos/contents/#get-contents&#34;&gt;get the contents
+of a file&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;file_content = repository.get_contents(&#39;README.md&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_3&#34;&gt;Referencing commits&lt;/h2&gt;
+
+&lt;p&gt;We have all the building blocks to download a resource from Github. The next
+step is to download a resource referenced by a specific commit. The Github API
+expects SHA values to reference a commit. To make this a bit more user friendly
+we can write a function that will search for a SHA given a git tag or branch
+name.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def get_sha_for_tag(repository, tag):
+    &amp;quot;&amp;quot;&amp;quot;
+    Returns a commit PyGithub object for the specified repository and tag.
+    &amp;quot;&amp;quot;&amp;quot;
+    branches = repository.get_branches()
+    matched_branches = [match for match in branches if match.name == tag]
+    if matched_branches:
+        return matched_branches[0].commit.sha
+
+    tags = repository.get_tags()
+    matched_tags = [match for match in tags if match.name == tag]
+    if not matched_tags:
+        raise ValueError(&#39;No Tag or Branch exists with that name&#39;)
+    return matched_tags[0].commit.sha
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we can pass this SHA to the &lt;code&gt;get_contents&lt;/code&gt; function to get a file for that
+specific commit.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;sha = get_sha_for_tag(repository, &#39;develop&#39;)
+file_content = repository.get_contents(&#39;README.md&#39;, ref=sha)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_4&#34;&gt;Putting it all together&lt;/h2&gt;
+
+&lt;p&gt;By putting a bit more polish on this we can easily download entire directories
+of code that reference a single tag or branch and copy them to our local
+environment. The basic workflow is:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Choose a repository.&lt;/li&gt;
+&lt;li&gt;Choose a branch or tag.&lt;/li&gt;
+&lt;li&gt;Choose a directory.&lt;/li&gt;
+&lt;li&gt;Iteratively download all the files in that directory.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Let&amp;rsquo;s make that happen.&lt;/p&gt;
+
+&lt;p&gt;For this code I&amp;rsquo;ll assume that the Github user belongs to a single organization
+and that this organization is sharing code between repositories.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from github import Github
+import getpass
+
+username = raw_input(&amp;quot;Github username: &amp;quot;)
+password = getpass.getpass(&amp;quot;Github password: &amp;quot;)
+
+github = Github(username, password)
+organization = github.get_user().get_orgs()[0]
+
+repository_name = raw_input(&amp;quot;Github repository: &amp;quot;)
+repository = organization.get_repo(repository_name)
+
+branch_or_tag_to_download = raw_input(&amp;quot;Branch or tag to download: &amp;quot;)
+sha = get_sha_for_tag(repository, branch_or_tag_to_download)
+
+directory_to_download = raw_input(&amp;quot;Directory to download: &amp;quot;)
+download_directory(repository, sha, directory_to_download)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This piece of code is fairly simple and relies on a couple of helper functions:
+&lt;code&gt;get_sha_for_tag&lt;/code&gt; and &lt;code&gt;download_directory&lt;/code&gt;. &lt;code&gt;get_sha_for_tag&lt;/code&gt; will return the
+SHA commit hash given a branch or tag and &lt;code&gt;download_directory&lt;/code&gt; will recursively
+download the files in the given directory.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def get_sha_for_tag(repository, tag):
+    &amp;quot;&amp;quot;&amp;quot;
+    Returns a commit PyGithub object for the specified repository and tag.
+    &amp;quot;&amp;quot;&amp;quot;
+    branches = repository.get_branches()
+    matched_branches = [match for match in branches if match.name == tag]
+    if matched_branches:
+        return matched_branches[0].commit.sha
+
+    tags = repository.get_tags()
+    matched_tags = [match for match in tags if match.name == tag]
+    if not matched_tags:
+        raise ValueError(&#39;No Tag or Branch exists with that name&#39;)
+    return matched_tags[0].commit.sha
+
+
+def download_directory(repository, sha, server_path):
+    &amp;quot;&amp;quot;&amp;quot;
+    Download all contents at server_path with commit tag sha in 
+    the repository.
+    &amp;quot;&amp;quot;&amp;quot;
+    contents = repository.get_dir_contents(server_path, ref=sha)
+
+    for content in contents:
+        print &amp;quot;Processing %s&amp;quot; % content.path
+        if content.type == &#39;dir&#39;:
+            download_directory(repository, sha, content.path)
+        else:
+            try:
+                path = content.path
+                file_content = repository.get_contents(path, ref=sha)
+                file_data = base64.b64decode(file_content.content)
+                file_out = open(content.name, &amp;quot;w&amp;quot;)
+                file_out.write(file_data)
+                file_out.close()
+            except (GithubException, IOError) as exc:
+                logging.error(&#39;Error processing %s: %s&#39;, content.path, exc)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We&amp;rsquo;ve been using a variation of this simple script to share code between Github
+repositories and appreciate it&amp;rsquo;s flexibility and ease of use. Let me know if you
+find it useful!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How to bypass the auto_now property option during an ndb put</title>
+      <link>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</link>
+      <pubDate>Wed, 28 May 2014 05:55:48 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</guid>
+      <description>&lt;p&gt;In App Engine the &lt;code&gt;auto_now&lt;/code&gt; option sets a property to the current date/time
+whenever the entity is created or updated. This is a great feature for tracking
+the time when an entity was last updated. However, sometimes you may want to put
+an entity without updating an &lt;code&gt;auto_now&lt;/code&gt; timestamp. This article will show you
+how.&lt;/p&gt;
+
+&lt;p&gt;First, let&amp;rsquo;s start with a very basic ndb model with an &lt;code&gt;updated&lt;/code&gt; property having
+the &lt;code&gt;auto_now&lt;/code&gt; option set to &lt;code&gt;True&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from google.appengine.ext import ndb
+
+class Article(ndb.model):
+    title = ndb.model.StringProperty()
+    updated = ndb.model.DateTimeProperty(auto_now=True)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, let&amp;rsquo;s put the entity to the datastore &lt;em&gt;without updating the timestamp&lt;/em&gt; and
+&lt;em&gt;completely bypassing the &lt;code&gt;auto_now&lt;/code&gt; option&lt;/em&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
+article._properties[&#39;updated&#39;]._auto_now = False
+article.put()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It&amp;rsquo;s pretty simple, but with caveats. Putting the entity using the code above
+will store the updated entity in the instance cache (and memcache). If we get
+the entity it will be retrieved from the instance cache with the &lt;code&gt;auto_now&lt;/code&gt;
+property still set to &lt;code&gt;False&lt;/code&gt;. This can have unwanted side-effects because
+subsequent updates to the entity will not trigger the &lt;code&gt;auto_now&lt;/code&gt; functionality.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
+article._properties[&#39;updated&#39;]._auto_now = False
+key = article.put() # Put the entity with the auto_now option set to False
+
+article = key.get() # Get the entity from instance cache
+article.title = &#39;Python versus Go&#39;
+article.put() # Put the entity with the auto_now option *still* set to False
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can set the &lt;code&gt;auto_now&lt;/code&gt; option to &lt;code&gt;True&lt;/code&gt; again to re-enable the functionality.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
+article._properties[&#39;updated&#39;]._auto_now = False
+key = article.put()
+
+article._properties[&#39;updated&#39;]._auto_now = True
+article = key.get() # Get the entity from instance cache
+article.title = &#39;Python versus Go&#39;
+article.put() # Puts the entity with the auto_now option set to True
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For more information on ndb caching &lt;a href=&#34;https://developers.google.com/appengine/docs/python/ndb/cache&#34;&gt;refer to the
+documentation&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine MapReduce API - Part 5: Using Combiners to Reduce Data Throughput</title>
+      <link>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</link>
+      <pubDate>Tue, 20 May 2014 08:54:12 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</guid>
+      <description>
+
+&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So far we&amp;rsquo;ve looked at using MapReduce pipelines to perform calculations over
+large data sets and combined multiple pipelines in succession. In this article
+we will look at how to reduce the amount of data transfer by using a combiner.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;What is a combiner?&lt;/h2&gt;
+
+&lt;p&gt;A combiner is a function that takes the output of a series of map calls as input and outputs a value of the same format to be processed by the reducer. The combiner is run just before the output of the mapper is written to disk. In fact, the combiner may not be run at all if the data can reside completely in memory and so your algorithm must be able to complete with our without the combiner. By reducing the amount of data that needs to be written to disk you can increase performance of the reduce stage.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;Example&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s look at an example that uses a combiner to reduce data throughput. To drive this discussion we will use an example that counts the number of occurrences of a character in a string. We originally looked at this example &lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;here&lt;/a&gt;. In this version we will only include the character or characters that occur the most. The operation will work like this: the mapper function will count the occurrence of each character in a string. The combiner will take these (key, value) pairs and output only the character or characters that appear the most. Finally, the reducer will sum those values to find our result. This contrived problem will provide a working example of a combiner.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start with the MapReduce job from our previous example.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;quot;&amp;quot;&amp;quot;
+app.pipelines
+&amp;quot;&amp;quot;&amp;quot;
+import collections
+
+from mapreduce.lib import pipeline
+from mapreduce import mapreduce_pipeline
+
+###
+### MapReduce Pipeline
+###
+def character_count_map(random_string):
+    &amp;quot;&amp;quot;&amp;quot; yield the number of occurrences of each character in random_string. &amp;quot;&amp;quot;&amp;quot;
+    counter = collections.Counter(random_string)
+    for character in counter.elements():
+        yield (character, counter[character])
+
+def character_count_reduce(key, values):
+    &amp;quot;&amp;quot;&amp;quot; sum the number of characters found for the key. &amp;quot;&amp;quot;&amp;quot;
+    yield (key, sum([int(i) for i in values]))
+
+class CountCharactersPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; Count the number of occurrences of a character in a set of strings. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, *args, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        mapper_params = {
+            &amp;quot;count&amp;quot;: 100,
+            &amp;quot;string_length&amp;quot;: 20,
+        }
+        reducer_params = {
+            &amp;quot;mime_type&amp;quot;: &amp;quot;text/plain&amp;quot;
+        }
+        output = yield mapreduce_pipeline.MapreducePipeline(
+            &amp;quot;character_count&amp;quot;,
+            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
+            mapper_params=mapper_params,
+            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
+            reducer_params=reducer_params,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
+            output_writer_spec=&amp;quot;mapreduce.output_writers.BlobstoreOutputWriter&amp;quot;,
+            shards=16)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Given this base we add a combiner step to the &lt;code&gt;MapreducePipeline&lt;/code&gt; by passing the &lt;code&gt;combiner_spec&lt;/code&gt; argument to the initialization.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;       output = yield mapreduce_pipeline.MapreducePipeline(
+            &amp;quot;character_count&amp;quot;,
+            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
+            mapper_params=mapper_params,
+            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
+            reducer_params=reducer_params,
+            combiner_spec=&amp;quot;app.pipelines.character_count_combine&amp;quot;,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
+            output_writer_spec=&amp;quot;mapreduce.output_writers.BlobstoreOutputWriter&amp;quot;,
+            shards=16)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Our combine function accepts a few parameters the key, a list of values for that key and a list of previously combined results. The combiner function yields combined values that might be processed by another combiner call and that will eventually end up in the reducer function.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s write our simple combiner function. We yield only a value instead of a &lt;code&gt;(key, value)&lt;/code&gt; tuple because the key is assumed to stay the same.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;def character_count_combine(key, values, previously_combined_values):
+    &amp;quot;&amp;quot;&amp;quot; emit the maximum value in values and previously_combined_values &amp;quot;&amp;quot;&amp;quot;
+    yield max(values + previously_combined_values)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Our combiner function is not guaranteed to run so we need to update our reduce function to take the maximum of the list of values as well.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;def character_count_reduce(key, values):
+    &amp;quot;&amp;quot;&amp;quot; sum the number of characters found for the key. &amp;quot;&amp;quot;&amp;quot;
+    yield (key, max(values))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This gives us our final pipeline using map, reduce and combine.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;###
+### MapReduce Pipeline
+###
+def character_count_map(random_string):
+    &amp;quot;&amp;quot;&amp;quot; yield the number of occurrences of each character in random_string. &amp;quot;&amp;quot;&amp;quot;
+    counter = collections.Counter(random_string)
+    for character in counter.elements():
+        yield (character, counter[character])
+
+def character_count_reduce(key, values):
+    &amp;quot;&amp;quot;&amp;quot; sum the number of characters found for the key. &amp;quot;&amp;quot;&amp;quot;
+    yield (key, max(values))
+
+def character_count_combine(key, values, previously_combined_values):
+    &amp;quot;&amp;quot;&amp;quot; emit the maximum value in values and previously_combined_values &amp;quot;&amp;quot;&amp;quot;
+    yield max(values + previously_combined_values)
+
+class CountCharactersPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; Count the number of occurrences of a character in a set of strings. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, *args, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        mapper_params = {
+            &amp;quot;count&amp;quot;: 100,
+            &amp;quot;string_length&amp;quot;: 20,
+        }
+        reducer_params = {
+            &amp;quot;mime_type&amp;quot;: &amp;quot;text/plain&amp;quot;
+        }
+        output = yield mapreduce_pipeline.MapreducePipeline(
+            &amp;quot;character_count&amp;quot;,
+            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
+            mapper_params=mapper_params,
+            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
+            reducer_params=reducer_params,
+            combiner_spec=&amp;quot;app.pipelines.character_count_combine&amp;quot;,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
+            output_writer_spec=&amp;quot;mapreduce.output_writers.BlobstoreOutputWriter&amp;quot;,
+            shards=16)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine MapReduce API - Part 4: Combining Sequential MapReduce Jobs</title>
+      <link>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs</link>
+      <pubDate>Tue, 13 May 2014 10:40:38 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs</guid>
+      <description>
+
+&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Last
+time&lt;/a&gt;
+we looked at how to run a full MapReduce Pipeline to count the number of
+occurrences of a character within each string. In this post we will see how to
+chain multiple MapReduce Pipelines together to perform sequential tasks.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Combining Sequential MapReduce Jobs&lt;/h2&gt;
+
+&lt;p&gt;As a contrived example (as all examples are) let&amp;rsquo;s imagine a scenario where we
+want to clean up some data by deleting a business entity from the datastore.
+Each business has employees stored that also need to be deleted. Our simplified
+models look like this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from google.appengine.ext import ndb
+
+class Business(ndb.model):
+    &amp;quot;&amp;quot;&amp;quot;
+    Model representing a business which will have employees.
+    &amp;quot;&amp;quot;&amp;quot;
+    name = ndb.StringProperty(required=True)
+    address = ndb.StringProperty()
+    
+class Employee(ndb.model):
+    &amp;quot;&amp;quot;&amp;quot;
+    Model representing employees of a business.
+    &amp;quot;&amp;quot;&amp;quot;
+    name = ndb.StringProperty(required=True)
+    business = ndb.StringProperty(required=True)    
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let&amp;rsquo;s create a pipeline that will iterate over every business with a matching
+&lt;code&gt;name&lt;/code&gt; and delete all the employees from that business. We can take advantage of
+the &lt;code&gt;filters&lt;/code&gt; parameter of the &lt;code&gt;DatastoreInputReader&lt;/code&gt; to find all employees
+working at a business with a matching name.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def delete_employee(entity):
+    &amp;quot;&amp;quot;&amp;quot; Delete an employee entity. &amp;quot;&amp;quot;&amp;quot;
+    yield op.db.Delete(entity)
+
+class DeleteBusinessPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; Delete a business. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, business_name, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        employee_params = {
+            &amp;quot;entity_kind&amp;quot;: &amp;quot;app.pipelines.Employee&amp;quot;,
+            &amp;quot;filters&amp;quot;: [(&#39;business&#39;, &#39;=&#39;, business_name)],
+        }
+        yield mapreduce_pipeline.MapperPipeline(
+            &amp;quot;delete_employee&amp;quot;,
+            handler_spec=app.pipelines.delete_employee,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.DatastoreInputReader&amp;quot;,
+            params=employee_params,
+            shards=2)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This simple pipeline will delete all of the employees. We can add a second
+pipeline to our execution that will delete the business by simply yielding the
+return value of the first pipeline to the Pipeline API.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def delete_employee(entity):
+    &amp;quot;&amp;quot;&amp;quot; Delete an employee entity. &amp;quot;&amp;quot;&amp;quot;
+    yield op.db.Delete(entity)
+
+def delete_business(entity):
+    &amp;quot;&amp;quot;&amp;quot; Delete a business entity. &amp;quot;&amp;quot;&amp;quot;
+    yield op.db.Delete(entity)
+
+class DeleteBusinessPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; Delete a business. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, business_name, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        employee_params = {
+            &amp;quot;entity_kind&amp;quot;: &amp;quot;app.pipelines.Employee&amp;quot;,
+            &amp;quot;filters&amp;quot;: [(&#39;business&#39;, &#39;=&#39;, business_name)],
+        }
+        yield mapreduce_pipeline.MapperPipeline(
+            &amp;quot;delete_employee&amp;quot;,
+            handler_spec=app.pipelines.delete_employee,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.DatastoreInputReader&amp;quot;,
+            params=employee_params,
+            shards=2)
+
+        business_params = {
+            &amp;quot;entity_kind&amp;quot;: &amp;quot;app.pipelines.Business&amp;quot;,
+            &amp;quot;filters&amp;quot;: [(&#39;name&#39;, &#39;=&#39;, business_name)],
+        }
+        yield mapreduce_pipeline.MapperPipeline(
+            &amp;quot;delete_business&amp;quot;,
+            handler_spec=app.pipelines.delete_business,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.DatastoreInputReader&amp;quot;,
+            params=business_params,
+            shards=2)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The return value of the MapperPipeline call is a &lt;code&gt;PipelineFuture&lt;/code&gt; object. This
+future will be executed once the previous future has completed. In this case our
+employee deletion pipeline will complete and the business deletion future will
+execute.&lt;/p&gt;
+
+&lt;p&gt;And that&amp;rsquo;s all it takes to run two sequential MapReduce jobs!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Installing lxml on OS X Mavericks</title>
+      <link>http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks</link>
+      <pubDate>Wed, 07 May 2014 10:26:45 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks</guid>
+      <description>&lt;p&gt;I recently tried installing lxml for use within an App Engine project on OS X
+Mavericks only to be hit with an error message from &lt;code&gt;clang&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;clang: error: unknown argument: &#39;-mno-fused-madd&#39; [-Wunused-command-line-argument-hard-error-in-future]
+
+clang: note: this will be a hard error (cannot be downgraded to a warning) in the future
+
+error: command &#39;cc&#39; failed with exit status 1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;clang&lt;/code&gt; compiler distributed with version 5.1 of Xcode tightened up some
+restrictions and turned compiler warnings into hard errors. To disable this you need to
+add a specific flag to ingore these warnings when installing affected packages.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future pip install lxml
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines</title>
+      <link>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines</link>
+      <pubDate>Mon, 28 Apr 2014 21:51:22 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines</guid>
+      <description>
+
+&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;In the last article&lt;/a&gt; we examined how to run one-off tasks that operate on a large dataset using a &lt;code&gt;mapreduce.yaml&lt;/code&gt; configuration file. This article will take us a step further and look at how to run a MapReduce job programmatically using the App Engine Pipeline API.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Running a Mapper Job Using the App Engine Pipeline API&lt;/h2&gt;
+
+&lt;p&gt;MapReduce jobs are based on the &lt;a href=&#34;https://code.google.com/p/appengine-pipeline/&#34;&gt;App Engine Pipeline API&lt;/a&gt; for connecting together time-consuming or complex workflows. We can define a pipeline for our MapReduce job to connect each stage of the MapReduce flow to one another. Let&amp;rsquo;s start by defining a pipeline for our simple &lt;code&gt;Touch&lt;/code&gt; job that will update the timestamp of every entity Kind we specify.&lt;/p&gt;
+
+&lt;p&gt;To create a pipeline we inherit from the &lt;code&gt;Pipeline&lt;/code&gt; object.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from mapreduce.lib import pipeline
+
+class TouchPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot;
+    Pipeline to update the timestamp of entities.
+    &amp;quot;&amp;quot;&amp;quot;
+    pass
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Our pipeline requires a single &lt;code&gt;run&lt;/code&gt; method. Within this method we set the specification of our &lt;code&gt;map&lt;/code&gt; function and yield a &lt;code&gt;Pipeline&lt;/code&gt; object.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;from mapreduce.lib import pipeline
+from mapreduce import mapreduce_pipeline
+
+class TouchPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot;
+    Pipeline to update the timestamp of entities.
+    &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, *args, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        mapper_params = {
+            &amp;quot;entity_kind&amp;quot;: &amp;quot;app.models.user.UserModel&amp;quot;,
+        }
+        yield mapreduce_pipeline.MapperPipeline(
+            &amp;quot;Touch all entities&amp;quot;,
+            handler_spec=&amp;quot;app.pipelines.touch&amp;quot;,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.DatastoreInputReader&amp;quot;,
+            params=mapper_params,
+            shards=64)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In this piece of code we define a MapperPipeline and pass it the parameters used to initialize the pipeline. The map function is specified by the&lt;code&gt;handler_spec&lt;/code&gt; parameter and our InputReader is given by the &lt;code&gt;input_reader_spec&lt;/code&gt; parameter.  You&amp;rsquo;ll notice from our &lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;previous article on running a MapReduce job using mapreduce.yaml&lt;/a&gt; that the parameters passed here match the specification supplied by the &lt;code&gt;mapreduce.yaml&lt;/code&gt; file in that article. In effect, we are looking at two different ways to define the same specification for a MapReduce job. The benefit of the pipelined approach here is that we can easily start our job programmatically by instantiating our &lt;code&gt;Pipeline&lt;/code&gt; object and executing the &lt;code&gt;start()&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;pipeline = TouchPipeline()
+pipeline.start()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Executing this code will start the MapReduce job. You can view the progress at the URL &lt;code&gt;/mapreduce&lt;/code&gt;, analagous to when starting the MapReduce job through the UI using &lt;code&gt;mapreduce.yaml&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;Adding a Reduce Step to Our MapReduce Job&lt;/h2&gt;
+
+&lt;p&gt;The previous example uses a &lt;code&gt;MapperPipeline&lt;/code&gt; to define a job that executes a map function on every entity of a certain Kind. What about reduce? For this we turn to the &lt;code&gt;MapreducePipeline&lt;/code&gt; object. This object accepts parameters for a &lt;code&gt;mapper_spec&lt;/code&gt; and a &lt;code&gt;reducer_spec&lt;/code&gt;. We can use this pipeline to perform a full MapReduce job. To make this discussion concrete and generate some useable code let&amp;rsquo;s use a feature built in to the MapReduce library especially for testing, the &lt;code&gt;RandomStringInputReader&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;RandomStringInputReader&lt;/code&gt; generates &lt;code&gt;x&lt;/code&gt; random strings of &lt;code&gt;y&lt;/code&gt; length. &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; are both parameters we can use to control the reader.  We can use this reader to create an example application that counts the number of occurrences of each character found in a random string.&lt;/p&gt;
+
+&lt;p&gt;For example, given ten random strings 20 characters in length&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;nzkeasmekjwewmvxgdre
+pczrbnzpacpwxpmiffgw
+kwsufcunznnzwqmfbszu
+gmmfhvikvexnamjorxod
+hpaedhjzuziouxaplnmp
+thurvybxiuxaskoxjvco
+ovwbokvfjiuoawyavpbs
+hymsucnolibdivisotrt
+durcotpoydwvkvtyyudl
+fujkmdenoexximucikfv
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;we want to find the total occurrences of each character.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(n, 9)
+(z, 8)
+(k, 9)
+etc.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Performing this calculation using MapReduce implies a two step process. First, the map function will count the number of occurrences of each letter in a given string. Second, the reduce function will sum these numbers for all strings to find the final result.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start by setting up a &lt;code&gt;MapreducePipeline&lt;/code&gt; object using the &lt;code&gt;RandomStringInputReader&lt;/code&gt; reader as our &lt;code&gt;input_reader_spec&lt;/code&gt; along with a skeleton &lt;code&gt;map&lt;/code&gt; and &lt;code&gt;reduce&lt;/code&gt; function.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from mapreduce.lib import pipeline
+from mapreduce import mapreduce_pipeline
+
+def character_count_map(random_string):
+    pass
+
+def character_count_reduce(key, values):
+    pass
+
+class CountCharactersPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; Count the number of occurrences of a character. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, *args, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        mapper_params = {
+            &amp;quot;count&amp;quot;: 100,
+            &amp;quot;string_length&amp;quot;: 20,
+        }
+        yield mapreduce_pipeline.MapreducePipeline(
+            &amp;quot;character_count&amp;quot;,
+            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
+            mapper_params=mapper_params,
+            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
+            shards=16)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can use a standard &lt;code&gt;RequestHandler&lt;/code&gt; to execute our mock MapReduce Pipeline.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;import webapp2
+
+class CountCharacters(webapp2.RequestHandler):
+
+    def get(self):
+        pipeline = CountCharactersPipeline()
+        pipeline.start()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let&amp;rsquo;s flesh out our MapReduce template to actually count the characters in a string. To do so our map function will yield a tuple of &lt;code&gt;(character, count)&lt;/code&gt; for each character encountered in our string and the number of times it was encountered. So for our input string &lt;code&gt;nzkeasmekjwewmvxgdre&lt;/code&gt; we would yield &lt;code&gt;(n, 1)&lt;/code&gt;, &lt;code&gt;(z, 1)&lt;/code&gt;, &lt;code&gt;(k, 2)&lt;/code&gt;, and so on. We update our &lt;code&gt;map&lt;/code&gt; function to do this work.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;import collections
+
+def character_count_map(random_string):
+    counter = collections.Counter(random_string)
+    for character in counter.elements():
+        yield (character, counter[character])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Each tuple returned by our &lt;code&gt;map&lt;/code&gt; will be fed to the Shuffle stage of the MapReduce job. The Shuffle stage groups all the values having the same key before passing the result to the &lt;code&gt;reduce&lt;/code&gt; function. For example, if we yielded &lt;code&gt;(n, 1)&lt;/code&gt; during one execution of our &lt;code&gt;map&lt;/code&gt; function and &lt;code&gt;(n, 4)&lt;/code&gt; in another execution, the Shuffle stage would group these and pass &lt;code&gt;n, [1, 4]&lt;/code&gt; as the parameters to our &lt;code&gt;reduce&lt;/code&gt; function (for more information on Shuffle refer to &lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1 of this guide&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;Our reduce function takes the list of values returned by the Shuffle stage and
+sums them.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def character_count_reduce(key, values):
+    yield (key, sum([int(i) for i in values]))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We now have a full MapReduce job that will count the occurrence of each character for a set of random strings. Running our pipeline shows the map, shuffle and reduce stages operating over our dataset.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/skeleton-job.png&#34;&gt;
+&lt;img src=&#34;http://sookocheff.com/img/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/skeleton-job.png&#34; alt=&#34;Skeleton MapReduce job.&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_3&#34;&gt;Where Is My Data?&lt;/h2&gt;
+
+&lt;p&gt;How does the output of the &lt;code&gt;map&lt;/code&gt; function arrive at the &lt;code&gt;reduce&lt;/code&gt; function? If you look at the application logs you will see periodic writes to the blobstore.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;Shard 1578130350583CAC16BCF-11 finalized blobstore file /blobstore/writable:RDlESEY4Q1U2UkRXT0pCVUpUTFQySlQ5VEJaTkJGUEpQS0RITVgzQ1lVREtKSzVUWTJVRlhTQjYwWFAzSE02OQ==.
+Finalized name is /blobstore/7BpFYTPsvNp95XA2uS1MlBm1DsVegjTEO9EP6TAbXZAtsxV5C7HjuZmYnqPuXdJC.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;These writes provide the blobstore location of the intermediate results from our calculation. A &lt;em&gt;master&lt;/em&gt; MapReduce task coordinates with the individual &lt;code&gt;map&lt;/code&gt;, &lt;code&gt;shuffle&lt;/code&gt; and &lt;code&gt;reduce&lt;/code&gt; shards to share these results via blobstore keys.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_4&#34;&gt;Writing our Results with OutputWriters&lt;/h2&gt;
+
+&lt;p&gt;The last thing we need to finish our MapReduce job is outputting the result. To do so we add an &lt;code&gt;output_writer_spec&lt;/code&gt; to our MapReduce initialization.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class CountCharactersPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; Count the number of occurrences of a character. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, *args, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        mapper_params = {
+            &amp;quot;count&amp;quot;: 100,
+            &amp;quot;string_length&amp;quot;: 20,
+        }
+        yield mapreduce_pipeline.MapreducePipeline(
+            &amp;quot;character_count&amp;quot;,
+            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
+            mapper_params=mapper_params,
+            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
+            output_writer_spec=&amp;quot;mapreduce.output_writers.BlobstoreOutputWriter&amp;quot;,
+            shards=16)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Unfortunately we don&amp;rsquo;t know where the &lt;code&gt;BlobstoreOutputWriter&lt;/code&gt; saves our result. To access this we can capture the output of the &lt;code&gt;MapreducePipeline&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class CountCharactersPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; Count the number of occurrences of a character. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, *args, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        mapper_params = {
+            &amp;quot;count&amp;quot;: 100,
+            &amp;quot;string_length&amp;quot;: 20,
+        }
+        output = yield mapreduce_pipeline.MapreducePipeline(
+            &amp;quot;character_count&amp;quot;,
+            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
+            mapper_params=mapper_params,
+            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
+            output_writer_spec=&amp;quot;mapreduce.output_writers.BlobstoreOutputWriter&amp;quot;,
+            shards=16)
+
+        yield StoreOutput(output)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;output&lt;/code&gt; is a &lt;code&gt;PipelineFuture&lt;/code&gt; object &amp;ndash; a generator that takes on a value after the execution of the &lt;code&gt;MapreducePipeline&lt;/code&gt; is complete. We can access the value of this generator from within a second pipeline object that writes the location of the blobkey to the datastore for future retrievals..&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class CharacterCounter(ndb.Model):
+    count = ndb.StringProperty(required=True)
+
+class StoreOutput(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot;A pipeline to store the result of the MapReduce job in the database. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, output):
+        counter = CharacterCounter(count=output[0])
+        counter.put()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is a simplified version of the StoreOutput pipeline provided by the &lt;a href=&#34;https://code.google.com/p/appengine-mapreduce/source/browse/trunk/python/demo/main.py#333&#34;&gt;MapReduce Made Easy demo application&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_5&#34;&gt;Conclusions&lt;/h2&gt;
+
+&lt;p&gt;In this article we&amp;rsquo;ve shown how to perform a full MapReduce job using the Google App Engine MapReduce API for Python. MapReduce is a powerful abstraction to use when processing large datasets. This article should provide a good starting point for defining and running your own MapReduce jobs. For reference here is the full source code used in this post.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;&amp;quot;&amp;quot;&amp;quot;
+app.mapreduce
+&amp;quot;&amp;quot;&amp;quot;
+import webapp2
+import collections
+
+from google.appengine.ext import ndb
+
+from mapreduce.lib import pipeline
+from mapreduce import mapreduce_pipeline
+
+###
+### Entities
+###
+class CharacterCounter(ndb.Model):
+    &amp;quot;&amp;quot;&amp;quot; A simple model to sotre the link to the blob storing our MapReduce output. &amp;quot;&amp;quot;&amp;quot;
+    count_link = ndb.StringProperty(required=True)
+
+###
+### MapReduce Pipeline
+###
+def character_count_map(random_string):
+    &amp;quot;&amp;quot;&amp;quot; yield the number of occurrences of each character in random_string. &amp;quot;&amp;quot;&amp;quot;
+    counter = collections.Counter(random_string)
+    for character in counter.elements():
+        yield (character, counter[character])
+
+def character_count_reduce(key, values):
+    &amp;quot;&amp;quot;&amp;quot; sum the number of characters found for the key. &amp;quot;&amp;quot;&amp;quot;
+    yield (key, sum([int(i) for i in values]))
+
+class CountCharactersPipeline(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; Count the number of occurrences of a character in a set of strings. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, *args, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        mapper_params = {
+            &amp;quot;count&amp;quot;: 100,
+            &amp;quot;string_length&amp;quot;: 20,
+        }
+        reducer_params = {
+            &amp;quot;mime_type&amp;quot;: &amp;quot;text/plain&amp;quot;
+        }
+        output = yield mapreduce_pipeline.MapreducePipeline(
+            &amp;quot;character_count&amp;quot;,
+            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
+            mapper_params=mapper_params,
+            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
+            reducer_params=reducer_params,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
+            output_writer_spec=&amp;quot;mapreduce.output_writers.BlobstoreOutputWriter&amp;quot;,
+            shards=16)
+
+        yield StoreOutput(output)
+
+class StoreOutput(pipeline.Pipeline):
+    &amp;quot;&amp;quot;&amp;quot; A pipeline to store the result of the MapReduce job in the database. &amp;quot;&amp;quot;&amp;quot;
+
+    def run(self, output):
+        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
+        counter = CharacterCounter(count_link=output[0])
+        counter.put()
+
+###
+### Handlers
+###
+class CountCharacters(webapp2.RequestHandler):
+    &amp;quot;&amp;quot;&amp;quot; A handler to start the map reduce pipeline. &amp;quot;&amp;quot;&amp;quot;
+
+    def get(self):
+        &amp;quot;&amp;quot;&amp;quot; get &amp;quot;&amp;quot;&amp;quot;
+        counter = CountCharactersPipeline()
+        counter.start()
+
+        redirect_url = &amp;quot;%s/status?root=%s&amp;quot; % (counter.base_path, counter.pipeline_id)
+        self.redirect(redirect_url)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml</title>
+      <link>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml</link>
+      <pubDate>Tue, 22 Apr 2014 06:48:36 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml</guid>
+      <description>
+
+&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Last time&lt;/a&gt; we looked at an overview of how MapReduce works. In this article we&amp;rsquo;ll be getting our hands dirty writing some code to handle the Map Stage. If you&amp;rsquo;ll recall, the Map Stage is composed of two separate components: an InputReader and a &lt;code&gt;map&lt;/code&gt; function. We&amp;rsquo;ll look at each of these in turn.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Getting Started: Installation&lt;/h2&gt;
+
+&lt;p&gt;First, let&amp;rsquo;s install the MapReduce API for Python. The API is constantly changing so the best way to install the latest version is to checkout the code directly from the &lt;a href=&#34;https://code.google.com/p/appengine-mapreduce/&#34;&gt;SVN repository&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;svn checkout http://appengine-mapreduce.googlecode.com/svn/trunk/python/src/mapreduce
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Place the &lt;code&gt;mapreduce&lt;/code&gt; folder into your application root directory and add the mapreduce handler to your &lt;code&gt;app.yaml&lt;/code&gt; file.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;includes:
+- lib/mapreduce/include.yaml
+
+handlers:
+- url: /_ah/pipeline.*
+  script: mapreduce.lib.pipeline.handlers._APP
+  login: admin
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can verify your installation by going to the &lt;code&gt;/mapreduce&lt;/code&gt; URL in your app. You&amp;rsquo;ll see a UI listing the status of any MapReduce jobs. You&amp;rsquo;ll also see a notice that the UI could not find the file &lt;code&gt;mapreduce.yaml&lt;/code&gt;. You can ignore that notice for now.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/could-not-find-mapreduce.png&#34;&gt;
+&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/could-not-find-mapreduce.png&#34; alt=&#34;Could not find mapreduce.yaml&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;To get a proper view of the data you will also need to add two indexes to your &lt;code&gt;index.yaml&lt;/code&gt; file to allow the MapReduce library to query for MapReduce jobs that are run via Pipelines and display them in the GUI.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;indexes:
+- kind: _AE_Pipeline_Record
+  properties:
+  - name: is_root_pipeline
+  - name: start_time
+    direction: desc
+- kind: _AE_Pipeline_Record
+  properties:
+  - name: class_path
+  - name: start_time
+    direction: desc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;Running Your First MapReduce Job&lt;/h2&gt;
+
+&lt;p&gt;The easiest way to get started with MapReduce is to use the &lt;code&gt;mapreduce.yaml&lt;/code&gt; file. This file allows you define a &lt;code&gt;mapper&lt;/code&gt; function that will be executed for each entity passed to it. Let&amp;rsquo;s go straight to an example and  create a &lt;code&gt;mapreduce.yaml&lt;/code&gt; file (in your applications root directory) that will iterate over all entities of a certain Kind and put them to the datastore (updating their timestamp).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;mapreduce:
+- name: Touch all entity_kind Models
+  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: path_to_my.touch
+    params:
+    - name: entity_kind
+      default: path_to_my.MyModel
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Go to the &lt;code&gt;/mapreduce&lt;/code&gt; URL in your app and you should see the &lt;em&gt;Touch all entity_kind Models&lt;/em&gt; job selectable under the Launch job setting.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/select-first-mapreduce.png&#34;&gt;
+&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/select-first-mapreduce.png&#34; alt=&#34;Select first mapreduce to Launch&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Go ahead and select this job and click &lt;code&gt;Run&lt;/code&gt;. You will get an error saying that &lt;em&gt;MyModel&lt;/em&gt; could not be found.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/could-not-find-my-model.png&#34;&gt;
+&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/could-not-find-my-model.png&#34; alt=&#34;Could not find a Model&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;This is a great time to edit your yaml file point to an actual model in your application to continue with this tutorial. Now that our InputReader is pointing to a model we can define the &lt;code&gt;map&lt;/code&gt; function specified by our yaml files &lt;code&gt;handler&lt;/code&gt; parameter. The &lt;code&gt;map&lt;/code&gt; function is iteratively passed entities from our InputReader and we can take actions on those entities.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def touch(entity):
+    &amp;quot;&amp;quot;&amp;quot;
+    Update the entities timestamp.
+    &amp;quot;&amp;quot;&amp;quot;
+    entity.put()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Go back to the &lt;code&gt;/mapreduce&lt;/code&gt; URL in your app and run the job again. Refresh the page (if it does not auto-refresh) and you can see your job running.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/running-first-job.png&#34;&gt;
+&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/running-first-job.png&#34; alt=&#34;Running your first mapreduce job&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;You can click on the &lt;code&gt;Detail&lt;/code&gt; link to get full details on the MapReduce job. This view gives you the status of individual shards in the MapReduce job and an overview of the processing time that was required.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png&#34;&gt;
+&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png&#34; alt=&#34;Running job details&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;We&amp;rsquo;ve ran our first MapReduce job!&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_3&#34;&gt;The MutationPool&lt;/h2&gt;
+
+&lt;p&gt;In our &lt;code&gt;touch&lt;/code&gt; function we put our entity to the datastore once for each entity. This is wasteful when the datastore allows putting multiple items at a time. To take advantage of this feature the MapReduce library offers a MutationPool that collects datastore operations to be performed in batches.&lt;/p&gt;
+
+&lt;p&gt;We can re-write our map function to take advantage of the MutationPool by yielding a database operation from within our map function. If you are unfamiliar with &lt;code&gt;yield&lt;/code&gt; you can think of it as returning a value to the MapReduce job. You can have multiple &lt;code&gt;yield&lt;/code&gt; statements in a function that will all return values to be handled by the MapReduce job.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from mapreduce import operation as op
+
+def touch(entity):
+    &amp;quot;&amp;quot;&amp;quot;
+    Update the entities timestamp.
+    &amp;quot;&amp;quot;&amp;quot;
+    yield op.db.Put(entity)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can run the MapReduce job again and see that the job works correctly using datastore operations via the MutationPool.&lt;/p&gt;
+
+&lt;p&gt;The source code for MapReduce operations can be found in the &lt;code&gt;mapreduce.operation&lt;/code&gt; module.  The &lt;code&gt;mapreduce.operation.db&lt;/code&gt; module currently supports two operations via the MutationPool &lt;code&gt;Put&lt;/code&gt; and &lt;code&gt;Delete&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_4&#34;&gt;Counters&lt;/h2&gt;
+
+&lt;p&gt;The MapReduce library also provides counters that can be incremented when a condition is met. In our example we can count the number of entities that were touched by incrementing a counter.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;from mapreduce import operation as op
+
+def touch(entity):
+    &amp;quot;&amp;quot;&amp;quot;
+    Update the entities timestamp.
+    &amp;quot;&amp;quot;&amp;quot;
+    yield op.db.Put(entity)
+    yield op.db.Increment(&#39;touched&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;All the counters that were incremented during operation of the job are listed with the job details summary.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png&#34;&gt;
+&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png&#34; alt=&#34;Incrementing a custom counter&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_5&#34;&gt;Passing Parameters to the Map Function&lt;/h2&gt;
+
+&lt;p&gt;We can pass additional parameters to our map function by specifying them in &lt;code&gt;mapreduce.yaml&lt;/code&gt;. Parameters are passed to both our InputReader and to our map handler function. In our example, we listed &lt;code&gt;entity_kind&lt;/code&gt; and this parameter was expected by our InputReader and used to specify the datastore Kind processed by our InputReader. On the MapReduce status page (&lt;code&gt;/mapreduce&lt;/code&gt;) we can type in a new value for this parameter to specify a different Kind before running the job.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/edit-parameters.png&#34;&gt;
+&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/edit-parameters.png&#34; alt=&#34;Editing job parameters&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s add an additional parameter for the map function that will only touch the entity if it is older than a specific date.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;- name: Touch all entity_kind Models
+  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: app.pipelines.touch
+    params:
+    - name: entity_kind
+      default: app.models.UserModel
+    - name: if_older_than
+      default:
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The mapreduce context holds the specifation for the job as defined by the &lt;code&gt;mapreduce.yaml&lt;/code&gt; file. Within this context we can access our parameters.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from mapreduce import operation as op, context
+from datetime import datetime
+
+def touch(entity):
+    &amp;quot;&amp;quot;&amp;quot;
+    Update the entities timestamp if not updated since if_older_than.
+    &amp;quot;&amp;quot;&amp;quot;
+    params = context.get().mapreduce_spec.mapper.params
+    if_older_than = params.get(&#39;if_older_than&#39;)
+    older_than = datetime.strptime(if_older_than, &#39;%b %d %Y&#39;) if if_older_than else datetime.now()
+
+    if entity.updated &amp;lt; older_than:
+        yield op.db.Put(entity)
+        yield op.counters.Increment(&#39;touched&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now our map function will operate on entities that have been updated previous to our &lt;code&gt;if_older_than&lt;/code&gt; parameter.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_6&#34;&gt;Parameter Validation&lt;/h2&gt;
+
+&lt;p&gt;The MapReduce library also provides a method to do parameter validation. In our previous example we passed a date to our map function as a string. We can use a validator to validate that parameter and modify it as necessary. To use a validator function, specify it in &lt;code&gt;mapreduce.yaml&lt;/code&gt; as &lt;code&gt;params_validator&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;- name: Touch all entity_kind Models
+  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: app.pipelines.touch
+    params:
+    - name: entity_kind
+      default: app.models.UserModel
+    - name: if_older_than
+      default: Jun 1 2014
+    params_validator: app.pipelines.touch_validator
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The validator function accepts a single argument, a dictionary of parameters. The function can modify this dictionary and any modifications will be made available to the map function. In our example we can use the validator to attempt converting our input date into a datetime object. The &lt;code&gt;strptime&lt;/code&gt; function returns a &lt;code&gt;ValueError&lt;/code&gt; if it cannot convert a string to the datetime.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;def touch_validator(user_params):
+    &amp;quot;&amp;quot;&amp;quot;
+    Validate the parameters of our map function.
+    &amp;quot;&amp;quot;&amp;quot;
+    if_older_than = user_params[&#39;if_older_than&#39;]
+    datetime.strptime(if_older_than, &#39;%b %d %Y&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can trigger the validator to fail by passing in an invalid date format.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/failed-validator.png&#34;&gt;
+&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/failed-validator.png&#34; alt=&#34;Passing an invalid paramter&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;If parameter validation fails the MapReduce job is not started and no entities are passed from our InputReader to the map function.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_7&#34;&gt;Callbacks&lt;/h2&gt;
+
+&lt;p&gt;The MapReduce library allows you to specify a callback function that is called after the MapReduce completes. This can be used for logging purposes or to trigger a specific event in code. The callback is specified in your &lt;code&gt;mapreduce.yaml&lt;/code&gt; file as &lt;code&gt;done_callback&lt;/code&gt; and points to a user specified function. This is a parameter of the MapReduce itself and not the map function &amp;ndash; note the independent entry in &lt;code&gt;mapreduce.yaml&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;- name: Touch all entity_kind Models
+  params:
+  - name: done_callback
+    value: /done_touch
+  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: app.pipelines.touch
+    params:
+    - name: entity_kind
+      default: app.models.UserModel
+    - name: if_older_than
+      default: Jun 1 2014
+    params_validator: app.pipelines.touch_validator
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Upon completion a POST request is made to the URL given by the &lt;code&gt;done_callback&lt;/code&gt; parameter. The MapReduce library sets a custom header in this request with the jobs &lt;code&gt;Mapreduce-Id&lt;/code&gt;. You can use this header to retrieve details on the job that just completed. This is also a great place to do any cleanup such as deleting temporary files. In our example we will just log the original specification for this job that we set via &lt;code&gt;mapreduce.yaml&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;import webapp2
+import logging
+from mapreduce.model import MapreduceState
+
+class DoneTouch(webapp2.RequestHandler):
+    &amp;quot;&amp;quot;&amp;quot;
+    Callback function upon completion of touch MapReduce job.
+    &amp;quot;&amp;quot;&amp;quot;
+
+    def post(self):
+        &amp;quot;&amp;quot;&amp;quot;
+        Log the MapReduce ID and input parameters.
+        &amp;quot;&amp;quot;&amp;quot;
+        mapreduce_id =  self.request.headers[&#39;Mapreduce-Id&#39;]           
+        state = MapreduceState.get_by_key_name(mapreduce_id)   
+        spec = state.mapreduce_spec
+        logging.info(spec)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_8&#34;&gt;Additional Input Readers&lt;/h2&gt;
+
+&lt;p&gt;In addition to the DatastoreInputReader the library includes readers for the
+Blobstore, Files and Google Cloud Storage Buckets. The documentation for these
+readers is scarse but you can consult the &lt;code&gt;mapreduce.input_readers&lt;/code&gt; module for
+more information on the expected parameters for these readers. This information
+was gathered from a combination of the offical &lt;a href=&#34;https://code.google.com/p/appengine-mapreduce/wiki/UserGuidePython#Specifying_readers&#34;&gt;Python Users
+Guide&lt;/a&gt;
+and from &lt;a href=&#34;https://code.google.com/p/appengine-mapreduce/source/browse/trunk/python/src/mapreduce/input_readers.py&#34;&gt;reading the
+source&lt;/a&gt;.
+This should give you enough information to get started with the InputReader of
+your choice.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_9&#34;&gt;Input Reader Reference&lt;/h3&gt;
+
+&lt;p&gt;As a reference here is a list of InputReaders and their parameters. All
+InputReaders support the &lt;code&gt;namespace&lt;/code&gt; parameter for specifying the namespaces to
+iterate over. If no namespace is given then all namespaces are used&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;namespace&lt;/dt&gt;
+  &lt;dd&gt;The list of namespaces that will be searched.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_10&#34;&gt;BlobstoreLineInputReader&lt;/h4&gt;
+
+&lt;p&gt;Input reader for a newline delimited blob in Blobstore.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;blob_key&lt;/dt&gt;
+  &lt;dd&gt;The BlobKey that this input reader is processing. Either a string
+  containing a single key or a list of blob key strings.&lt;/dd&gt;
+  &lt;dt&gt;start_position&lt;/dt&gt;
+  &lt;dd&gt;the line number position to start reading at.&lt;/dd&gt;
+  &lt;dt&gt;end_position&lt;/dt&gt;
+  &lt;dd&gt;The last line number position to read.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_11&#34;&gt;BlobstoreZipInputReader&lt;/h4&gt;
+
+&lt;p&gt;Input reader for files from a zip archive stored in the Blobstore. Iterates over all compressed files in a zipfile in Blobstore.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;blob_key&lt;/dt&gt;
+  &lt;dd&gt;The BlobKey that this input reader is processing. Either a string
+  containing a single key or a list of blob key strings.&lt;/dd&gt;
+  &lt;dt&gt;start_index&lt;/dt&gt;
+  &lt;dd&gt;the index of the first file to read.&lt;/dd&gt;
+  &lt;dt&gt;end_index&lt;/dt&gt;
+  &lt;dd&gt;The index of the last file that will not be read.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_12&#34;&gt;BlobstoreZipLineInputReader&lt;/h4&gt;
+
+&lt;p&gt;Input reader for files from a zip archive stored in the Blobstore. Iterates over all compressed files in a zipfile in Blobstore. Each compressed file is expected to be a newline delimited file.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;blob_key&lt;/dt&gt;
+  &lt;dd&gt;The BlobKey that this input reader is processing. Either a string
+  containing a single key or a list of blob key strings.&lt;/dd&gt;
+  &lt;dt&gt;start_file_index&lt;/dt&gt;
+  &lt;dd&gt;the index of the first file to read within the zip.&lt;/dd&gt;
+  &lt;dt&gt;end_file_index&lt;/dt&gt;
+  &lt;dd&gt;the index of the last file that will not be read.&lt;/dd&gt;
+  &lt;dt&gt;offset&lt;/dt&gt;
+  &lt;dd&gt;The by offset with `BLOB_KEY.zip[start_file_index]` to start reading.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_13&#34;&gt;DatastoreInputReader&lt;/h4&gt;
+
+&lt;p&gt;Iterates over a Model and yields model instances. Supports both db.model and ndb.model.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;entity_kind&lt;/dt&gt;
+  &lt;dd&gt;the datastore kind to map over.&lt;/dd&gt;
+  &lt;dt&gt;keys_only&lt;/dt&gt;
+  &lt;dd&gt;use a keys_only query.&lt;/dd&gt;
+  &lt;dt&gt;batch_size&lt;/dt&gt;
+  &lt;dd&gt;the number of entities to read from the datastore with each batch get.&lt;/dd&gt;
+  &lt;dt&gt;key_range&lt;/dt&gt;
+  &lt;dd&gt;a range of keys to return from your query&lt;/dd&gt;
+  &lt;dt&gt;filters&lt;/dt&gt;
+  &lt;dd&gt;Any filters to apply to the datastore query.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_14&#34;&gt;DatastoreKeyInputReader&lt;/h4&gt;
+
+&lt;p&gt;Iterate over an entity kind and yields datastore.Key.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;entity_kind&lt;/dt&gt;
+  &lt;dd&gt;the datastore kind to map over.&lt;/dd&gt;
+  &lt;dt&gt;keys_only&lt;/dt&gt;
+  &lt;dd&gt;use a keys_only query.&lt;/dd&gt;
+  &lt;dt&gt;batch_size&lt;/dt&gt;
+  &lt;dd&gt;the number of entities to read from the datastore with each batch get.&lt;/dd&gt;
+  &lt;dt&gt;key_range&lt;/dt&gt;
+  &lt;dd&gt;a range of keys to return from your query&lt;/dd&gt;
+  &lt;dt&gt;filters&lt;/dt&gt;
+  &lt;dd&gt;Any filters to apply to the datastore query.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_15&#34;&gt;FileInputReader&lt;/h4&gt;
+
+&lt;p&gt;Iterate over Google Cloud Storage files using the &lt;a href=&#34;https://developers.google.com/appengine/docs/python/googlestorage/&#34;&gt;Files API&lt;/a&gt;.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;files&lt;/dt&gt;
+  &lt;dd&gt;A list of filenames or globbed filename patterns. The format is
+  `/gs/bucket/filename` or `/gs/bucket/prefix*`.&lt;/dd&gt;
+  &lt;dt&gt;format&lt;/dt&gt;
+  &lt;dd&gt;One of &#34;lines&#34;, &#34;bytes&#34;, &#34;zip&#34;. &#34;lines&#34; reads the input file line-by-line,
+  &#34;bytes&#34; reads the whole file at once and &#34;zip&#34; iterates over every file within
+  the zip.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_16&#34;&gt;LogInputReader&lt;/h4&gt;
+
+&lt;p&gt;Input reader for a time range of logs via the &lt;a href=&#34;https://developers.google.com/appengine/docs/python/logs/&#34;&gt;Logs API&lt;/a&gt;.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;start_time&lt;/dt&gt;
+  &lt;dd&gt;The earliest request completion or last-update time of logs that should be mapped over, in seconds since the Unix epoch.&lt;/dd&gt;
+  &lt;dt&gt;end_time&lt;/dt&gt;
+  &lt;dd&gt;The latest request completion or last-update time that logs should be mapped over, in seconds since the Unix epoch.&lt;/dd&gt;
+  &lt;dt&gt;minimum_log_level&lt;/dt&gt;
+  &lt;dd&gt;An application log level which serves as a filter on the requests mapped over.&lt;/dd&gt;
+  &lt;dt&gt;include_incomplete&lt;/dt&gt;
+  &lt;dd&gt;Whether or not to include requests that have started but not yet finished, as a boolean.&lt;/dd&gt;
+  &lt;dt&gt;include_app_logs&lt;/dt&gt;
+  &lt;dd&gt;Whether or not to include application level logs in the mapped logs, as a boolean.&lt;/dd&gt;
+  &lt;dt&gt;version_ids&lt;/dt&gt;
+  &lt;dd&gt;A list of version ids whose logs should be read. This can not be used with module_versions&lt;/dd&gt;
+  &lt;dt&gt;module_versions&lt;/dt&gt;
+  &lt;dd&gt;A list of tuples containing a module and version id whose logs should be read. This can not be used with version_ids.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_17&#34;&gt;NamespaceInputReader&lt;/h4&gt;
+
+&lt;p&gt;An input reader to iterate over namespaces. This reader yields namespace names as string.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;namespace_range&lt;/dt&gt;
+  &lt;dd&gt;An alphabetic range for the namespace. As defined by [namespace_range.py](https://code.google.com/p/appengine-mapreduce/source/browse/trunk/python/src/mapreduce/namespace_range.py).&lt;/dd&gt;
+  &lt;dt&gt;batch_size&lt;/dt&gt;
+  &lt;dd&gt;The number of namespaces to read with each batch.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_18&#34;&gt;RandomStringInputReader&lt;/h4&gt;
+
+&lt;p&gt;Yields random strings as output. Useful to populate output with testing entries.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;count&lt;/dt&gt;
+  &lt;dd&gt;The total number of entries this reader should generate.&lt;/dd&gt;
+  &lt;dt&gt;string_length&lt;/dt&gt;
+  &lt;dd&gt;The length of the generated strings.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_19&#34;&gt;RawDatastoreInputReader&lt;/h4&gt;
+
+&lt;p&gt;Exactly the same as DatastoreInputReader but yields a datastore.Entity.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;entity_kind&lt;/dt&gt;
+  &lt;dd&gt;the datastore kind to map over.&lt;/dd&gt;
+  &lt;dt&gt;keys_only&lt;/dt&gt;
+  &lt;dd&gt;use a keys_only query.&lt;/dd&gt;
+  &lt;dt&gt;batch_size&lt;/dt&gt;
+  &lt;dd&gt;the number of entities to read from the datastore with each batch get.&lt;/dd&gt;
+  &lt;dt&gt;key_range&lt;/dt&gt;
+  &lt;dd&gt;a range of keys to return from your query&lt;/dd&gt;
+  &lt;dt&gt;filters&lt;/dt&gt;
+  &lt;dd&gt;Any filters to apply to the datastore query.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h4 id=&#34;toc_20&#34;&gt;RecordsReader&lt;/h4&gt;
+
+&lt;p&gt;Reads a list of Files API files in records format.&lt;/p&gt;
+
+&lt;dl class=&#34;dl-horizontal&#34;&gt;
+  &lt;dt&gt;files&lt;/dt&gt;
+  &lt;dd&gt;A comma separated string of files to read from.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h2 id=&#34;toc_21&#34;&gt;Conclusions&lt;/h2&gt;
+
+&lt;p&gt;Defining a MapReduce job via &lt;code&gt;mapreduce.yaml&lt;/code&gt; provides a convenient way to
+iterate over large datasets and run a function on each unit of work.
+Unfortunately, running a MapDeduce job this way has a few limitations.
+First, there is no way to specify a reduce phase, limiting the type of jobs we
+can perform. Second, you cannot start a MapReduce job programmatically.&lt;/p&gt;
+
+&lt;p&gt;The next article in this series will show how to overcome these limitations
+using MapReduce Pipelines to programmatically control your API.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine MapReduce API - Part 1: The Basics</title>
+      <link>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</link>
+      <pubDate>Tue, 15 Apr 2014 12:09:36 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</guid>
+      <description>
+
+&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The first arcticle in this series provides an overview of the &lt;a href=&#34;https://developers.google.com/appengine/docs/python/dataprocessing/&#34;&gt;App Engine MapReduce
+API&lt;/a&gt;. We
+will give a basic overview of what MapReduce is and how it is used to do
+parallel and distributed processing of large datasets.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;The Map and Reduce Functions&lt;/h2&gt;
+
+&lt;p&gt;MapReduce is based on the &lt;code&gt;map&lt;/code&gt; and &lt;code&gt;reduce&lt;/code&gt; functions that are commonly used in
+lazily-evaluated functional programming languages. Let&amp;rsquo;s look at &lt;code&gt;map&lt;/code&gt; first.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_2&#34;&gt;map&lt;/h3&gt;
+
+&lt;p&gt;A &lt;code&gt;map&lt;/code&gt; function is a way to apply a transformation to every element in a list.
+Using Clojure as the example functional language we can use the &lt;code&gt;map&lt;/code&gt; function
+to increment every number in a list by &lt;code&gt;1&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;=&amp;gt; (map inc [1 2 3 4 5])
+(2 3 4 5 6)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In this example &lt;code&gt;inc&lt;/code&gt; is the increment function where &lt;code&gt;inc(x) = x+1&lt;/code&gt;. More
+generally, you can apply any function &lt;code&gt;fn&lt;/code&gt; to all elements of a list by passing
+it to the map function.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;=&amp;gt; (map fn [1 2 3 4 5])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_3&#34;&gt;reduce&lt;/h3&gt;
+
+&lt;p&gt;Reduce applying a function &lt;code&gt;fn&lt;/code&gt; of two arguments to a sequence of parameters.
+Each iteration of the function call uses the value of the previous call as an
+input parameter of the function. In this example we start with a base value of 0
+and iteratively add to that base value to sum a list of numbers.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;=&amp;gt; (reduce + 0 [1 2 3 4 5])
+=&amp;gt; (reduce + 1 [2 3 4 5])
+=&amp;gt; (reduce + 3 [3 4 5])
+=&amp;gt; (reduce + 6 [4 5])
+=&amp;gt; (reduce + 10 [5])
+15
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;An interesting feature of both map and reduce is that they can be lazily
+evaluated &amp;ndash; meaning that each operation can be performed only when it is
+needed. With MapReduce, lazy evaluation allows you to work with large datasets
+by processing data only when needed.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_4&#34;&gt;MapReduce Stages&lt;/h2&gt;
+
+&lt;p&gt;The App Engine MapReduce API provides a method for operating over large datasets
+via a parallel and distributed system of lazy evaluation. In contrast to the
+&lt;code&gt;map&lt;/code&gt; and &lt;code&gt;reduce&lt;/code&gt; functions a MapReduce job may output a single value or a list
+of values depending on the job requirements.&lt;/p&gt;
+
+&lt;p&gt;A MapReduce job is made up of stages. Each stage completes before the next stage
+begins and any intermediate data is stored in temporary storage between the
+stages. MapReduce has three stages: map, shuffle and reduce.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_5&#34;&gt;Map&lt;/h3&gt;
+
+&lt;p&gt;The map stage has two components &amp;ndash; an &lt;em&gt;InputReader&lt;/em&gt; and a &lt;em&gt;map&lt;/em&gt; function. The
+InputReader&amp;rsquo;s job is to deliver data one record at a time to the &lt;em&gt;map&lt;/em&gt; function.
+The &lt;em&gt;map&lt;/em&gt; function is applied to each record individually and a key-value pair
+is emitted. The data emitted by the &lt;em&gt;map&lt;/em&gt; function is stored in temporary
+storage for processing by the next stage.&lt;/p&gt;
+
+&lt;p&gt;The prototypical MapReduce example counts the number of each words in a set of
+documents. For example, assume the input is a document database containing a
+document id and the text of that document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;14877 DIY Pinterest narwhal forage typewriter, quinoa Odd Future. Fap hashtag 
+88390 chillwave, paleo post-ironic squid fanny pack yr PBR&amp;amp;B High Life. Put a bird on it
+73205 gastropub leggings ennui PBR&amp;amp;B. Vice Pinterest 8-bit chambray. Dreamcatcher
+95782 letterpress 3 wolf moon, mustache craft beer Pitchfork yr trust fund Tonx 77865 collie lassie
+75093 Portland skateboard bespoke kitsch. Seitan irony mustache messenger bag,
+24798 skateboard hashtag pickled tote bag try-hard meggings actually Vice quinoa
+13334 plaid. Biodiesel Echo Park fashion axe direct trade, forage Neutra try-hard
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Using the App Engine MapReduce API we can define a map function to output a
+key-value pair for each occurrence of a word in the document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def map(document):
+    &amp;quot;&amp;quot;&amp;quot;
+    Count the occurrence of each word in a document.
+    &amp;quot;&amp;quot;&amp;quot;
+    for word in document:
+        yield (word.lower(), 1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Our output would record each time a word was encountered within a document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;diy 1
+pinterest 1
+narwhal 1
+forage 1
+typewriter 1
+quinoa 1
+odd 1
+future 1
+... more records ...
+pinterest 1
+forage 1
+quinoa 1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_6&#34;&gt;Shuffle&lt;/h3&gt;
+
+&lt;p&gt;The shuffle stage is done in two steps. First, the data emitted by the map stage
+is sorted. Entries with the same key are grouped together.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(diy, 1)
+(forage, 1)
+(forage, 1)
+(future, 1)
+(narwhal, 1)
+(odd, 1)
+(pinterest, 1)
+(pinterest, 1)
+(quinoa, 1)
+(quinoa, 1)
+(typewriter, 1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Second, entries for each key are condensed into a single list of values. These
+values are stored in temporary storage for processing by the next stage.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(diy, [1])
+(forage, [1, 1])
+(future, [1])
+(narwhal, [1])
+(odd, [1])
+(pinterest, [1, 1])
+(quinoa, [1, 1])
+(typewriter, [1])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_7&#34;&gt;Reduce&lt;/h3&gt;
+
+&lt;p&gt;The reduce stage has two components &amp;ndash; a &lt;em&gt;reduce&lt;/em&gt; function and an
+&lt;em&gt;OutputWriter&lt;/em&gt;. The reduce function is called for each unique key in the
+shuffled temporary data. The &lt;em&gt;reduce&lt;/em&gt; function emits a final value based on its
+input. To count the number of occurrences of a word our reduce function will
+look like this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def reduce(key, values):
+   &amp;quot;&amp;quot;&amp;quot;
+    Sum the list of values.
+    &amp;quot;&amp;quot;&amp;quot;
+    yield (key, sum(values))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Applying this reducing function to our data would give the following output.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(diy, 1)
+(forage, 2)
+(future, 1)
+(narwhal, 1)
+(odd, 1)
+(pinterest, 2)
+(quinoa, 2)
+(typewriter, 1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This output is passed to the &lt;em&gt;OutputWriter&lt;/em&gt; which writes the data to permanent storage.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_8&#34;&gt;The Benefits of MapReduce&lt;/h2&gt;
+
+&lt;p&gt;MapReduce performs parallel and distributed operations by partitioning the data
+to be processed both spatially and temporally. The spatial partitioning is done
+via &lt;em&gt;sharding&lt;/em&gt; while the temporal partitioning is done via &lt;em&gt;slicing&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_9&#34;&gt;Sharding: Parallel Processing&lt;/h3&gt;
+
+&lt;p&gt;The input data is divided into multiple smaller datasets called &lt;em&gt;shards&lt;/em&gt;. Each
+of these shards are processed in parallel. A shard is processed by an individual
+instance of the map function with its own input reader that feeds it data
+reserved for this shard. Likewise for the reduce function.&lt;/p&gt;
+
+&lt;p&gt;The benefit of sharding is that each shard can be processed in parallel.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_10&#34;&gt;Slicing: Fault Tolerance&lt;/h3&gt;
+
+&lt;p&gt;The data in a shard is processed sequentially. Each shard is assigned a task and
+that task iterates over all data in the shard using an App Engine Task Queue.
+When a task is run it iterates over as much data from the shard as it can in 15
+seconds (configurable). After this time period expires a new slice is created
+and the process repeats until all data in the shard has been processed.&lt;/p&gt;
+
+&lt;p&gt;The benefit of slicing is fault tolerance. If an error occurs during the run of
+a slice, that particular slice can be run again without affecting the processing
+of previous or subsequent slices.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_11&#34;&gt;Conclusions&lt;/h2&gt;
+
+&lt;p&gt;MapReduce provides a convenient programming model for operating on large
+datasets. In our next article we look at how to use the Python MapReduce API for
+App Engine to process entities from the datastore.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Understanding JSON Patch</title>
+      <link>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</link>
+      <pubDate>Tue, 08 Apr 2014 16:12:14 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</guid>
+      <description>
+
+&lt;p&gt;The typical update cycle for an API resource is to (1) GET the representation, (2) modify it and (3) PUT back the entire representation. This can waste bandwidth and processing time for large resources. An alternative is to use the &lt;a href=&#34;https://tools.ietf.org/html/rfc5789&#34;&gt;HTTP PATCH&lt;/a&gt; extension method to only send the differences between two resources. HTTP PATCH applies a set of changes to the document referenced by the HTTP request.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;PATCH /file.txt HTTP/1.1
+Host: sookocheff.com
+Content-Type: application/json
+If-Match: &amp;quot;e0036bbc6f&amp;quot;
+
+[description of changes]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The format of the PATCH request body differs depending on the representation of the resource. For JSON documents, &lt;a href=&#34;https://tools.ietf.org/html/rfc6902&#34;&gt;JSON Patch&lt;/a&gt; defines this format.&lt;/p&gt;
+
+&lt;p&gt;A JSON Patch document is a sequential list of operations to be applied to an object. Each operation is a JSON object having exactly one &lt;code&gt;op&lt;/code&gt; member.
+Valid operations are &lt;code&gt;add&lt;/code&gt;, &lt;code&gt;remove&lt;/code&gt;, &lt;code&gt;replace&lt;/code&gt;, &lt;code&gt;move&lt;/code&gt;, &lt;code&gt;copy&lt;/code&gt; and &lt;code&gt;test&lt;/code&gt;. Any other operation is considered an error.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Each operation must also have exactly one &lt;code&gt;path&lt;/code&gt; member.
+The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf.org/html/rfc6901&#34;&gt;JSON Pointer&lt;/a&gt; that determines a location within the JSON document to modify.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/player/name&amp;quot; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The remaining elements of a JSON Patch operation depend on the particular operation being performed.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_0&#34;&gt;add&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;add&lt;/code&gt; operation is used in different ways depending on the target of the &lt;code&gt;path&lt;/code&gt; being referenced. Generally speaking we can use &lt;code&gt;add&lt;/code&gt; to append to a list, add a member to an object or update the value of an existing field. The &lt;code&gt;add&lt;/code&gt; operation accepts a &lt;code&gt;value&lt;/code&gt; member which is the value to update the referenced &lt;code&gt;path&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h4 id=&#34;toc_1&#34;&gt;Append to a List&lt;/h4&gt;
+
+&lt;p&gt;To append a value to a list you use an existing list as the &lt;code&gt;path&lt;/code&gt; of the operation. So, given the JSON document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;{
+    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can append an order to the list using the &lt;code&gt;add&lt;/code&gt; operation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/orders&amp;quot;, &amp;quot;value&amp;quot;: {&amp;quot;id&amp;quot;: 789} }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;After applying the patch we get the final document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;{
+    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;toc_2&#34;&gt;Add a Member to an Object&lt;/h4&gt;
+
+&lt;p&gt;If the &lt;code&gt;path&lt;/code&gt; references a member of an object that does not exist, a new member is added to the object. We start with our JSON document listing our orders.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789&amp;quot;}]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Using this JSON Patch document we can add a total and a currency member to the document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;[
+{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot;, &amp;quot;value&amp;quot;: 20.00 },
+{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/currency&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;USD&amp;quot; }
+]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;After applying the patch we get the final representation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
+    &amp;quot;total&amp;quot;: 20.00,
+    &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;toc_3&#34;&gt;Update an Existing Member of an Object&lt;/h4&gt;
+
+&lt;p&gt;If the &lt;code&gt;path&lt;/code&gt; refers to an existing object member, that member is updated with the newly supplied value.&lt;/p&gt;
+
+&lt;p&gt;Given the JSON document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
+    &amp;quot;total&amp;quot;: 20.00,
+    &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can update the total by using an &lt;code&gt;add&lt;/code&gt; operation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot;, &amp;quot;value&amp;quot;: 30.00 },
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Leaving the final result.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
+    &amp;quot;total&amp;quot;: 30.00,
+    &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_4&#34;&gt;remove&lt;/h3&gt;
+
+&lt;p&gt;Remove is a simple operation. The target location of the &lt;code&gt;path&lt;/code&gt; is removed from the object.&lt;/p&gt;
+
+&lt;p&gt;Starting with the following document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
+    &amp;quot;total&amp;quot;: 30.00,
+    &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can remove the &lt;code&gt;currency&lt;/code&gt; member with a &lt;code&gt;remove&lt;/code&gt; operation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;remove&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/currency&amp;quot; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
+    &amp;quot;total&amp;quot;: 30.00
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can also remove an element from an array. All remaining elements are shifted one position to the left. To remove order &lt;code&gt;456&lt;/code&gt; we can remove the array index referencing this order.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;remove&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/orders/1&amp;quot; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 789}],
+    &amp;quot;total&amp;quot;: 30.00
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_5&#34;&gt;replace&lt;/h3&gt;
+
+&lt;p&gt;Replace is used to set a new value to a member of the object. It is logically equivalent to a &lt;code&gt;remove&lt;/code&gt; operation followed by an &lt;code&gt;add&lt;/code&gt; operation to the same &lt;code&gt;path&lt;/code&gt; or to an &lt;code&gt;add&lt;/code&gt; operation to an existing member.&lt;/p&gt;
+
+&lt;p&gt;Given the following JSON document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
+    &amp;quot;total&amp;quot;: 20.00,
+    &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can apply the &lt;code&gt;replace&lt;/code&gt; operation to update the order total.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;replace&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot;, &amp;quot;value&amp;quot;: 30.00 },
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
+    &amp;quot;total&amp;quot;: 30.00,
+    &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_6&#34;&gt;move&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;move&lt;/code&gt; operation removes the value at a specified location and adds it to the target location. The removal location is given by a &lt;code&gt;from&lt;/code&gt; member and the target location is given by the &lt;code&gt;path&lt;/code&gt; member.&lt;/p&gt;
+
+&lt;p&gt;Given this starting document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
+    &amp;quot;total&amp;quot;: 30.00,
+    &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can move an order to the root of the document by applying this JSON patch.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;json
+{ &amp;quot;op&amp;quot;: &amp;quot;move&amp;quot;, &amp;quot;from&amp;quot;: &amp;quot;/orders/0&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/rootOrder&amp;quot; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
+    &amp;quot;rootOrder&amp;quot;: {&amp;quot;id&amp;quot;: 123}, 
+    &amp;quot;total&amp;quot;: 30.00,
+    &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_7&#34;&gt;copy&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;copy&lt;/code&gt; is like &lt;code&gt;move&lt;/code&gt;. It copies the value at the &lt;code&gt;from&lt;/code&gt; location to the  &lt;code&gt;path&lt;/code&gt; location, leaving duplicates of the data at each location.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;copy&amp;quot;, &amp;quot;from&amp;quot;: &amp;quot;/orders/0&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/rootOrder&amp;quot; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_8&#34;&gt;test&lt;/h3&gt;
+
+&lt;p&gt;The HTTP PATCH method is atomic and the patch should only be applied if all operations can be safely applied. The &lt;code&gt;test&lt;/code&gt; operation can offer additional validation to ensure that patch preconditions or postconditions are met. If the test fails the whole patch is discarded. &lt;code&gt;test&lt;/code&gt; is strictly an equality check.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;test&amp;quot;, &amp;quot;value&amp;quot;: 30.00, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_9&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;JSON Patch is an effective way to provide diffs of your API resources. Most languages already have an implementation available. There is no reason not to adopt the HTTP PATCH today.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How to Version a REST API</title>
+      <link>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</link>
+      <pubDate>Tue, 01 Apr 2014 14:16:18 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</guid>
+      <description>
+
+&lt;p&gt;API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;1) Versioned URL&lt;/h2&gt;
+
+&lt;p&gt;URL versioning inserts a version number directly in the URL of the resource. As an example,  version one of the API could be accessed through the &lt;code&gt;v1&lt;/code&gt; URL.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http://sookocheff.com/api/v1/users/12345
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Version two of the API could be accessed through the &lt;code&gt;v2&lt;/code&gt; URL.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http://sookocheff.com/api/v2/users/12345
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This solution has been widely adopted because it is easy to deploy and easy for client developers to understand. This method also makes each API version discoverable and browseable without using an advanced HTTP client — just alter the URL.&lt;/p&gt;
+
+&lt;p&gt;The drawback to using URL versioning is that by changing the URL of a resource with each new API version we are violating the REST constraint that &lt;a href=&#34;http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/&#34;&gt;each resource be accessible via a unique URL&lt;/a&gt;. To mitigate this you can map the current version of the API to a non-versioned URL.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http://sookocheff.com/api/users/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once this mapping is in place you can safely deprecate old URLs by redirecting to the non-versioned URL &amp;ndash; notifying the client to use the latest version. At all times the non-versioned URL represents the latest version of that resource.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_1&#34;&gt;Pros:&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Easy to implement.&lt;/li&gt;
+&lt;li&gt;Easy to understand.&lt;/li&gt;
+&lt;li&gt;Direct path to deprecation.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;toc_2&#34;&gt;Cons:&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Violates REST principle of unique URLs for a resource.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;toc_3&#34;&gt;2) Versioned Media Type&lt;/h2&gt;
+
+&lt;p&gt;When making an HTTP request the client can request a specific MIME type (or list of MIME types) that it is willing to accept using an &lt;code&gt;Accept&lt;/code&gt; header. For example, an HTML client may use the following &lt;code&gt;Accept&lt;/code&gt; header to request an HTML representation of the resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;GET /v1/users/12345 HTTP/1.1
+Host: sookocheff.com
+Accept: text/html
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Whereas an XML client may use the following &lt;code&gt;Accept&lt;/code&gt; header to request an XML representation of the resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;GET /v1/users/12345 HTTP/1.1
+Host: sookocheff.com
+Accept: application/xml
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can use this functionality to allow the client to access specific versions of a resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;GET  /users/12345 HTTP/1.1
+Host: sookocheff.com
+Accept: application/vnd.sookocheff.user+json?version=2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This method assumes we have defined a custom media type to represent every resource in our API and that the media type accepts a &lt;code&gt;version&lt;/code&gt; parameter.&lt;/p&gt;
+
+&lt;p&gt;Versioning the media type does adhere to strict REST principles but causes problems in other ways. First, you need a custom media type for every resource returned by your API. This is not only reinventing the wheel &amp;ndash; &lt;a href=&#34;http://schema.org/&#34;&gt;perfectly good&lt;/a&gt; &lt;a href=&#34;http://www.iana.org/assignments/media-types/media-types.xhtml&#34;&gt;media types&lt;/a&gt; &lt;a href=&#34;http://www.freeformatter.com/mime-types-list.html&#34;&gt;already exist&lt;/a&gt; &amp;ndash; it also creates a media type so specific to your API that it cannot be reused elsewhere. Lastly, it is unclear whether the version parameter applies to the version of the media type or to the version of your API.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_4&#34;&gt;Pros:&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Adheres to REST principles.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;toc_5&#34;&gt;Cons:&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Custom media type for every resource.&lt;/li&gt;
+&lt;li&gt;Binds your media type to your API.&lt;/li&gt;
+&lt;li&gt;Unclear versioning.&lt;/li&gt;
+&lt;li&gt;Requires sophisticated API client.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;toc_6&#34;&gt;3) Versioned HTTP Header&lt;/h2&gt;
+
+&lt;p&gt;The &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616-sec7.html#sec7.1&#34;&gt;HTTP specification&lt;/a&gt; states that unknown HTTP headers MUST be forwarded on to the recipient. This means that custom HTTP headers can be set by our client and received by our API.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET /users/12345 HTTP/1.1
+Host: sookocheff.com
+Accept: application/json
+Users-Version: 2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A server receiving this request can parse the header to ascertain the version number being requested by the client and return the proper representation.&lt;/p&gt;
+
+&lt;p&gt;This method requires that your API client is able to modify the HTTP headers of its requests. If the client is unable to provide a version number with the HTTP header you can assume that a request is made for the latest API version.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_7&#34;&gt;Pros:&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Adheres to REST principles.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;toc_8&#34;&gt;Cons:&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Requires sophisticated API client.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;toc_9&#34;&gt;4) Versioned Resources&lt;/h2&gt;
+
+&lt;p&gt;The last versioning method is to set the version number in the response itself. This places the burden of versioning with the client rather than the server. A client receiving a response from a known version number can parse it and act appropriately. It would be up to the client how to handle an unknown version number.&lt;/p&gt;
+
+&lt;p&gt;This method is only appropriate if you as the developer have direct control over both the server and the client being deployed.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_10&#34;&gt;Pros:&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Simplified server.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;toc_11&#34;&gt;Cons:&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Complex client.&lt;/li&gt;
+&lt;li&gt;Tightly couples server to client.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;toc_12&#34;&gt;What to do?&lt;/h2&gt;
+
+&lt;p&gt;By following &lt;a href=&#34;http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/&#34;&gt;REST principles&lt;/a&gt; we can guide our API versioning practices while being pragmatic about our choices so that our API can work in the real world.&lt;/p&gt;
+
+&lt;p&gt;My recommendation is to combine versioned URLs with custom HTTP headers using the following guidelines. With these guidelines we can safely version our API while supporting existing clients and offering them a clear upgrade path.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Each major version of the API recieves a versioned URL.&lt;/li&gt;
+&lt;li&gt;One non-versioned URL always represents the latest API version.&lt;/li&gt;
+&lt;li&gt;Redirect deprecated URLs to the canonical URL after an advertised grace period.&lt;/li&gt;
+&lt;li&gt;Add a custom HTTP header for the version number.
+
+&lt;ul&gt;
+&lt;li&gt;This header specifies both major &lt;strong&gt;and&lt;/strong&gt; minor version numbers.&lt;/li&gt;
+&lt;li&gt;The non-versioned URL returns the appropriate version of the resource when specified by the HTTP header.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;toc_13&#34;&gt;References&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api&#34;&gt;Vinay Sahni&lt;/a&gt; has collected a long list of best practices for pragmatic API design, including versioning.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://stackoverflow.com/questions/389169/best-practices-for-api-versioning&#34;&gt;stackoverflow&lt;/a&gt; presents a collection of good answers providing best practices for API versioning.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>When to Use HTTP PUT and HTTP POST</title>
+      <link>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</link>
+      <pubDate>Thu, 27 Mar 2014 07:23:34 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</guid>
+      <description>
+
+&lt;p&gt;The HTTP protocol defines two methods for updating a resource &amp;ndash; &lt;code&gt;PUT&lt;/code&gt; and
+&lt;code&gt;POST&lt;/code&gt;. Both &lt;code&gt;PUT&lt;/code&gt; and &lt;code&gt;POST&lt;/code&gt; are used to modify a resource and this semantic
+similarity can confuse API developers. This confusion has led most developers to
+use &lt;code&gt;POST&lt;/code&gt; for any action which may modify the state of a resource, ignoring
+&lt;code&gt;PUT&lt;/code&gt; entirely.&lt;/p&gt;
+
+&lt;p&gt;This article attempts to explain the semantics behind the &lt;code&gt;PUT&lt;/code&gt; and &lt;code&gt;POST&lt;/code&gt;
+methods and offers clear suggestions on when to use each method.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;PUT&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s go &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616.html&#34;&gt;straight to the HTTP/1.1 RFC&lt;/a&gt; for the &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6&#34;&gt;definition of PUT&lt;/a&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The PUT method requests that the enclosed entity be stored under the supplied
+Request-URI. If the Request-URI refers to an already existing resource, the
+enclosed entity SHOULD be considered as a modified version of the one residing
+on the origin server. If the Request-URI does not point to an existing
+resource &amp;hellip; the origin server can create the resource with that URI.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The PUT specification requires that you already know the URL of the resource you
+wish to create or update. On create, if the client chooses the identifier for a
+resource a PUT request will create the new resource at the specified URL.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PUT /user/1234567890 HTTP/1.1
+Host: http://sookocheff.com
+
+{
+    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+    &amp;quot;website&amp;quot;: &amp;quot;http://kevinsookocheff.com&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The server could respond with a &lt;code&gt;201 Created&lt;/code&gt; status code and the new resource&amp;rsquo;s
+location.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;HTTP/1.1 201 Created
+Location: /user/1234567890
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In addition, if you know that a resource already exists for a URL, you can make
+a PUT request to that URL to replace the state of that resource on the server.
+This example updates the user&amp;rsquo;s website.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PUT /user/1234567890 HTTP/1.1
+Host: http://sookocheff.com
+
+{
+    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+    &amp;quot;website&amp;quot;: &amp;quot;http://sookocheff.com&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In general the HTTP PUT method replaces the resource at the current URL with the
+resource contained within the request. PUT is used to both create and update the
+state of a resource on the server.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;POST&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s go &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616.html&#34;&gt;back to the HTTP/1.1 RFC&lt;/a&gt; for the &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.5&#34;&gt;definition of POST&lt;/a&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The POST method is used to request that the origin server accept the entity
+enclosed in the request as a new subordinate of the resource identified by the
+Request-URI &amp;hellip;  The posted entity is subordinate to that URI in the same way
+that a file is subordinate to a directory containing it, a news article is
+subordinate to a newsgroup to which it is posted, or a record is subordinate
+to a database.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Practically speaking, POST is used to append a resource to an existing
+collection. In the following example you do not know the actual URL of the
+resource &amp;ndash; the server decides the location where it is stored under the
+&lt;code&gt;user&lt;/code&gt; collection.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;POST /user HTTP/1.1
+Host: http://sookocheff.com
+
+{
+    &amp;quot;name&amp;quot;: &amp;quot;Bryan Larson&amp;quot;,
+    &amp;quot;website&amp;quot;: &amp;quot;http://www.bryanlarson.ca&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The server could respond with a &lt;code&gt;201 Created&lt;/code&gt; status code and the resource&amp;rsquo;s new
+location.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;HTTP/1.1 201 Created
+Location: /user/636363
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Subsequent updates to this user would be made through a &lt;code&gt;PUT&lt;/code&gt; request to the
+specific URL for the user - &lt;code&gt;/user/636363&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The book &lt;a href=&#34;http://www.amazon.ca/RESTful-Web-APIs-Leonard-Richardson/dp/1449358063&#34;&gt;RESTful Web APIs&lt;/a&gt;
+classify this behaviour &lt;em&gt;POST-to-append&lt;/em&gt; and is the generally recommended way to
+handle a POST request within the context of a specific resource.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;Putting it Together&lt;/h2&gt;
+
+&lt;p&gt;The &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616.html&#34;&gt;HTTP/1.1 RFC&lt;/a&gt; offers some guidance on &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6&#34;&gt;distinguishing between POST and
+PUT&lt;/a&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The fundamental difference between the POST and PUT requests is reflected in
+the different meaning of the Request-URI. The URI in a POST request identifies
+the resource that will handle the enclosed entity &amp;hellip;  In contrast, the URI in
+a PUT request identifies the entity enclosed with the request.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;By following the existing semantics of the HTTP PUT and POST methods we can
+begin to take advantage of the &lt;a href=&#34;http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/&#34;&gt;benefits of REST&lt;/a&gt; to write scalable and
+robust APIs. Not only is your API ready to scale and easy to maintain, it is
+easy to understand and use. By consistently following these existing semantics
+you can avoid inserting special cases and &amp;lsquo;gotchas&amp;rsquo; into your API that confuse
+client developers.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Stripe checkout opening in a new tab</title>
+      <link>http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab</link>
+      <pubDate>Tue, 25 Mar 2014 07:23:45 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab</guid>
+      <description>&lt;p&gt;At &lt;a href=&#34;http://www.vendasta.com&#34;&gt;VendAsta&lt;/a&gt; we&amp;rsquo;ve been integrating with the &lt;a href=&#34;http://stripe.com/checkout&#34;&gt;Stripe&lt;/a&gt; payment system using Stripe Checkout. The experience has been completely painless and surprisingly simple. Then came a hiccup. While demoing the new functionality we found that one particular computer in the office would open the checkout modal dialog in a new browser window. Just one laptop. It was running the same version of Chrome that we were developing on. It was running the same OS as a working test machine. But the dialog would consistently open in a new browser window on just this one laptop.&lt;/p&gt;
+
+&lt;p&gt;After a Friday afternoon debugging session our Product Owner decided to jump onto IRC and chat directly with the Stripe developers. They were quickly able to diagnose our problem: touch. The troublesome laptop was a Windows 8 machine with a touch display — and Stripe Checkout will open in a new browser window when used on a tablet.&lt;/p&gt;
+
+&lt;p&gt;This episode was a great reminder of how the first step in debugging is often to &lt;a href=&#34;http://www.hanselman.com/blog/BackToBasicsAssertYourAssumptionsAndDiffYourSourceCode.aspx&#34;&gt;find the difference between the working and non-working system&lt;/a&gt;. Hopefully this post will help someone else with the same problem.&lt;/p&gt;
+
+&lt;p&gt;P.S. Kudos to Stripe for their prompt help via IRC.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How REST Constraints Affect API Design</title>
+      <link>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</link>
+      <pubDate>Wed, 19 Mar 2014 14:11:48 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</guid>
+      <description>
+
+&lt;p&gt;REST was developed and formalized by analyzing the existing Web and extracting
+the principles that made it work. This set of principles was written down in the
+&lt;a href=&#34;https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm&#34;&gt;Fielding dissertation&lt;/a&gt;
+which lays out the set of constraints that, when enforced, will make a generic
+network system into a resilient network like the Web. In Chapter 5 of the
+dissertation Fielding outlines REST&amp;rsquo;s interface constraints.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;REST is defined by four interface constraints: identification of resources;
+manipulation of resources using representations; self-descriptive messages;
+and, hypermedia as the engine of application state.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;toc_0&#34;&gt;Why is this important for APIs?&lt;/h3&gt;
+
+&lt;p&gt;API design is in an infancy. Each API is designed for a single use case and
+standard. This proliferation of different design ideas results in APIs that each
+have their own specification and semantics. Interoperability between APIs is
+nonexistent. In the early 1990s the Web was facing this exact problem and as a
+result the principles of REST were formalized and adopted. The result was a
+scalable, resilient and ultimately successful system. By adopting the REST
+constraints in our APIs we can take advantage of this foundational work to
+provide APIs that form a scalable and resilient network of their own.&lt;/p&gt;
+
+&lt;p&gt;We will take a look at each of the four interface constraints in turn and see
+how they can be used to design an API that developers love to use.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;1. Identification of Resources&lt;/h2&gt;
+
+&lt;p&gt;A resource is the key abstraction of REST. Anything that can be named is a
+resource &amp;ndash; a video, a document, an image. We identify resources using a
+unique identifier called the Uniform Resource Identifier (URI). When discussing
+the Web we almost always use a more specific form of URI called a Uniform
+Resource Locator (URL). A URL is what we are all accustomed to when accessing
+sites through HTTP.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;http://sookocheff.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;By building REST APIs over HTTP we can use URLs to identify resources accessed
+by our API. To satisfy the REST constraint each URL should map to a single
+resource and all access to this resource is done through that URL. As an
+example, if I want to offer an API for a shipping application I might have a
+resource representing an order. A URL for the individual order numbered &lt;code&gt;12345&lt;/code&gt;
+would have a path including the order number.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/orders/12345
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This simple example shows how we can create a URL to uniquely represent each
+resource represented by our API.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;2. Manipulation of Resources Using Representations&lt;/h2&gt;
+
+&lt;p&gt;When making a request for a resource the server responds with a representation
+of the resource. This representation captures the current state of the resource
+in a format that the client can understand and manipulate. Abstractly the
+representation is a sequence of bytes along with metadata describing those
+bytes. This metadata is known as the media type of the representation. Typical
+API examples are HTML, JSON, and XML. Because the server sends a representation
+of the resource it is possible for the client to request a specific
+representation that fits the client&amp;rsquo;s needs. For example, a client can ask for
+the JSON representation of a resource or the XML representation of the resource.
+The server may provide this representation if it is capable of doing so. This
+concept is called &lt;em&gt;content negotiation&lt;/em&gt;. You can use content negotiation in your
+API to allow multiple clients to access a different representations of the
+resource from the same URL.&lt;/p&gt;
+
+&lt;p&gt;The way that a client asks for a specific representation is through the HTTP
+&lt;code&gt;Accepts&lt;/code&gt; header. The following request is asking for a plain text
+representation of the order.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;GET /orders/12345
+Accept: text/plain
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Whereas the following request is asking for a JSON representation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;GET /orders/12345
+Accept: application/json
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;By using content negotiation in your API you can offer new resource
+representations without changing the resources URL or breaking existing clients.
+This keeps your client and server flexibly decoupled.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_3&#34;&gt;3. Self-Descriptive Messages&lt;/h2&gt;
+
+&lt;p&gt;The representations served by a RESTful system contain all of the data required
+by the client to understand and act on the resource. If any additional
+information is needed but not contained in the response a link to that
+information should be provided within the response. This means that the media
+type you choose to respond with should be self documenting and should list any
+related resources or actions that the client may be interested in. Specific
+media types already exist for JSON APIS. These include HAL, JSON-LD,
+Collection+JSON and JSONAPI. For a detailed discussion see my post &lt;a href=&#34;http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format/&#34;&gt;on
+choosing a hypermedia
+type&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Each of these formats are aiming to solve the &lt;a href=&#34;https://www.w3.org/TR/json-ld/#basic-concepts&#34;&gt;same
+problem&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;JSON has no built-in support for hyperlinks, which are a fundamental building
+block on the Web.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;By linking together the resources offered by your API you can build
+self-descriptive APIs.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_4&#34;&gt;4. Hypermedia As The Engine Of Application State&lt;/h2&gt;
+
+&lt;p&gt;Together, the first three REST constraints imply the fourth and most important &amp;ndash;
+hypermedia as the engine of application state. By uniquely identifying
+resources, using representations to communicate resource state and using
+self-descriptive messages via media types all application state stays with the
+client.&lt;/p&gt;
+
+&lt;p&gt;By keeping all application state with the client a direct connection between the
+client and the server is not necessary, allowing the server to scale to serve
+many clients with minimal resources. This ability to scale has led to the Web&amp;rsquo;s
+scalable and resilient nature.&lt;/p&gt;
+
+&lt;p&gt;By designing our APIs with the REST constraints we can build scalable and
+resilient APIs.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>On choosing a hypermedia type for your API - HAL, JSON-LD, Collection&#43;JSON, SIREN, Oh My!</title>
+      <link>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format</link>
+      <pubDate>Tue, 11 Mar 2014 15:15:15 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format</guid>
+      <description>
+
+&lt;p&gt;In recent years REST has been at the forefront of modern API
+design. This has led to APIs with manageable URLs that respect the HTTP verbs
+(GET, POST, PUT &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616.html&#34;&gt;and the
+ rest&lt;/a&gt;), producing an
+intuitive model for client developers. Unfortunately, there are two problems
+that REST doesn&amp;rsquo;t solve alone.&lt;/p&gt;
+
+&lt;p&gt;The first problem is standardized responses. Most every enterprise has defined
+their own custom API format, usually a JSON response that maps neatly to their
+own data model. A Facebook API client cannot communicate with a Twitter API and
+vice versa. This leads to a proliferation of API clients that do almost &amp;ndash; but
+not quite &amp;ndash; the same thing. Duplication of effort abounds.&lt;/p&gt;
+
+&lt;p&gt;The second problem is linking. As the &lt;a href=&#34;https://www.w3.org/TR/json-ld/#basic-concepts&#34;&gt;W3C puts it&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;JSON has no built-in support for hyperlinks, which are a fundamental building
+block on the Web.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The drawback of this is that two API endpoints are only linked together by API
+documentation. As a user you are forced to scour through walls of API
+documentation to understand the relationships between API endpoints and grasp
+exactly what actions you can and cannot take against a given resource.&lt;/p&gt;
+
+&lt;p&gt;To solve these problems we can look at how we structure our API responses. By
+using &lt;em&gt;hypermedia&lt;/em&gt; in our responses we can offer links between API endpoints and
+documentation, potential actions, and related endpoints. This allows for
+&lt;em&gt;discoverable&lt;/em&gt; APIs where it is clear from the API response the set of next
+actions that a client may want to take. Furthermore, by &lt;em&gt;standardizing&lt;/em&gt; on a
+hypermedia type clients developed for one API can understand the format of
+another API and communicate with minimal duplicated effort.&lt;/p&gt;
+
+&lt;p&gt;In this post I will evaluate a few mature hypermedia types for APIs,
+offering a side-by-side comparison of their strengths and weaknesses. If you
+are impatient for the final result you can &lt;a href=&#34;https://gist.github.com/soofaloofa/9350847&#34;&gt;jump straight to the code&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;The Model&lt;/h2&gt;
+
+&lt;p&gt;To drive this discussion let&amp;rsquo;s use a hypothetical API for managing a &lt;code&gt;Player&lt;/code&gt;
+resource derived from the &lt;a href=&#34;https://developer.apple.com/library/ios/documentation/GameKit/Reference/GKPlayer_Ref/Reference/Reference.html#//apple_ref/occ/cl/GKPlayer&#34;&gt;&lt;code&gt;GKPlayer&lt;/code&gt;
+class&lt;/a&gt;
+used by Apple&amp;rsquo;s GameCenter API. The &lt;code&gt;Player&lt;/code&gt; resource can be expressed with this
+simple diagram.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;/img/2014-02-06-on-choosing-a-hypermedia-format/player-model.png&#34; alt=&#34;PlayerResource&#34; title=&#34;Player Resource&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Representing this as a typical JSON response would yield something like the
+following.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
+    &amp;quot;alias&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
+    &amp;quot;displayName&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+    &amp;quot;profilePhotoUrl&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And the list of this player&amp;rsquo;s friends could be retrieved with a separate API call.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;[
+{
+    &amp;quot;playerId&amp;quot;: &amp;quot;1895638109&amp;quot;,
+    &amp;quot;alias&amp;quot;: &amp;quot;sdong&amp;quot;,
+    &amp;quot;displayName&amp;quot;: &amp;quot;Sheldon Dong&amp;quot;,
+    &amp;quot;profilePhotoUrl&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/avatar.png&amp;quot;
+},
+{
+    &amp;quot;playerId&amp;quot;: &amp;quot;8371023509&amp;quot;,
+    &amp;quot;alias&amp;quot;: &amp;quot;mliu&amp;quot;,
+    &amp;quot;displayName&amp;quot;: &amp;quot;Martin Liu&amp;quot;,
+    &amp;quot;profilePhotoUrl&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/avatar.png&amp;quot;
+}
+]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let&amp;rsquo;s take a look at how this API can be represented using hypermedia types.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;JSON-LD&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;ll start by looking at JSON for Linked Documents (JSON-LD). JSON-LD is a well
+supported media type endorsed by the &lt;a href=&#34;https://www.w3.org&#34;&gt;World Wide Web
+Consortium&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The selling point of JSON-LD is that you can adopt the standard without
+introducing breaking changes to your API. The syntax is designed to not disturb
+already deployed systems and to provide a smooth migration path from JSON to
+JSON with added semantics.&lt;/p&gt;
+
+&lt;p&gt;JSON-LD introduces keywords that augment an existing response with additional
+information. The most important augmentation is the &lt;em&gt;context&lt;/em&gt;. A context in
+JSON-LD defines a set of terms that are scoped and valid within the
+representation being discussed. A context is assigned to a JSON response using
+the &lt;code&gt;@context&lt;/code&gt; keyword.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+  &amp;quot;@context&amp;quot;: {}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Within the context properties are assigned to a URL that provides documentation
+about the meaning of that property.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;@context&amp;quot;: {
+        &amp;quot;displayName&amp;quot;: &amp;quot;https://schema.org/name&amp;quot;
+    },
+    &amp;quot;displayName&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It&amp;rsquo;s a good idea to use standard naming for our APIs so we can go ahead and
+rename &lt;code&gt;displayName&lt;/code&gt; to &lt;code&gt;name&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;@context&amp;quot;: {
+        &amp;quot;name&amp;quot;: &amp;quot;https://schema.org/name&amp;quot;
+    },
+    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;At this point we have an unambiguous definition of what the property &lt;code&gt;name&lt;/code&gt;
+means within the API response by visiting &lt;code&gt;https://schema.org/name&lt;/code&gt; to read the
+semantics of this property. We can go further and add context to the rest of the
+properties. To be consistent with existent naming we will change
+&lt;code&gt;profilePhotoUrl&lt;/code&gt; to &lt;code&gt;image&lt;/code&gt; and &lt;code&gt;alias&lt;/code&gt; to &lt;code&gt;alternateName&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;@context&amp;quot;: {
+        &amp;quot;name&amp;quot;: &amp;quot;https://schema.org/name&amp;quot;,
+        &amp;quot;alternateName&amp;quot;: &amp;quot;https://schema.org/alternateName&amp;quot;,
+        &amp;quot;image&amp;quot;: {
+            &amp;quot;@id&amp;quot;: &amp;quot;https://schema.org/image&amp;quot;,
+            &amp;quot;@type&amp;quot;: &amp;quot;@id&amp;quot;
+        }
+    },
+    &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot;,
+    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
+    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+    &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
+    &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In this example we&amp;rsquo;ve added the &lt;code&gt;@id&lt;/code&gt; annotation. &lt;code&gt;@id&lt;/code&gt; signifies &lt;em&gt;identifiers&lt;/em&gt;.
+Identifiers allow unique external references to any resource, providing similar
+semantcis to URLs. In JSON-LD terminology every distinct resource is a node in
+the JSON-LD graph. These distinct nodes should have identifiers that can be used
+to retrieve a representation of that node.&lt;/p&gt;
+
+&lt;p&gt;The last element from our model that is missing from our JSON-LD response is the
+list of friends. With JSON-LD unordered lists can be specified using simple
+array notation.  In this example we will represent friends by the identifiers
+that point to their resources. An HTTP GET request to those URLs would return
+the full representation of each friend.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;@context&amp;quot;: {
+        &amp;quot;name&amp;quot;: &amp;quot;https://schema.org/name&amp;quot;,
+        &amp;quot;alternateName&amp;quot;: &amp;quot;https://schema.org/alternateName&amp;quot;,
+        &amp;quot;image&amp;quot;: {
+            &amp;quot;@id&amp;quot;: &amp;quot;https://schema.org/image&amp;quot;,
+            &amp;quot;@type&amp;quot;: &amp;quot;@id&amp;quot;
+        },
+        &amp;quot;friends&amp;quot;: {
+            &amp;quot;@container&amp;quot;: &amp;quot;@set&amp;quot;
+         }
+    },
+    &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot;,
+    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
+    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+    &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
+    &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;,
+    &amp;quot;friends&amp;quot;: [ 
+        {
+            &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/1895638109&amp;quot;
+        },
+        {
+            &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/8371023509&amp;quot;
+        }
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This gives us the representation of our &lt;code&gt;Player&lt;/code&gt; resource in JSON-LD. This
+example doesn&amp;rsquo;t cover all of JSON-LD but should give you a flavour of how the
+format can be used.&lt;/p&gt;
+
+&lt;p&gt;Thanks to &lt;a href=&#34;https://twitter.com/markuslanthaler&#34;&gt;Markus Lanthaler&lt;/a&gt; for offering
+suggestions on how to simplify this even more. In this example we define a
+&lt;code&gt;@vocab&lt;/code&gt; for our context that encompasses the terms that we use within our
+response. Our list of friends is provided as a simple link to a separate
+endpoint.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;{
+    &amp;quot;@context&amp;quot;: {
+        &amp;quot;@vocab&amp;quot;: &amp;quot;https://schema.org/&amp;quot;,
+        &amp;quot;image&amp;quot;: { &amp;quot;@type&amp;quot;: &amp;quot;@id&amp;quot; },
+        &amp;quot;friends&amp;quot;: { &amp;quot;@type&amp;quot;: &amp;quot;@id&amp;quot; }
+    },
+    &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot;,
+    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
+    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+    &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
+    &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;,
+    &amp;quot;friends&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you want to dive fully into JSON-LD you can always read
+the &lt;a href=&#34;https://www.w3.org/TR/json-ld/&#34;&gt;specification&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;JSON-LD lacks support for specifying the actions you can take on a resource. To
+address this short-coming &lt;a href=&#34;http://www.markus-lanthaler.com/hydra/&#34;&gt;HYDRA&lt;/a&gt;
+provides a vocabulary allowing client-server communication using the JSON-LD
+message format.&lt;/p&gt;
+
+&lt;p&gt;To specify the actions available on a resource we would use the &lt;code&gt;operation&lt;/code&gt;
+property.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;@context&amp;quot;: [
+        &amp;quot;http://www.w3.org/ns/hydra/core&amp;quot;,
+        {
+            &amp;quot;@vocab&amp;quot;: &amp;quot;https://schema.org/&amp;quot;,
+            &amp;quot;image&amp;quot;: { &amp;quot;@type&amp;quot;: &amp;quot;@id&amp;quot; },
+            &amp;quot;friends&amp;quot;: { &amp;quot;@type&amp;quot;: &amp;quot;@id&amp;quot; }
+        }
+    ],
+    &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;,
+    &amp;quot;operation&amp;quot;: {
+        &amp;quot;@type&amp;quot;: &amp;quot;BefriendAction&amp;quot;,
+        &amp;quot;method&amp;quot;: &amp;quot;POST&amp;quot;,
+        &amp;quot;expects&amp;quot;: {
+            &amp;quot;@id&amp;quot;: &amp;quot;http://schema.org/Person&amp;quot;,
+            &amp;quot;supportedProperty&amp;quot;: [
+                { &amp;quot;property&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;range&amp;quot;: &amp;quot;Text&amp;quot; },
+                { &amp;quot;property&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;range&amp;quot;: &amp;quot;Text&amp;quot; },
+                { &amp;quot;property&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;range&amp;quot;: &amp;quot;URL&amp;quot; }
+            ]
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;operation&lt;/code&gt; property defines a &lt;code&gt;method&lt;/code&gt; term that specifies the HTTP method
+that the endpoint allows. HYDRA also provides a template of the expected
+properties and their data types. In our example a POST request to
+&lt;code&gt;https://api.example.com/player/1234567890/friends&lt;/code&gt; (the resource&amp;rsquo;s URL) will
+add a new friend to our user&amp;rsquo;s friend list.&lt;/p&gt;
+
+&lt;p&gt;HYDRA also provides a &lt;code&gt;member&lt;/code&gt; property that allows us to embed additional
+resources within our current representations. In the following example we embed
+our friends directly within the resource as a list.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;GET https://api.example.com/player/1234567890/friends
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;{
+    &amp;quot;@context&amp;quot;: [
+        &amp;quot;http://www.w3.org/ns/hydra/core&amp;quot;,
+        {
+            &amp;quot;@vocab&amp;quot;: &amp;quot;https://schema.org/&amp;quot;,
+            &amp;quot;image&amp;quot;: { &amp;quot;@type&amp;quot;: &amp;quot;@id&amp;quot; },
+            &amp;quot;friends&amp;quot;: { &amp;quot;@type&amp;quot;: &amp;quot;@id&amp;quot; }
+        }
+    ],
+    &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;,
+    &amp;quot;operation&amp;quot;: {
+        &amp;quot;@type&amp;quot;: &amp;quot;BefriendAction&amp;quot;,
+        &amp;quot;method&amp;quot;: &amp;quot;POST&amp;quot;,
+        &amp;quot;expects&amp;quot;: {
+            &amp;quot;@id&amp;quot;: &amp;quot;http://schema.org/Person&amp;quot;,
+            &amp;quot;supportedProperty&amp;quot;: [
+                { &amp;quot;property&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;range&amp;quot;: &amp;quot;Text&amp;quot; },
+                { &amp;quot;property&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;range&amp;quot;: &amp;quot;Text&amp;quot; },
+                { &amp;quot;property&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;range&amp;quot;: &amp;quot;URL&amp;quot; }
+            ]
+        }
+    },
+    &amp;quot;member&amp;quot;: [
+            {
+                &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/1895638109&amp;quot;,
+                &amp;quot;name&amp;quot;: &amp;quot;Sheldon Dong&amp;quot;,
+                &amp;quot;alternateName&amp;quot;: &amp;quot;sdong&amp;quot;,
+                &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/avatar.png&amp;quot;,
+                &amp;quot;friends&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/friends&amp;quot;
+            },
+            {
+                &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/8371023509&amp;quot;,
+                &amp;quot;name&amp;quot;: &amp;quot;Martin Liu&amp;quot;,
+                &amp;quot;alternateName&amp;quot;: &amp;quot;mliu&amp;quot;,
+                &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/avatar.png&amp;quot;,
+                &amp;quot;friends&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/friends&amp;quot;
+            }
+        ],
+    &amp;quot;nextPage&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends?page=2&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We&amp;rsquo;ve also added a &lt;code&gt;nextPage&lt;/code&gt; property which is a property defined by HYDRA for
+paged collections. For more details on HYDRA&amp;rsquo;s reserved properties you can read
+the full
+&lt;a href=&#34;http://www.markus-lanthaler.com/hydra/spec/latest/core/#properties&#34;&gt;documentation&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;HAL&lt;/h2&gt;
+
+&lt;p&gt;HAL is a lightweight media type that uses the idea of &lt;em&gt;Resources&lt;/em&gt; and &lt;em&gt;Links&lt;/em&gt; to
+model your JSON responses. &lt;em&gt;Resources&lt;/em&gt; can contain &lt;em&gt;State&lt;/em&gt; defined by key-value
+pairs of data, &lt;em&gt;Links&lt;/em&gt; leading to additional resources and &lt;em&gt;Embedded Resources&lt;/em&gt;
+which are children of the current resource embedded in the representation for
+convenience.&lt;/p&gt;
+
+&lt;p&gt;HAL is simple to use and easy to understand. These virtues have lead HAL to
+become one of the leading hypermedia types in modern APIs.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_3&#34;&gt;State&lt;/h3&gt;
+
+&lt;p&gt;State is the traditional JSON key-value pairs defining the current state of the
+resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
+    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+    &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
+    &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_4&#34;&gt;Links&lt;/h3&gt;
+
+&lt;p&gt;Links in HAL are identified as a JSON object named &lt;code&gt;_links&lt;/code&gt;. Keys within
+&lt;code&gt;_links&lt;/code&gt; are the name of the link and should describe the relationship between
+the current resource and the link. At a minimum the &lt;code&gt;_links&lt;/code&gt; property should
+contain a &lt;code&gt;self&lt;/code&gt; entry pointing to the current resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;_links&amp;quot;: {
+        &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; }
+    },
+    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
+    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+    &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
+    &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can easily add a link to the &lt;code&gt;Friends&lt;/code&gt; resource which can be used to retrieve
+the full list.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+
+    &amp;quot;_links&amp;quot;: {
+        &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; },
+        &amp;quot;friends&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot; }
+    },
+    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
+    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+    &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
+    &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_5&#34;&gt;Embedded Resources&lt;/h3&gt;
+
+&lt;p&gt;Making a GET request to the &lt;code&gt;Friends&lt;/code&gt; link would return a full list of
+&lt;code&gt;Player&lt;/code&gt; resources. Each &lt;code&gt;Player&lt;/code&gt; returned is embedded in the representation
+as an &lt;em&gt;Embedded Resource&lt;/em&gt;. &lt;em&gt;Embedded Resources&lt;/em&gt; augment the current resource
+state with additional, related resources. These resources are provided as a
+convenience to the client application and can be easily used to represent a
+list of items.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;_links&amp;quot;: {
+        &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot; },
+        &amp;quot;next&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends?page=2&amp;quot; }
+    },
+    &amp;quot;size&amp;quot;: &amp;quot;2&amp;quot;,
+    &amp;quot;_embedded&amp;quot;: { 
+        &amp;quot;player&amp;quot;: [
+            { 
+                &amp;quot;_links&amp;quot;: { 
+                    &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109&amp;quot; },
+                    &amp;quot;friends&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/friends&amp;quot; }
+                },
+                &amp;quot;playerId&amp;quot;: &amp;quot;1895638109&amp;quot;,
+                &amp;quot;name&amp;quot;: &amp;quot;Sheldon Dong&amp;quot;,
+                &amp;quot;alternateName&amp;quot;: &amp;quot;sdong&amp;quot;,
+                &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/avatar.png&amp;quot;
+            },
+            { 
+                &amp;quot;_links&amp;quot;: { 
+                    &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509&amp;quot; },
+                    &amp;quot;friends&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/friends&amp;quot; }
+                },
+                &amp;quot;playerId&amp;quot;: &amp;quot;8371023509&amp;quot;,
+                &amp;quot;name&amp;quot;: &amp;quot;Martin Liu&amp;quot;,
+                &amp;quot;alternateName&amp;quot;: &amp;quot;mliu&amp;quot;,
+                &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/avatar.png&amp;quot;
+            }
+        ]
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In this response we&amp;rsquo;ve added a &lt;code&gt;next&lt;/code&gt; link to represent a paged collection and
+provide a reference to get the next set of friends in the list. The embedded
+resources are a list contained within the &lt;code&gt;player&lt;/code&gt; property.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_6&#34;&gt;Curies&lt;/h3&gt;
+
+&lt;p&gt;An important point about HAL is that each link relation points to a URL with
+documentation about that relation. This makes the API discoverable by always
+providing documentation about the links available from the current resource. In
+the next example a URL for &lt;code&gt;friends&lt;/code&gt; points to documentation about that resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;_links&amp;quot;: {
+        &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; },
+        &amp;quot;https://api.example.com/docs/rels/friends&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot; }
+    },
+    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
+    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+    &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
+    &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Since URLs are long and unwieldy, HAL provides &lt;code&gt;curies&lt;/code&gt;. &lt;code&gt;Curies&lt;/code&gt; are a reserved
+link relation acting as a base URL that is expanded upon by each term. In this
+example we will define a &lt;code&gt;curie&lt;/code&gt; &lt;code&gt;ex&lt;/code&gt; that references the &lt;code&gt;URI&lt;/code&gt;
+&lt;code&gt;https://api.example.com/docs/rels/{rel}&lt;/code&gt;. &lt;code&gt;Curies&lt;/code&gt; are expanded by postfixing
+the curie name with a &lt;code&gt;:&lt;/code&gt; followed by the name of the resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;_links&amp;quot;: {
+        &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; },
+        &amp;quot;curies&amp;quot;: [{ &amp;quot;name&amp;quot;: &amp;quot;ex&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/docs/rels/{rel}&amp;quot;, &amp;quot;templated&amp;quot;: true }],
+        &amp;quot;ex:friends&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot; }
+    },
+    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
+    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+    &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
+    &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;HAL&amp;rsquo;s lightweight syntax and model make it a popular choice for API developers
+and users. For more information on HAL you can refer to the draft standard that
+has been submitted to the &lt;a href=&#34;https://tools.ietf.org/html/draft-kelly-json-hal-06&#34;&gt;Network Working
+Group&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_7&#34;&gt;Collection+JSON&lt;/h2&gt;
+
+&lt;p&gt;The Collection+JSON standard is a media type that standardizes the reading,
+writing and querying of items in a collection. Although geared to handling
+collections, by representing a single item as a collection of one element,
+Collection+JSON can elegantly handle most API responses.&lt;/p&gt;
+
+&lt;p&gt;At a minimum a Collection+JSON response must contain a &lt;code&gt;collection&lt;/code&gt; object with
+a &lt;code&gt;version&lt;/code&gt; and a URI pointing to itself.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;collection&amp;quot;: {
+        &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
+        &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_8&#34;&gt;Returning Data&lt;/h3&gt;
+
+&lt;p&gt;Typically, the response would include a list of items in the collection. For a
+single resource, this collection would be a list of a single element. The
+properties of each element are given by explicit name/value pairs within a
+&lt;code&gt;data&lt;/code&gt; attribute as in the following example.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;collection&amp;quot;: {
+        &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
+        &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player&amp;quot;,
+        &amp;quot;items&amp;quot;: [
+            {
+                &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot;,
+                &amp;quot;data&amp;quot;: [
+                      { &amp;quot;name&amp;quot;: &amp;quot;playerId&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;1234567890&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Identifier&amp;quot; },
+                      { &amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Full Name&amp;quot; },
+                      { &amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;soofaloofa&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Alias&amp;quot; }
+                ]
+            }
+        ]
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_9&#34;&gt;Links&lt;/h3&gt;
+
+&lt;p&gt;Links can be a property of the collection or of individual items in the
+collection. Links may may also include a &lt;code&gt;name&lt;/code&gt; and a &lt;code&gt;prompt&lt;/code&gt; which can be
+useful when creating HTML forms to reference the collection or item.&lt;/p&gt;
+
+&lt;p&gt;In this example we will add links for the &lt;code&gt;Players&lt;/code&gt; avatar and friends.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;collection&amp;quot;: {
+        &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
+        &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player&amp;quot;,
+        &amp;quot;items&amp;quot;: [
+            {
+                &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot;,
+                &amp;quot;data&amp;quot;: [
+                      {&amp;quot;name&amp;quot;: &amp;quot;playerId&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;1234567890&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Identifier&amp;quot;},
+                      {&amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Full Name&amp;quot;},
+                      {&amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;soofaloofa&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Alias&amp;quot;}
+                ],
+                &amp;quot;links&amp;quot;: [
+                    {&amp;quot;rel&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Avatar&amp;quot;, &amp;quot;render&amp;quot;: &amp;quot;image&amp;quot; },
+                    {&amp;quot;rel&amp;quot;: &amp;quot;friends&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Friends&amp;quot; }
+                ]
+            }
+        ]
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_10&#34;&gt;Templates&lt;/h3&gt;
+
+&lt;p&gt;As the name would imply, Collection+JSON is uniquely suited to handling
+collections. Templates are one aspect of this. A template is an object that
+represents an item in the collection. The client can then fill in this template
+and POST it to the collection to add an element, or PUT it to update an existing
+item.&lt;/p&gt;
+
+&lt;p&gt;In this example we define a template for adding to the user&amp;rsquo;s list of friends.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;collection&amp;quot;:
+    {
+        &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
+        &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;,
+        &amp;quot;links&amp;quot;: [
+            {&amp;quot;rel&amp;quot;: &amp;quot;next&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends?page=2&amp;quot;}
+        ],
+        &amp;quot;items&amp;quot;: [
+            {
+                &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109&amp;quot;,
+                &amp;quot;data&amp;quot;: [
+                      {&amp;quot;name&amp;quot;: &amp;quot;playerId&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;1895638109&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Identifier&amp;quot;},
+                      {&amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;Sheldon Dong&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Full Name&amp;quot;},
+                      {&amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;sdong&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Alias&amp;quot;}
+                ],
+                &amp;quot;links&amp;quot;: [
+                    {&amp;quot;rel&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/avatar.png&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Avatar&amp;quot;, &amp;quot;render&amp;quot;: &amp;quot;image&amp;quot; },
+                    {&amp;quot;rel&amp;quot;: &amp;quot;friends&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/friends&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Friends&amp;quot; }
+                ]
+            },
+            {
+                &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509&amp;quot;,
+                &amp;quot;data&amp;quot;: [
+                      {&amp;quot;name&amp;quot;: &amp;quot;playerId&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;8371023509&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Identifier&amp;quot;},
+                      {&amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;Martin Liu&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Full Name&amp;quot;},
+                      {&amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;mliu&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Alias&amp;quot;}
+                ],
+                &amp;quot;links&amp;quot;: [
+                    {&amp;quot;rel&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/avatar.png&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Avatar&amp;quot;, &amp;quot;render&amp;quot;: &amp;quot;image&amp;quot; },
+                    {&amp;quot;rel&amp;quot;: &amp;quot;friends&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/friends&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Friends&amp;quot; }
+                ]
+            }
+        ],
+        &amp;quot;template&amp;quot;: {
+            &amp;quot;data&amp;quot;: [
+                {&amp;quot;name&amp;quot;: &amp;quot;playerId&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Identifier&amp;quot;},
+                {&amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Full Name&amp;quot;},
+                {&amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Alias&amp;quot;},
+                {&amp;quot;name&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Avatar&amp;quot;}
+            ]
+        }
+        
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To add a friend to this collection you would POST the data specified by the
+template to the &lt;code&gt;href&lt;/code&gt; link defined by the collection
+(&lt;code&gt;https://api.example.com/player/1234567890/friends&lt;/code&gt;).&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_11&#34;&gt;Queries&lt;/h3&gt;
+
+&lt;p&gt;The final piece of Collecion+JSON is the &lt;code&gt;queries&lt;/code&gt; property. Queries, as the
+name implies, define the queries that are supported by this collection. Here the
+&lt;code&gt;data&lt;/code&gt; object specifies the query parameters supported by the server.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;collection&amp;quot;:
+    {
+        &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
+        &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;,
+        &amp;quot;links&amp;quot;: [
+            {&amp;quot;rel&amp;quot;: &amp;quot;next&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends?page=2&amp;quot;}
+        ],
+        &amp;quot;items&amp;quot;: [
+            {
+                &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109&amp;quot;,
+                &amp;quot;data&amp;quot;: [
+                      {&amp;quot;name&amp;quot;: &amp;quot;playerId&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;1895638109&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Identifier&amp;quot;},
+                      {&amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;Sheldon Dong&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Full Name&amp;quot;},
+                      {&amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;sdong&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Alias&amp;quot;}
+                ],
+                &amp;quot;links&amp;quot;: [
+                    {&amp;quot;rel&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/avatar.png&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Avatar&amp;quot;, &amp;quot;render&amp;quot;: &amp;quot;image&amp;quot; },
+                    {&amp;quot;rel&amp;quot;: &amp;quot;friends&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/friends&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Friends&amp;quot; }
+                ]
+            },
+            {
+                &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509&amp;quot;,
+                &amp;quot;data&amp;quot;: [
+                      {&amp;quot;name&amp;quot;: &amp;quot;playerId&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;8371023509&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Identifier&amp;quot;},
+                      {&amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;Martin Liu&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Full Name&amp;quot;},
+                      {&amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;mliu&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Alias&amp;quot;}
+                ],
+                &amp;quot;links&amp;quot;: [
+                    {&amp;quot;rel&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/avatar.png&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Avatar&amp;quot;, &amp;quot;render&amp;quot;: &amp;quot;image&amp;quot; },
+                    {&amp;quot;rel&amp;quot;: &amp;quot;friends&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/friends&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Friends&amp;quot; }
+                ]
+            }
+        ],
+        &amp;quot;queries&amp;quot;: [
+            {
+                &amp;quot;rel&amp;quot;: &amp;quot;search&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends/search&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Search&amp;quot;,
+                &amp;quot;data&amp;quot;: [
+                    {&amp;quot;name&amp;quot;: &amp;quot;search&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;}
+                ]
+            }
+        ],
+        &amp;quot;template&amp;quot;: {
+            &amp;quot;data&amp;quot;: [
+                {&amp;quot;name&amp;quot;: &amp;quot;playerId&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Identifier&amp;quot; },
+                {&amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Full Name&amp;quot;},
+                {&amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Alias&amp;quot;},
+                {&amp;quot;name&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Avatar&amp;quot;}
+            ]
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;By defining the template and queries within the response Collection+JSON makes
+navigation by a new API user relatively simple without needing to understand the
+full meaning of the API. It also provides a level of interoperability between
+APIs using the Collection+JSON media type. Collection+JSON was designed by &lt;a href=&#34;https://amundsen.com&#34;&gt;Mike
+Amundsen&lt;/a&gt;. You can find detailed examples, the full spec
+and sample code &lt;a href=&#34;https://amundsen.com/media-types/collection/&#34;&gt;on his website&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_12&#34;&gt;SIREN&lt;/h2&gt;
+
+&lt;p&gt;The last media type we&amp;rsquo;ll look at is
+&lt;a href=&#34;https://github.com/kevinswiber/siren&#34;&gt;SIREN&lt;/a&gt;. SIREN aims to represent generic
+entities along with actions for modifying those entities and links for client
+navigation.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_13&#34;&gt;Entities&lt;/h3&gt;
+
+&lt;p&gt;Each SIREN entity may have an optional class that describes the nature of the
+entity. This class defines the type of resource being returned by the API.
+Think of this as a data model for your API. By defining our response as
+returning a &lt;code&gt;player&lt;/code&gt; class the API user can immediately gain insight about the
+data being returned.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;class&amp;quot;: &amp;quot;player&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_14&#34;&gt;Properties&lt;/h3&gt;
+
+&lt;p&gt;The state of the entity is reflected as key-value pairs in a &lt;code&gt;properties&lt;/code&gt; object.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{
+    &amp;quot;class&amp;quot;: &amp;quot;player&amp;quot;,
+    &amp;quot;properties&amp;quot;: {
+        &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
+        &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+        &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
+        &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_15&#34;&gt;Links&lt;/h3&gt;
+
+&lt;p&gt;Links are used in the same sense we&amp;rsquo;ve already seen in other media types &amp;ndash;
+navigating to related resources. With SIREN links have a relation and a URL.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;class&amp;quot;: &amp;quot;player&amp;quot;,
+    &amp;quot;links&amp;quot;: [
+        { &amp;quot;rel&amp;quot;: [ &amp;quot;self&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; },
+        { &amp;quot;rel&amp;quot;: [ &amp;quot;friends&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot; }
+    ],
+    &amp;quot;properties&amp;quot;: {
+        &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
+        &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+        &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
+        &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_16&#34;&gt;Actions&lt;/h3&gt;
+
+&lt;p&gt;One of the biggest pieces missing from common Hypermedia types is the ability to
+dictate what requests can be made to alter the application state. SIREN
+facilitates this by defining &lt;code&gt;actions&lt;/code&gt; that a client can take on the given
+resource.&lt;/p&gt;
+
+&lt;p&gt;SIREN actions show the available HTTP request method and includes the URL for
+the request along with fields or variables that the URL accepts. As an example,
+our resource for listing a players friends can offer an action to add a
+friend to the list, or search for a friend.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+    &amp;quot;class&amp;quot;: &amp;quot;player&amp;quot;,
+    &amp;quot;links&amp;quot;: [
+        {&amp;quot;rel&amp;quot;: [ &amp;quot;self&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;},
+        {&amp;quot;rel&amp;quot;: [ &amp;quot;next&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends?page=2&amp;quot;}
+    ],
+    &amp;quot;actions&amp;quot;: [{
+        &amp;quot;class&amp;quot;: &amp;quot;add-friend&amp;quot;,
+        &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;,
+        &amp;quot;method&amp;quot;: &amp;quot;POST&amp;quot;,
+        &amp;quot;fields&amp;quot;: [
+            {&amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;type&amp;quot;: &amp;quot;string&amp;quot;},
+            {&amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;type&amp;quot;: &amp;quot;string&amp;quot;},
+            {&amp;quot;name&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;type&amp;quot;: &amp;quot;href&amp;quot;}
+        ]
+    }],
+    &amp;quot;properties&amp;quot;: {
+        &amp;quot;size&amp;quot;: &amp;quot;2&amp;quot;
+    },
+    &amp;quot;entities&amp;quot;: [
+        { 
+            &amp;quot;links&amp;quot;: [ 
+                {&amp;quot;rel&amp;quot;: [ &amp;quot;self&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109&amp;quot;},
+                {&amp;quot;rel&amp;quot;: [ &amp;quot;friends&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/friends&amp;quot;}
+            ],
+            &amp;quot;properties&amp;quot;: {
+                &amp;quot;playerId&amp;quot;: &amp;quot;1895638109&amp;quot;,
+                &amp;quot;name&amp;quot;: &amp;quot;Sheldon Dong&amp;quot;,
+                &amp;quot;alternateName&amp;quot;: &amp;quot;sdong&amp;quot;,
+                &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/avatar.png&amp;quot;
+            }
+        },
+        { 
+            &amp;quot;links&amp;quot;: [
+                {&amp;quot;rel&amp;quot;: [ &amp;quot;self&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509&amp;quot;},
+                {&amp;quot;rel&amp;quot;: [ &amp;quot;friends&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/friends&amp;quot; }
+            ],
+            &amp;quot;properties&amp;quot;: {
+                &amp;quot;playerId&amp;quot;: &amp;quot;8371023509&amp;quot;,
+                &amp;quot;name&amp;quot;: &amp;quot;Martin Liu&amp;quot;,
+                &amp;quot;alternateName&amp;quot;: &amp;quot;mliu&amp;quot;,
+                &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/avatar.png&amp;quot;
+            }
+        }
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_17&#34;&gt;Entities&lt;/h3&gt;
+
+&lt;p&gt;The previous example also introduces &lt;code&gt;entities&lt;/code&gt; to the response.  Any related
+entities that you wish to embed in the current representation are entered as a
+list of &lt;code&gt;entities&lt;/code&gt;. Entities are nested. Each entity in this list can have a
+class, properties and additional entities.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_18&#34;&gt;Conclusions&lt;/h2&gt;
+
+&lt;p&gt;I&amp;rsquo;ve create a &lt;a href=&#34;https://gist.github.com/soofaloofa/9350847&#34;&gt;Gist&lt;/a&gt; comparing each
+of the media types discussed in this post.&lt;/p&gt;
+
+&lt;p&gt;After going through this exercise I&amp;rsquo;ve come to a few conclusions.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_19&#34;&gt;JSON-LD&lt;/h3&gt;
+
+&lt;p&gt;JSON-LD is great for augmenting existing APIs without introducing
+breaking changes. This augmentation mostly serves as a way to self document your
+API. If you are looking to add operations to a JSON-LD response look to HYDRA.
+HYDRA adds a vocabulary for communicating using the JSON-LD specification. This
+is an interesting choice as it decouples the API serialization format from the
+communication format.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_20&#34;&gt;HAL&lt;/h3&gt;
+
+&lt;p&gt;The light weight syntax and semantics of HAL is appealing in a lot of contexts.
+HAL is a minimal representation that offers most of the benefits of using a
+hypermedia type without adding too much complexity to the implementation. One
+area where HAL falters is, like JSON-LD, the lack of support for specifying
+actions.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_21&#34;&gt;Collection+JSON&lt;/h3&gt;
+
+&lt;p&gt;Don&amp;rsquo;t be fooled by the name. Collection+JSON can be used to represent single
+items as well and it does this quite well. Of course it shines when representing
+data collections. Particularly appealing is the ability to list queries that
+your collection supports and templates that clients can use to alter your
+collection. For publishing user editable data Collection+JSON shines.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_22&#34;&gt;SIREN&lt;/h3&gt;
+
+&lt;p&gt;SIREN attempts to represent generic classes of items and overcome the main
+drawback of HAL &amp;ndash; support for actions. It does this admirably well and also
+introduces the concept of classes to your model bringing a sense of type
+information to your API responses.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_23&#34;&gt;And the winner is?&lt;/h3&gt;
+
+&lt;p&gt;Unfortunately, there is no clear winner. It depends on the contraints in place
+on your API. However, I will offer some suggestions.&lt;/p&gt;
+
+&lt;p&gt;If you are augmenting existing API responses choose JSON-LD.
+If you are keeping it simple choose HAL.
+If you are looking for a full featured media type choose Collection+JSON.&lt;/p&gt;
+
+&lt;p&gt;Did I cover all the bases? Completely miss the mark? Let me know in the
+comments!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>New Year, New Domain, New Design</title>
+      <link>http://sookocheff.com/posts/2014-01-06-new-year-new-domain-new-design</link>
+      <pubDate>Mon, 06 Jan 2014 12:13:14 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-01-06-new-year-new-domain-new-design</guid>
+      <description>&lt;p&gt;Well the New Year is upon us and I decided to take a fresh approach to this website. I&amp;rsquo;ve migrated to a new domain and re-written the site from the ground up using &lt;a href=&#34;http://docpad.org/&#34;&gt;DocPad&lt;/a&gt; and &lt;a href=&#34;http://getbootstrap.com/&#34;&gt;Bootstrap&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve migrated the existing comments (and maybe lost a few) but haven&amp;rsquo;t bothered to redirect any old posts to their new home. I&amp;rsquo;m definitely starting fresh!&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

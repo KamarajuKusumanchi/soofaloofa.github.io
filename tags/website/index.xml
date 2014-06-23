@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+      <title>Website on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
+    <link>http://sookocheff.com/tags/website/index.xml</link>
+    <language>en-us</language>
+    <author>Kevin Sookocheff</author>
+    <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Mon, 06 Jan 2014 12:13:14 UTC</updated>
+    
+    <item>
+      <title>New Year, New Domain, New Design</title>
+      <link>http://sookocheff.com/posts/2014-01-06-new-year-new-domain-new-design</link>
+      <pubDate>Mon, 06 Jan 2014 12:13:14 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-01-06-new-year-new-domain-new-design</guid>
+      <description>&lt;p&gt;Well the New Year is upon us and I decided to take a fresh approach to this website. I&amp;rsquo;ve migrated to a new domain and re-written the site from the ground up using &lt;a href=&#34;http://docpad.org/&#34;&gt;DocPad&lt;/a&gt; and &lt;a href=&#34;http://getbootstrap.com/&#34;&gt;Bootstrap&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve migrated the existing comments (and maybe lost a few) but haven&amp;rsquo;t bothered to redirect any old posts to their new home. I&amp;rsquo;m definitely starting fresh!&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -45,7 +45,7 @@ storing the result in a local representation.&lt;/p&gt;
 
 &lt;h2 id=&#34;toc_1&#34;&gt;Accessing a repository&lt;/h2&gt;
 
-&lt;p&gt;Now that we have a user we can get a repository for that user by name. To get
+&lt;p&gt;Now that we have a user we can get a repository for that user by name. To get
 the repository for this website we make a request to &lt;a href=&#34;https://developer.github.com/v3/repos/#get&#34;&gt;get a repo by
 owner&lt;/a&gt;.&lt;/p&gt;
 

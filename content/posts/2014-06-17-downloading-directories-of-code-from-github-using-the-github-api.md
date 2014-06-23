@@ -42,7 +42,7 @@ curl -u soofaloofa https://api.github.com/user
 
 ##  Accessing a repository
 
-Now that we have a user we can get a repository for that user by name. To get
+Now that we have a user we can get a repository for that user by name. To get
 the repository for this website we make a request to [get a repo by
 owner](https://developer.github.com/v3/repos/#get).
 

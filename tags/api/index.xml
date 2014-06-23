@@ -5,13 +5,10 @@
     <link>http://sookocheff.com/tags/api/index.xml</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Tue, 08 Apr 2014 16:12:14 UTC</updated>
     
     <item>
       <title>Understanding JSON Patch</title>
       <link>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</link>
-      <pubDate>Tue, 08 Apr 2014 16:12:14 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</guid>
       <description>
 
@@ -229,8 +226,6 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
     <item>
       <title>How to Version a REST API</title>
       <link>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</link>
-      <pubDate>Tue, 01 Apr 2014 14:16:18 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</guid>
       <description>
 
@@ -387,8 +382,6 @@ Users-Version: 2
     <item>
       <title>When to Use HTTP PUT and HTTP POST</title>
       <link>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</link>
-      <pubDate>Thu, 27 Mar 2014 07:23:34 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</guid>
       <description>
 
@@ -515,8 +508,6 @@ client developers.&lt;/p&gt;
     <item>
       <title>How REST Constraints Affect API Design</title>
       <link>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</link>
-      <pubDate>Wed, 19 Mar 2014 14:11:48 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</guid>
       <description>
 
@@ -651,8 +642,6 @@ resilient APIs.&lt;/p&gt;
     <item>
       <title>On choosing a hypermedia type for your API - HAL, JSON-LD, Collection&#43;JSON, SIREN, Oh My!</title>
       <link>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format</link>
-      <pubDate>Tue, 11 Mar 2014 15:15:15 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format</guid>
       <description>
 

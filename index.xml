@@ -5,13 +5,10 @@
     <link>http://sookocheff.com/index.xml</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Tue, 17 Jun 2014 13:09:42 UTC</updated>
     
     <item>
       <title>Running Multiple App Engine Modules Locally with dev_appserver.py</title>
       <link>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally</link>
-      <pubDate>Tue, 17 Jun 2014 13:09:42 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally</guid>
       <description>&lt;p&gt;The recently released &lt;a href=&#34;https://developers.google.com/appengine/docs/python/modules/&#34;&gt;App Engine Modules API&lt;/a&gt; allows developers to compartmentalize their applications into logical units that can share state using the datastore or memcache.&lt;/p&gt;
 
@@ -25,8 +22,6 @@
     <item>
       <title>Downloading directories of code from Github using the Github API</title>
       <link>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api</link>
-      <pubDate>Tue, 17 Jun 2014 06:14:23 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api</guid>
       <description>
 
@@ -199,8 +194,6 @@ find it useful!&lt;/p&gt;
     <item>
       <title>How to bypass the auto_now property option during an ndb put</title>
       <link>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</link>
-      <pubDate>Wed, 28 May 2014 05:55:48 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</guid>
       <description>&lt;p&gt;In App Engine the &lt;code&gt;auto_now&lt;/code&gt; option sets a property to the current date/time
 whenever the entity is created or updated. This is a great feature for tracking
@@ -261,8 +254,6 @@ documentation&lt;/a&gt;.&lt;/p&gt;
     <item>
       <title>App Engine MapReduce API - Part 5: Using Combiners to Reduce Data Throughput</title>
       <link>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</link>
-      <pubDate>Tue, 20 May 2014 08:54:12 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</guid>
       <description>
 
@@ -412,8 +403,6 @@ class CountCharactersPipeline(pipeline.Pipeline):
     <item>
       <title>App Engine MapReduce API - Part 4: Combining Sequential MapReduce Jobs</title>
       <link>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs</link>
-      <pubDate>Tue, 13 May 2014 10:40:38 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs</guid>
       <description>
 
@@ -536,8 +525,6 @@ execute.&lt;/p&gt;
     <item>
       <title>Installing lxml on OS X Mavericks</title>
       <link>http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks</link>
-      <pubDate>Wed, 07 May 2014 10:26:45 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks</guid>
       <description>&lt;p&gt;I recently tried installing lxml for use within an App Engine project on OS X
 Mavericks only to be hit with an error message from &lt;code&gt;clang&lt;/code&gt;.&lt;/p&gt;
@@ -561,8 +548,6 @@ add a specific flag to ingore these warnings when installing affected packages.&
     <item>
       <title>App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines</title>
       <link>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines</link>
-      <pubDate>Mon, 28 Apr 2014 21:51:22 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines</guid>
       <description>
 
@@ -877,8 +862,6 @@ class CountCharacters(webapp2.RequestHandler):
     <item>
       <title>App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml</title>
       <link>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml</link>
-      <pubDate>Tue, 22 Apr 2014 06:48:36 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml</guid>
       <description>
 
@@ -1337,8 +1320,6 @@ using MapReduce Pipelines to programmatically control your API.&lt;/p&gt;
     <item>
       <title>App Engine MapReduce API - Part 1: The Basics</title>
       <link>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</link>
-      <pubDate>Tue, 15 Apr 2014 12:09:36 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</guid>
       <description>
 
@@ -1556,8 +1537,6 @@ App Engine to process entities from the datastore.&lt;/p&gt;
     <item>
       <title>Understanding JSON Patch</title>
       <link>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</link>
-      <pubDate>Tue, 08 Apr 2014 16:12:14 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</guid>
       <description>
 
@@ -1775,8 +1754,6 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
     <item>
       <title>How to Version a REST API</title>
       <link>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</link>
-      <pubDate>Tue, 01 Apr 2014 14:16:18 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</guid>
       <description>
 
@@ -1933,8 +1910,6 @@ Users-Version: 2
     <item>
       <title>When to Use HTTP PUT and HTTP POST</title>
       <link>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</link>
-      <pubDate>Thu, 27 Mar 2014 07:23:34 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</guid>
       <description>
 
@@ -2061,8 +2036,6 @@ client developers.&lt;/p&gt;
     <item>
       <title>Stripe checkout opening in a new tab</title>
       <link>http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab</link>
-      <pubDate>Tue, 25 Mar 2014 07:23:45 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab</guid>
       <description>&lt;p&gt;At &lt;a href=&#34;http://www.vendasta.com&#34;&gt;VendAsta&lt;/a&gt; we&amp;rsquo;ve been integrating with the &lt;a href=&#34;http://stripe.com/checkout&#34;&gt;Stripe&lt;/a&gt; payment system using Stripe Checkout. The experience has been completely painless and surprisingly simple. Then came a hiccup. While demoing the new functionality we found that one particular computer in the office would open the checkout modal dialog in a new browser window. Just one laptop. It was running the same version of Chrome that we were developing on. It was running the same OS as a working test machine. But the dialog would consistently open in a new browser window on just this one laptop.&lt;/p&gt;
 
@@ -2077,8 +2050,6 @@ client developers.&lt;/p&gt;
     <item>
       <title>How REST Constraints Affect API Design</title>
       <link>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</link>
-      <pubDate>Wed, 19 Mar 2014 14:11:48 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</guid>
       <description>
 
@@ -2213,8 +2184,6 @@ resilient APIs.&lt;/p&gt;
     <item>
       <title>On choosing a hypermedia type for your API - HAL, JSON-LD, Collection&#43;JSON, SIREN, Oh My!</title>
       <link>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format</link>
-      <pubDate>Tue, 11 Mar 2014 15:15:15 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format</guid>
       <description>
 

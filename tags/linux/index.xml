@@ -5,13 +5,10 @@
     <link>http://sookocheff.com/tags/linux/index.xml</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Tue, 11 Jan 2011 06:55:12 UTC</updated>
     
     <item>
       <title>A cheap home server</title>
       <link>http://sookocheff.com/posts/2011-01-11-a-cheap-home-server</link>
-      <pubDate>Tue, 11 Jan 2011 06:55:12 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-01-11-a-cheap-home-server</guid>
       <description>&lt;p&gt;In order to have a home server you need the server.  That is, you need the hardware.  You could probably find all sorts of information comparing performance, power consumption, and cost for an assortment of different parts (check &lt;a href=&#34;http://www.tomshardware.com&#34;&gt;tomshardware.com&lt;/a&gt; or do some intense [Googling][2]).  Or, you can trust that I’ve done my research and go with the same setup as me. I started with a barebones &lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16856167037&#34;&gt;MSI Wind Nettop PC&lt;/a&gt;.  It’s small and built to be both quiet and efficient, plus it comes with a compact flash slot to house the operating system; all big wins for a home server.  Really, any bare bones PC with an Atom 330 processor or better will do. You can always check out &lt;a href=&#34;http://us.shuttle.com/&#34;&gt;Shuttle’s&lt;/a&gt; latest offerings as well. With bare bones systems you must supply your own RAM and hard drives (be careful, you may have to supply your own CPU as well).  Just be careful to get the right type of RAM for your motherboard.  I went with 2GB of &lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16820231146&#34;&gt;G.SKILL DDR2 533 Laptop Memory&lt;/a&gt;. I opted for two &lt;a href=&#34;http://&#34;&gt;Western Digital Caviar Green 1TB hard drives&lt;/a&gt;.  These drives will be used solely to house data.  Get as big a hard drive as you want/need (you can even build a two drive RAID array if you want) and a &lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16820220459&#34;&gt;Patriot 4GB Compact Flash&lt;/a&gt; card to house the operating system.  That’s it, that’s all. I won’t guide you through every piece of the component installation as there are far better resources out there already.  However, if you are following along with the exact component list I described beware of one potential snafu.  The MSI Nettop has only one hard drive bay and we ordered two drives.  However, with appropriate &lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16817994073&amp;amp;cm_re=drive_bay_adapter-_-17-994-073-_-Product&#34;&gt;5.25″ to 3.5″ drive bay adapters&lt;/a&gt; you can re-purpose the DVD tray to hold that second hard drive. Beware that the compact flash slot on this PC is positioned awkwardly and you will have to unscrew the male VGA adapter from the case in order to install the compact flash card. Lastly, since we have no DVD drive we will need to have a USB drive handy for installing the operating system. Hardware List:&lt;/p&gt;
 
@@ -39,8 +36,6 @@
     <item>
       <title>How to get Pulse Audio to recognize your Delta 44 (and other ICE1712 cards)</title>
       <link>http://sookocheff.com/posts/2010-09-28-how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards</link>
-      <pubDate>Tue, 28 Sep 2010 14:23:34 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2010-09-28-how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards</guid>
       <description>&lt;p&gt;I bought a used Delta 44 soundcard with the intention of recording my guitar playing. Pairing this with Rockit 5 powered monitors, a Mackie 802-VLZ3 mixer and the classic Shure SM57 microphone made for a good quality, inexpensive home studio. Using the PCI-based Delta 44 meant that any old computer would work and my idea was to use vanilla Ubuntu and install the Ardour digital audio workstation to push costs even further down. So far so good. Now the only issue is getting everything up and running. Ubuntu is a fairly mature distribution; you can expect a certain level of quality with each release. Unfortunately, this has not been the case with PulseAudio. I won’t go into details; suffice it to say it had a tumultuous upbringing and many of the kinks have since been worked out. Anyways, I quickly discovered that PulseAudio does not recognize the Delta 44. Don’t worry, this is a known problem and a workaround exists. Finding the workaround, however, did take some time.&lt;/p&gt;
 
@@ -187,8 +182,6 @@ skip-probe = yes
     <item>
       <title>Share multiple mt-daap libraries</title>
       <link>http://sookocheff.com/posts/2010-08-03-share-multiple-mt-daap-libraries</link>
-      <pubDate>Tue, 03 Aug 2010 18:12:34 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2010-08-03-share-multiple-mt-daap-libraries</guid>
       <description>&lt;p&gt;I recently moved all of our household music to a shared network drive and was looking for a solution to stream these libraries as distinct entities; I wanted to keep my wife’s library separate mostly so I could keep all of my painstakingly catalouged music organized exactly how I like it. I was already using mt-daapd, now known as the Firefly Media Server, to stream my own library from my Linux server. Unfortunately, it doesn’t support streaming two libraries from one program instance. The solution to this is to run two copies of mt-daapd and configure them to play nice with each other. Don’t worry, it’s not quite as difficult as it sounds. The first thing you’ll need is to have a separate configuration file for the second daap instance. The easiest way to do this is to copy the files from an existing installation.&lt;/p&gt;
 
@@ -254,8 +247,6 @@ ln -s /etc/init.d/mt-daapd-new_library_name K25mt-daapd-new_library_name
     <item>
       <title>How to forward root users mail to an external address</title>
       <link>http://sookocheff.com/posts/2010-06-01-how-to-forward-root-users-mail-to-an-external-address</link>
-      <pubDate>Tue, 01 Jun 2010 14:12:32 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2010-06-01-how-to-forward-root-users-mail-to-an-external-address</guid>
       <description>&lt;p&gt;I recently set up a RAID array wanted to keep notified of any errors that may occur. By default Ubuntu Server sends mail to the root user whenever an error occurs but logging in as root to check mail every so often didn’t seem very convenient. There had to be a better way. The best information that I found came from the Ubuntu community forums. Here I’ll expand on that discussion, hopefully helping other people who are trying to do the same thing. The traditional way to forward mail is to create a .forward file in your home directory, entering the addresses that you would like to forward mail to.&lt;/p&gt;
 
@@ -422,8 +413,6 @@ chmod 600 passwd passwd.db
     <item>
       <title>How to monitor a RAID array in Ubuntu server</title>
       <link>http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server</link>
-      <pubDate>Fri, 28 May 2010 02:15:45 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server</guid>
       <description>
 
@@ -497,8 +486,6 @@ md0 : active raid1 sdb5[1] sda5[0]&lt;br /&gt;
     <item>
       <title>Mounting SAMBA shares from the command line</title>
       <link>http://sookocheff.com/posts/2010-07-28-mounting-samba-shares-from-the-command-line</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2010-07-28-mounting-samba-shares-from-the-command-line</guid>
       <description>&lt;p&gt;I recently started using Xubuntu to see if the proclaimed speed differences actually made a difference in productivity. Unfortunately, the Thunar file manager does not automatically recognize network drives so I needed to manually mount SAMBA shares from the command line.  In my searches I stumbled across this &lt;a href=&#34;http://ubuntuforums.org/showthread.php?t=288534&#34;&gt;thread&lt;/a&gt; giving the exact solution I used.  Hopefully this helps someone else who is having this same problem.&lt;/p&gt;
 </description>

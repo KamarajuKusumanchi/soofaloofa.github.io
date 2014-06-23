@@ -5,13 +5,10 @@
     <link>http://sookocheff.com/tags/json/index.xml</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Tue, 08 Apr 2014 16:12:14 UTC</updated>
     
     <item>
       <title>Understanding JSON Patch</title>
       <link>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</link>
-      <pubDate>Tue, 08 Apr 2014 16:12:14 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</guid>
       <description>
 
@@ -229,8 +226,6 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
     <item>
       <title>On choosing a hypermedia type for your API - HAL, JSON-LD, Collection&#43;JSON, SIREN, Oh My!</title>
       <link>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format</link>
-      <pubDate>Tue, 11 Mar 2014 15:15:15 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format</guid>
       <description>
 

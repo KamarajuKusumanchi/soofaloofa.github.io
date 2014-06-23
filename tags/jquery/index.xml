@@ -5,13 +5,10 @@
     <link>http://sookocheff.com/tags/jquery/index.xml</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Wed, 18 May 2011 15:16:17 UTC</updated>
     
     <item>
       <title>Dissecting jQuery&#39;s Fade Animation</title>
       <link>http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation</link>
-      <pubDate>Wed, 18 May 2011 15:16:17 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation</guid>
       <description>&lt;p&gt;Fade animations are a standard tool in any jQuery developer’s toolbox. But how do they really work? Let’s create a small function that encapsulates solely the fade functionality and find out.&lt;/p&gt;
 

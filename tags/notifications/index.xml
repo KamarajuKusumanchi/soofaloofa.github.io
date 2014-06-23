@@ -5,13 +5,10 @@
     <link>http://sookocheff.com/tags/notifications/index.xml</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Fri, 06 May 2011 10:10:10 UTC</updated>
     
     <item>
       <title>How to Display HTML5 Notifications</title>
       <link>http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications</link>
-      <pubDate>Fri, 06 May 2011 10:10:10 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications</guid>
       <description>&lt;p&gt;Chrome recently introduced support for HTML Notifications.&lt;/p&gt;
 

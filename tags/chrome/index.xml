@@ -5,13 +5,10 @@
     <link>http://sookocheff.com/tags/chrome/index.xml</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Fri, 06 May 2011 10:10:10 UTC</updated>
     
     <item>
       <title>How to Display HTML5 Notifications</title>
       <link>http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications</link>
-      <pubDate>Fri, 06 May 2011 10:10:10 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications</guid>
       <description>&lt;p&gt;Chrome recently introduced support for HTML Notifications.&lt;/p&gt;
 
@@ -53,8 +50,6 @@ if (window.webkitNotifications &amp;amp;&amp;amp; window.webkitNotifications.che
     <item>
       <title>And the winner is - Google Chrome!</title>
       <link>http://sookocheff.com/posts/2011-01-06-and-the-winner-is-google-chrome</link>
-      <pubDate>Thu, 06 Jan 2011 15:23:34 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-01-06-and-the-winner-is-google-chrome</guid>
       <description>&lt;p&gt;Google gets it. I recently switched to Google Chrome as my primary web browser and will stick with it for one essential reason.  Speed.  Application launch speed, page loading speed, Javascript speed.  Just plain old speed. When a user opens a browser they are usually expecting to do a few things at the top of their priority list.  Check e-mail, maybe Facebook, check the news headlines and get out. In Firefox there is a significant delay between clicking on the app icon and actually beginning to browse the web.  With Chrome, application launch is almost instantaneous and the difference in user experience is immediately noticeable.  This is a huge win for me and I imagine it will be a huge win for other users who give Chrome a try. Google spends a huge amount of resources in creating efficient algorithms with minimal HTML and Javascript for their flagship products: the search engine, Gmail, and Google Docs.  This attention to efficiency is also paying dividends with Google Chrome and we will continue to see the same gains with Google Chrome OS and Android. Google gets it.&lt;/p&gt;
 </description>

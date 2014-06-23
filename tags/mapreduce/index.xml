@@ -5,13 +5,10 @@
     <link>http://sookocheff.com/tags/mapreduce/index.xml</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Tue, 20 May 2014 08:54:12 UTC</updated>
     
     <item>
       <title>App Engine MapReduce API - Part 5: Using Combiners to Reduce Data Throughput</title>
       <link>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</link>
-      <pubDate>Tue, 20 May 2014 08:54:12 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</guid>
       <description>
 
@@ -161,8 +158,6 @@ class CountCharactersPipeline(pipeline.Pipeline):
     <item>
       <title>App Engine MapReduce API - Part 4: Combining Sequential MapReduce Jobs</title>
       <link>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs</link>
-      <pubDate>Tue, 13 May 2014 10:40:38 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs</guid>
       <description>
 
@@ -285,8 +280,6 @@ execute.&lt;/p&gt;
     <item>
       <title>App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines</title>
       <link>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines</link>
-      <pubDate>Mon, 28 Apr 2014 21:51:22 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines</guid>
       <description>
 
@@ -601,8 +594,6 @@ class CountCharacters(webapp2.RequestHandler):
     <item>
       <title>App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml</title>
       <link>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml</link>
-      <pubDate>Tue, 22 Apr 2014 06:48:36 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml</guid>
       <description>
 
@@ -1061,8 +1052,6 @@ using MapReduce Pipelines to programmatically control your API.&lt;/p&gt;
     <item>
       <title>App Engine MapReduce API - Part 1: The Basics</title>
       <link>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</link>
-      <pubDate>Tue, 15 Apr 2014 12:09:36 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</guid>
       <description>
 

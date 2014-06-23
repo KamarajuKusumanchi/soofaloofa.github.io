@@ -2,10 +2,8 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Readability on Kevin Sookocheff </title>
-      <generator uri="https://hugo.spf13.com">Hugo</generator>
     <link>http://sookocheff.com/tags/readability/index.xml</link>
     <language>en-us</language>
-    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <updated>Sat, 04 Sep 2010 13:13:13 UTC</updated>
     

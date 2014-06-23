@@ -2,10 +2,8 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Version-Control on Kevin Sookocheff </title>
-      <generator uri="https://hugo.spf13.com">Hugo</generator>
     <link>http://sookocheff.com/tags/version-control/index.xml</link>
     <language>en-us</language>
-    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <updated>Mon, 08 Oct 2012 09:11:18 UTC</updated>
     

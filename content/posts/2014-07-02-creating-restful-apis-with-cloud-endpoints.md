@@ -10,9 +10,9 @@ tags:
 ---
 
 [App Engine Cloud
-Endpoints](https://developers.google.com/appengine/docs/python/endpoints/) can
-is a great way to quickly and easily create JSON API endpoints. What's not clear
-is how to structure your `Message` code to support a RESTful
+Endpoints](https://developers.google.com/appengine/docs/python/endpoints/) is a
+great way to quickly and easily create JSON API endpoints. What's not clear is
+how to structure your `Message` code to support a RESTful
 create-read-update-delete (CRUD) API. This article will show the basic CRUD
 operations for one Resource. The results can easily be adapted to support a full
 REST API.
@@ -39,7 +39,7 @@ HTTP PUT /users/{id}
 HTTP DELETE /users/{id}
 ```
 
-Given our model we can define a basic Cloud Endpoints message representing a `User`.
+Given this model we can define a basic Cloud Endpoints message representing a `User`.
 
 ```python
 class UserMessage(messages.Message):
@@ -48,7 +48,7 @@ class UserMessage(messages.Message):
     username = messages.StringField(3)
 ```
 
-Now we can write the **C** (create) portion of our CRUD API using HTTP POST
+Now we can write the **C** (create) portion of the CRUD API using HTTP POST
 and a `ResourceContainer` to hold the message we wish to submit to the API.
 
 ```python
@@ -67,13 +67,13 @@ def create(self, request):
     return user.to_message()
 ```
 
-Similarly we can define our **R** (read) portion of the API using an HTTP GET
+Similarly we can define the **R** (read) portion of the API using an HTTP GET
 method. To parameterize our cloud endpoint we need to add the parameter to our
 `ResourceContainer`. I'll call it `id` here. The actual message type is
 `VoidMessage` because we are not passing any information in our request to the
 API endpoint other than the `id` parameter.
 
-Our response simply gets the entity from the datastore and returns it as a
+The response retrieves the entity from the datastore and returns it as a
 message.
 
 ```python

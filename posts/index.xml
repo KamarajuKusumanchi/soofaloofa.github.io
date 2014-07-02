@@ -2,13 +2,165 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Posts on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
     <link>http://sookocheff.com/posts/index.xml</link>
     <language>en-us</language>
+    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Wed, 02 Jul 2014 06:14:23 UTC</updated>
+    
+    <item>
+      <title>Creating RESTful APIs with App Engine Cloud Endpoints</title>
+      <link>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints</link>
+      <pubDate>Wed, 02 Jul 2014 06:14:23 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://developers.google.com/appengine/docs/python/endpoints/&#34;&gt;App Engine Cloud
+Endpoints&lt;/a&gt; can
+is a great way to quickly and easily create JSON API endpoints. What&amp;rsquo;s not clear
+is how to structure your &lt;code&gt;Message&lt;/code&gt; code to support a RESTful
+create-read-update-delete (CRUD) API. This article will show the basic CRUD
+operations for one Resource. The results can easily be adapted to support a full
+REST API.&lt;/p&gt;
+
+&lt;p&gt;To support this discussion let&amp;rsquo;s use a concrete resource for our API &amp;ndash; a &lt;code&gt;User&lt;/code&gt;
+resource. We can give our &lt;code&gt;User&lt;/code&gt; model a few simple attributes.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34;&gt;
+&lt;img src=&#34;/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34; alt=&#34;Player Resource&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;A CRUD API for this resource would support a URL structure and HTTP verbs
+for each operation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;# Create a new user
+HTTP POST /users/
+
+# Read a user by id
+HTTP GET /users/{id}
+
+# Update a user by id
+HTTP PUT /users/{id}
+
+# Delete a user by id
+HTTP DELETE /users/{id}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Given our model we can define a basic Cloud Endpoints message representing a &lt;code&gt;User&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class UserMessage(messages.Message):
+    id = messages.StringField(1)
+    email = messages.StringField(2)
+    username = messages.StringField(3)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we can write the &lt;strong&gt;C&lt;/strong&gt; (create) portion of our CRUD API using HTTP POST
+and a &lt;code&gt;ResourceContainer&lt;/code&gt; to hold the message we wish to submit to the API.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;POST_RESOURCE = endpoints.ResourceContainer(UserMessage)
+
+...
+
+@endpoints.method(POST_RESOURCE,
+                  UserMessage,
+                  path=&#39;/users&#39;,
+                  http_method=&#39;POST&#39;,
+                  name=&#39;users.create&#39;)
+def create(self, request):
+    user = User(username=request.username, email=request.email)
+    user.put()
+    return user.to_message()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Similarly we can define our &lt;strong&gt;R&lt;/strong&gt; (read) portion of the API using an HTTP GET
+method. To parameterize our cloud endpoint we need to add the parameter to our
+&lt;code&gt;ResourceContainer&lt;/code&gt;. I&amp;rsquo;ll call it &lt;code&gt;id&lt;/code&gt; here. The actual message type is
+&lt;code&gt;VoidMessage&lt;/code&gt; because we are not passing any information in our request to the
+API endpoint other than the &lt;code&gt;id&lt;/code&gt; parameter.&lt;/p&gt;
+
+&lt;p&gt;Our response simply gets the entity from the datastore and returns it as a
+message.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,
+                                          id=messages.StringField(1,
+                                                                  variant=messages.Variant.STRING,
+                                                                  required=True))
+
+...
+
+@endpoints.method(ID_RESOURCE,
+                  UserMessage,
+                  http_method=&#39;GET&#39;,
+                  path=&#39;users/{id}&#39;,
+                  name=&#39;users.read&#39;)
+def read(self, request):
+    entity = User.get_by_id(request.id)
+    if not entity:
+        message = &#39;No User with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
+        raise endpoints.NotFoundException(message)
+
+    return entity.to_message()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;strong&gt;U&lt;/strong&gt; (update) operation uses a similar parameterized &lt;code&gt;ResourceContainer&lt;/code&gt; to
+access a User given an id. We augment this request with the &lt;code&gt;UserMessage&lt;/code&gt; which
+defines the content of the body of the message. The endpoint takes the content
+of the message and updates the entity with that content.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;PUT_RESOURCE = endpoints.ResourceContainer(UserMessage,
+                                           id=messages.StringField(1,
+                                                                   variant=messages.Variant.STRING,
+                                                                   required=True))
+
+...
+
+@endpoints.method(PUT_RESOURCE,
+                  UserMessage,
+                  http_method=&#39;PUT&#39;,
+                  path=&#39;users/{id}&#39;,
+                  name=&#39;users.update&#39;)
+def update(self, request):
+    entity = User.update_from_message(request.id, request)
+    if not entity:
+        message = &#39;No User with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
+        raise endpoints.NotFoundException(message)
+
+    return entity.to_message()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Lastly, the &lt;strong&gt;D&lt;/strong&gt; (delete) endpoint takes an identifier which we have previously
+defined as &lt;code&gt;ID_RESOURCE&lt;/code&gt;. The endpoint deletes the entity referred to by that
+identifier and returns a &lt;code&gt;VoidMessage&lt;/code&gt; which is converted to an &lt;code&gt;HTTP 204 No
+Content&lt;/code&gt; response by the cloud endpoints API.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@endpoints.method(ID_RESOURCE,
+                  message_types.VoidMessage,
+                  http_method=&#39;DELETE&#39;,
+                  path=&#39;users/{id}&#39;,
+                  name=&#39;users.delete&#39;)
+def delete(self, request):
+    entity = User.get_by_id(request.id)
+    if not entity:
+        message = &#39;No User with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
+        raise endpoints.NotFoundException(message)
+
+    entity.key.delete()
+    return message_types.VoidMessage()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This basic pattern can be used with any resource that your API wishes to
+support and gives a basic pattern with which to build out your full API.&lt;/p&gt;
+
+&lt;p&gt;If you have any questions please send me an email or let me know in the
+comments!&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Running Multiple App Engine Modules Locally with dev_appserver.py</title>
       <link>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally</link>
+      <pubDate>Tue, 17 Jun 2014 13:09:42 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally</guid>
       <description>&lt;p&gt;The recently released &lt;a href=&#34;https://developers.google.com/appengine/docs/python/modules/&#34;&gt;App Engine Modules API&lt;/a&gt; allows developers to compartmentalize their applications into logical units that can share state using the datastore or memcache.&lt;/p&gt;
 
@@ -22,6 +174,8 @@
     <item>
       <title>Downloading directories of code from Github using the Github API</title>
       <link>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api</link>
+      <pubDate>Tue, 17 Jun 2014 06:14:23 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api</guid>
       <description>
 
@@ -194,6 +348,8 @@ find it useful!&lt;/p&gt;
     <item>
       <title>How to bypass the auto_now property option during an ndb put</title>
       <link>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</link>
+      <pubDate>Wed, 28 May 2014 05:55:48 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</guid>
       <description>&lt;p&gt;In App Engine the &lt;code&gt;auto_now&lt;/code&gt; option sets a property to the current date/time
 whenever the entity is created or updated. This is a great feature for tracking
@@ -254,6 +410,8 @@ documentation&lt;/a&gt;.&lt;/p&gt;
     <item>
       <title>App Engine MapReduce API - Part 5: Using Combiners to Reduce Data Throughput</title>
       <link>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</link>
+      <pubDate>Tue, 20 May 2014 08:54:12 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</guid>
       <description>
 
@@ -403,6 +561,8 @@ class CountCharactersPipeline(pipeline.Pipeline):
     <item>
       <title>App Engine MapReduce API - Part 4: Combining Sequential MapReduce Jobs</title>
       <link>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs</link>
+      <pubDate>Tue, 13 May 2014 10:40:38 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs</guid>
       <description>
 
@@ -525,6 +685,8 @@ execute.&lt;/p&gt;
     <item>
       <title>Installing lxml on OS X Mavericks</title>
       <link>http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks</link>
+      <pubDate>Wed, 07 May 2014 10:26:45 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks</guid>
       <description>&lt;p&gt;I recently tried installing lxml for use within an App Engine project on OS X
 Mavericks only to be hit with an error message from &lt;code&gt;clang&lt;/code&gt;.&lt;/p&gt;
@@ -548,6 +710,8 @@ add a specific flag to ingore these warnings when installing affected packages.&
     <item>
       <title>App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines</title>
       <link>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines</link>
+      <pubDate>Mon, 28 Apr 2014 21:51:22 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines</guid>
       <description>
 
@@ -862,6 +1026,8 @@ class CountCharacters(webapp2.RequestHandler):
     <item>
       <title>App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml</title>
       <link>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml</link>
+      <pubDate>Tue, 22 Apr 2014 06:48:36 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml</guid>
       <description>
 
@@ -1320,6 +1486,8 @@ using MapReduce Pipelines to programmatically control your API.&lt;/p&gt;
     <item>
       <title>App Engine MapReduce API - Part 1: The Basics</title>
       <link>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</link>
+      <pubDate>Tue, 15 Apr 2014 12:09:36 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</guid>
       <description>
 
@@ -1537,6 +1705,8 @@ App Engine to process entities from the datastore.&lt;/p&gt;
     <item>
       <title>Understanding JSON Patch</title>
       <link>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</link>
+      <pubDate>Tue, 08 Apr 2014 16:12:14 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</guid>
       <description>
 
@@ -1754,6 +1924,8 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
     <item>
       <title>How to Version a REST API</title>
       <link>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</link>
+      <pubDate>Tue, 01 Apr 2014 14:16:18 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</guid>
       <description>
 
@@ -1910,6 +2082,8 @@ Users-Version: 2
     <item>
       <title>When to Use HTTP PUT and HTTP POST</title>
       <link>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</link>
+      <pubDate>Thu, 27 Mar 2014 07:23:34 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</guid>
       <description>
 
@@ -2036,6 +2210,8 @@ client developers.&lt;/p&gt;
     <item>
       <title>Stripe checkout opening in a new tab</title>
       <link>http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab</link>
+      <pubDate>Tue, 25 Mar 2014 07:23:45 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab</guid>
       <description>&lt;p&gt;At &lt;a href=&#34;http://www.vendasta.com&#34;&gt;VendAsta&lt;/a&gt; we&amp;rsquo;ve been integrating with the &lt;a href=&#34;http://stripe.com/checkout&#34;&gt;Stripe&lt;/a&gt; payment system using Stripe Checkout. The experience has been completely painless and surprisingly simple. Then came a hiccup. While demoing the new functionality we found that one particular computer in the office would open the checkout modal dialog in a new browser window. Just one laptop. It was running the same version of Chrome that we were developing on. It was running the same OS as a working test machine. But the dialog would consistently open in a new browser window on just this one laptop.&lt;/p&gt;
 
@@ -2050,6 +2226,8 @@ client developers.&lt;/p&gt;
     <item>
       <title>How REST Constraints Affect API Design</title>
       <link>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</link>
+      <pubDate>Wed, 19 Mar 2014 14:11:48 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</guid>
       <description>
 
@@ -2178,902 +2356,6 @@ scalable and resilient nature.&lt;/p&gt;
 
 &lt;p&gt;By designing our APIs with the REST constraints we can build scalable and
 resilient APIs.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>On choosing a hypermedia type for your API - HAL, JSON-LD, Collection&#43;JSON, SIREN, Oh My!</title>
-      <link>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format</link>
-      <guid>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format</guid>
-      <description>
-
-&lt;p&gt;In recent years REST has been at the forefront of modern API
-design. This has led to APIs with manageable URLs that respect the HTTP verbs
-(GET, POST, PUT &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616.html&#34;&gt;and the
- rest&lt;/a&gt;), producing an
-intuitive model for client developers. Unfortunately, there are two problems
-that REST doesn&amp;rsquo;t solve alone.&lt;/p&gt;
-
-&lt;p&gt;The first problem is standardized responses. Most every enterprise has defined
-their own custom API format, usually a JSON response that maps neatly to their
-own data model. A Facebook API client cannot communicate with a Twitter API and
-vice versa. This leads to a proliferation of API clients that do almost &amp;ndash; but
-not quite &amp;ndash; the same thing. Duplication of effort abounds.&lt;/p&gt;
-
-&lt;p&gt;The second problem is linking. As the &lt;a href=&#34;https://www.w3.org/TR/json-ld/#basic-concepts&#34;&gt;W3C puts it&lt;/a&gt;:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;JSON has no built-in support for hyperlinks, which are a fundamental building
-block on the Web.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The drawback of this is that two API endpoints are only linked together by API
-documentation. As a user you are forced to scour through walls of API
-documentation to understand the relationships between API endpoints and grasp
-exactly what actions you can and cannot take against a given resource.&lt;/p&gt;
-
-&lt;p&gt;To solve these problems we can look at how we structure our API responses. By
-using &lt;em&gt;hypermedia&lt;/em&gt; in our responses we can offer links between API endpoints and
-documentation, potential actions, and related endpoints. This allows for
-&lt;em&gt;discoverable&lt;/em&gt; APIs where it is clear from the API response the set of next
-actions that a client may want to take. Furthermore, by &lt;em&gt;standardizing&lt;/em&gt; on a
-hypermedia type clients developed for one API can understand the format of
-another API and communicate with minimal duplicated effort.&lt;/p&gt;
-
-&lt;p&gt;In this post I will evaluate a few mature hypermedia types for APIs,
-offering a side-by-side comparison of their strengths and weaknesses. If you
-are impatient for the final result you can &lt;a href=&#34;https://gist.github.com/soofaloofa/9350847&#34;&gt;jump straight to the code&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_0&#34;&gt;The Model&lt;/h2&gt;
-
-&lt;p&gt;To drive this discussion let&amp;rsquo;s use a hypothetical API for managing a &lt;code&gt;Player&lt;/code&gt;
-resource derived from the &lt;a href=&#34;https://developer.apple.com/library/ios/documentation/GameKit/Reference/GKPlayer_Ref/Reference/Reference.html#//apple_ref/occ/cl/GKPlayer&#34;&gt;&lt;code&gt;GKPlayer&lt;/code&gt;
-class&lt;/a&gt;
-used by Apple&amp;rsquo;s GameCenter API. The &lt;code&gt;Player&lt;/code&gt; resource can be expressed with this
-simple diagram.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;/img/2014-02-06-on-choosing-a-hypermedia-format/player-model.png&#34; alt=&#34;PlayerResource&#34; title=&#34;Player Resource&#34; /&gt;
-&lt;/p&gt;
-
-&lt;p&gt;Representing this as a typical JSON response would yield something like the
-following.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
-    &amp;quot;alias&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
-    &amp;quot;displayName&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-    &amp;quot;profilePhotoUrl&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And the list of this player&amp;rsquo;s friends could be retrieved with a separate API call.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;[
-{
-    &amp;quot;playerId&amp;quot;: &amp;quot;1895638109&amp;quot;,
-    &amp;quot;alias&amp;quot;: &amp;quot;sdong&amp;quot;,
-    &amp;quot;displayName&amp;quot;: &amp;quot;Sheldon Dong&amp;quot;,
-    &amp;quot;profilePhotoUrl&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/avatar.png&amp;quot;
-},
-{
-    &amp;quot;playerId&amp;quot;: &amp;quot;8371023509&amp;quot;,
-    &amp;quot;alias&amp;quot;: &amp;quot;mliu&amp;quot;,
-    &amp;quot;displayName&amp;quot;: &amp;quot;Martin Liu&amp;quot;,
-    &amp;quot;profilePhotoUrl&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/avatar.png&amp;quot;
-}
-]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Let&amp;rsquo;s take a look at how this API can be represented using hypermedia types.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_1&#34;&gt;JSON-LD&lt;/h2&gt;
-
-&lt;p&gt;We&amp;rsquo;ll start by looking at JSON for Linked Documents (JSON-LD). JSON-LD is a well
-supported media type endorsed by the &lt;a href=&#34;https://www.w3.org&#34;&gt;World Wide Web
-Consortium&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;The selling point of JSON-LD is that you can adopt the standard without
-introducing breaking changes to your API. The syntax is designed to not disturb
-already deployed systems and to provide a smooth migration path from JSON to
-JSON with added semantics.&lt;/p&gt;
-
-&lt;p&gt;JSON-LD introduces keywords that augment an existing response with additional
-information. The most important augmentation is the &lt;em&gt;context&lt;/em&gt;. A context in
-JSON-LD defines a set of terms that are scoped and valid within the
-representation being discussed. A context is assigned to a JSON response using
-the &lt;code&gt;@context&lt;/code&gt; keyword.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-  &amp;quot;@context&amp;quot;: {}
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Within the context properties are assigned to a URL that provides documentation
-about the meaning of that property.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;@context&amp;quot;: {
-        &amp;quot;displayName&amp;quot;: &amp;quot;https://schema.org/name&amp;quot;
-    },
-    &amp;quot;displayName&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;It&amp;rsquo;s a good idea to use standard naming for our APIs so we can go ahead and
-rename &lt;code&gt;displayName&lt;/code&gt; to &lt;code&gt;name&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;@context&amp;quot;: {
-        &amp;quot;name&amp;quot;: &amp;quot;https://schema.org/name&amp;quot;
-    },
-    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;At this point we have an unambiguous definition of what the property &lt;code&gt;name&lt;/code&gt;
-means within the API response by visiting &lt;code&gt;https://schema.org/name&lt;/code&gt; to read the
-semantics of this property. We can go further and add context to the rest of the
-properties. To be consistent with existent naming we will change
-&lt;code&gt;profilePhotoUrl&lt;/code&gt; to &lt;code&gt;image&lt;/code&gt; and &lt;code&gt;alias&lt;/code&gt; to &lt;code&gt;alternateName&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;@context&amp;quot;: {
-        &amp;quot;name&amp;quot;: &amp;quot;https://schema.org/name&amp;quot;,
-        &amp;quot;alternateName&amp;quot;: &amp;quot;https://schema.org/alternateName&amp;quot;,
-        &amp;quot;image&amp;quot;: {
-            &amp;quot;@id&amp;quot;: &amp;quot;https://schema.org/image&amp;quot;,
-            &amp;quot;@type&amp;quot;: &amp;quot;@id&amp;quot;
-        }
-    },
-    &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot;,
-    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
-    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-    &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
-    &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;In this example we&amp;rsquo;ve added the &lt;code&gt;@id&lt;/code&gt; annotation. &lt;code&gt;@id&lt;/code&gt; signifies &lt;em&gt;identifiers&lt;/em&gt;.
-Identifiers allow unique external references to any resource, providing similar
-semantcis to URLs. In JSON-LD terminology every distinct resource is a node in
-the JSON-LD graph. These distinct nodes should have identifiers that can be used
-to retrieve a representation of that node.&lt;/p&gt;
-
-&lt;p&gt;The last element from our model that is missing from our JSON-LD response is the
-list of friends. With JSON-LD unordered lists can be specified using simple
-array notation.  In this example we will represent friends by the identifiers
-that point to their resources. An HTTP GET request to those URLs would return
-the full representation of each friend.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;@context&amp;quot;: {
-        &amp;quot;name&amp;quot;: &amp;quot;https://schema.org/name&amp;quot;,
-        &amp;quot;alternateName&amp;quot;: &amp;quot;https://schema.org/alternateName&amp;quot;,
-        &amp;quot;image&amp;quot;: {
-            &amp;quot;@id&amp;quot;: &amp;quot;https://schema.org/image&amp;quot;,
-            &amp;quot;@type&amp;quot;: &amp;quot;@id&amp;quot;
-        },
-        &amp;quot;friends&amp;quot;: {
-            &amp;quot;@container&amp;quot;: &amp;quot;@set&amp;quot;
-         }
-    },
-    &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot;,
-    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
-    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-    &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
-    &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;,
-    &amp;quot;friends&amp;quot;: [ 
-        {
-            &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/1895638109&amp;quot;
-        },
-        {
-            &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/8371023509&amp;quot;
-        }
-    ]
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This gives us the representation of our &lt;code&gt;Player&lt;/code&gt; resource in JSON-LD. This
-example doesn&amp;rsquo;t cover all of JSON-LD but should give you a flavour of how the
-format can be used.&lt;/p&gt;
-
-&lt;p&gt;Thanks to &lt;a href=&#34;https://twitter.com/markuslanthaler&#34;&gt;Markus Lanthaler&lt;/a&gt; for offering
-suggestions on how to simplify this even more. In this example we define a
-&lt;code&gt;@vocab&lt;/code&gt; for our context that encompasses the terms that we use within our
-response. Our list of friends is provided as a simple link to a separate
-endpoint.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;{
-    &amp;quot;@context&amp;quot;: {
-        &amp;quot;@vocab&amp;quot;: &amp;quot;https://schema.org/&amp;quot;,
-        &amp;quot;image&amp;quot;: { &amp;quot;@type&amp;quot;: &amp;quot;@id&amp;quot; },
-        &amp;quot;friends&amp;quot;: { &amp;quot;@type&amp;quot;: &amp;quot;@id&amp;quot; }
-    },
-    &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot;,
-    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
-    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-    &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
-    &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;,
-    &amp;quot;friends&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;If you want to dive fully into JSON-LD you can always read
-the &lt;a href=&#34;https://www.w3.org/TR/json-ld/&#34;&gt;specification&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;JSON-LD lacks support for specifying the actions you can take on a resource. To
-address this short-coming &lt;a href=&#34;http://www.markus-lanthaler.com/hydra/&#34;&gt;HYDRA&lt;/a&gt;
-provides a vocabulary allowing client-server communication using the JSON-LD
-message format.&lt;/p&gt;
-
-&lt;p&gt;To specify the actions available on a resource we would use the &lt;code&gt;operation&lt;/code&gt;
-property.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;@context&amp;quot;: [
-        &amp;quot;http://www.w3.org/ns/hydra/core&amp;quot;,
-        {
-            &amp;quot;@vocab&amp;quot;: &amp;quot;https://schema.org/&amp;quot;,
-            &amp;quot;image&amp;quot;: { &amp;quot;@type&amp;quot;: &amp;quot;@id&amp;quot; },
-            &amp;quot;friends&amp;quot;: { &amp;quot;@type&amp;quot;: &amp;quot;@id&amp;quot; }
-        }
-    ],
-    &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;,
-    &amp;quot;operation&amp;quot;: {
-        &amp;quot;@type&amp;quot;: &amp;quot;BefriendAction&amp;quot;,
-        &amp;quot;method&amp;quot;: &amp;quot;POST&amp;quot;,
-        &amp;quot;expects&amp;quot;: {
-            &amp;quot;@id&amp;quot;: &amp;quot;http://schema.org/Person&amp;quot;,
-            &amp;quot;supportedProperty&amp;quot;: [
-                { &amp;quot;property&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;range&amp;quot;: &amp;quot;Text&amp;quot; },
-                { &amp;quot;property&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;range&amp;quot;: &amp;quot;Text&amp;quot; },
-                { &amp;quot;property&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;range&amp;quot;: &amp;quot;URL&amp;quot; }
-            ]
-        }
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The &lt;code&gt;operation&lt;/code&gt; property defines a &lt;code&gt;method&lt;/code&gt; term that specifies the HTTP method
-that the endpoint allows. HYDRA also provides a template of the expected
-properties and their data types. In our example a POST request to
-&lt;code&gt;https://api.example.com/player/1234567890/friends&lt;/code&gt; (the resource&amp;rsquo;s URL) will
-add a new friend to our user&amp;rsquo;s friend list.&lt;/p&gt;
-
-&lt;p&gt;HYDRA also provides a &lt;code&gt;member&lt;/code&gt; property that allows us to embed additional
-resources within our current representations. In the following example we embed
-our friends directly within the resource as a list.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;GET https://api.example.com/player/1234567890/friends
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;{
-    &amp;quot;@context&amp;quot;: [
-        &amp;quot;http://www.w3.org/ns/hydra/core&amp;quot;,
-        {
-            &amp;quot;@vocab&amp;quot;: &amp;quot;https://schema.org/&amp;quot;,
-            &amp;quot;image&amp;quot;: { &amp;quot;@type&amp;quot;: &amp;quot;@id&amp;quot; },
-            &amp;quot;friends&amp;quot;: { &amp;quot;@type&amp;quot;: &amp;quot;@id&amp;quot; }
-        }
-    ],
-    &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;,
-    &amp;quot;operation&amp;quot;: {
-        &amp;quot;@type&amp;quot;: &amp;quot;BefriendAction&amp;quot;,
-        &amp;quot;method&amp;quot;: &amp;quot;POST&amp;quot;,
-        &amp;quot;expects&amp;quot;: {
-            &amp;quot;@id&amp;quot;: &amp;quot;http://schema.org/Person&amp;quot;,
-            &amp;quot;supportedProperty&amp;quot;: [
-                { &amp;quot;property&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;range&amp;quot;: &amp;quot;Text&amp;quot; },
-                { &amp;quot;property&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;range&amp;quot;: &amp;quot;Text&amp;quot; },
-                { &amp;quot;property&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;range&amp;quot;: &amp;quot;URL&amp;quot; }
-            ]
-        }
-    },
-    &amp;quot;member&amp;quot;: [
-            {
-                &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/1895638109&amp;quot;,
-                &amp;quot;name&amp;quot;: &amp;quot;Sheldon Dong&amp;quot;,
-                &amp;quot;alternateName&amp;quot;: &amp;quot;sdong&amp;quot;,
-                &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/avatar.png&amp;quot;,
-                &amp;quot;friends&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/friends&amp;quot;
-            },
-            {
-                &amp;quot;@id&amp;quot;: &amp;quot;https://api.example.com/player/8371023509&amp;quot;,
-                &amp;quot;name&amp;quot;: &amp;quot;Martin Liu&amp;quot;,
-                &amp;quot;alternateName&amp;quot;: &amp;quot;mliu&amp;quot;,
-                &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/avatar.png&amp;quot;,
-                &amp;quot;friends&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/friends&amp;quot;
-            }
-        ],
-    &amp;quot;nextPage&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends?page=2&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We&amp;rsquo;ve also added a &lt;code&gt;nextPage&lt;/code&gt; property which is a property defined by HYDRA for
-paged collections. For more details on HYDRA&amp;rsquo;s reserved properties you can read
-the full
-&lt;a href=&#34;http://www.markus-lanthaler.com/hydra/spec/latest/core/#properties&#34;&gt;documentation&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_2&#34;&gt;HAL&lt;/h2&gt;
-
-&lt;p&gt;HAL is a lightweight media type that uses the idea of &lt;em&gt;Resources&lt;/em&gt; and &lt;em&gt;Links&lt;/em&gt; to
-model your JSON responses. &lt;em&gt;Resources&lt;/em&gt; can contain &lt;em&gt;State&lt;/em&gt; defined by key-value
-pairs of data, &lt;em&gt;Links&lt;/em&gt; leading to additional resources and &lt;em&gt;Embedded Resources&lt;/em&gt;
-which are children of the current resource embedded in the representation for
-convenience.&lt;/p&gt;
-
-&lt;p&gt;HAL is simple to use and easy to understand. These virtues have lead HAL to
-become one of the leading hypermedia types in modern APIs.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_3&#34;&gt;State&lt;/h3&gt;
-
-&lt;p&gt;State is the traditional JSON key-value pairs defining the current state of the
-resource.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
-    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-    &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
-    &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_4&#34;&gt;Links&lt;/h3&gt;
-
-&lt;p&gt;Links in HAL are identified as a JSON object named &lt;code&gt;_links&lt;/code&gt;. Keys within
-&lt;code&gt;_links&lt;/code&gt; are the name of the link and should describe the relationship between
-the current resource and the link. At a minimum the &lt;code&gt;_links&lt;/code&gt; property should
-contain a &lt;code&gt;self&lt;/code&gt; entry pointing to the current resource.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;_links&amp;quot;: {
-        &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; }
-    },
-    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
-    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-    &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
-    &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We can easily add a link to the &lt;code&gt;Friends&lt;/code&gt; resource which can be used to retrieve
-the full list.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-
-    &amp;quot;_links&amp;quot;: {
-        &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; },
-        &amp;quot;friends&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot; }
-    },
-    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
-    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-    &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
-    &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_5&#34;&gt;Embedded Resources&lt;/h3&gt;
-
-&lt;p&gt;Making a GET request to the &lt;code&gt;Friends&lt;/code&gt; link would return a full list of
-&lt;code&gt;Player&lt;/code&gt; resources. Each &lt;code&gt;Player&lt;/code&gt; returned is embedded in the representation
-as an &lt;em&gt;Embedded Resource&lt;/em&gt;. &lt;em&gt;Embedded Resources&lt;/em&gt; augment the current resource
-state with additional, related resources. These resources are provided as a
-convenience to the client application and can be easily used to represent a
-list of items.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;_links&amp;quot;: {
-        &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot; },
-        &amp;quot;next&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends?page=2&amp;quot; }
-    },
-    &amp;quot;size&amp;quot;: &amp;quot;2&amp;quot;,
-    &amp;quot;_embedded&amp;quot;: { 
-        &amp;quot;player&amp;quot;: [
-            { 
-                &amp;quot;_links&amp;quot;: { 
-                    &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109&amp;quot; },
-                    &amp;quot;friends&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/friends&amp;quot; }
-                },
-                &amp;quot;playerId&amp;quot;: &amp;quot;1895638109&amp;quot;,
-                &amp;quot;name&amp;quot;: &amp;quot;Sheldon Dong&amp;quot;,
-                &amp;quot;alternateName&amp;quot;: &amp;quot;sdong&amp;quot;,
-                &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/avatar.png&amp;quot;
-            },
-            { 
-                &amp;quot;_links&amp;quot;: { 
-                    &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509&amp;quot; },
-                    &amp;quot;friends&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/friends&amp;quot; }
-                },
-                &amp;quot;playerId&amp;quot;: &amp;quot;8371023509&amp;quot;,
-                &amp;quot;name&amp;quot;: &amp;quot;Martin Liu&amp;quot;,
-                &amp;quot;alternateName&amp;quot;: &amp;quot;mliu&amp;quot;,
-                &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/avatar.png&amp;quot;
-            }
-        ]
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;In this response we&amp;rsquo;ve added a &lt;code&gt;next&lt;/code&gt; link to represent a paged collection and
-provide a reference to get the next set of friends in the list. The embedded
-resources are a list contained within the &lt;code&gt;player&lt;/code&gt; property.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_6&#34;&gt;Curies&lt;/h3&gt;
-
-&lt;p&gt;An important point about HAL is that each link relation points to a URL with
-documentation about that relation. This makes the API discoverable by always
-providing documentation about the links available from the current resource. In
-the next example a URL for &lt;code&gt;friends&lt;/code&gt; points to documentation about that resource.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;_links&amp;quot;: {
-        &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; },
-        &amp;quot;https://api.example.com/docs/rels/friends&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot; }
-    },
-    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
-    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-    &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
-    &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Since URLs are long and unwieldy, HAL provides &lt;code&gt;curies&lt;/code&gt;. &lt;code&gt;Curies&lt;/code&gt; are a reserved
-link relation acting as a base URL that is expanded upon by each term. In this
-example we will define a &lt;code&gt;curie&lt;/code&gt; &lt;code&gt;ex&lt;/code&gt; that references the &lt;code&gt;URI&lt;/code&gt;
-&lt;code&gt;https://api.example.com/docs/rels/{rel}&lt;/code&gt;. &lt;code&gt;Curies&lt;/code&gt; are expanded by postfixing
-the curie name with a &lt;code&gt;:&lt;/code&gt; followed by the name of the resource.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;_links&amp;quot;: {
-        &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; },
-        &amp;quot;curies&amp;quot;: [{ &amp;quot;name&amp;quot;: &amp;quot;ex&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/docs/rels/{rel}&amp;quot;, &amp;quot;templated&amp;quot;: true }],
-        &amp;quot;ex:friends&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot; }
-    },
-    &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
-    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-    &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
-    &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;HAL&amp;rsquo;s lightweight syntax and model make it a popular choice for API developers
-and users. For more information on HAL you can refer to the draft standard that
-has been submitted to the &lt;a href=&#34;https://tools.ietf.org/html/draft-kelly-json-hal-06&#34;&gt;Network Working
-Group&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_7&#34;&gt;Collection+JSON&lt;/h2&gt;
-
-&lt;p&gt;The Collection+JSON standard is a media type that standardizes the reading,
-writing and querying of items in a collection. Although geared to handling
-collections, by representing a single item as a collection of one element,
-Collection+JSON can elegantly handle most API responses.&lt;/p&gt;
-
-&lt;p&gt;At a minimum a Collection+JSON response must contain a &lt;code&gt;collection&lt;/code&gt; object with
-a &lt;code&gt;version&lt;/code&gt; and a URI pointing to itself.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;collection&amp;quot;: {
-        &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
-        &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot;
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_8&#34;&gt;Returning Data&lt;/h3&gt;
-
-&lt;p&gt;Typically, the response would include a list of items in the collection. For a
-single resource, this collection would be a list of a single element. The
-properties of each element are given by explicit name/value pairs within a
-&lt;code&gt;data&lt;/code&gt; attribute as in the following example.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;collection&amp;quot;: {
-        &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
-        &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player&amp;quot;,
-        &amp;quot;items&amp;quot;: [
-            {
-                &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot;,
-                &amp;quot;data&amp;quot;: [
-                      { &amp;quot;name&amp;quot;: &amp;quot;playerId&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;1234567890&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Identifier&amp;quot; },
-                      { &amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Full Name&amp;quot; },
-                      { &amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;soofaloofa&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Alias&amp;quot; }
-                ]
-            }
-        ]
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_9&#34;&gt;Links&lt;/h3&gt;
-
-&lt;p&gt;Links can be a property of the collection or of individual items in the
-collection. Links may may also include a &lt;code&gt;name&lt;/code&gt; and a &lt;code&gt;prompt&lt;/code&gt; which can be
-useful when creating HTML forms to reference the collection or item.&lt;/p&gt;
-
-&lt;p&gt;In this example we will add links for the &lt;code&gt;Players&lt;/code&gt; avatar and friends.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;collection&amp;quot;: {
-        &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
-        &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player&amp;quot;,
-        &amp;quot;items&amp;quot;: [
-            {
-                &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot;,
-                &amp;quot;data&amp;quot;: [
-                      {&amp;quot;name&amp;quot;: &amp;quot;playerId&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;1234567890&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Identifier&amp;quot;},
-                      {&amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Full Name&amp;quot;},
-                      {&amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;soofaloofa&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Alias&amp;quot;}
-                ],
-                &amp;quot;links&amp;quot;: [
-                    {&amp;quot;rel&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Avatar&amp;quot;, &amp;quot;render&amp;quot;: &amp;quot;image&amp;quot; },
-                    {&amp;quot;rel&amp;quot;: &amp;quot;friends&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Friends&amp;quot; }
-                ]
-            }
-        ]
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_10&#34;&gt;Templates&lt;/h3&gt;
-
-&lt;p&gt;As the name would imply, Collection+JSON is uniquely suited to handling
-collections. Templates are one aspect of this. A template is an object that
-represents an item in the collection. The client can then fill in this template
-and POST it to the collection to add an element, or PUT it to update an existing
-item.&lt;/p&gt;
-
-&lt;p&gt;In this example we define a template for adding to the user&amp;rsquo;s list of friends.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;collection&amp;quot;:
-    {
-        &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
-        &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;,
-        &amp;quot;links&amp;quot;: [
-            {&amp;quot;rel&amp;quot;: &amp;quot;next&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends?page=2&amp;quot;}
-        ],
-        &amp;quot;items&amp;quot;: [
-            {
-                &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109&amp;quot;,
-                &amp;quot;data&amp;quot;: [
-                      {&amp;quot;name&amp;quot;: &amp;quot;playerId&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;1895638109&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Identifier&amp;quot;},
-                      {&amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;Sheldon Dong&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Full Name&amp;quot;},
-                      {&amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;sdong&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Alias&amp;quot;}
-                ],
-                &amp;quot;links&amp;quot;: [
-                    {&amp;quot;rel&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/avatar.png&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Avatar&amp;quot;, &amp;quot;render&amp;quot;: &amp;quot;image&amp;quot; },
-                    {&amp;quot;rel&amp;quot;: &amp;quot;friends&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/friends&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Friends&amp;quot; }
-                ]
-            },
-            {
-                &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509&amp;quot;,
-                &amp;quot;data&amp;quot;: [
-                      {&amp;quot;name&amp;quot;: &amp;quot;playerId&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;8371023509&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Identifier&amp;quot;},
-                      {&amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;Martin Liu&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Full Name&amp;quot;},
-                      {&amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;mliu&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Alias&amp;quot;}
-                ],
-                &amp;quot;links&amp;quot;: [
-                    {&amp;quot;rel&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/avatar.png&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Avatar&amp;quot;, &amp;quot;render&amp;quot;: &amp;quot;image&amp;quot; },
-                    {&amp;quot;rel&amp;quot;: &amp;quot;friends&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/friends&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Friends&amp;quot; }
-                ]
-            }
-        ],
-        &amp;quot;template&amp;quot;: {
-            &amp;quot;data&amp;quot;: [
-                {&amp;quot;name&amp;quot;: &amp;quot;playerId&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Identifier&amp;quot;},
-                {&amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Full Name&amp;quot;},
-                {&amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Alias&amp;quot;},
-                {&amp;quot;name&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Avatar&amp;quot;}
-            ]
-        }
-        
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;To add a friend to this collection you would POST the data specified by the
-template to the &lt;code&gt;href&lt;/code&gt; link defined by the collection
-(&lt;code&gt;https://api.example.com/player/1234567890/friends&lt;/code&gt;).&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_11&#34;&gt;Queries&lt;/h3&gt;
-
-&lt;p&gt;The final piece of Collecion+JSON is the &lt;code&gt;queries&lt;/code&gt; property. Queries, as the
-name implies, define the queries that are supported by this collection. Here the
-&lt;code&gt;data&lt;/code&gt; object specifies the query parameters supported by the server.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;collection&amp;quot;:
-    {
-        &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
-        &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;,
-        &amp;quot;links&amp;quot;: [
-            {&amp;quot;rel&amp;quot;: &amp;quot;next&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends?page=2&amp;quot;}
-        ],
-        &amp;quot;items&amp;quot;: [
-            {
-                &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109&amp;quot;,
-                &amp;quot;data&amp;quot;: [
-                      {&amp;quot;name&amp;quot;: &amp;quot;playerId&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;1895638109&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Identifier&amp;quot;},
-                      {&amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;Sheldon Dong&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Full Name&amp;quot;},
-                      {&amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;sdong&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Alias&amp;quot;}
-                ],
-                &amp;quot;links&amp;quot;: [
-                    {&amp;quot;rel&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/avatar.png&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Avatar&amp;quot;, &amp;quot;render&amp;quot;: &amp;quot;image&amp;quot; },
-                    {&amp;quot;rel&amp;quot;: &amp;quot;friends&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/friends&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Friends&amp;quot; }
-                ]
-            },
-            {
-                &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509&amp;quot;,
-                &amp;quot;data&amp;quot;: [
-                      {&amp;quot;name&amp;quot;: &amp;quot;playerId&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;8371023509&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Identifier&amp;quot;},
-                      {&amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;Martin Liu&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Full Name&amp;quot;},
-                      {&amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;mliu&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Alias&amp;quot;}
-                ],
-                &amp;quot;links&amp;quot;: [
-                    {&amp;quot;rel&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/avatar.png&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Avatar&amp;quot;, &amp;quot;render&amp;quot;: &amp;quot;image&amp;quot; },
-                    {&amp;quot;rel&amp;quot;: &amp;quot;friends&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/friends&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Friends&amp;quot; }
-                ]
-            }
-        ],
-        &amp;quot;queries&amp;quot;: [
-            {
-                &amp;quot;rel&amp;quot;: &amp;quot;search&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends/search&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Search&amp;quot;,
-                &amp;quot;data&amp;quot;: [
-                    {&amp;quot;name&amp;quot;: &amp;quot;search&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;}
-                ]
-            }
-        ],
-        &amp;quot;template&amp;quot;: {
-            &amp;quot;data&amp;quot;: [
-                {&amp;quot;name&amp;quot;: &amp;quot;playerId&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Identifier&amp;quot; },
-                {&amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Full Name&amp;quot;},
-                {&amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Alias&amp;quot;},
-                {&amp;quot;name&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;&amp;quot;, &amp;quot;prompt&amp;quot;: &amp;quot;Avatar&amp;quot;}
-            ]
-        }
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;By defining the template and queries within the response Collection+JSON makes
-navigation by a new API user relatively simple without needing to understand the
-full meaning of the API. It also provides a level of interoperability between
-APIs using the Collection+JSON media type. Collection+JSON was designed by &lt;a href=&#34;https://amundsen.com&#34;&gt;Mike
-Amundsen&lt;/a&gt;. You can find detailed examples, the full spec
-and sample code &lt;a href=&#34;https://amundsen.com/media-types/collection/&#34;&gt;on his website&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_12&#34;&gt;SIREN&lt;/h2&gt;
-
-&lt;p&gt;The last media type we&amp;rsquo;ll look at is
-&lt;a href=&#34;https://github.com/kevinswiber/siren&#34;&gt;SIREN&lt;/a&gt;. SIREN aims to represent generic
-entities along with actions for modifying those entities and links for client
-navigation.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_13&#34;&gt;Entities&lt;/h3&gt;
-
-&lt;p&gt;Each SIREN entity may have an optional class that describes the nature of the
-entity. This class defines the type of resource being returned by the API.
-Think of this as a data model for your API. By defining our response as
-returning a &lt;code&gt;player&lt;/code&gt; class the API user can immediately gain insight about the
-data being returned.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;class&amp;quot;: &amp;quot;player&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_14&#34;&gt;Properties&lt;/h3&gt;
-
-&lt;p&gt;The state of the entity is reflected as key-value pairs in a &lt;code&gt;properties&lt;/code&gt; object.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;{
-    &amp;quot;class&amp;quot;: &amp;quot;player&amp;quot;,
-    &amp;quot;properties&amp;quot;: {
-        &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
-        &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-        &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
-        &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_15&#34;&gt;Links&lt;/h3&gt;
-
-&lt;p&gt;Links are used in the same sense we&amp;rsquo;ve already seen in other media types &amp;ndash;
-navigating to related resources. With SIREN links have a relation and a URL.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;class&amp;quot;: &amp;quot;player&amp;quot;,
-    &amp;quot;links&amp;quot;: [
-        { &amp;quot;rel&amp;quot;: [ &amp;quot;self&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; },
-        { &amp;quot;rel&amp;quot;: [ &amp;quot;friends&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot; }
-    ],
-    &amp;quot;properties&amp;quot;: {
-        &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
-        &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-        &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
-        &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/avatar.png&amp;quot;
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_16&#34;&gt;Actions&lt;/h3&gt;
-
-&lt;p&gt;One of the biggest pieces missing from common Hypermedia types is the ability to
-dictate what requests can be made to alter the application state. SIREN
-facilitates this by defining &lt;code&gt;actions&lt;/code&gt; that a client can take on the given
-resource.&lt;/p&gt;
-
-&lt;p&gt;SIREN actions show the available HTTP request method and includes the URL for
-the request along with fields or variables that the URL accepts. As an example,
-our resource for listing a players friends can offer an action to add a
-friend to the list, or search for a friend.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;class&amp;quot;: &amp;quot;player&amp;quot;,
-    &amp;quot;links&amp;quot;: [
-        {&amp;quot;rel&amp;quot;: [ &amp;quot;self&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;},
-        {&amp;quot;rel&amp;quot;: [ &amp;quot;next&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends?page=2&amp;quot;}
-    ],
-    &amp;quot;actions&amp;quot;: [{
-        &amp;quot;class&amp;quot;: &amp;quot;add-friend&amp;quot;,
-        &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;,
-        &amp;quot;method&amp;quot;: &amp;quot;POST&amp;quot;,
-        &amp;quot;fields&amp;quot;: [
-            {&amp;quot;name&amp;quot;: &amp;quot;name&amp;quot;, &amp;quot;type&amp;quot;: &amp;quot;string&amp;quot;},
-            {&amp;quot;name&amp;quot;: &amp;quot;alternateName&amp;quot;, &amp;quot;type&amp;quot;: &amp;quot;string&amp;quot;},
-            {&amp;quot;name&amp;quot;: &amp;quot;image&amp;quot;, &amp;quot;type&amp;quot;: &amp;quot;href&amp;quot;}
-        ]
-    }],
-    &amp;quot;properties&amp;quot;: {
-        &amp;quot;size&amp;quot;: &amp;quot;2&amp;quot;
-    },
-    &amp;quot;entities&amp;quot;: [
-        { 
-            &amp;quot;links&amp;quot;: [ 
-                {&amp;quot;rel&amp;quot;: [ &amp;quot;self&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109&amp;quot;},
-                {&amp;quot;rel&amp;quot;: [ &amp;quot;friends&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/friends&amp;quot;}
-            ],
-            &amp;quot;properties&amp;quot;: {
-                &amp;quot;playerId&amp;quot;: &amp;quot;1895638109&amp;quot;,
-                &amp;quot;name&amp;quot;: &amp;quot;Sheldon Dong&amp;quot;,
-                &amp;quot;alternateName&amp;quot;: &amp;quot;sdong&amp;quot;,
-                &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/1895638109/avatar.png&amp;quot;
-            }
-        },
-        { 
-            &amp;quot;links&amp;quot;: [
-                {&amp;quot;rel&amp;quot;: [ &amp;quot;self&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509&amp;quot;},
-                {&amp;quot;rel&amp;quot;: [ &amp;quot;friends&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/friends&amp;quot; }
-            ],
-            &amp;quot;properties&amp;quot;: {
-                &amp;quot;playerId&amp;quot;: &amp;quot;8371023509&amp;quot;,
-                &amp;quot;name&amp;quot;: &amp;quot;Martin Liu&amp;quot;,
-                &amp;quot;alternateName&amp;quot;: &amp;quot;mliu&amp;quot;,
-                &amp;quot;image&amp;quot;: &amp;quot;https://api.example.com/player/8371023509/avatar.png&amp;quot;
-            }
-        }
-    ]
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_17&#34;&gt;Entities&lt;/h3&gt;
-
-&lt;p&gt;The previous example also introduces &lt;code&gt;entities&lt;/code&gt; to the response.  Any related
-entities that you wish to embed in the current representation are entered as a
-list of &lt;code&gt;entities&lt;/code&gt;. Entities are nested. Each entity in this list can have a
-class, properties and additional entities.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_18&#34;&gt;Conclusions&lt;/h2&gt;
-
-&lt;p&gt;I&amp;rsquo;ve create a &lt;a href=&#34;https://gist.github.com/soofaloofa/9350847&#34;&gt;Gist&lt;/a&gt; comparing each
-of the media types discussed in this post.&lt;/p&gt;
-
-&lt;p&gt;After going through this exercise I&amp;rsquo;ve come to a few conclusions.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_19&#34;&gt;JSON-LD&lt;/h3&gt;
-
-&lt;p&gt;JSON-LD is great for augmenting existing APIs without introducing
-breaking changes. This augmentation mostly serves as a way to self document your
-API. If you are looking to add operations to a JSON-LD response look to HYDRA.
-HYDRA adds a vocabulary for communicating using the JSON-LD specification. This
-is an interesting choice as it decouples the API serialization format from the
-communication format.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_20&#34;&gt;HAL&lt;/h3&gt;
-
-&lt;p&gt;The light weight syntax and semantics of HAL is appealing in a lot of contexts.
-HAL is a minimal representation that offers most of the benefits of using a
-hypermedia type without adding too much complexity to the implementation. One
-area where HAL falters is, like JSON-LD, the lack of support for specifying
-actions.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_21&#34;&gt;Collection+JSON&lt;/h3&gt;
-
-&lt;p&gt;Don&amp;rsquo;t be fooled by the name. Collection+JSON can be used to represent single
-items as well and it does this quite well. Of course it shines when representing
-data collections. Particularly appealing is the ability to list queries that
-your collection supports and templates that clients can use to alter your
-collection. For publishing user editable data Collection+JSON shines.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_22&#34;&gt;SIREN&lt;/h3&gt;
-
-&lt;p&gt;SIREN attempts to represent generic classes of items and overcome the main
-drawback of HAL &amp;ndash; support for actions. It does this admirably well and also
-introduces the concept of classes to your model bringing a sense of type
-information to your API responses.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_23&#34;&gt;And the winner is?&lt;/h3&gt;
-
-&lt;p&gt;Unfortunately, there is no clear winner. It depends on the contraints in place
-on your API. However, I will offer some suggestions.&lt;/p&gt;
-
-&lt;p&gt;If you are augmenting existing API responses choose JSON-LD.
-If you are keeping it simple choose HAL.
-If you are looking for a full featured media type choose Collection+JSON.&lt;/p&gt;
-
-&lt;p&gt;Did I cover all the bases? Completely miss the mark? Let me know in the
-comments!&lt;/p&gt;
 </description>
     </item>
     

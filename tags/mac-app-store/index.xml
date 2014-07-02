@@ -2,13 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Mac-App-Store on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
     <link>http://sookocheff.com/tags/mac-app-store/index.xml</link>
     <language>en-us</language>
+    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Tue, 09 Apr 2013 14:43:12 UTC</updated>
     
     <item>
       <title>Submitting a Unity3d Game to the Mac App Store</title>
       <link>http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store</link>
+      <pubDate>Tue, 09 Apr 2013 14:43:12 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store</guid>
       <description>
 

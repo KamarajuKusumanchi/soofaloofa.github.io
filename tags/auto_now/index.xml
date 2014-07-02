@@ -2,13 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Auto_now on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
     <link>http://sookocheff.com/tags/auto_now/index.xml</link>
     <language>en-us</language>
+    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Wed, 28 May 2014 05:55:48 UTC</updated>
     
     <item>
       <title>How to bypass the auto_now property option during an ndb put</title>
       <link>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</link>
+      <pubDate>Wed, 28 May 2014 05:55:48 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</guid>
       <description>&lt;p&gt;In App Engine the &lt;code&gt;auto_now&lt;/code&gt; option sets a property to the current date/time
 whenever the entity is created or updated. This is a great feature for tracking

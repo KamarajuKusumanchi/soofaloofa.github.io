@@ -2,13 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Javascript on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
     <link>http://sookocheff.com/tags/javascript/index.xml</link>
     <language>en-us</language>
+    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Wed, 27 Jul 2011 10:08:42 UTC</updated>
     
     <item>
       <title>Saving canvas data to an image file with JavaScript and PHP</title>
       <link>http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php</link>
+      <pubDate>Wed, 27 Jul 2011 10:08:42 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php</guid>
       <description>
 
@@ -98,6 +103,8 @@ else {
     <item>
       <title>Date.now() in IE6</title>
       <link>http://sookocheff.com/posts/2011-06-09-date-now-in-ie6</link>
+      <pubDate>Thu, 09 Jun 2011 11:10:09 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-06-09-date-now-in-ie6</guid>
       <description>&lt;p&gt;I was fiddling with a JavaScript timer application and noticed a bug in IE6. I’m sure this is documented elsewhere but I couldn’t find anything with some quick searches; hence this post.&lt;/p&gt;
 
@@ -108,6 +115,8 @@ else {
     <item>
       <title>The JavaScript click event and hidden input elements</title>
       <link>http://sookocheff.com/posts/2011-06-02-the-javascript-click-event-and-hidden-input-elements</link>
+      <pubDate>Thu, 02 Jun 2011 16:42:48 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-06-02-the-javascript-click-event-and-hidden-input-elements</guid>
       <description>&lt;p&gt;I was recently working with the HTML canvas element and wanted to attach an event to the canvas that would fire the click event of a file input element. I would then hide the input element so that the canvas element was the only way to browse for files. My first attempt was simple enough.&lt;/p&gt;
 
@@ -134,6 +143,8 @@ else {
     <item>
       <title>Dissecting jQuery&#39;s Fade Animation</title>
       <link>http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation</link>
+      <pubDate>Wed, 18 May 2011 15:16:17 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation</guid>
       <description>&lt;p&gt;Fade animations are a standard tool in any jQuery developer’s toolbox. But how do they really work? Let’s create a small function that encapsulates solely the fade functionality and find out.&lt;/p&gt;
 
@@ -207,6 +218,8 @@ else {
     <item>
       <title>An Argument Against JavaScript Minification</title>
       <link>http://sookocheff.com/posts/2011-05-10-an-argument-against-javascript-minification</link>
+      <pubDate>Tue, 10 May 2011 15:11:09 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-05-10-an-argument-against-javascript-minification</guid>
       <description>&lt;p&gt;Developers learn by example. This is no secret. The first advice given to new developers is to read a lot of good source code and the best advice given to experienced developers is to read a lot of good source code. Canonical texts for many languages let the source code say far more than the text. I’m thinking of text’s like &lt;a href=&#34;http://cm.bell-labs.com/cm/cs/cbook/&#34;&gt;Kernighan &amp;amp; Ritchie&lt;/a&gt; and &lt;a href=&#34;http://mitpress.mit.edu/catalog/item/default.asp?ttype=2&amp;amp;tid=4825&#34;&gt;Friedman &amp;amp; Felleisen&lt;/a&gt;.&lt;/p&gt;
 
@@ -221,6 +234,8 @@ else {
     <item>
       <title>How to Display HTML5 Notifications</title>
       <link>http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications</link>
+      <pubDate>Fri, 06 May 2011 10:10:10 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications</guid>
       <description>&lt;p&gt;Chrome recently introduced support for HTML Notifications.&lt;/p&gt;
 
@@ -262,6 +277,8 @@ if (window.webkitNotifications &amp;amp;&amp;amp; window.webkitNotifications.che
     <item>
       <title>Constants in JavaScript</title>
       <link>http://sookocheff.com/posts/2011-04-20-constants-in-javascript</link>
+      <pubDate>Wed, 20 Apr 2011 14:11:28 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-04-20-constants-in-javascript</guid>
       <description>&lt;p&gt;How are constants declared in JavaScript?&lt;/p&gt;
 
@@ -311,6 +328,8 @@ alert(&#39;PI: &#39;   CONSTANTS.get(&#39;PI&#39;));
     <item>
       <title>Understanding Closures in JavaScript</title>
       <link>http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript</link>
+      <pubDate>Wed, 19 Jan 2011 09:11:15 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript</guid>
       <description>
 
@@ -396,6 +415,8 @@ alert(output());
     <item>
       <title>The future of mobile development</title>
       <link>http://sookocheff.com/posts/2011-01-15-the-future-of-mobile-development</link>
+      <pubDate>Sat, 15 Jan 2011 09:19:21 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-01-15-the-future-of-mobile-development</guid>
       <description>&lt;p&gt;The future of mobile development is cross-platform HTML5, JavaScript, and CSS3.  Let me explain. I’ve been working on a couple Windows Phone 7 applications to accompany my first release, &lt;a href=&#34;http://www.appsfuze.com/applications/windowsphone.photo/faceart,3617&#34;&gt;FaceArt&lt;/a&gt;, in the Marketplace. As I do more research and development with the mobile platform I keep looking for ways to increase the reach of my apps. The most obvious is to release Android and iOS versions but I have a few hurdles to clear first, the biggest being lack of time. I do all development as a moonlighting gig while I work full-time and I’m already struggling to find extra hours during the week to finish my first three applications for one platform. How am I going to write and maintain three separate codebases for each app for the major mobile platforms while still keeping my employer happy during the work week?  The solution is cross-platform libraries targeting mobile and web apps. &lt;a href=&#34;http://www.phonegap.com&#34;&gt;PhoneGap&lt;/a&gt;, &lt;a href=&#34;http://www.airplaysdk.com&#34;&gt;AirPlay&lt;/a&gt;, and &lt;a href=&#34;http://www.dragonfiresdk.com&#34;&gt;DragonFire SDK&lt;/a&gt; are a few notable products designed for just this problem.  The most notable, and most intriguing for me, is PhoneGap. I first noticed PhoneGap through an article on &lt;a href=&#34;http://arstechnica.com/apple/news/2010/11/introducing-the-ars-technica-reader-for-ipad.ars&#34;&gt;ArsTechnica&lt;/a&gt;. This open-source solution wraps apps designed with HTML5, JavaScript, and CSS in a container suitable for the respective app stores. Why is this exciting? You can design an application for the web and get the mobile app for free (or minimal) time investment.  This is as close to the write once, run anywhere ideal that we will get for mobile phones and as the tools improve the experience is only going to get better for developers.  I personally can’t wait to see what the future holds for this product. What do you think?&lt;/p&gt;
 </description>

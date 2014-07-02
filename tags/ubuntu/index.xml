@@ -2,13 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Ubuntu on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
     <link>http://sookocheff.com/tags/ubuntu/index.xml</link>
     <language>en-us</language>
+    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Tue, 19 Oct 2010 15:09:18 UTC</updated>
     
     <item>
       <title>How to install the real-time kernel in Ubuntu</title>
       <link>http://sookocheff.com/posts/2010-10-19-how-to-install-the-real-time-kernel-in-ubuntu</link>
+      <pubDate>Tue, 19 Oct 2010 15:09:18 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2010-10-19-how-to-install-the-real-time-kernel-in-ubuntu</guid>
       <description>&lt;p&gt;To use Ubuntu as an audio production server you need the real-time kernel. This allows applications to have some guarantee of the maximum response time of any task. High priority tasks are given the CPU within a fixed minimum amount of time allowing for processor intensive tasks to actually be completed. Follow along to see how to install the real-time kernel yourself. A vanilla install of most Linux distributions does not enable the real-time kernel, but it is easy enough to install. Just type&lt;/p&gt;
 
@@ -37,6 +42,8 @@
     <item>
       <title>How to forward root users mail to an external address</title>
       <link>http://sookocheff.com/posts/2010-06-01-how-to-forward-root-users-mail-to-an-external-address</link>
+      <pubDate>Tue, 01 Jun 2010 14:12:32 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2010-06-01-how-to-forward-root-users-mail-to-an-external-address</guid>
       <description>&lt;p&gt;I recently set up a RAID array wanted to keep notified of any errors that may occur. By default Ubuntu Server sends mail to the root user whenever an error occurs but logging in as root to check mail every so often didn’t seem very convenient. There had to be a better way. The best information that I found came from the Ubuntu community forums. Here I’ll expand on that discussion, hopefully helping other people who are trying to do the same thing. The traditional way to forward mail is to create a .forward file in your home directory, entering the addresses that you would like to forward mail to.&lt;/p&gt;
 
@@ -203,6 +210,8 @@ chmod 600 passwd passwd.db
     <item>
       <title>How to monitor a RAID array in Ubuntu server</title>
       <link>http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server</link>
+      <pubDate>Fri, 28 May 2010 02:15:45 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server</guid>
       <description>
 

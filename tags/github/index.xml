@@ -2,13 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Github on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
     <link>http://sookocheff.com/tags/github/index.xml</link>
     <language>en-us</language>
+    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Tue, 17 Jun 2014 06:14:23 UTC</updated>
     
     <item>
       <title>Downloading directories of code from Github using the Github API</title>
       <link>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api</link>
+      <pubDate>Tue, 17 Jun 2014 06:14:23 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api</guid>
       <description>
 

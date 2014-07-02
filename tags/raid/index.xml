@@ -2,13 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Raid on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
     <link>http://sookocheff.com/tags/raid/index.xml</link>
     <language>en-us</language>
+    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Fri, 28 May 2010 02:15:45 UTC</updated>
     
     <item>
       <title>How to monitor a RAID array in Ubuntu server</title>
       <link>http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server</link>
+      <pubDate>Fri, 28 May 2010 02:15:45 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server</guid>
       <description>
 

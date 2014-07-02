@@ -73,6 +73,157 @@
 
         
           <article>
+            <h2><a href="http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints">Creating RESTful APIs with App Engine Cloud Endpoints</a></h2>
+            <small class="text-muted">
+              Posted on Wednesday, July 2, 2014.
+            </small>
+            
+              <p>
+                <p><a href="https://developers.google.com/appengine/docs/python/endpoints/">App Engine Cloud
+Endpoints</a> can
+is a great way to quickly and easily create JSON API endpoints. What&rsquo;s not clear
+is how to structure your <code>Message</code> code to support a RESTful
+create-read-update-delete (CRUD) API. This article will show the basic CRUD
+operations for one Resource. The results can easily be adapted to support a full
+REST API.</p>
+
+<p>To support this discussion let&rsquo;s use a concrete resource for our API &ndash; a <code>User</code>
+resource. We can give our <code>User</code> model a few simple attributes.</p>
+
+<p><a class="thumbnail" href="/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png">
+<img src="/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png" alt="Player Resource">
+</a></p>
+
+<p>A CRUD API for this resource would support a URL structure and HTTP verbs
+for each operation.</p>
+
+<pre><code class="bash"># Create a new user
+HTTP POST /users/
+
+# Read a user by id
+HTTP GET /users/{id}
+
+# Update a user by id
+HTTP PUT /users/{id}
+
+# Delete a user by id
+HTTP DELETE /users/{id}
+</code></pre>
+
+<p>Given our model we can define a basic Cloud Endpoints message representing a <code>User</code>.</p>
+
+<pre><code class="python">class UserMessage(messages.Message):
+    id = messages.StringField(1)
+    email = messages.StringField(2)
+    username = messages.StringField(3)
+</code></pre>
+
+<p>Now we can write the <strong>C</strong> (create) portion of our CRUD API using HTTP POST
+and a <code>ResourceContainer</code> to hold the message we wish to submit to the API.</p>
+
+<pre><code class="python">POST_RESOURCE = endpoints.ResourceContainer(UserMessage)
+
+...
+
+@endpoints.method(POST_RESOURCE,
+                  UserMessage,
+                  path='/users',
+                  http_method='POST',
+                  name='users.create')
+def create(self, request):
+    user = User(username=request.username, email=request.email)
+    user.put()
+    return user.to_message()
+</code></pre>
+
+<p>Similarly we can define our <strong>R</strong> (read) portion of the API using an HTTP GET
+method. To parameterize our cloud endpoint we need to add the parameter to our
+<code>ResourceContainer</code>. I&rsquo;ll call it <code>id</code> here. The actual message type is
+<code>VoidMessage</code> because we are not passing any information in our request to the
+API endpoint other than the <code>id</code> parameter.</p>
+
+<p>Our response simply gets the entity from the datastore and returns it as a
+message.</p>
+
+<pre><code class="python">ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,
+                                          id=messages.StringField(1,
+                                                                  variant=messages.Variant.STRING,
+                                                                  required=True))
+
+...
+
+@endpoints.method(ID_RESOURCE,
+                  UserMessage,
+                  http_method='GET',
+                  path='users/{id}',
+                  name='users.read')
+def read(self, request):
+    entity = User.get_by_id(request.id)
+    if not entity:
+        message = 'No User with the id &quot;%s&quot; exists.' % request.id
+        raise endpoints.NotFoundException(message)
+
+    return entity.to_message()
+</code></pre>
+
+<p>The <strong>U</strong> (update) operation uses a similar parameterized <code>ResourceContainer</code> to
+access a User given an id. We augment this request with the <code>UserMessage</code> which
+defines the content of the body of the message. The endpoint takes the content
+of the message and updates the entity with that content.</p>
+
+<pre><code class="python">PUT_RESOURCE = endpoints.ResourceContainer(UserMessage,
+                                           id=messages.StringField(1,
+                                                                   variant=messages.Variant.STRING,
+                                                                   required=True))
+
+...
+
+@endpoints.method(PUT_RESOURCE,
+                  UserMessage,
+                  http_method='PUT',
+                  path='users/{id}',
+                  name='users.update')
+def update(self, request):
+    entity = User.update_from_message(request.id, request)
+    if not entity:
+        message = 'No User with the id &quot;%s&quot; exists.' % request.id
+        raise endpoints.NotFoundException(message)
+
+    return entity.to_message()
+</code></pre>
+
+<p>Lastly, the <strong>D</strong> (delete) endpoint takes an identifier which we have previously
+defined as <code>ID_RESOURCE</code>. The endpoint deletes the entity referred to by that
+identifier and returns a <code>VoidMessage</code> which is converted to an <code>HTTP 204 No
+Content</code> response by the cloud endpoints API.</p>
+
+<pre><code class="python">@endpoints.method(ID_RESOURCE,
+                  message_types.VoidMessage,
+                  http_method='DELETE',
+                  path='users/{id}',
+                  name='users.delete')
+def delete(self, request):
+    entity = User.get_by_id(request.id)
+    if not entity:
+        message = 'No User with the id &quot;%s&quot; exists.' % request.id
+        raise endpoints.NotFoundException(message)
+
+    entity.key.delete()
+    return message_types.VoidMessage()
+</code></pre>
+
+<p>This basic pattern can be used with any resource that your API wishes to
+support and gives a basic pattern with which to build out your full API.</p>
+
+<p>If you have any questions please send me an email or let me know in the
+comments!</p>
+
+              </p>
+            
+            <hr>
+          </article>
+        
+          <article>
             <h2><a href="http://sookocheff.com/posts/2014-04-08-understanding-json-patch">Understanding JSON Patch</a></h2>
             <small class="text-muted">
               Posted on Tuesday, April 8, 2014.
@@ -165,7 +316,7 @@
          <h3>App Engine</h3>
          <ul class="list-unstyled">
            <li>
-             <a href="/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">MapReduce API</a>
+             <a href="/series/mapreduce-api/">MapReduce API</a>
            </li>
          </ul>
        </div>

@@ -2,13 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Android on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
     <link>http://sookocheff.com/tags/android/index.xml</link>
     <language>en-us</language>
+    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Tue, 30 Apr 2013 22:10:18 UTC</updated>
     
     <item>
       <title>Apple has a Software Problem - Why I&#39;ll be Switching to Android</title>
       <link>http://sookocheff.com/posts/2013-04-30-apple-has-a-software-problem-why-ill-be-switching-to-android</link>
+      <pubDate>Tue, 30 Apr 2013 22:10:18 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2013-04-30-apple-has-a-software-problem-why-ill-be-switching-to-android</guid>
       <description>&lt;p&gt;No one can question Apple’s dominance in hardware. The build quality and user experience of the iPod, iPhone and iPad positioned Apple as the most profitable company in the world. However, with the build quality of rival devices quickly approaching Apple quality, software will be the next battleground for consumer loyalty. And Apple has a software problem.&lt;/p&gt;
 

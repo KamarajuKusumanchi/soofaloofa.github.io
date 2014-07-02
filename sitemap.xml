@@ -3,8 +3,13 @@
   
   <url>
     <loc>http://sookocheff.com/</loc>
-    <lastmod>2014-06-17T13:09:42+00:00</lastmod>
+    <lastmod>2014-07-02T06:14:23+00:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints</loc>
+    <lastmod>2014-07-02T06:14:23+00:00</lastmod>
   </url>
   
   <url>
@@ -258,12 +263,12 @@
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2011-04-23-book-review-start-small-stay-small</loc>
+    <loc>http://sookocheff.com/posts/2010-07-28-mounting-samba-shares-from-the-command-line</loc>
     <lastmod>0001-01-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2010-07-28-mounting-samba-shares-from-the-command-line</loc>
+    <loc>http://sookocheff.com/posts/2011-04-23-book-review-start-small-stay-small</loc>
     <lastmod>0001-01-01T00:00:00+00:00</lastmod>
   </url>
   

@@ -2,13 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Ie on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
     <link>http://sookocheff.com/tags/ie/index.xml</link>
     <language>en-us</language>
+    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Thu, 09 Jun 2011 11:10:09 UTC</updated>
     
     <item>
       <title>Date.now() in IE6</title>
       <link>http://sookocheff.com/posts/2011-06-09-date-now-in-ie6</link>
+      <pubDate>Thu, 09 Jun 2011 11:10:09 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-06-09-date-now-in-ie6</guid>
       <description>&lt;p&gt;I was fiddling with a JavaScript timer application and noticed a bug in IE6. I’m sure this is documented elsewhere but I couldn’t find anything with some quick searches; hence this post.&lt;/p&gt;
 
@@ -19,6 +24,8 @@
     <item>
       <title>Simple IE 9 Speed Hack</title>
       <link>http://sookocheff.com/posts/2011-03-22-simple-ie-9-speed-hack</link>
+      <pubDate>Tue, 22 Mar 2011 10:12:34 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-03-22-simple-ie-9-speed-hack</guid>
       <description>&lt;p&gt;This morning I noticed that hovering over links in IE 9 causes slight mouse lag on low-powered computers.  The culprit?  A pop-up notification at the bottom left of the window displaying the link target.  The fix?  Permanently display the Status bar by right-clicking an open space to the right of the New tab button, and selecting Status bar.&lt;/p&gt;
 

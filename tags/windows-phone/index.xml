@@ -2,13 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Windows-Phone on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
     <link>http://sookocheff.com/tags/windows-phone/index.xml</link>
     <language>en-us</language>
+    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Thu, 10 Feb 2011 09:14:23 UTC</updated>
     
     <item>
       <title>Simply Pomodoro for Windows Phone 7 Released</title>
       <link>http://sookocheff.com/posts/2011-02-10-simply-pomodoro-for-windows-phone-7-released</link>
+      <pubDate>Thu, 10 Feb 2011 09:14:23 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2011-02-10-simply-pomodoro-for-windows-phone-7-released</guid>
       <description>&lt;p&gt;I just finished my latest application for Windows Phone 7: Simply Pomodoro.&lt;/p&gt;
 

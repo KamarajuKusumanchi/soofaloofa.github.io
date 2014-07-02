@@ -2,13 +2,165 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>App-Engine on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
     <link>http://sookocheff.com/tags/app-engine/index.xml</link>
     <language>en-us</language>
+    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Wed, 02 Jul 2014 06:14:23 UTC</updated>
+    
+    <item>
+      <title>Creating RESTful APIs with App Engine Cloud Endpoints</title>
+      <link>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints</link>
+      <pubDate>Wed, 02 Jul 2014 06:14:23 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://developers.google.com/appengine/docs/python/endpoints/&#34;&gt;App Engine Cloud
+Endpoints&lt;/a&gt; can
+is a great way to quickly and easily create JSON API endpoints. What&amp;rsquo;s not clear
+is how to structure your &lt;code&gt;Message&lt;/code&gt; code to support a RESTful
+create-read-update-delete (CRUD) API. This article will show the basic CRUD
+operations for one Resource. The results can easily be adapted to support a full
+REST API.&lt;/p&gt;
+
+&lt;p&gt;To support this discussion let&amp;rsquo;s use a concrete resource for our API &amp;ndash; a &lt;code&gt;User&lt;/code&gt;
+resource. We can give our &lt;code&gt;User&lt;/code&gt; model a few simple attributes.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34;&gt;
+&lt;img src=&#34;/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34; alt=&#34;Player Resource&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;A CRUD API for this resource would support a URL structure and HTTP verbs
+for each operation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;# Create a new user
+HTTP POST /users/
+
+# Read a user by id
+HTTP GET /users/{id}
+
+# Update a user by id
+HTTP PUT /users/{id}
+
+# Delete a user by id
+HTTP DELETE /users/{id}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Given our model we can define a basic Cloud Endpoints message representing a &lt;code&gt;User&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class UserMessage(messages.Message):
+    id = messages.StringField(1)
+    email = messages.StringField(2)
+    username = messages.StringField(3)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we can write the &lt;strong&gt;C&lt;/strong&gt; (create) portion of our CRUD API using HTTP POST
+and a &lt;code&gt;ResourceContainer&lt;/code&gt; to hold the message we wish to submit to the API.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;POST_RESOURCE = endpoints.ResourceContainer(UserMessage)
+
+...
+
+@endpoints.method(POST_RESOURCE,
+                  UserMessage,
+                  path=&#39;/users&#39;,
+                  http_method=&#39;POST&#39;,
+                  name=&#39;users.create&#39;)
+def create(self, request):
+    user = User(username=request.username, email=request.email)
+    user.put()
+    return user.to_message()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Similarly we can define our &lt;strong&gt;R&lt;/strong&gt; (read) portion of the API using an HTTP GET
+method. To parameterize our cloud endpoint we need to add the parameter to our
+&lt;code&gt;ResourceContainer&lt;/code&gt;. I&amp;rsquo;ll call it &lt;code&gt;id&lt;/code&gt; here. The actual message type is
+&lt;code&gt;VoidMessage&lt;/code&gt; because we are not passing any information in our request to the
+API endpoint other than the &lt;code&gt;id&lt;/code&gt; parameter.&lt;/p&gt;
+
+&lt;p&gt;Our response simply gets the entity from the datastore and returns it as a
+message.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,
+                                          id=messages.StringField(1,
+                                                                  variant=messages.Variant.STRING,
+                                                                  required=True))
+
+...
+
+@endpoints.method(ID_RESOURCE,
+                  UserMessage,
+                  http_method=&#39;GET&#39;,
+                  path=&#39;users/{id}&#39;,
+                  name=&#39;users.read&#39;)
+def read(self, request):
+    entity = User.get_by_id(request.id)
+    if not entity:
+        message = &#39;No User with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
+        raise endpoints.NotFoundException(message)
+
+    return entity.to_message()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;strong&gt;U&lt;/strong&gt; (update) operation uses a similar parameterized &lt;code&gt;ResourceContainer&lt;/code&gt; to
+access a User given an id. We augment this request with the &lt;code&gt;UserMessage&lt;/code&gt; which
+defines the content of the body of the message. The endpoint takes the content
+of the message and updates the entity with that content.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;PUT_RESOURCE = endpoints.ResourceContainer(UserMessage,
+                                           id=messages.StringField(1,
+                                                                   variant=messages.Variant.STRING,
+                                                                   required=True))
+
+...
+
+@endpoints.method(PUT_RESOURCE,
+                  UserMessage,
+                  http_method=&#39;PUT&#39;,
+                  path=&#39;users/{id}&#39;,
+                  name=&#39;users.update&#39;)
+def update(self, request):
+    entity = User.update_from_message(request.id, request)
+    if not entity:
+        message = &#39;No User with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
+        raise endpoints.NotFoundException(message)
+
+    return entity.to_message()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Lastly, the &lt;strong&gt;D&lt;/strong&gt; (delete) endpoint takes an identifier which we have previously
+defined as &lt;code&gt;ID_RESOURCE&lt;/code&gt;. The endpoint deletes the entity referred to by that
+identifier and returns a &lt;code&gt;VoidMessage&lt;/code&gt; which is converted to an &lt;code&gt;HTTP 204 No
+Content&lt;/code&gt; response by the cloud endpoints API.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@endpoints.method(ID_RESOURCE,
+                  message_types.VoidMessage,
+                  http_method=&#39;DELETE&#39;,
+                  path=&#39;users/{id}&#39;,
+                  name=&#39;users.delete&#39;)
+def delete(self, request):
+    entity = User.get_by_id(request.id)
+    if not entity:
+        message = &#39;No User with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
+        raise endpoints.NotFoundException(message)
+
+    entity.key.delete()
+    return message_types.VoidMessage()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This basic pattern can be used with any resource that your API wishes to
+support and gives a basic pattern with which to build out your full API.&lt;/p&gt;
+
+&lt;p&gt;If you have any questions please send me an email or let me know in the
+comments!&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Running Multiple App Engine Modules Locally with dev_appserver.py</title>
       <link>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally</link>
+      <pubDate>Tue, 17 Jun 2014 13:09:42 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally</guid>
       <description>&lt;p&gt;The recently released &lt;a href=&#34;https://developers.google.com/appengine/docs/python/modules/&#34;&gt;App Engine Modules API&lt;/a&gt; allows developers to compartmentalize their applications into logical units that can share state using the datastore or memcache.&lt;/p&gt;
 
@@ -22,6 +174,8 @@
     <item>
       <title>How to bypass the auto_now property option during an ndb put</title>
       <link>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</link>
+      <pubDate>Wed, 28 May 2014 05:55:48 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</guid>
       <description>&lt;p&gt;In App Engine the &lt;code&gt;auto_now&lt;/code&gt; option sets a property to the current date/time
 whenever the entity is created or updated. This is a great feature for tracking
@@ -82,6 +236,8 @@ documentation&lt;/a&gt;.&lt;/p&gt;
     <item>
       <title>App Engine MapReduce API - Part 5: Using Combiners to Reduce Data Throughput</title>
       <link>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</link>
+      <pubDate>Tue, 20 May 2014 08:54:12 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</guid>
       <description>
 
@@ -231,6 +387,8 @@ class CountCharactersPipeline(pipeline.Pipeline):
     <item>
       <title>App Engine MapReduce API - Part 4: Combining Sequential MapReduce Jobs</title>
       <link>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs</link>
+      <pubDate>Tue, 13 May 2014 10:40:38 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs</guid>
       <description>
 
@@ -353,6 +511,8 @@ execute.&lt;/p&gt;
     <item>
       <title>App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines</title>
       <link>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines</link>
+      <pubDate>Mon, 28 Apr 2014 21:51:22 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines</guid>
       <description>
 
@@ -667,6 +827,8 @@ class CountCharacters(webapp2.RequestHandler):
     <item>
       <title>App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml</title>
       <link>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml</link>
+      <pubDate>Tue, 22 Apr 2014 06:48:36 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml</guid>
       <description>
 
@@ -1125,6 +1287,8 @@ using MapReduce Pipelines to programmatically control your API.&lt;/p&gt;
     <item>
       <title>App Engine MapReduce API - Part 1: The Basics</title>
       <link>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</link>
+      <pubDate>Tue, 15 Apr 2014 12:09:36 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</guid>
       <description>
 

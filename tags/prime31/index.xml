@@ -2,13 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Prime31 on Kevin Sookocheff </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
     <link>http://sookocheff.com/tags/prime31/index.xml</link>
     <language>en-us</language>
+    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Thu, 15 Nov 2012 13:14:15 UTC</updated>
     
     <item>
       <title>Showing a local webpage in Unity3d using the Prime[31] etcetera plugin.</title>
       <link>http://sookocheff.com/posts/2012-11-15-etcetera-plugin-live-alerts-prompts-loading-views-push-localization-and-more</link>
+      <pubDate>Thu, 15 Nov 2012 13:14:15 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2012-11-15-etcetera-plugin-live-alerts-prompts-loading-views-push-localization-and-more</guid>
       <description>&lt;p&gt;I&amp;rsquo;ve been working with Prime31&amp;rsquo;s Etcetera plugin for iOS development with Unity3d. There are a lot of great things in there but some of the documentation is lacking.&lt;br /&gt;
 Anyways, if you want to show a local web page with the &lt;code&gt;showWebPage&lt;/code&gt; command it is a two step process.&lt;/p&gt;

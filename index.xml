@@ -16,9 +16,9 @@
       <author>Kevin Sookocheff</author>
       <guid>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://developers.google.com/appengine/docs/python/endpoints/&#34;&gt;App Engine Cloud
-Endpoints&lt;/a&gt; can
-is a great way to quickly and easily create JSON API endpoints. What&amp;rsquo;s not clear
-is how to structure your &lt;code&gt;Message&lt;/code&gt; code to support a RESTful
+Endpoints&lt;/a&gt; is a
+great way to quickly and easily create JSON API endpoints. What&amp;rsquo;s not clear is
+how to structure your &lt;code&gt;Message&lt;/code&gt; code to support a RESTful
 create-read-update-delete (CRUD) API. This article will show the basic CRUD
 operations for one Resource. The results can easily be adapted to support a full
 REST API.&lt;/p&gt;
@@ -46,7 +46,7 @@ HTTP PUT /users/{id}
 HTTP DELETE /users/{id}
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Given our model we can define a basic Cloud Endpoints message representing a &lt;code&gt;User&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Given this model we can define a basic Cloud Endpoints message representing a &lt;code&gt;User&lt;/code&gt;.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class UserMessage(messages.Message):
     id = messages.StringField(1)
@@ -54,7 +54,7 @@ HTTP DELETE /users/{id}
     username = messages.StringField(3)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Now we can write the &lt;strong&gt;C&lt;/strong&gt; (create) portion of our CRUD API using HTTP POST
+&lt;p&gt;Now we can write the &lt;strong&gt;C&lt;/strong&gt; (create) portion of the CRUD API using HTTP POST
 and a &lt;code&gt;ResourceContainer&lt;/code&gt; to hold the message we wish to submit to the API.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;python&#34;&gt;POST_RESOURCE = endpoints.ResourceContainer(UserMessage)
@@ -72,13 +72,13 @@ def create(self, request):
     return user.to_message()
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Similarly we can define our &lt;strong&gt;R&lt;/strong&gt; (read) portion of the API using an HTTP GET
+&lt;p&gt;Similarly we can define the &lt;strong&gt;R&lt;/strong&gt; (read) portion of the API using an HTTP GET
 method. To parameterize our cloud endpoint we need to add the parameter to our
 &lt;code&gt;ResourceContainer&lt;/code&gt;. I&amp;rsquo;ll call it &lt;code&gt;id&lt;/code&gt; here. The actual message type is
 &lt;code&gt;VoidMessage&lt;/code&gt; because we are not passing any information in our request to the
 API endpoint other than the &lt;code&gt;id&lt;/code&gt; parameter.&lt;/p&gt;
 
-&lt;p&gt;Our response simply gets the entity from the datastore and returns it as a
+&lt;p&gt;The response retrieves the entity from the datastore and returns it as a
 message.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;python&#34;&gt;ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,

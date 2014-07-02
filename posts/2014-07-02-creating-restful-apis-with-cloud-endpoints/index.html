@@ -79,9 +79,9 @@
 
           <div class=".post-content">
             <p><a href="https://developers.google.com/appengine/docs/python/endpoints/">App Engine Cloud
-Endpoints</a> can
-is a great way to quickly and easily create JSON API endpoints. What&rsquo;s not clear
-is how to structure your <code>Message</code> code to support a RESTful
+Endpoints</a> is a
+great way to quickly and easily create JSON API endpoints. What&rsquo;s not clear is
+how to structure your <code>Message</code> code to support a RESTful
 create-read-update-delete (CRUD) API. This article will show the basic CRUD
 operations for one Resource. The results can easily be adapted to support a full
 REST API.</p>
@@ -109,7 +109,7 @@ HTTP PUT /users/{id}
 HTTP DELETE /users/{id}
 </code></pre>
 
-<p>Given our model we can define a basic Cloud Endpoints message representing a <code>User</code>.</p>
+<p>Given this model we can define a basic Cloud Endpoints message representing a <code>User</code>.</p>
 
 <pre><code class="python">class UserMessage(messages.Message):
     id = messages.StringField(1)
@@ -117,7 +117,7 @@ HTTP DELETE /users/{id}
     username = messages.StringField(3)
 </code></pre>
 
-<p>Now we can write the <strong>C</strong> (create) portion of our CRUD API using HTTP POST
+<p>Now we can write the <strong>C</strong> (create) portion of the CRUD API using HTTP POST
 and a <code>ResourceContainer</code> to hold the message we wish to submit to the API.</p>
 
 <pre><code class="python">POST_RESOURCE = endpoints.ResourceContainer(UserMessage)
@@ -135,13 +135,13 @@ def create(self, request):
     return user.to_message()
 </code></pre>
 
-<p>Similarly we can define our <strong>R</strong> (read) portion of the API using an HTTP GET
+<p>Similarly we can define the <strong>R</strong> (read) portion of the API using an HTTP GET
 method. To parameterize our cloud endpoint we need to add the parameter to our
 <code>ResourceContainer</code>. I&rsquo;ll call it <code>id</code> here. The actual message type is
 <code>VoidMessage</code> because we are not passing any information in our request to the
 API endpoint other than the <code>id</code> parameter.</p>
 
-<p>Our response simply gets the entity from the datastore and returns it as a
+<p>The response retrieves the entity from the datastore and returns it as a
 message.</p>
 
 <pre><code class="python">ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,

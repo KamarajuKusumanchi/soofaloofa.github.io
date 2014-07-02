@@ -6,6 +6,8 @@ tags:
   - "app engine"
   - "mapreduce"
   - "python"
+series:
+  - "MapReduce API"
 ---
 
 ## MapReduce API Series

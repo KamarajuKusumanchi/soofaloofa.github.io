@@ -1,13 +1,233 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-      <title>Recent Content on Kevin Sookocheff </title>
-      <generator uri="https://hugo.spf13.com">Hugo</generator>
+      <title>Kevin Sookocheff</title>
     <link>http://sookocheff.com/index.xml</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Wed, 02 Jul 2014 06:14:23 UTC</updated>
+    <updated>Thu, 10 Jul 2014 14:32:15 UTC</updated>
+    
+    <item>
+      <title>Unit Testing Cloud Endpoints</title>
+      <link>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints</link>
+      <pubDate>Thu, 10 Jul 2014 14:32:15 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints</guid>
+      <description>
+
+&lt;p&gt;Writing unit tests for App Engine Cloud Endpoints is a fairly straight forward
+process. Unfortunately it is not well documented and a few gotchas exist. This
+article provides a template you can use to unit test Cloud Endpoints including
+full source code for a working example.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;The Model&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s use a simple User model as the resource being exposed by our API. This
+model has two properties &amp;ndash; a username and an email address. The class also
+provides &lt;code&gt;to_message&lt;/code&gt; function that converts the model to a ProtoRPC Message for
+transmission by the Cloud Endpoints API.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class User(ndb.Model):
+    &amp;quot;&amp;quot;&amp;quot;
+    A basic user model.
+    &amp;quot;&amp;quot;&amp;quot;
+    username = ndb.StringProperty(required=True)
+    email = ndb.StringProperty(required=True)
+
+    def to_message(self):
+        &amp;quot;&amp;quot;&amp;quot;
+        Convert the model to a ProtoRPC messsage.
+        &amp;quot;&amp;quot;&amp;quot;
+        return UserMessage(id=self.key.id(),
+                           username=self.username,
+                           email=self.email)
+
+
+class UserMessage(messages.Message):
+    &amp;quot;&amp;quot;&amp;quot;
+    A message representing a User model.
+    &amp;quot;&amp;quot;&amp;quot;
+    id = messages.IntegerField(1)
+    username = messages.StringField(2)
+    email = messages.StringField(3)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;The API&lt;/h2&gt;
+
+&lt;p&gt;To keep things simple the API for this resource provides a single &lt;code&gt;GET&lt;/code&gt; endpoint
+that returns a &lt;code&gt;UserMessage&lt;/code&gt; based on a &lt;code&gt;User&lt;/code&gt; in the datastore. We parameterize
+our endpoint with an &lt;code&gt;ID_RESOURCE&lt;/code&gt; that takes an &lt;code&gt;IntegerField&lt;/code&gt; holding the id
+of the User resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,
+                                          id=messages.IntegerField(1, 
+                                                                   variant=messages.Variant.INT32, 
+                                                                   required=True))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The API itself has one method, &lt;code&gt;users_get&lt;/code&gt;, that returns a user given an id or
+&lt;code&gt;404&lt;/code&gt; if no user with the specified id exists.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+class UsersApi(remote.Service):
+
+    @endpoints.method(ID_RESOURCE,
+                      UserMessage,
+                      http_method=&#39;GET&#39;,
+                      path=&#39;users/{id}&#39;,
+                      name=&#39;users.get&#39;)
+    def users_get(self, request):
+        entity = User.get_by_id(request.id)
+        if not entity:
+            message = &#39;No user with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
+            raise endpoints.NotFoundException(message)
+
+        return entity.to_message()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;The Tests&lt;/h2&gt;
+
+&lt;p&gt;The setup for our tests is similar to many App Engine test cases. We set our
+environment and initialize any test stubs we may need.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class GaeTestCase(unittest.TestCase):
+    &amp;quot;&amp;quot;&amp;quot;
+    API unit tests.
+    &amp;quot;&amp;quot;&amp;quot;
+
+    def setUp(self):
+        super(GaeTestCase, self).setUp()
+        tb = testbed.Testbed()
+        tb.setup_env(current_version_id=&#39;testbed.version&#39;)  # Required for the endpoints API
+        tb.activate()
+        tb.init_all_stubs()
+        self.api = UsersApi()  # Set our API under test
+        self.testbed = tb
+
+    def tearDown(self):
+        self.testbed.deactivate()
+        super(GaeTestCase, self).tearDown()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The actual tests call the endpoints method directly. Endpoint methods that
+are set to receive a &lt;code&gt;ResourceContainer&lt;/code&gt; expect a &lt;code&gt;CombinedContainer&lt;/code&gt; as the
+parameter to the function. The &lt;code&gt;ResourceContainer&lt;/code&gt; class has a property called
+&lt;code&gt;combined_message_class&lt;/code&gt; that returns a &lt;code&gt;CombinedContainer&lt;/code&gt; class that can be
+instantiated and passed to our endpoint. We instantiate our container with the
+identifier we expect for our User resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def test_get_returns_entity(self):
+    user = User(username=&#39;soofaloofa&#39;, email=&#39;soofaloofa@example.com&#39;)
+    user.put()
+
+    container = ID_RESOURCE.combined_message_class(id=user.key.id())
+    response = self.api.users_get(container)
+    self.assertEquals(response.username, &#39;soofaloofa&#39;)
+    self.assertEquals(response.email, &#39;soofaloofa@example.com&#39;)
+    self.assertEquals(response.id, user.key.id())
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can also add a test for the &lt;code&gt;404&lt;/code&gt; condition by calling &lt;code&gt;assertRaises&lt;/code&gt; on our
+endpoint with an identifier that does not correspond to a User resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def test_get_returns_404_if_no_entity(self):
+    container = ID_RESOURCE.combined_message_class(id=1)
+    self.assertRaises(endpoints.NotFoundException, self.api.users_get, container)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Full source code follows.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;import unittest
+import endpoints
+
+from protorpc import remote
+from protorpc import messages
+from protorpc import message_types
+from google.appengine.ext import testbed
+from google.appengine.ext import ndb
+
+
+class User(ndb.Model):
+    &amp;quot;&amp;quot;&amp;quot;
+    A basic user model.
+    &amp;quot;&amp;quot;&amp;quot;
+    username = ndb.StringProperty(required=True)
+    email = ndb.StringProperty(required=True)
+
+    def to_message(self):
+        &amp;quot;&amp;quot;&amp;quot;
+        Convert the model to a ProtoRPC messsage.
+        &amp;quot;&amp;quot;&amp;quot;
+        return UserMessage(id=self.key.id(),
+                           username=self.username,
+                           email=self.email)
+
+
+class UserMessage(messages.Message):
+    &amp;quot;&amp;quot;&amp;quot;
+    A message representing a User model.
+    &amp;quot;&amp;quot;&amp;quot;
+    id = messages.IntegerField(1)
+    username = messages.StringField(2)
+    email = messages.StringField(3)
+
+ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,
+                                          id=messages.IntegerField(1, variant=messages.Variant.INT32, required=True))
+
+
+@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+class UsersApi(remote.Service):
+
+    @endpoints.method(ID_RESOURCE,
+                      UserMessage,
+                      http_method=&#39;GET&#39;,
+                      path=&#39;users/{id}&#39;,
+                      name=&#39;users.get&#39;)
+    def users_get(self, request):
+        entity = User.get_by_id(request.id)
+        if not entity:
+            message = &#39;No user with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
+            print message
+            raise endpoints.NotFoundException(message)
+
+        return entity.to_message()
+
+
+class GaeTestCase(unittest.TestCase):
+    &amp;quot;&amp;quot;&amp;quot;
+    API unit tests.
+    &amp;quot;&amp;quot;&amp;quot;
+
+    def setUp(self):
+        super(GaeTestCase, self).setUp()
+        tb = testbed.Testbed()
+        tb.setup_env(current_version_id=&#39;testbed.version&#39;)
+        tb.activate()
+        tb.init_all_stubs()
+        self.api = UsersApi()
+        self.testbed = tb
+
+    def tearDown(self):
+        self.testbed.deactivate()
+        super(GaeTestCase, self).tearDown()
+
+    def test_get_returns_entity(self):
+        user = User(username=&#39;soofaloofa&#39;, email=&#39;soofaloofa@example.com&#39;)
+        user.put()
+
+        container = ID_RESOURCE.combined_message_class(id=user.key.id())
+        response = self.api.users_get(container)
+        self.assertEquals(response.username, &#39;soofaloofa&#39;)
+        self.assertEquals(response.email, &#39;soofaloofa@example.com&#39;)
+        self.assertEquals(response.id, user.key.id())
+
+    def test_get_returns_404_if_no_entity(self):
+        container = ID_RESOURCE.combined_message_class(id=1)
+        self.assertRaises(endpoints.NotFoundException, self.api.users_get, container)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>Creating RESTful APIs with App Engine Cloud Endpoints</title>
@@ -2220,142 +2440,6 @@ client developers.&lt;/p&gt;
 &lt;p&gt;This episode was a great reminder of how the first step in debugging is often to &lt;a href=&#34;http://www.hanselman.com/blog/BackToBasicsAssertYourAssumptionsAndDiffYourSourceCode.aspx&#34;&gt;find the difference between the working and non-working system&lt;/a&gt;. Hopefully this post will help someone else with the same problem.&lt;/p&gt;
 
 &lt;p&gt;P.S. Kudos to Stripe for their prompt help via IRC.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>How REST Constraints Affect API Design</title>
-      <link>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</link>
-      <pubDate>Wed, 19 Mar 2014 14:11:48 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</guid>
-      <description>
-
-&lt;p&gt;REST was developed and formalized by analyzing the existing Web and extracting
-the principles that made it work. This set of principles was written down in the
-&lt;a href=&#34;https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm&#34;&gt;Fielding dissertation&lt;/a&gt;
-which lays out the set of constraints that, when enforced, will make a generic
-network system into a resilient network like the Web. In Chapter 5 of the
-dissertation Fielding outlines REST&amp;rsquo;s interface constraints.&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;REST is defined by four interface constraints: identification of resources;
-manipulation of resources using representations; self-descriptive messages;
-and, hypermedia as the engine of application state.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&#34;toc_0&#34;&gt;Why is this important for APIs?&lt;/h3&gt;
-
-&lt;p&gt;API design is in an infancy. Each API is designed for a single use case and
-standard. This proliferation of different design ideas results in APIs that each
-have their own specification and semantics. Interoperability between APIs is
-nonexistent. In the early 1990s the Web was facing this exact problem and as a
-result the principles of REST were formalized and adopted. The result was a
-scalable, resilient and ultimately successful system. By adopting the REST
-constraints in our APIs we can take advantage of this foundational work to
-provide APIs that form a scalable and resilient network of their own.&lt;/p&gt;
-
-&lt;p&gt;We will take a look at each of the four interface constraints in turn and see
-how they can be used to design an API that developers love to use.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_1&#34;&gt;1. Identification of Resources&lt;/h2&gt;
-
-&lt;p&gt;A resource is the key abstraction of REST. Anything that can be named is a
-resource &amp;ndash; a video, a document, an image. We identify resources using a
-unique identifier called the Uniform Resource Identifier (URI). When discussing
-the Web we almost always use a more specific form of URI called a Uniform
-Resource Locator (URL). A URL is what we are all accustomed to when accessing
-sites through HTTP.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;http://sookocheff.com
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;By building REST APIs over HTTP we can use URLs to identify resources accessed
-by our API. To satisfy the REST constraint each URL should map to a single
-resource and all access to this resource is done through that URL. As an
-example, if I want to offer an API for a shipping application I might have a
-resource representing an order. A URL for the individual order numbered &lt;code&gt;12345&lt;/code&gt;
-would have a path including the order number.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;/orders/12345
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This simple example shows how we can create a URL to uniquely represent each
-resource represented by our API.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_2&#34;&gt;2. Manipulation of Resources Using Representations&lt;/h2&gt;
-
-&lt;p&gt;When making a request for a resource the server responds with a representation
-of the resource. This representation captures the current state of the resource
-in a format that the client can understand and manipulate. Abstractly the
-representation is a sequence of bytes along with metadata describing those
-bytes. This metadata is known as the media type of the representation. Typical
-API examples are HTML, JSON, and XML. Because the server sends a representation
-of the resource it is possible for the client to request a specific
-representation that fits the client&amp;rsquo;s needs. For example, a client can ask for
-the JSON representation of a resource or the XML representation of the resource.
-The server may provide this representation if it is capable of doing so. This
-concept is called &lt;em&gt;content negotiation&lt;/em&gt;. You can use content negotiation in your
-API to allow multiple clients to access a different representations of the
-resource from the same URL.&lt;/p&gt;
-
-&lt;p&gt;The way that a client asks for a specific representation is through the HTTP
-&lt;code&gt;Accepts&lt;/code&gt; header. The following request is asking for a plain text
-representation of the order.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;GET /orders/12345
-Accept: text/plain
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Whereas the following request is asking for a JSON representation.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;GET /orders/12345
-Accept: application/json
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;By using content negotiation in your API you can offer new resource
-representations without changing the resources URL or breaking existing clients.
-This keeps your client and server flexibly decoupled.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_3&#34;&gt;3. Self-Descriptive Messages&lt;/h2&gt;
-
-&lt;p&gt;The representations served by a RESTful system contain all of the data required
-by the client to understand and act on the resource. If any additional
-information is needed but not contained in the response a link to that
-information should be provided within the response. This means that the media
-type you choose to respond with should be self documenting and should list any
-related resources or actions that the client may be interested in. Specific
-media types already exist for JSON APIS. These include HAL, JSON-LD,
-Collection+JSON and JSONAPI. For a detailed discussion see my post &lt;a href=&#34;http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format/&#34;&gt;on
-choosing a hypermedia
-type&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Each of these formats are aiming to solve the &lt;a href=&#34;https://www.w3.org/TR/json-ld/#basic-concepts&#34;&gt;same
-problem&lt;/a&gt;:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;JSON has no built-in support for hyperlinks, which are a fundamental building
-block on the Web.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;By linking together the resources offered by your API you can build
-self-descriptive APIs.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_4&#34;&gt;4. Hypermedia As The Engine Of Application State&lt;/h2&gt;
-
-&lt;p&gt;Together, the first three REST constraints imply the fourth and most important &amp;ndash;
-hypermedia as the engine of application state. By uniquely identifying
-resources, using representations to communicate resource state and using
-self-descriptive messages via media types all application state stays with the
-client.&lt;/p&gt;
-
-&lt;p&gt;By keeping all application state with the client a direct connection between the
-client and the server is not necessary, allowing the server to scale to serve
-many clients with minimal resources. This ability to scale has led to the Web&amp;rsquo;s
-scalable and resilient nature.&lt;/p&gt;
-
-&lt;p&gt;By designing our APIs with the REST constraints we can build scalable and
-resilient APIs.&lt;/p&gt;
 </description>
     </item>
     

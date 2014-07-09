@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-      <title>Ie on Kevin Sookocheff </title>
-      <generator uri="https://hugo.spf13.com">Hugo</generator>
+      <title>Kevin Sookocheff</title>
     <link>http://sookocheff.com/tags/ie/index.xml</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>

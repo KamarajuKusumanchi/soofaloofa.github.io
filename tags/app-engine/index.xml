@@ -1,13 +1,233 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-      <title>App-Engine on Kevin Sookocheff </title>
-      <generator uri="https://hugo.spf13.com">Hugo</generator>
+      <title>Kevin Sookocheff</title>
     <link>http://sookocheff.com/tags/app-engine/index.xml</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Wed, 02 Jul 2014 06:14:23 UTC</updated>
+    <updated>Thu, 10 Jul 2014 14:32:15 UTC</updated>
+    
+    <item>
+      <title>Unit Testing Cloud Endpoints</title>
+      <link>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints</link>
+      <pubDate>Thu, 10 Jul 2014 14:32:15 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints</guid>
+      <description>
+
+&lt;p&gt;Writing unit tests for App Engine Cloud Endpoints is a fairly straight forward
+process. Unfortunately it is not well documented and a few gotchas exist. This
+article provides a template you can use to unit test Cloud Endpoints including
+full source code for a working example.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;The Model&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s use a simple User model as the resource being exposed by our API. This
+model has two properties &amp;ndash; a username and an email address. The class also
+provides &lt;code&gt;to_message&lt;/code&gt; function that converts the model to a ProtoRPC Message for
+transmission by the Cloud Endpoints API.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class User(ndb.Model):
+    &amp;quot;&amp;quot;&amp;quot;
+    A basic user model.
+    &amp;quot;&amp;quot;&amp;quot;
+    username = ndb.StringProperty(required=True)
+    email = ndb.StringProperty(required=True)
+
+    def to_message(self):
+        &amp;quot;&amp;quot;&amp;quot;
+        Convert the model to a ProtoRPC messsage.
+        &amp;quot;&amp;quot;&amp;quot;
+        return UserMessage(id=self.key.id(),
+                           username=self.username,
+                           email=self.email)
+
+
+class UserMessage(messages.Message):
+    &amp;quot;&amp;quot;&amp;quot;
+    A message representing a User model.
+    &amp;quot;&amp;quot;&amp;quot;
+    id = messages.IntegerField(1)
+    username = messages.StringField(2)
+    email = messages.StringField(3)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;The API&lt;/h2&gt;
+
+&lt;p&gt;To keep things simple the API for this resource provides a single &lt;code&gt;GET&lt;/code&gt; endpoint
+that returns a &lt;code&gt;UserMessage&lt;/code&gt; based on a &lt;code&gt;User&lt;/code&gt; in the datastore. We parameterize
+our endpoint with an &lt;code&gt;ID_RESOURCE&lt;/code&gt; that takes an &lt;code&gt;IntegerField&lt;/code&gt; holding the id
+of the User resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,
+                                          id=messages.IntegerField(1, 
+                                                                   variant=messages.Variant.INT32, 
+                                                                   required=True))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The API itself has one method, &lt;code&gt;users_get&lt;/code&gt;, that returns a user given an id or
+&lt;code&gt;404&lt;/code&gt; if no user with the specified id exists.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+class UsersApi(remote.Service):
+
+    @endpoints.method(ID_RESOURCE,
+                      UserMessage,
+                      http_method=&#39;GET&#39;,
+                      path=&#39;users/{id}&#39;,
+                      name=&#39;users.get&#39;)
+    def users_get(self, request):
+        entity = User.get_by_id(request.id)
+        if not entity:
+            message = &#39;No user with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
+            raise endpoints.NotFoundException(message)
+
+        return entity.to_message()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;The Tests&lt;/h2&gt;
+
+&lt;p&gt;The setup for our tests is similar to many App Engine test cases. We set our
+environment and initialize any test stubs we may need.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class GaeTestCase(unittest.TestCase):
+    &amp;quot;&amp;quot;&amp;quot;
+    API unit tests.
+    &amp;quot;&amp;quot;&amp;quot;
+
+    def setUp(self):
+        super(GaeTestCase, self).setUp()
+        tb = testbed.Testbed()
+        tb.setup_env(current_version_id=&#39;testbed.version&#39;)  # Required for the endpoints API
+        tb.activate()
+        tb.init_all_stubs()
+        self.api = UsersApi()  # Set our API under test
+        self.testbed = tb
+
+    def tearDown(self):
+        self.testbed.deactivate()
+        super(GaeTestCase, self).tearDown()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The actual tests call the endpoints method directly. Endpoint methods that
+are set to receive a &lt;code&gt;ResourceContainer&lt;/code&gt; expect a &lt;code&gt;CombinedContainer&lt;/code&gt; as the
+parameter to the function. The &lt;code&gt;ResourceContainer&lt;/code&gt; class has a property called
+&lt;code&gt;combined_message_class&lt;/code&gt; that returns a &lt;code&gt;CombinedContainer&lt;/code&gt; class that can be
+instantiated and passed to our endpoint. We instantiate our container with the
+identifier we expect for our User resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def test_get_returns_entity(self):
+    user = User(username=&#39;soofaloofa&#39;, email=&#39;soofaloofa@example.com&#39;)
+    user.put()
+
+    container = ID_RESOURCE.combined_message_class(id=user.key.id())
+    response = self.api.users_get(container)
+    self.assertEquals(response.username, &#39;soofaloofa&#39;)
+    self.assertEquals(response.email, &#39;soofaloofa@example.com&#39;)
+    self.assertEquals(response.id, user.key.id())
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can also add a test for the &lt;code&gt;404&lt;/code&gt; condition by calling &lt;code&gt;assertRaises&lt;/code&gt; on our
+endpoint with an identifier that does not correspond to a User resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def test_get_returns_404_if_no_entity(self):
+    container = ID_RESOURCE.combined_message_class(id=1)
+    self.assertRaises(endpoints.NotFoundException, self.api.users_get, container)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Full source code follows.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;import unittest
+import endpoints
+
+from protorpc import remote
+from protorpc import messages
+from protorpc import message_types
+from google.appengine.ext import testbed
+from google.appengine.ext import ndb
+
+
+class User(ndb.Model):
+    &amp;quot;&amp;quot;&amp;quot;
+    A basic user model.
+    &amp;quot;&amp;quot;&amp;quot;
+    username = ndb.StringProperty(required=True)
+    email = ndb.StringProperty(required=True)
+
+    def to_message(self):
+        &amp;quot;&amp;quot;&amp;quot;
+        Convert the model to a ProtoRPC messsage.
+        &amp;quot;&amp;quot;&amp;quot;
+        return UserMessage(id=self.key.id(),
+                           username=self.username,
+                           email=self.email)
+
+
+class UserMessage(messages.Message):
+    &amp;quot;&amp;quot;&amp;quot;
+    A message representing a User model.
+    &amp;quot;&amp;quot;&amp;quot;
+    id = messages.IntegerField(1)
+    username = messages.StringField(2)
+    email = messages.StringField(3)
+
+ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,
+                                          id=messages.IntegerField(1, variant=messages.Variant.INT32, required=True))
+
+
+@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+class UsersApi(remote.Service):
+
+    @endpoints.method(ID_RESOURCE,
+                      UserMessage,
+                      http_method=&#39;GET&#39;,
+                      path=&#39;users/{id}&#39;,
+                      name=&#39;users.get&#39;)
+    def users_get(self, request):
+        entity = User.get_by_id(request.id)
+        if not entity:
+            message = &#39;No user with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
+            print message
+            raise endpoints.NotFoundException(message)
+
+        return entity.to_message()
+
+
+class GaeTestCase(unittest.TestCase):
+    &amp;quot;&amp;quot;&amp;quot;
+    API unit tests.
+    &amp;quot;&amp;quot;&amp;quot;
+
+    def setUp(self):
+        super(GaeTestCase, self).setUp()
+        tb = testbed.Testbed()
+        tb.setup_env(current_version_id=&#39;testbed.version&#39;)
+        tb.activate()
+        tb.init_all_stubs()
+        self.api = UsersApi()
+        self.testbed = tb
+
+    def tearDown(self):
+        self.testbed.deactivate()
+        super(GaeTestCase, self).tearDown()
+
+    def test_get_returns_entity(self):
+        user = User(username=&#39;soofaloofa&#39;, email=&#39;soofaloofa@example.com&#39;)
+        user.put()
+
+        container = ID_RESOURCE.combined_message_class(id=user.key.id())
+        response = self.api.users_get(container)
+        self.assertEquals(response.username, &#39;soofaloofa&#39;)
+        self.assertEquals(response.email, &#39;soofaloofa@example.com&#39;)
+        self.assertEquals(response.id, user.key.id())
+
+    def test_get_returns_404_if_no_entity(self):
+        container = ID_RESOURCE.combined_message_class(id=1)
+        self.assertRaises(endpoints.NotFoundException, self.api.users_get, container)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>Creating RESTful APIs with App Engine Cloud Endpoints</title>

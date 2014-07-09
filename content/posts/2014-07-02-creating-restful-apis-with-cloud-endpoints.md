@@ -7,6 +7,8 @@ tags:
   - "rest"
   - "api"
   - "cloud endpoints"
+series:
+  - "Cloud Endpoints"
 ---
 
 [App Engine Cloud

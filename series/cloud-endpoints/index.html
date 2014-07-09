@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 
-<title>Notifications : sookocheff.com</title>
+<title>Cloud-Endpoints : sookocheff.com</title>
 
 <meta charset="utf-8">
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/tags/notifications">
+<link rel="canonical" href="http://sookocheff.com/series/cloud-endpoints">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -69,51 +69,36 @@
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <section class="page">
-        <h1>Notifications</h1>
+        <h1>Cloud-Endpoints</h1>
 
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications">How to Display HTML5 Notifications</a></h2>
+            <h2><a href="http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints">Unit Testing Cloud Endpoints</a></h2>
             <small class="text-muted">
-              Posted on Friday, May 6, 2011.
+              Posted on Thursday, July 10, 2014.
             </small>
             
               <p>
-                <p>Chrome recently introduced support for HTML Notifications.</p>
-
-<p>Following the brief tutorial at <a href="http://www.html5rocks.com/tutorials/notifications/quick/">HTML5 Rocks</a> I was able to implement this in a matter of minutes and I couldn’t be happier with the results.</p>
-
-<p>The first step towards implementation is to check if the Notifications API is implemented by the browser. We do this by checking for the existence of the webkitNotifications object.</p>
-
-<pre><code>// check for notifications support
-if (!window.webkitNotifications) {
-    alert('Your browser does not support the Notifications API');
-}
-</code></pre>
-
-<p>As a means of preventing unwanted notifications we request permission from the user before displaying anything. The method <code>webkitNotifications.checkPermission()</code> will return zero if permission has previously been granted. If it returns non-zero we can request permission with the method <code>webkitNotifications.requestPermission()</code>.</p>
-
-<pre><code>// request permission to use notifications
-  if (window.webkitNotifications) {
-    if (window.webkitNotifications.checkPermission() &gt; 0) {
-            window.webkitNotifications.requestPermission();
-    }
-}
-</code></pre>
-
-<p>Now that we have requested permission we can display our notification. We use the function <code>webkitNotifications.createNotification()</code> to create a Notification object. This function takes three parameters: an icon to display, a title and text. We then call the <code>show()</code> method on our Notification object to display our notification.</p>
-
-<pre><code>// display a notification
-if (window.webkitNotifications &amp;&amp; window.webkitNotifications.checkPermission() == 0) {
-    window.webkitNotifications.createNotification(
-        'apple-touch-icon.png',
-        'Awesome!',
-        &quot;You've completed a Pomodoro!&quot;).show();
-}
-</code></pre>
-
-<p>The Notifications specification is currently in Draft format and has been submitted to the HTML working group for standardization. You can see the current spec through the <a href="http://www.chromium.org/developers/design-documents/desktop-notifications/api-specification">Chromium documentation</a>.</p>
-
+                Writing unit tests for App Engine Cloud Endpoints is a fairly straight forward process. Unfortunately it is not well documented and a few gotchas exist. This article provides a template you can use to unit test Cloud Endpoints including full source code for a working example.
+              </p>
+              <p class="text-center">
+                <a href="http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints"><button type="button" class="btn btn-primary">Read More</button></a>
+              </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints">Creating RESTful APIs with App Engine Cloud Endpoints</a></h2>
+            <small class="text-muted">
+              Posted on Wednesday, July 2, 2014.
+            </small>
+            
+              <p>
+                App Engine Cloud Endpoints can is a great way to quickly and easily create JSON API endpoints. What&#39;s not clear is how to structure your Message code to support a RESTful create-read-update-delete (CRUD) API. This article will show the basic CRUD operations for one Resource. The results can easily be adapted to support a full REST API.
+              </p>
+              <p class="text-center">
+                <a href="http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints"><button type="button" class="btn btn-primary">Read More</button></a>
               </p>
             
             <hr>

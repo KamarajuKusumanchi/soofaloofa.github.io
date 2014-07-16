@@ -1,6 +1,6 @@
 ---
 title: "Mounting SAMBA shares from the command line" 
-date: 2010/07/28 18:12:37
+date: 2010-07-28T18:12:37
 tags:
   - samba
   - linux

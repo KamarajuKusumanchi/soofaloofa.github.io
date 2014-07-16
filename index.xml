@@ -6,7 +6,103 @@
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Thu, 10 Jul 2014 14:32:15 UTC</updated>
+    <updated>Wed, 16 Jul 2014 01:02:25 UTC</updated>
+    
+    <item>
+      <title>Using Basic Authentication with Google Cloud Endpoints</title>
+      <link>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints</link>
+      <pubDate>Wed, 16 Jul 2014 01:02:25 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints</guid>
+      <description>
+
+&lt;p&gt;Cloud Endpoints provides strong integration with OAuth 2.0. If you can use this
+integration &amp;ndash; do it. However, some legacy systems require supporting
+alternative authentication mechanisms. This article will show you how to secure
+an API endpoint using Basic Authentication. You can use this as a starting point
+for whatever authentication method you choose.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;A basic endpoint&lt;/h2&gt;
+
+&lt;p&gt;As a starting point let&amp;rsquo;s define a basic endpoint that will return a
+hypothetical UserMessage defining a User resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+class UsersApi(remote.Service):
+
+    @endpoints.method(message_types.VoidMessage,
+                      UserMessage,
+                      http_method=&#39;GET&#39;,
+                      path=&#39;user&#39;,
+                      name=&#39;user.auth&#39;)
+    def user_auth(self, request):
+        ## Return a UserMessage
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let&amp;rsquo;s build up a UserMessage based on the credentials set in the HTTP
+Authorization header. We can access the HTTP headers of the request through the
+&lt;a href=&#34;https://developers.google.com/appengine/docs/python/tools/protorpc/remote/httprequeststateclass&#34;&gt;HTTPRequestState&lt;/a&gt;
+using the instance variable &lt;code&gt;request_state&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+class UsersApi(remote.Service):
+
+    @endpoints.method(message_types.VoidMessage,
+                      UserMessage,
+                      http_method=&#39;GET&#39;,
+                      path=&#39;user&#39;,
+                      name=&#39;user.auth&#39;)
+    def user_auth(self, request):
+        basic_auth = self.request_state.headers.get(&#39;authorization&#39;)
+        print basic_auth
+        ## Return a UserMessage
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can test this endpoint using &lt;a href=&#34;https://github.com/jakubroztocil/httpie&#34;&gt;httpie&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;http -a username:password GET :8888/_ah/api/users/v1/user
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Examing the logs will show that we receive the HTTP Authorization header in its
+base64 encoded form.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The header can be decoded with the &lt;code&gt;base64&lt;/code&gt; module.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;basic_auth = self.request_state.headers.get(&#39;authorization&#39;)
+auth_type, credentials = basic_auth.split(&#39; &#39;)
+print base64.b64decode(credentials)  # prints username:password
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Using the username and password we can check the datastore for a User model with
+the same credentials and return a &lt;code&gt;UserMessage&lt;/code&gt; based on the model .&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+class UsersApi(remote.Service):
+
+    @endpoints.method(message_types.VoidMessage,
+                      UserMessage,
+                      http_method=&#39;GET&#39;,
+                      path=&#39;user&#39;,
+                      name=&#39;user.auth&#39;)
+    def user_auth(self, request):
+        basic_auth = self.request_state.headers.get(&#39;authorization&#39;)
+        auth_type, credentials = basic_auth.split(&#39; &#39;)
+        username, password = base64.b64decode(credentials).split(&#39;:&#39;)
+        user = User.get_by_username(username)
+        if user and user.verify_password(password):
+            return user.to_message()
+        else:
+            raise endpoints.UnauthorizedException
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This should serve as a starting point for anyone wishing to use Basic
+Authentication with Google Cloud Endpoints. If you&amp;rsquo;ve read this far, why not
+subscribe to this blog through &lt;a href=&#34;http://kevinsookocheff.us3.list-manage2.com/subscribe?u=8b57d632b8677f07ca57dc9cb&amp;amp;id=ec7ddaa3ba&#34;&gt;email&lt;/a&gt; or &lt;a href=&#34;http://sookocheff.com/index.xml&#34;&gt;RSS&lt;/a&gt;?&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Unit Testing Cloud Endpoints</title>
@@ -2424,22 +2520,6 @@ robust APIs. Not only is your API ready to scale and easy to maintain, it is
 easy to understand and use. By consistently following these existing semantics
 you can avoid inserting special cases and &amp;lsquo;gotchas&amp;rsquo; into your API that confuse
 client developers.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Stripe checkout opening in a new tab</title>
-      <link>http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab</link>
-      <pubDate>Tue, 25 Mar 2014 07:23:45 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab</guid>
-      <description>&lt;p&gt;At &lt;a href=&#34;http://www.vendasta.com&#34;&gt;VendAsta&lt;/a&gt; we&amp;rsquo;ve been integrating with the &lt;a href=&#34;http://stripe.com/checkout&#34;&gt;Stripe&lt;/a&gt; payment system using Stripe Checkout. The experience has been completely painless and surprisingly simple. Then came a hiccup. While demoing the new functionality we found that one particular computer in the office would open the checkout modal dialog in a new browser window. Just one laptop. It was running the same version of Chrome that we were developing on. It was running the same OS as a working test machine. But the dialog would consistently open in a new browser window on just this one laptop.&lt;/p&gt;
-
-&lt;p&gt;After a Friday afternoon debugging session our Product Owner decided to jump onto IRC and chat directly with the Stripe developers. They were quickly able to diagnose our problem: touch. The troublesome laptop was a Windows 8 machine with a touch display — and Stripe Checkout will open in a new browser window when used on a tablet.&lt;/p&gt;
-
-&lt;p&gt;This episode was a great reminder of how the first step in debugging is often to &lt;a href=&#34;http://www.hanselman.com/blog/BackToBasicsAssertYourAssumptionsAndDiffYourSourceCode.aspx&#34;&gt;find the difference between the working and non-working system&lt;/a&gt;. Hopefully this post will help someone else with the same problem.&lt;/p&gt;
-
-&lt;p&gt;P.S. Kudos to Stripe for their prompt help via IRC.&lt;/p&gt;
 </description>
     </item>
     

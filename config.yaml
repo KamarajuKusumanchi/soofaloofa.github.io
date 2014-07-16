@@ -2,7 +2,6 @@
 MetaDataFormat: "yaml"
 baseurl: "http://sookocheff.com"
 title: "Kevin Sookocheff"
-disqusShortname: "kevinsookocheff"
 languageCode: "en-us"
 copyright: "Copyright Kevin Sookocheff."
 author:

@@ -253,6 +253,16 @@ ln -s /etc/init.d/mt-daapd-new_library_name K25mt-daapd-new_library_name
     </item>
     
     <item>
+      <title>Mounting SAMBA shares from the command line</title>
+      <link>http://sookocheff.com/posts/2010-07-28-mounting-samba-shares-from-the-command-line</link>
+      <pubDate>Wed, 28 Jul 2010 18:12:37 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2010-07-28-mounting-samba-shares-from-the-command-line</guid>
+      <description>&lt;p&gt;I recently started using Xubuntu to see if the proclaimed speed differences actually made a difference in productivity. Unfortunately, the Thunar file manager does not automatically recognize network drives so I needed to manually mount SAMBA shares from the command line.  In my searches I stumbled across this &lt;a href=&#34;http://ubuntuforums.org/showthread.php?t=288534&#34;&gt;thread&lt;/a&gt; giving the exact solution I used.  Hopefully this helps someone else who is having this same problem.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>How to forward root users mail to an external address</title>
       <link>http://sookocheff.com/posts/2010-06-01-how-to-forward-root-users-mail-to-an-external-address</link>
       <pubDate>Tue, 01 Jun 2010 14:12:32 UTC</pubDate>
@@ -492,16 +502,6 @@ md0 : active raid1 sdb5[1] sda5[0]&lt;br /&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;So, it turns out that my version of Ubuntu Server was already monitoring data integrity once a month.  I then decided to search my init scripts to see what was installed by default and found /etc/init.d/mdadm.  It turns out that, by default, a daemon job to monitor the array (with the mdadm –monitor command shown above) is run at startup and will send mail to root for any strange occurrence. So, if you are running a debian-based server and wish to monitor the state of your RAID array you really don’t have to do anything at all.  But how about sending root mail to your external e-mail address.  Well, that’s the subject of &lt;a href=&#34;http://www.kevinsookocheff.com/2010/06/01/how-to-forward-root-users-mail-to-an-external-address/&#34;&gt;another post&lt;/a&gt;.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Mounting SAMBA shares from the command line</title>
-      <link>http://sookocheff.com/posts/2010-07-28-mounting-samba-shares-from-the-command-line</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2010-07-28-mounting-samba-shares-from-the-command-line</guid>
-      <description>&lt;p&gt;I recently started using Xubuntu to see if the proclaimed speed differences actually made a difference in productivity. Unfortunately, the Thunar file manager does not automatically recognize network drives so I needed to manually mount SAMBA shares from the command line.  In my searches I stumbled across this &lt;a href=&#34;http://ubuntuforums.org/showthread.php?t=288534&#34;&gt;thread&lt;/a&gt; giving the exact solution I used.  Hopefully this helps someone else who is having this same problem.&lt;/p&gt;
 </description>
     </item>
     

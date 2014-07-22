@@ -3,8 +3,13 @@
   
   <url>
     <loc>http://sookocheff.com/</loc>
-    <lastmod>2014-07-16T01:02:25+00:00</lastmod>
+    <lastmod>2014-07-22T06:29:56+00:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client</loc>
+    <lastmod>2014-07-22T06:29:56+00:00</lastmod>
   </url>
   
   <url>

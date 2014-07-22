@@ -24,10 +24,11 @@ pip install google-apis-client-generator
 
 The client generator works by taking an API discovery document, parsing it into
 an object model, and then using a language template to transform the object
-model to running code. The discovery document for your API is available from the
-API discovery root URL.
+model to running code. 
 
-You can download the discovery root document (using [httpie](https://github.com/jakubroztocil/httpie) in this example).
+To run the generator you will need the discovery document for your API. You can
+find this document from the root API discovery URL. First, download the root API
+discovery document using [httpie](https://github.com/jakubroztocil/httpie).
 
 ```bash
 http --download https://example.appspot.com/_ah/api/discovery/v1/apis
@@ -53,9 +54,9 @@ http --download https://example.appspot.com/_ah/api/discovery/v1/apis
 ```
 
 The root discovery document will have an `items` member listing the available
-APIs and a `discoveryLink` within each API. The `discoveryLink` provides the
-schema for your API. We can download this schema and use it as input to the
-client generator.
+APIs and a `discoveryLink` for each API. The `discoveryLink` provides the schema
+for the API. We can download this schema and use it as input to the client
+generator.
 
 ```bash
 http --download https://example.appspot.com/_ah/api/discovery/v1/apis/example/v1/rest
@@ -63,6 +64,5 @@ http --download https://example.appspot.com/_ah/api/discovery/v1/apis/example/v1
 generate_library --input=rest.json --language=csharp --output_dir=tmp/csharp
 ```
 
-Your C# client library is now ready to use based on your discovery document. As
-of this writing you can generate client libraries in C++, C#, Dart, GWT, Java,
-PHP and Python.
+Your C# client library is now ready to use. As of this writing you can generate
+client libraries in C++, C#, Dart, GWT, Java, PHP and Python.

@@ -6,7 +6,53 @@
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Tue, 22 Jul 2014 06:29:56 UTC</updated>
+    <updated>Tue, 29 Jul 2014 20:32:42 UTC</updated>
+    
+    <item>
+      <title>Bypassing ndb hooks with the RawDatastoreInputReader</title>
+      <link>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader</link>
+      <pubDate>Tue, 29 Jul 2014 20:32:42 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader</guid>
+      <description>
+
+&lt;p&gt;When doing a MapReduce operation there are times when you want to edit a set of entities without triggering the post or pre put hooks associated with those entities. On such ocassions using the raw datastore entity allows you to process the data without unwanted side effects.&lt;/p&gt;
+
+&lt;p&gt;For the sake of this discussion let&amp;rsquo;s assume we want to move a &lt;code&gt;phone_number&lt;/code&gt; field to a &lt;code&gt;work_number&lt;/code&gt; field for all entities of a certain Kind in the datastore.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;Getting the raw datastore entity&lt;/h2&gt;
+
+&lt;p&gt;The MapReduce library provides a &lt;code&gt;RawDatastoreInputReader&lt;/code&gt; that will feed raw datastore entities to your mapping function. We can set our MapReduce operation to use the &lt;code&gt;RawDatastoreInputReader&lt;/code&gt; using a &lt;code&gt;mapreduce.yaml&lt;/code&gt; declaration.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;- name: move_phone_numbers
+  mapper:
+    input_reader: mapreduce.input_readers.RawDatastoreInputReader
+    handler: app.pipelines.move_phone_numbers_map
+    params:
+    - name: entity_kind
+      default: MyModel
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Manipulating a raw datastore entity&lt;/h2&gt;
+
+&lt;p&gt;Our &lt;code&gt;raw_datastore_map&lt;/code&gt; function to use the datastore entity in its raw form. The raw form of the datastore entity provides a dictionary like interface that we can use to manipulate the entity. With this interface we can move the phone number to the correct field.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;def move_phone_numbers_map(entity):
+    phone_number = entity.get(&#39;phone_number&#39;)
+    if phone_number:
+        entity[&#39;work_number&#39;] = phone_number
+    del entity[&#39;phone_number&#39;]
+    
+    yield op.db.Put(entity)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Using &lt;code&gt;op.db.Put&lt;/code&gt; will put the entity to the datastore using the raw datastore
+API, thereby bypassing any ndb hooks that are in place.  For more information on
+the raw datastore API the best resource is the source code itself, available
+from the &lt;a href=&#34;https://code.google.com/p/googleappengine/source/browse/trunk/python/google/appengine/api/datastore.py&#34;&gt;App Engine SDK
+repository&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Generating a C# client for an App Engine Cloud Endpoints API</title>
@@ -2295,164 +2341,6 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 &lt;h3 id=&#34;toc_9&#34;&gt;Conclusion&lt;/h3&gt;
 
 &lt;p&gt;JSON Patch is an effective way to provide diffs of your API resources. Most languages already have an implementation available. There is no reason not to adopt the HTTP PATCH today.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>How to Version a REST API</title>
-      <link>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</link>
-      <pubDate>Tue, 01 Apr 2014 14:16:18 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</guid>
-      <description>
-
-&lt;p&gt;API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_0&#34;&gt;1) Versioned URL&lt;/h2&gt;
-
-&lt;p&gt;URL versioning inserts a version number directly in the URL of the resource. As an example,  version one of the API could be accessed through the &lt;code&gt;v1&lt;/code&gt; URL.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http://sookocheff.com/api/v1/users/12345
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Version two of the API could be accessed through the &lt;code&gt;v2&lt;/code&gt; URL.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http://sookocheff.com/api/v2/users/12345
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This solution has been widely adopted because it is easy to deploy and easy for client developers to understand. This method also makes each API version discoverable and browseable without using an advanced HTTP client — just alter the URL.&lt;/p&gt;
-
-&lt;p&gt;The drawback to using URL versioning is that by changing the URL of a resource with each new API version we are violating the REST constraint that &lt;a href=&#34;http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/&#34;&gt;each resource be accessible via a unique URL&lt;/a&gt;. To mitigate this you can map the current version of the API to a non-versioned URL.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http://sookocheff.com/api/users/
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Once this mapping is in place you can safely deprecate old URLs by redirecting to the non-versioned URL &amp;ndash; notifying the client to use the latest version. At all times the non-versioned URL represents the latest version of that resource.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_1&#34;&gt;Pros:&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Easy to implement.&lt;/li&gt;
-&lt;li&gt;Easy to understand.&lt;/li&gt;
-&lt;li&gt;Direct path to deprecation.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;toc_2&#34;&gt;Cons:&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Violates REST principle of unique URLs for a resource.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;toc_3&#34;&gt;2) Versioned Media Type&lt;/h2&gt;
-
-&lt;p&gt;When making an HTTP request the client can request a specific MIME type (or list of MIME types) that it is willing to accept using an &lt;code&gt;Accept&lt;/code&gt; header. For example, an HTML client may use the following &lt;code&gt;Accept&lt;/code&gt; header to request an HTML representation of the resource.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;GET /v1/users/12345 HTTP/1.1
-Host: sookocheff.com
-Accept: text/html
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Whereas an XML client may use the following &lt;code&gt;Accept&lt;/code&gt; header to request an XML representation of the resource.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;GET /v1/users/12345 HTTP/1.1
-Host: sookocheff.com
-Accept: application/xml
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We can use this functionality to allow the client to access specific versions of a resource.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;GET  /users/12345 HTTP/1.1
-Host: sookocheff.com
-Accept: application/vnd.sookocheff.user+json?version=2
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This method assumes we have defined a custom media type to represent every resource in our API and that the media type accepts a &lt;code&gt;version&lt;/code&gt; parameter.&lt;/p&gt;
-
-&lt;p&gt;Versioning the media type does adhere to strict REST principles but causes problems in other ways. First, you need a custom media type for every resource returned by your API. This is not only reinventing the wheel &amp;ndash; &lt;a href=&#34;http://schema.org/&#34;&gt;perfectly good&lt;/a&gt; &lt;a href=&#34;http://www.iana.org/assignments/media-types/media-types.xhtml&#34;&gt;media types&lt;/a&gt; &lt;a href=&#34;http://www.freeformatter.com/mime-types-list.html&#34;&gt;already exist&lt;/a&gt; &amp;ndash; it also creates a media type so specific to your API that it cannot be reused elsewhere. Lastly, it is unclear whether the version parameter applies to the version of the media type or to the version of your API.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_4&#34;&gt;Pros:&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Adheres to REST principles.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;toc_5&#34;&gt;Cons:&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Custom media type for every resource.&lt;/li&gt;
-&lt;li&gt;Binds your media type to your API.&lt;/li&gt;
-&lt;li&gt;Unclear versioning.&lt;/li&gt;
-&lt;li&gt;Requires sophisticated API client.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;toc_6&#34;&gt;3) Versioned HTTP Header&lt;/h2&gt;
-
-&lt;p&gt;The &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616-sec7.html#sec7.1&#34;&gt;HTTP specification&lt;/a&gt; states that unknown HTTP headers MUST be forwarded on to the recipient. This means that custom HTTP headers can be set by our client and received by our API.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET /users/12345 HTTP/1.1
-Host: sookocheff.com
-Accept: application/json
-Users-Version: 2
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;A server receiving this request can parse the header to ascertain the version number being requested by the client and return the proper representation.&lt;/p&gt;
-
-&lt;p&gt;This method requires that your API client is able to modify the HTTP headers of its requests. If the client is unable to provide a version number with the HTTP header you can assume that a request is made for the latest API version.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_7&#34;&gt;Pros:&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Adheres to REST principles.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;toc_8&#34;&gt;Cons:&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Requires sophisticated API client.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;toc_9&#34;&gt;4) Versioned Resources&lt;/h2&gt;
-
-&lt;p&gt;The last versioning method is to set the version number in the response itself. This places the burden of versioning with the client rather than the server. A client receiving a response from a known version number can parse it and act appropriately. It would be up to the client how to handle an unknown version number.&lt;/p&gt;
-
-&lt;p&gt;This method is only appropriate if you as the developer have direct control over both the server and the client being deployed.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_10&#34;&gt;Pros:&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Simplified server.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;toc_11&#34;&gt;Cons:&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Complex client.&lt;/li&gt;
-&lt;li&gt;Tightly couples server to client.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;toc_12&#34;&gt;What to do?&lt;/h2&gt;
-
-&lt;p&gt;By following &lt;a href=&#34;http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/&#34;&gt;REST principles&lt;/a&gt; we can guide our API versioning practices while being pragmatic about our choices so that our API can work in the real world.&lt;/p&gt;
-
-&lt;p&gt;My recommendation is to combine versioned URLs with custom HTTP headers using the following guidelines. With these guidelines we can safely version our API while supporting existing clients and offering them a clear upgrade path.&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Each major version of the API recieves a versioned URL.&lt;/li&gt;
-&lt;li&gt;One non-versioned URL always represents the latest API version.&lt;/li&gt;
-&lt;li&gt;Redirect deprecated URLs to the canonical URL after an advertised grace period.&lt;/li&gt;
-&lt;li&gt;Add a custom HTTP header for the version number.
-
-&lt;ul&gt;
-&lt;li&gt;This header specifies both major &lt;strong&gt;and&lt;/strong&gt; minor version numbers.&lt;/li&gt;
-&lt;li&gt;The non-versioned URL returns the appropriate version of the resource when specified by the HTTP header.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;toc_13&#34;&gt;References&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api&#34;&gt;Vinay Sahni&lt;/a&gt; has collected a long list of best practices for pragmatic API design, including versioning.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://stackoverflow.com/questions/389169/best-practices-for-api-versioning&#34;&gt;stackoverflow&lt;/a&gt; presents a collection of good answers providing best practices for API versioning.&lt;/p&gt;
 </description>
     </item>
     

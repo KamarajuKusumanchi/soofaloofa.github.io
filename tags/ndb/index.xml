@@ -6,7 +6,53 @@
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Wed, 28 May 2014 05:55:48 UTC</updated>
+    <updated>Tue, 29 Jul 2014 20:32:42 UTC</updated>
+    
+    <item>
+      <title>Bypassing ndb hooks with the RawDatastoreInputReader</title>
+      <link>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader</link>
+      <pubDate>Tue, 29 Jul 2014 20:32:42 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader</guid>
+      <description>
+
+&lt;p&gt;When doing a MapReduce operation there are times when you want to edit a set of entities without triggering the post or pre put hooks associated with those entities. On such ocassions using the raw datastore entity allows you to process the data without unwanted side effects.&lt;/p&gt;
+
+&lt;p&gt;For the sake of this discussion let&amp;rsquo;s assume we want to move a &lt;code&gt;phone_number&lt;/code&gt; field to a &lt;code&gt;work_number&lt;/code&gt; field for all entities of a certain Kind in the datastore.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;Getting the raw datastore entity&lt;/h2&gt;
+
+&lt;p&gt;The MapReduce library provides a &lt;code&gt;RawDatastoreInputReader&lt;/code&gt; that will feed raw datastore entities to your mapping function. We can set our MapReduce operation to use the &lt;code&gt;RawDatastoreInputReader&lt;/code&gt; using a &lt;code&gt;mapreduce.yaml&lt;/code&gt; declaration.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;- name: move_phone_numbers
+  mapper:
+    input_reader: mapreduce.input_readers.RawDatastoreInputReader
+    handler: app.pipelines.move_phone_numbers_map
+    params:
+    - name: entity_kind
+      default: MyModel
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Manipulating a raw datastore entity&lt;/h2&gt;
+
+&lt;p&gt;Our &lt;code&gt;raw_datastore_map&lt;/code&gt; function to use the datastore entity in its raw form. The raw form of the datastore entity provides a dictionary like interface that we can use to manipulate the entity. With this interface we can move the phone number to the correct field.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;def move_phone_numbers_map(entity):
+    phone_number = entity.get(&#39;phone_number&#39;)
+    if phone_number:
+        entity[&#39;work_number&#39;] = phone_number
+    del entity[&#39;phone_number&#39;]
+    
+    yield op.db.Put(entity)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Using &lt;code&gt;op.db.Put&lt;/code&gt; will put the entity to the datastore using the raw datastore
+API, thereby bypassing any ndb hooks that are in place.  For more information on
+the raw datastore API the best resource is the source code itself, available
+from the &lt;a href=&#34;https://code.google.com/p/googleappengine/source/browse/trunk/python/google/appengine/api/datastore.py&#34;&gt;App Engine SDK
+repository&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>How to bypass the auto_now property option during an ndb put</title>

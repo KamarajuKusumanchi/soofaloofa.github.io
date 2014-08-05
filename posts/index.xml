@@ -6,7 +6,84 @@
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Tue, 29 Jul 2014 20:32:42 UTC</updated>
+    <updated>Mon, 04 Aug 2014 21:18:13 UTC</updated>
+    
+    <item>
+      <title>Restoring an App Engine backup into a Big Query table</title>
+      <link>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup</link>
+      <pubDate>Mon, 04 Aug 2014 21:18:13 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup</guid>
+      <description>
+
+&lt;p&gt;An unfortunate DevOps task for any team running App Engine is restoring data
+from backups. One way to do this is by accessing the Google Cloud Storage URL
+for a given App Engine backup and importing that backup into BigQuery. This
+article will show you to get the Cloud Storage URL for an App Engine backup and
+manually perform that import.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;Getting the Cloud Storage URL&lt;/h2&gt;
+
+&lt;p&gt;The first thing you need to do is access the cloud storage URL for a given App
+Engine backup. First, log in to the Google Developer Console and navigate to
+your backup. The filename of the backup will be a long sequence of characters
+followed by the name of your model. The file extension will be &lt;code&gt;.backup_info&lt;/code&gt;.
+As an example, this is the filename of backup for an Account model used in one
+of our projects.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Right click on your backup and copy the URL to your clipboard. The URL will be
+of the form below. The name of your cloud storage bucket and the identifier for
+you app have been highlighted below. Replace these with appropriate values for
+your project.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;https://console.developers.google.com/m/cloudstorage/b/**bucket**/o/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To get the cloud storage URL in the format expected by a BigQuery import remove
+everything up to the bucket name.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;**bucket**/o/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now remove the &lt;code&gt;o&lt;/code&gt; between the bucket name and your app identifier.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;**bucket**/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally, append &lt;code&gt;gs://&lt;/code&gt; to the file to arrive at your final Google Cloud Storage
+URL.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;gs://**bucket**/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The next step is to import the backup into BigQuery. To do this, navigate to
+your project and create a new table in your desired dataset.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34;&gt;
+&lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34; alt=&#34;Player Resource&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;In the &lt;code&gt;Choose destination&lt;/code&gt; tab pick a name for your new table. In my case I&amp;rsquo;ll
+name the table with the date of my backup for reference.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34;&gt;
+&lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34; alt=&#34;Player Resource&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Next, choose App Engine Datastore Backup as the source format and paste the
+Cloud Storage URL you arrived at above in the appropriate field.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/select-date.png&#34;&gt;
+&lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/select-date.png&#34; alt=&#34;Player Resource&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;You can choose the defaults for the next tabs and, finally, import your App
+Engine backup into BigQuery and watch it being fully restored.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Bypassing ndb hooks with the RawDatastoreInputReader</title>
@@ -2122,225 +2199,6 @@ of previous or subsequent slices.&lt;/p&gt;
 &lt;p&gt;MapReduce provides a convenient programming model for operating on large
 datasets. In our next article we look at how to use the Python MapReduce API for
 App Engine to process entities from the datastore.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Understanding JSON Patch</title>
-      <link>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</link>
-      <pubDate>Tue, 08 Apr 2014 16:12:14 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</guid>
-      <description>
-
-&lt;p&gt;The typical update cycle for an API resource is to (1) GET the representation, (2) modify it and (3) PUT back the entire representation. This can waste bandwidth and processing time for large resources. An alternative is to use the &lt;a href=&#34;https://tools.ietf.org/html/rfc5789&#34;&gt;HTTP PATCH&lt;/a&gt; extension method to only send the differences between two resources. HTTP PATCH applies a set of changes to the document referenced by the HTTP request.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;PATCH /file.txt HTTP/1.1
-Host: sookocheff.com
-Content-Type: application/json
-If-Match: &amp;quot;e0036bbc6f&amp;quot;
-
-[description of changes]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The format of the PATCH request body differs depending on the representation of the resource. For JSON documents, &lt;a href=&#34;https://tools.ietf.org/html/rfc6902&#34;&gt;JSON Patch&lt;/a&gt; defines this format.&lt;/p&gt;
-
-&lt;p&gt;A JSON Patch document is a sequential list of operations to be applied to an object. Each operation is a JSON object having exactly one &lt;code&gt;op&lt;/code&gt; member.
-Valid operations are &lt;code&gt;add&lt;/code&gt;, &lt;code&gt;remove&lt;/code&gt;, &lt;code&gt;replace&lt;/code&gt;, &lt;code&gt;move&lt;/code&gt;, &lt;code&gt;copy&lt;/code&gt; and &lt;code&gt;test&lt;/code&gt;. Any other operation is considered an error.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot; }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Each operation must also have exactly one &lt;code&gt;path&lt;/code&gt; member.
-The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf.org/html/rfc6901&#34;&gt;JSON Pointer&lt;/a&gt; that determines a location within the JSON document to modify.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/player/name&amp;quot; }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The remaining elements of a JSON Patch operation depend on the particular operation being performed.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_0&#34;&gt;add&lt;/h3&gt;
-
-&lt;p&gt;The &lt;code&gt;add&lt;/code&gt; operation is used in different ways depending on the target of the &lt;code&gt;path&lt;/code&gt; being referenced. Generally speaking we can use &lt;code&gt;add&lt;/code&gt; to append to a list, add a member to an object or update the value of an existing field. The &lt;code&gt;add&lt;/code&gt; operation accepts a &lt;code&gt;value&lt;/code&gt; member which is the value to update the referenced &lt;code&gt;path&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h4 id=&#34;toc_1&#34;&gt;Append to a List&lt;/h4&gt;
-
-&lt;p&gt;To append a value to a list you use an existing list as the &lt;code&gt;path&lt;/code&gt; of the operation. So, given the JSON document.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;{
-    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}]
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We can append an order to the list using the &lt;code&gt;add&lt;/code&gt; operation.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/orders&amp;quot;, &amp;quot;value&amp;quot;: {&amp;quot;id&amp;quot;: 789} }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;After applying the patch we get the final document.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;{
-    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}]
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;toc_2&#34;&gt;Add a Member to an Object&lt;/h4&gt;
-
-&lt;p&gt;If the &lt;code&gt;path&lt;/code&gt; references a member of an object that does not exist, a new member is added to the object. We start with our JSON document listing our orders.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789&amp;quot;}]
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Using this JSON Patch document we can add a total and a currency member to the document.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;[
-{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot;, &amp;quot;value&amp;quot;: 20.00 },
-{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/currency&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;USD&amp;quot; }
-]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;After applying the patch we get the final representation.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
-    &amp;quot;total&amp;quot;: 20.00,
-    &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;toc_3&#34;&gt;Update an Existing Member of an Object&lt;/h4&gt;
-
-&lt;p&gt;If the &lt;code&gt;path&lt;/code&gt; refers to an existing object member, that member is updated with the newly supplied value.&lt;/p&gt;
-
-&lt;p&gt;Given the JSON document.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
-    &amp;quot;total&amp;quot;: 20.00,
-    &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We can update the total by using an &lt;code&gt;add&lt;/code&gt; operation.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot;, &amp;quot;value&amp;quot;: 30.00 },
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Leaving the final result.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
-    &amp;quot;total&amp;quot;: 30.00,
-    &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_4&#34;&gt;remove&lt;/h3&gt;
-
-&lt;p&gt;Remove is a simple operation. The target location of the &lt;code&gt;path&lt;/code&gt; is removed from the object.&lt;/p&gt;
-
-&lt;p&gt;Starting with the following document.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
-    &amp;quot;total&amp;quot;: 30.00,
-    &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We can remove the &lt;code&gt;currency&lt;/code&gt; member with a &lt;code&gt;remove&lt;/code&gt; operation.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;remove&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/currency&amp;quot; }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
-    &amp;quot;total&amp;quot;: 30.00
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We can also remove an element from an array. All remaining elements are shifted one position to the left. To remove order &lt;code&gt;456&lt;/code&gt; we can remove the array index referencing this order.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;remove&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/orders/1&amp;quot; }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 789}],
-    &amp;quot;total&amp;quot;: 30.00
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_5&#34;&gt;replace&lt;/h3&gt;
-
-&lt;p&gt;Replace is used to set a new value to a member of the object. It is logically equivalent to a &lt;code&gt;remove&lt;/code&gt; operation followed by an &lt;code&gt;add&lt;/code&gt; operation to the same &lt;code&gt;path&lt;/code&gt; or to an &lt;code&gt;add&lt;/code&gt; operation to an existing member.&lt;/p&gt;
-
-&lt;p&gt;Given the following JSON document.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
-    &amp;quot;total&amp;quot;: 20.00,
-    &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We can apply the &lt;code&gt;replace&lt;/code&gt; operation to update the order total.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;replace&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot;, &amp;quot;value&amp;quot;: 30.00 },
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
-    &amp;quot;total&amp;quot;: 30.00,
-    &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_6&#34;&gt;move&lt;/h3&gt;
-
-&lt;p&gt;The &lt;code&gt;move&lt;/code&gt; operation removes the value at a specified location and adds it to the target location. The removal location is given by a &lt;code&gt;from&lt;/code&gt; member and the target location is given by the &lt;code&gt;path&lt;/code&gt; member.&lt;/p&gt;
-
-&lt;p&gt;Given this starting document.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
-    &amp;quot;total&amp;quot;: 30.00,
-    &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We can move an order to the root of the document by applying this JSON patch.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;json
-{ &amp;quot;op&amp;quot;: &amp;quot;move&amp;quot;, &amp;quot;from&amp;quot;: &amp;quot;/orders/0&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/rootOrder&amp;quot; }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-    &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
-    &amp;quot;rootOrder&amp;quot;: {&amp;quot;id&amp;quot;: 123}, 
-    &amp;quot;total&amp;quot;: 30.00,
-    &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_7&#34;&gt;copy&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;copy&lt;/code&gt; is like &lt;code&gt;move&lt;/code&gt;. It copies the value at the &lt;code&gt;from&lt;/code&gt; location to the  &lt;code&gt;path&lt;/code&gt; location, leaving duplicates of the data at each location.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;copy&amp;quot;, &amp;quot;from&amp;quot;: &amp;quot;/orders/0&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/rootOrder&amp;quot; }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_8&#34;&gt;test&lt;/h3&gt;
-
-&lt;p&gt;The HTTP PATCH method is atomic and the patch should only be applied if all operations can be safely applied. The &lt;code&gt;test&lt;/code&gt; operation can offer additional validation to ensure that patch preconditions or postconditions are met. If the test fails the whole patch is discarded. &lt;code&gt;test&lt;/code&gt; is strictly an equality check.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;test&amp;quot;, &amp;quot;value&amp;quot;: 30.00, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot; }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_9&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;JSON Patch is an effective way to provide diffs of your API resources. Most languages already have an implementation available. There is no reason not to adopt the HTTP PATCH today.&lt;/p&gt;
 </description>
     </item>
     

@@ -3,8 +3,13 @@
   
   <url>
     <loc>http://sookocheff.com/</loc>
-    <lastmod>2014-07-29T20:32:42+00:00</lastmod>
+    <lastmod>2014-08-04T21:18:13+00:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup</loc>
+    <lastmod>2014-08-04T21:18:13+00:00</lastmod>
   </url>
   
   <url>

@@ -70,7 +70,7 @@ name the table with the date of my backup for reference.
 Next, choose App Engine Datastore Backup as the source format and paste the
 Cloud Storage URL you arrived at above in the appropriate field. 
 
-{{% img 2014-08-04-restoring-an-app-engine-backup/select-date.png %}}
+{{% img 2014-08-04-restoring-an-app-engine-backup/select-data.png %}}
 
 You can choose the defaults for the next tabs and, finally, import your App
 Engine backup into BigQuery and watch it being fully restored.

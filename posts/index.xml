@@ -6,7 +6,159 @@
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Mon, 04 Aug 2014 21:18:13 UTC</updated>
+    <updated>Thu, 14 Aug 2014 17:58:03 UTC</updated>
+    
+    <item>
+      <title>Converting an ndb model to a BigQuery schema</title>
+      <link>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema</link>
+      <pubDate>Thu, 14 Aug 2014 17:58:03 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema</guid>
+      <description>
+
+&lt;p&gt;I have been working on the problem of recording changes to an ndb model. One way to accomplish this is to stream data changes to a BigQuery table corresponding to the ndb model. It would be great to do this in a generic way which gives us the problem of generating a BigQuery table given an ndb model. This article will describe one solution to this problem.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;Accessing the properties of an ndb class&lt;/h2&gt;
+
+&lt;p&gt;The first step in the process is to find all the properties of the class via the
+ndb &lt;code&gt;_properties&lt;/code&gt; accessor. By iterating over this field we can find all of the
+properties on the class and their ndb types.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def tablify(ndb_model):
+    &amp;quot;&amp;quot;&amp;quot;
+    Convert ndb_model into a BigQuery table schema.
+    &amp;quot;&amp;quot;&amp;quot;
+    for name, ndb_type in ndb_model.__class__._properties.iteritmes():
+       print name, ndb_type
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Converting properties to BigQuery schema types&lt;/h2&gt;
+
+&lt;p&gt;Now that we have the set of properties on the class we can map from the type of
+each property to a BigQuery type. Here is a helper function that provides a
+simple mapping.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def ndb_type_to_bigquery_type(_type):
+    &amp;quot;&amp;quot;&amp;quot;
+    Convert a python type to a bigquery type.
+    &amp;quot;&amp;quot;&amp;quot;
+    if isinstance(_type, ndb.IntegerProperty):
+        return &amp;quot;INTEGER&amp;quot;
+    elif isinstance(_type, ndb.FloatProperty):
+        return &amp;quot;FLOAT&amp;quot;
+    elif isinstance(_type, ndb.BooleanProperty):
+        return &amp;quot;BOOLEAN&amp;quot;
+    elif type(_type) in [ndb.StringProperty, ndb.TextProperty, ndb.ComputedProperty]:
+        return &amp;quot;STRING&amp;quot;
+    elif type(_type) in [ndb.DateTimeProperty, ndb.DateProperty, ndb.TimeProperty]:
+        return &amp;quot;TIMESTAMP&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The last task is to format everything as a &lt;a href=&#34;https://developers.google.com/bigquery/docs/reference/v2/tables&#34;&gt;BigQuery table
+resource&lt;/a&gt;. This
+involves adding some boiler-plate around each field in our BigQuery schema and
+fleshing out the structure of the JSON.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;
+from google.appengine.ext import ndb
+
+SUPPORTED_TYPES = [ndb.IntegerProperty,
+                   ndb.FloatProperty,
+                   ndb.BooleanProperty,
+                   ndb.StringProperty,
+                   ndb.TextProperty,
+                   ndb.DateTimeProperty,
+                   ndb.DateProperty,
+                   ndb.TimeProperty,
+                   ndb.ComputedProperty]
+
+
+def ndb_type_to_bigquery_type(_type):
+    &amp;quot;&amp;quot;&amp;quot;
+    Convert a python type to a bigquery type.
+    &amp;quot;&amp;quot;&amp;quot;
+    if isinstance(_type, ndb.IntegerProperty):
+        return &amp;quot;INTEGER&amp;quot;
+    elif isinstance(_type, ndb.FloatProperty):
+        return &amp;quot;FLOAT&amp;quot;
+    elif isinstance(_type, ndb.BooleanProperty):
+        return &amp;quot;BOOLEAN&amp;quot;
+    elif type(_type) in [ndb.StringProperty, ndb.TextProperty, ndb.ComputedProperty]:
+        return &amp;quot;STRING&amp;quot;
+    elif type(_type) in [ndb.DateTimeProperty, ndb.DateProperty, ndb.TimeProperty]:
+        return &amp;quot;TIMESTAMP&amp;quot;
+
+
+def ndb_property_to_bigquery_field(name, ndb_type):
+    &amp;quot;&amp;quot;&amp;quot;
+    Convert from ndb property to a BigQuery schema table field.
+    &amp;quot;&amp;quot;&amp;quot;
+    if type(ndb_type) not in SUPPORTED_TYPES:
+        raise ValueError(&#39;Unsupported object property&#39;)
+
+    field = {
+        &amp;quot;description&amp;quot;: name,
+        &amp;quot;name&amp;quot;: name,
+        &amp;quot;type&amp;quot;: ndb_type_to_bigquery_type(ndb_type)
+    }
+
+    if ndb_type._repeated:
+        field[&#39;mode&#39;] = &#39;REPEATED&#39;
+
+    return field
+
+
+def tablify_schema(obj):
+    &amp;quot;&amp;quot;&amp;quot;
+    Convert ndb_model into a BigQuery table schema.
+    &amp;quot;&amp;quot;&amp;quot;
+    table_schema = {&#39;fields&#39;: []}
+    
+    for name, ndb_type in obj.__class__._properties.iteritems():
+        table_schema[&#39;fields&#39;].append(ndb_property_to_bigquery_field(name, ndb_type))
+
+    return table_schema
+
+
+def tablify(obj, project_id, dataset_id, table_id):
+    &amp;quot;&amp;quot;&amp;quot;
+    Return a BigQuery table resource representing an ndb object.
+    &amp;quot;&amp;quot;&amp;quot;
+    return {
+        &amp;quot;kind&amp;quot;: &amp;quot;bigquery#table&amp;quot;,
+        &amp;quot;id&amp;quot;: table_id,
+        &amp;quot;tableReference&amp;quot;: {
+            &amp;quot;projectId&amp;quot;: project_id,
+            &amp;quot;datasetId&amp;quot;: dataset_id,
+            &amp;quot;tableId&amp;quot;: table_id
+        },
+        &amp;quot;description&amp;quot;: &amp;quot;Table Resource&amp;quot;,
+        &amp;quot;schema&amp;quot;: tablify_schema(obj)
+    }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;Creating the new table on BigQuery.&lt;/h2&gt;
+
+&lt;p&gt;Now that we have a BigQuery schema we can create the table in BigQuery using the BigQuery api client.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from oauth2client.appengine import AppAssertionCredentials
+from apiclient.discovery import build
+
+credentials = AppAssertionCredentials(scope=&#39;https://www.googleapis.com/auth/bigquery&#39;)
+http = credentials.authorize(httplib2.Http())
+big_query_service = build(&#39;bigquery&#39;, &#39;v2&#39;, http=http)
+        
+table_resource = tablify(ndb_model, project_id, dataset_id, table_id)
+                response = big_query_service.tables().insert(projectId=project_id,
+                                                             datasetId=dataset_id,
+                                                             body=table_resource).execute()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And that&amp;rsquo;s it. This article outlined a quick method of generating a BigQuery
+table scheme from an ndb model. If you found this useful let me know in the
+comments.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Restoring an App Engine backup into a Big Query table</title>
@@ -1980,225 +2132,6 @@ can perform. Second, you cannot start a MapReduce job programmatically.&lt;/p&gt
 
 &lt;p&gt;The next article in this series will show how to overcome these limitations
 using MapReduce Pipelines to programmatically control your API.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>App Engine MapReduce API - Part 1: The Basics</title>
-      <link>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</link>
-      <pubDate>Tue, 15 Apr 2014 12:09:36 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics</guid>
-      <description>
-
-&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The first arcticle in this series provides an overview of the &lt;a href=&#34;https://developers.google.com/appengine/docs/python/dataprocessing/&#34;&gt;App Engine MapReduce
-API&lt;/a&gt;. We
-will give a basic overview of what MapReduce is and how it is used to do
-parallel and distributed processing of large datasets.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_1&#34;&gt;The Map and Reduce Functions&lt;/h2&gt;
-
-&lt;p&gt;MapReduce is based on the &lt;code&gt;map&lt;/code&gt; and &lt;code&gt;reduce&lt;/code&gt; functions that are commonly used in
-lazily-evaluated functional programming languages. Let&amp;rsquo;s look at &lt;code&gt;map&lt;/code&gt; first.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_2&#34;&gt;map&lt;/h3&gt;
-
-&lt;p&gt;A &lt;code&gt;map&lt;/code&gt; function is a way to apply a transformation to every element in a list.
-Using Clojure as the example functional language we can use the &lt;code&gt;map&lt;/code&gt; function
-to increment every number in a list by &lt;code&gt;1&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;=&amp;gt; (map inc [1 2 3 4 5])
-(2 3 4 5 6)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;In this example &lt;code&gt;inc&lt;/code&gt; is the increment function where &lt;code&gt;inc(x) = x+1&lt;/code&gt;. More
-generally, you can apply any function &lt;code&gt;fn&lt;/code&gt; to all elements of a list by passing
-it to the map function.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;=&amp;gt; (map fn [1 2 3 4 5])
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_3&#34;&gt;reduce&lt;/h3&gt;
-
-&lt;p&gt;Reduce applying a function &lt;code&gt;fn&lt;/code&gt; of two arguments to a sequence of parameters.
-Each iteration of the function call uses the value of the previous call as an
-input parameter of the function. In this example we start with a base value of 0
-and iteratively add to that base value to sum a list of numbers.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;=&amp;gt; (reduce + 0 [1 2 3 4 5])
-=&amp;gt; (reduce + 1 [2 3 4 5])
-=&amp;gt; (reduce + 3 [3 4 5])
-=&amp;gt; (reduce + 6 [4 5])
-=&amp;gt; (reduce + 10 [5])
-15
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;An interesting feature of both map and reduce is that they can be lazily
-evaluated &amp;ndash; meaning that each operation can be performed only when it is
-needed. With MapReduce, lazy evaluation allows you to work with large datasets
-by processing data only when needed.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_4&#34;&gt;MapReduce Stages&lt;/h2&gt;
-
-&lt;p&gt;The App Engine MapReduce API provides a method for operating over large datasets
-via a parallel and distributed system of lazy evaluation. In contrast to the
-&lt;code&gt;map&lt;/code&gt; and &lt;code&gt;reduce&lt;/code&gt; functions a MapReduce job may output a single value or a list
-of values depending on the job requirements.&lt;/p&gt;
-
-&lt;p&gt;A MapReduce job is made up of stages. Each stage completes before the next stage
-begins and any intermediate data is stored in temporary storage between the
-stages. MapReduce has three stages: map, shuffle and reduce.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_5&#34;&gt;Map&lt;/h3&gt;
-
-&lt;p&gt;The map stage has two components &amp;ndash; an &lt;em&gt;InputReader&lt;/em&gt; and a &lt;em&gt;map&lt;/em&gt; function. The
-InputReader&amp;rsquo;s job is to deliver data one record at a time to the &lt;em&gt;map&lt;/em&gt; function.
-The &lt;em&gt;map&lt;/em&gt; function is applied to each record individually and a key-value pair
-is emitted. The data emitted by the &lt;em&gt;map&lt;/em&gt; function is stored in temporary
-storage for processing by the next stage.&lt;/p&gt;
-
-&lt;p&gt;The prototypical MapReduce example counts the number of each words in a set of
-documents. For example, assume the input is a document database containing a
-document id and the text of that document.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;14877 DIY Pinterest narwhal forage typewriter, quinoa Odd Future. Fap hashtag 
-88390 chillwave, paleo post-ironic squid fanny pack yr PBR&amp;amp;B High Life. Put a bird on it
-73205 gastropub leggings ennui PBR&amp;amp;B. Vice Pinterest 8-bit chambray. Dreamcatcher
-95782 letterpress 3 wolf moon, mustache craft beer Pitchfork yr trust fund Tonx 77865 collie lassie
-75093 Portland skateboard bespoke kitsch. Seitan irony mustache messenger bag,
-24798 skateboard hashtag pickled tote bag try-hard meggings actually Vice quinoa
-13334 plaid. Biodiesel Echo Park fashion axe direct trade, forage Neutra try-hard
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Using the App Engine MapReduce API we can define a map function to output a
-key-value pair for each occurrence of a word in the document.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def map(document):
-    &amp;quot;&amp;quot;&amp;quot;
-    Count the occurrence of each word in a document.
-    &amp;quot;&amp;quot;&amp;quot;
-    for word in document:
-        yield (word.lower(), 1)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Our output would record each time a word was encountered within a document.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;diy 1
-pinterest 1
-narwhal 1
-forage 1
-typewriter 1
-quinoa 1
-odd 1
-future 1
-... more records ...
-pinterest 1
-forage 1
-quinoa 1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_6&#34;&gt;Shuffle&lt;/h3&gt;
-
-&lt;p&gt;The shuffle stage is done in two steps. First, the data emitted by the map stage
-is sorted. Entries with the same key are grouped together.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;(diy, 1)
-(forage, 1)
-(forage, 1)
-(future, 1)
-(narwhal, 1)
-(odd, 1)
-(pinterest, 1)
-(pinterest, 1)
-(quinoa, 1)
-(quinoa, 1)
-(typewriter, 1)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Second, entries for each key are condensed into a single list of values. These
-values are stored in temporary storage for processing by the next stage.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;(diy, [1])
-(forage, [1, 1])
-(future, [1])
-(narwhal, [1])
-(odd, [1])
-(pinterest, [1, 1])
-(quinoa, [1, 1])
-(typewriter, [1])
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;toc_7&#34;&gt;Reduce&lt;/h3&gt;
-
-&lt;p&gt;The reduce stage has two components &amp;ndash; a &lt;em&gt;reduce&lt;/em&gt; function and an
-&lt;em&gt;OutputWriter&lt;/em&gt;. The reduce function is called for each unique key in the
-shuffled temporary data. The &lt;em&gt;reduce&lt;/em&gt; function emits a final value based on its
-input. To count the number of occurrences of a word our reduce function will
-look like this.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def reduce(key, values):
-   &amp;quot;&amp;quot;&amp;quot;
-    Sum the list of values.
-    &amp;quot;&amp;quot;&amp;quot;
-    yield (key, sum(values))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Applying this reducing function to our data would give the following output.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;(diy, 1)
-(forage, 2)
-(future, 1)
-(narwhal, 1)
-(odd, 1)
-(pinterest, 2)
-(quinoa, 2)
-(typewriter, 1)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This output is passed to the &lt;em&gt;OutputWriter&lt;/em&gt; which writes the data to permanent storage.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_8&#34;&gt;The Benefits of MapReduce&lt;/h2&gt;
-
-&lt;p&gt;MapReduce performs parallel and distributed operations by partitioning the data
-to be processed both spatially and temporally. The spatial partitioning is done
-via &lt;em&gt;sharding&lt;/em&gt; while the temporal partitioning is done via &lt;em&gt;slicing&lt;/em&gt;.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_9&#34;&gt;Sharding: Parallel Processing&lt;/h3&gt;
-
-&lt;p&gt;The input data is divided into multiple smaller datasets called &lt;em&gt;shards&lt;/em&gt;. Each
-of these shards are processed in parallel. A shard is processed by an individual
-instance of the map function with its own input reader that feeds it data
-reserved for this shard. Likewise for the reduce function.&lt;/p&gt;
-
-&lt;p&gt;The benefit of sharding is that each shard can be processed in parallel.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_10&#34;&gt;Slicing: Fault Tolerance&lt;/h3&gt;
-
-&lt;p&gt;The data in a shard is processed sequentially. Each shard is assigned a task and
-that task iterates over all data in the shard using an App Engine Task Queue.
-When a task is run it iterates over as much data from the shard as it can in 15
-seconds (configurable). After this time period expires a new slice is created
-and the process repeats until all data in the shard has been processed.&lt;/p&gt;
-
-&lt;p&gt;The benefit of slicing is fault tolerance. If an error occurs during the run of
-a slice, that particular slice can be run again without affecting the processing
-of previous or subsequent slices.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_11&#34;&gt;Conclusions&lt;/h2&gt;
-
-&lt;p&gt;MapReduce provides a convenient programming model for operating on large
-datasets. In our next article we look at how to use the Python MapReduce API for
-App Engine to process entities from the datastore.&lt;/p&gt;
 </description>
     </item>
     

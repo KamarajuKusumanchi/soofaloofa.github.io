@@ -6,7 +6,186 @@
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Thu, 14 Aug 2014 17:58:03 UTC</updated>
+    <updated>Thu, 18 Sep 2014 12:57:32 UTC</updated>
+    
+    <item>
+      <title>Working From Home: A Retrospective</title>
+      <link>http://sookocheff.com/posts/2014-09-15-working-from-home-retrospective</link>
+      <pubDate>Thu, 18 Sep 2014 12:57:32 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-09-15-working-from-home-retrospective</guid>
+      <description>
+
+&lt;p&gt;I&amp;rsquo;ve spent the past eight months working from home thanks to some great support
+from my &lt;a href=&#34;http://www.vendasta.com&#34;&gt;employer&lt;/a&gt;, allowing me to support my wife and
+children and still contribute as a meaningful employee. Working from home with
+four small children and a loving and supportive wife has brought its fair share
+of both challenges and delights. This post will describe the working from home
+experience and the lessons I&amp;rsquo;ve learned along the way.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;Personal Productivity&lt;/h2&gt;
+
+&lt;p&gt;Without a doubt my personal productivity went up. Working from home meant fewer
+distractions, noise and interruptions. VendAsta follows an open office plan
+which can be great for ad-hoc communication but terrible for worker satisfaction
+and personal productivity. In fact, a recent New Yorker article summarizing the
+issue (&lt;a href=&#34;http://www.newyorker.com/business/currency/the-open-office-trap&#34;&gt;The Open-Office
+        Trap&lt;/a&gt;)
+details numerous studies showing that open office plans are detrimental to
+productivity and satisfaction at work. In one study, researchers from the
+University of Calgary found that moving to an open office design is &amp;ldquo;negatively
+related to workers’ satisfaction with their physical environment and perceived
+productivity&amp;rdquo;. In another, Researchers at the University of Sidney found that
+&lt;a href=&#34;http://theconversation.com/open-plan-offices-attract-highest-levels-of-worker-dissatisfaction-study-18246&#34;&gt;open office plans have the lowest level of worker
+satisfaction&lt;/a&gt;
+stating that &amp;ldquo;the disadvantages brought by noise disruption were bigger than the
+predicted benefits of increased interaction&amp;rdquo;.&lt;/p&gt;
+
+&lt;p&gt;My experience working from home confirmed these findings and I found that the
+decreasing number of interruptions meant I could perform more and better work in
+less time.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Team Communication&lt;/h2&gt;
+
+&lt;p&gt;Team communication suffered. At VendAsta, we practice &lt;a href=&#34;http://scrummethodology.com/&#34;&gt;agile development using
+scrum&lt;/a&gt; with all of the encompassing roles and
+responsibilities. As a team member my role is to estimate stories in the
+backlog, commit to a set number of stories per sprint, and to execute on those
+stories during the sprint. When the stories were written with careful business
+analysis and clear expectations of the acceptance criteria I felt no discernable
+difference between working from home and working remotely. When the stories were
+written with vague acceptance criteria or without careful thought of the
+business implications it was significantly harder to contribute to team
+productivity. Our usual approach in this case is to get together as a team in an
+ad-hoc meeting to hash out the details of the particular story so that work on
+it can resume. Unfortunately, even with modern video chat, screen sharing and
+other remote working tools, communicating to a group of people is very difficult
+as a remote employee. There is just no substitute to sitting together in the
+same room working out a problem on a shared white board.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;Work-Life Balance&lt;/h2&gt;
+
+&lt;p&gt;The difference in work-life balance is difficult to analyze. I&amp;rsquo;ll start with the
+biggest and most glaring postive &amp;ndash; I was home and helpful to our family during
+breakfast, lunch, and dinner for almost a year. You really can&amp;rsquo;t over value how
+important that is to a young family. Living in a small city I don&amp;rsquo;t have a very
+long commute but the difference between a 20 minute commute and no commute at
+all is striking. Being around for lunch or to help put a child to sleep. Just
+being in the house so my wife could grab some groceries while everyone was
+napping. All of these minor benefits add up to really make the experience of
+raising our children that much easier.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_3&#34;&gt;Guilt&lt;/h2&gt;
+
+&lt;p&gt;Working from home with my wife and children in the same house meant I was always
+aware of the sheer pile of &lt;em&gt;work&lt;/em&gt; my wife was doing each day to help our family
+&amp;ndash; while I had the much easier task of sitting at a computer typing on a
+keyboard. The dichotomy between the pace and stress level of her day and mine
+meant that I was, more often than not, feeling guilty about not helping her
+more.  At the same time, if I did stay an extra 15 minutes after lunch to help
+her get a particularly fussy child to nap I felt guilty to my employer and team
+for not being back at my desk and working. The reality is that, as a remote
+worker, I assume the rest of my team thinks I&amp;rsquo;m relaxing in a hammock with a
+cocktail if I&amp;rsquo;m unavailable for a few minutes. I&amp;rsquo;m not sure how to assuage that
+guilt.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_4&#34;&gt;Helpful Tools&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.google.ca/chrome/business/solutions/for-meetings.html&#34;&gt;ChromeBox&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Our company was sent a set of ChromeBox units for free as part of a trial
+program. They are, without a doubt, excellent for holding meetings with remote
+employees.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.hipchat.com/&#34;&gt;HipChat&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;We started using HipChat internally and the area where it excels is group to
+group communication. HipChat makes it effortless to jump into a different teams
+chat and ask a quick question.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;toc_5&#34;&gt;Not So Helpful Tools&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Google Hangouts.&lt;/p&gt;
+
+&lt;p&gt;This is a tough item to put on the list because it is so great at what it is
+meant to do &amp;ndash; one to one video chat. Unfortunately, when you get more than one
+person in the same Hangout and that Hangout is being shared on a projector it
+quickly degrades into a useability problem. I dare not count the number of
+minutes and hours wasted getting Hangouts to properly  share the presenters
+screen or to get the proper microphone unmuted for a presentation.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Pen and Paper. Whiteboards.&lt;/p&gt;
+
+&lt;p&gt;By far my most used and most useful communication tool is
+rendered useless by remote work. I&amp;rsquo;m the type of person that needs time writing,
+reading and thinking to come up with solutions to a problem. By
+stripping those tools away during remote meetings I found it very
+difficult to contribute to joint discussions in a meaningful way.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;toc_6&#34;&gt;Qualities of a Remote Worker&lt;/h2&gt;
+
+&lt;p&gt;Remote working is not for everyone. Although I can&amp;rsquo;t claim to have any authority
+on the subject I did compile a list of qualities that make a successful remote
+worker.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Action Oriented&lt;/p&gt;
+
+&lt;p&gt;A great remote worker needs to gravitate towards taking action rather than
+waiting for instruction. Being remote implies that you may not always be up to
+date on the discussions and decisions being made in the office. At times it is
+up to you to pick up a task and start working on it.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Able to Prioritize Independently&lt;/p&gt;
+
+&lt;p&gt;Closely linked to being action oriented is the ability to prioritize. Not being
+privy or available for every in office conversation means you need to be able to
+judge independently what tasks are high priority. It&amp;rsquo;s important to note that
+you &lt;em&gt;may be wrong&lt;/em&gt; in your choice of tasks. As long as you have some level of
+trust with your manager or employer and you aren&amp;rsquo;t too far off the mark this
+shouldn&amp;rsquo;t be an issue.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Strong Written Communicator&lt;/p&gt;
+
+&lt;p&gt;As a remote worker one of your primary communication channels is e-mail. Being a
+strong writer complements so many other professional attributes that you really
+cannot value this enough. It&amp;rsquo;s my opinion that every knowledge worker should be
+comfortable writing and presenting their ideas.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;toc_7&#34;&gt;Qualities of a Remote Manager&lt;/h2&gt;
+
+&lt;p&gt;Remote work is not for every job. The remote employee&amp;rsquo;s job should be well
+defined with clear goals. There also must be some level of trust between the
+employee and the employer. In the end, you are a professional and it is up to
+you to act as a professional no matter where you are working. That said, there
+are a few qualities that the employer needs to bring to the table as well.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Trust&lt;/p&gt;
+
+&lt;p&gt;The employer has to trust their employee to get the job down to the best of
+their ability. You hired the person to begin with so some level of trust must be
+present. The trust level cannot be different for remote and in office workers.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Planning&lt;/p&gt;
+
+&lt;p&gt;The product manager is generally responsible for determining the project goals
+and how they are prioritized. Remote workers need a manager with a strong
+ability to distill and communicate the project goals so that the worker can
+independently choose tasks without unnecessary communication barriers.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;toc_8&#34;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;I really enjoyed my time as a remote worker, but equally enjoy being back in the
+office. Things are not better or worse in either case. Just different.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Converting an ndb model to a BigQuery schema</title>
@@ -1672,466 +1851,6 @@ class CountCharacters(webapp2.RequestHandler):
         redirect_url = &amp;quot;%s/status?root=%s&amp;quot; % (counter.base_path, counter.pipeline_id)
         self.redirect(redirect_url)
 &lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml</title>
-      <link>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml</link>
-      <pubDate>Tue, 22 Apr 2014 06:48:36 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml</guid>
-      <description>
-
-&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Last time&lt;/a&gt; we looked at an overview of how MapReduce works. In this article we&amp;rsquo;ll be getting our hands dirty writing some code to handle the Map Stage. If you&amp;rsquo;ll recall, the Map Stage is composed of two separate components: an InputReader and a &lt;code&gt;map&lt;/code&gt; function. We&amp;rsquo;ll look at each of these in turn.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_1&#34;&gt;Getting Started: Installation&lt;/h2&gt;
-
-&lt;p&gt;First, let&amp;rsquo;s install the MapReduce API for Python. The API is constantly changing so the best way to install the latest version is to checkout the code directly from the &lt;a href=&#34;https://code.google.com/p/appengine-mapreduce/&#34;&gt;SVN repository&lt;/a&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;svn checkout http://appengine-mapreduce.googlecode.com/svn/trunk/python/src/mapreduce
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Place the &lt;code&gt;mapreduce&lt;/code&gt; folder into your application root directory and add the mapreduce handler to your &lt;code&gt;app.yaml&lt;/code&gt; file.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;includes:
-- lib/mapreduce/include.yaml
-
-handlers:
-- url: /_ah/pipeline.*
-  script: mapreduce.lib.pipeline.handlers._APP
-  login: admin
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;You can verify your installation by going to the &lt;code&gt;/mapreduce&lt;/code&gt; URL in your app. You&amp;rsquo;ll see a UI listing the status of any MapReduce jobs. You&amp;rsquo;ll also see a notice that the UI could not find the file &lt;code&gt;mapreduce.yaml&lt;/code&gt;. You can ignore that notice for now.&lt;/p&gt;
-
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/could-not-find-mapreduce.png&#34;&gt;
-&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/could-not-find-mapreduce.png&#34; alt=&#34;Could not find mapreduce.yaml&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;To get a proper view of the data you will also need to add two indexes to your &lt;code&gt;index.yaml&lt;/code&gt; file to allow the MapReduce library to query for MapReduce jobs that are run via Pipelines and display them in the GUI.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;indexes:
-- kind: _AE_Pipeline_Record
-  properties:
-  - name: is_root_pipeline
-  - name: start_time
-    direction: desc
-- kind: _AE_Pipeline_Record
-  properties:
-  - name: class_path
-  - name: start_time
-    direction: desc
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;toc_2&#34;&gt;Running Your First MapReduce Job&lt;/h2&gt;
-
-&lt;p&gt;The easiest way to get started with MapReduce is to use the &lt;code&gt;mapreduce.yaml&lt;/code&gt; file. This file allows you define a &lt;code&gt;mapper&lt;/code&gt; function that will be executed for each entity passed to it. Let&amp;rsquo;s go straight to an example and  create a &lt;code&gt;mapreduce.yaml&lt;/code&gt; file (in your applications root directory) that will iterate over all entities of a certain Kind and put them to the datastore (updating their timestamp).&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;mapreduce:
-- name: Touch all entity_kind Models
-  mapper:
-    input_reader: mapreduce.input_readers.DatastoreInputReader
-    handler: path_to_my.touch
-    params:
-    - name: entity_kind
-      default: path_to_my.MyModel
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Go to the &lt;code&gt;/mapreduce&lt;/code&gt; URL in your app and you should see the &lt;em&gt;Touch all entity_kind Models&lt;/em&gt; job selectable under the Launch job setting.&lt;/p&gt;
-
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/select-first-mapreduce.png&#34;&gt;
-&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/select-first-mapreduce.png&#34; alt=&#34;Select first mapreduce to Launch&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Go ahead and select this job and click &lt;code&gt;Run&lt;/code&gt;. You will get an error saying that &lt;em&gt;MyModel&lt;/em&gt; could not be found.&lt;/p&gt;
-
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/could-not-find-my-model.png&#34;&gt;
-&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/could-not-find-my-model.png&#34; alt=&#34;Could not find a Model&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;This is a great time to edit your yaml file point to an actual model in your application to continue with this tutorial. Now that our InputReader is pointing to a model we can define the &lt;code&gt;map&lt;/code&gt; function specified by our yaml files &lt;code&gt;handler&lt;/code&gt; parameter. The &lt;code&gt;map&lt;/code&gt; function is iteratively passed entities from our InputReader and we can take actions on those entities.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def touch(entity):
-    &amp;quot;&amp;quot;&amp;quot;
-    Update the entities timestamp.
-    &amp;quot;&amp;quot;&amp;quot;
-    entity.put()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Go back to the &lt;code&gt;/mapreduce&lt;/code&gt; URL in your app and run the job again. Refresh the page (if it does not auto-refresh) and you can see your job running.&lt;/p&gt;
-
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/running-first-job.png&#34;&gt;
-&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/running-first-job.png&#34; alt=&#34;Running your first mapreduce job&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;You can click on the &lt;code&gt;Detail&lt;/code&gt; link to get full details on the MapReduce job. This view gives you the status of individual shards in the MapReduce job and an overview of the processing time that was required.&lt;/p&gt;
-
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png&#34;&gt;
-&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png&#34; alt=&#34;Running job details&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;We&amp;rsquo;ve ran our first MapReduce job!&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_3&#34;&gt;The MutationPool&lt;/h2&gt;
-
-&lt;p&gt;In our &lt;code&gt;touch&lt;/code&gt; function we put our entity to the datastore once for each entity. This is wasteful when the datastore allows putting multiple items at a time. To take advantage of this feature the MapReduce library offers a MutationPool that collects datastore operations to be performed in batches.&lt;/p&gt;
-
-&lt;p&gt;We can re-write our map function to take advantage of the MutationPool by yielding a database operation from within our map function. If you are unfamiliar with &lt;code&gt;yield&lt;/code&gt; you can think of it as returning a value to the MapReduce job. You can have multiple &lt;code&gt;yield&lt;/code&gt; statements in a function that will all return values to be handled by the MapReduce job.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from mapreduce import operation as op
-
-def touch(entity):
-    &amp;quot;&amp;quot;&amp;quot;
-    Update the entities timestamp.
-    &amp;quot;&amp;quot;&amp;quot;
-    yield op.db.Put(entity)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;You can run the MapReduce job again and see that the job works correctly using datastore operations via the MutationPool.&lt;/p&gt;
-
-&lt;p&gt;The source code for MapReduce operations can be found in the &lt;code&gt;mapreduce.operation&lt;/code&gt; module.  The &lt;code&gt;mapreduce.operation.db&lt;/code&gt; module currently supports two operations via the MutationPool &lt;code&gt;Put&lt;/code&gt; and &lt;code&gt;Delete&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_4&#34;&gt;Counters&lt;/h2&gt;
-
-&lt;p&gt;The MapReduce library also provides counters that can be incremented when a condition is met. In our example we can count the number of entities that were touched by incrementing a counter.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;from mapreduce import operation as op
-
-def touch(entity):
-    &amp;quot;&amp;quot;&amp;quot;
-    Update the entities timestamp.
-    &amp;quot;&amp;quot;&amp;quot;
-    yield op.db.Put(entity)
-    yield op.db.Increment(&#39;touched&#39;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;All the counters that were incremented during operation of the job are listed with the job details summary.&lt;/p&gt;
-
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png&#34;&gt;
-&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png&#34; alt=&#34;Incrementing a custom counter&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_5&#34;&gt;Passing Parameters to the Map Function&lt;/h2&gt;
-
-&lt;p&gt;We can pass additional parameters to our map function by specifying them in &lt;code&gt;mapreduce.yaml&lt;/code&gt;. Parameters are passed to both our InputReader and to our map handler function. In our example, we listed &lt;code&gt;entity_kind&lt;/code&gt; and this parameter was expected by our InputReader and used to specify the datastore Kind processed by our InputReader. On the MapReduce status page (&lt;code&gt;/mapreduce&lt;/code&gt;) we can type in a new value for this parameter to specify a different Kind before running the job.&lt;/p&gt;
-
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/edit-parameters.png&#34;&gt;
-&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/edit-parameters.png&#34; alt=&#34;Editing job parameters&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s add an additional parameter for the map function that will only touch the entity if it is older than a specific date.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;- name: Touch all entity_kind Models
-  mapper:
-    input_reader: mapreduce.input_readers.DatastoreInputReader
-    handler: app.pipelines.touch
-    params:
-    - name: entity_kind
-      default: app.models.UserModel
-    - name: if_older_than
-      default:
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The mapreduce context holds the specifation for the job as defined by the &lt;code&gt;mapreduce.yaml&lt;/code&gt; file. Within this context we can access our parameters.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from mapreduce import operation as op, context
-from datetime import datetime
-
-def touch(entity):
-    &amp;quot;&amp;quot;&amp;quot;
-    Update the entities timestamp if not updated since if_older_than.
-    &amp;quot;&amp;quot;&amp;quot;
-    params = context.get().mapreduce_spec.mapper.params
-    if_older_than = params.get(&#39;if_older_than&#39;)
-    older_than = datetime.strptime(if_older_than, &#39;%b %d %Y&#39;) if if_older_than else datetime.now()
-
-    if entity.updated &amp;lt; older_than:
-        yield op.db.Put(entity)
-        yield op.counters.Increment(&#39;touched&#39;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now our map function will operate on entities that have been updated previous to our &lt;code&gt;if_older_than&lt;/code&gt; parameter.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_6&#34;&gt;Parameter Validation&lt;/h2&gt;
-
-&lt;p&gt;The MapReduce library also provides a method to do parameter validation. In our previous example we passed a date to our map function as a string. We can use a validator to validate that parameter and modify it as necessary. To use a validator function, specify it in &lt;code&gt;mapreduce.yaml&lt;/code&gt; as &lt;code&gt;params_validator&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;- name: Touch all entity_kind Models
-  mapper:
-    input_reader: mapreduce.input_readers.DatastoreInputReader
-    handler: app.pipelines.touch
-    params:
-    - name: entity_kind
-      default: app.models.UserModel
-    - name: if_older_than
-      default: Jun 1 2014
-    params_validator: app.pipelines.touch_validator
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The validator function accepts a single argument, a dictionary of parameters. The function can modify this dictionary and any modifications will be made available to the map function. In our example we can use the validator to attempt converting our input date into a datetime object. The &lt;code&gt;strptime&lt;/code&gt; function returns a &lt;code&gt;ValueError&lt;/code&gt; if it cannot convert a string to the datetime.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;def touch_validator(user_params):
-    &amp;quot;&amp;quot;&amp;quot;
-    Validate the parameters of our map function.
-    &amp;quot;&amp;quot;&amp;quot;
-    if_older_than = user_params[&#39;if_older_than&#39;]
-    datetime.strptime(if_older_than, &#39;%b %d %Y&#39;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We can trigger the validator to fail by passing in an invalid date format.&lt;/p&gt;
-
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/failed-validator.png&#34;&gt;
-&lt;img src=&#34;/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/failed-validator.png&#34; alt=&#34;Passing an invalid paramter&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;If parameter validation fails the MapReduce job is not started and no entities are passed from our InputReader to the map function.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_7&#34;&gt;Callbacks&lt;/h2&gt;
-
-&lt;p&gt;The MapReduce library allows you to specify a callback function that is called after the MapReduce completes. This can be used for logging purposes or to trigger a specific event in code. The callback is specified in your &lt;code&gt;mapreduce.yaml&lt;/code&gt; file as &lt;code&gt;done_callback&lt;/code&gt; and points to a user specified function. This is a parameter of the MapReduce itself and not the map function &amp;ndash; note the independent entry in &lt;code&gt;mapreduce.yaml&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;- name: Touch all entity_kind Models
-  params:
-  - name: done_callback
-    value: /done_touch
-  mapper:
-    input_reader: mapreduce.input_readers.DatastoreInputReader
-    handler: app.pipelines.touch
-    params:
-    - name: entity_kind
-      default: app.models.UserModel
-    - name: if_older_than
-      default: Jun 1 2014
-    params_validator: app.pipelines.touch_validator
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Upon completion a POST request is made to the URL given by the &lt;code&gt;done_callback&lt;/code&gt; parameter. The MapReduce library sets a custom header in this request with the jobs &lt;code&gt;Mapreduce-Id&lt;/code&gt;. You can use this header to retrieve details on the job that just completed. This is also a great place to do any cleanup such as deleting temporary files. In our example we will just log the original specification for this job that we set via &lt;code&gt;mapreduce.yaml&lt;/code&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;import webapp2
-import logging
-from mapreduce.model import MapreduceState
-
-class DoneTouch(webapp2.RequestHandler):
-    &amp;quot;&amp;quot;&amp;quot;
-    Callback function upon completion of touch MapReduce job.
-    &amp;quot;&amp;quot;&amp;quot;
-
-    def post(self):
-        &amp;quot;&amp;quot;&amp;quot;
-        Log the MapReduce ID and input parameters.
-        &amp;quot;&amp;quot;&amp;quot;
-        mapreduce_id =  self.request.headers[&#39;Mapreduce-Id&#39;]           
-        state = MapreduceState.get_by_key_name(mapreduce_id)   
-        spec = state.mapreduce_spec
-        logging.info(spec)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;toc_8&#34;&gt;Additional Input Readers&lt;/h2&gt;
-
-&lt;p&gt;In addition to the DatastoreInputReader the library includes readers for the
-Blobstore, Files and Google Cloud Storage Buckets. The documentation for these
-readers is scarse but you can consult the &lt;code&gt;mapreduce.input_readers&lt;/code&gt; module for
-more information on the expected parameters for these readers. This information
-was gathered from a combination of the offical &lt;a href=&#34;https://code.google.com/p/appengine-mapreduce/wiki/UserGuidePython#Specifying_readers&#34;&gt;Python Users
-Guide&lt;/a&gt;
-and from &lt;a href=&#34;https://code.google.com/p/appengine-mapreduce/source/browse/trunk/python/src/mapreduce/input_readers.py&#34;&gt;reading the
-source&lt;/a&gt;.
-This should give you enough information to get started with the InputReader of
-your choice.&lt;/p&gt;
-
-&lt;h3 id=&#34;toc_9&#34;&gt;Input Reader Reference&lt;/h3&gt;
-
-&lt;p&gt;As a reference here is a list of InputReaders and their parameters. All
-InputReaders support the &lt;code&gt;namespace&lt;/code&gt; parameter for specifying the namespaces to
-iterate over. If no namespace is given then all namespaces are used&lt;/p&gt;
-
-&lt;dl class=&#34;dl-horizontal&#34;&gt;
-  &lt;dt&gt;namespace&lt;/dt&gt;
-  &lt;dd&gt;The list of namespaces that will be searched.&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;h4 id=&#34;toc_10&#34;&gt;BlobstoreLineInputReader&lt;/h4&gt;
-
-&lt;p&gt;Input reader for a newline delimited blob in Blobstore.&lt;/p&gt;
-
-&lt;dl class=&#34;dl-horizontal&#34;&gt;
-  &lt;dt&gt;blob_key&lt;/dt&gt;
-  &lt;dd&gt;The BlobKey that this input reader is processing. Either a string
-  containing a single key or a list of blob key strings.&lt;/dd&gt;
-  &lt;dt&gt;start_position&lt;/dt&gt;
-  &lt;dd&gt;the line number position to start reading at.&lt;/dd&gt;
-  &lt;dt&gt;end_position&lt;/dt&gt;
-  &lt;dd&gt;The last line number position to read.&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;h4 id=&#34;toc_11&#34;&gt;BlobstoreZipInputReader&lt;/h4&gt;
-
-&lt;p&gt;Input reader for files from a zip archive stored in the Blobstore. Iterates over all compressed files in a zipfile in Blobstore.&lt;/p&gt;
-
-&lt;dl class=&#34;dl-horizontal&#34;&gt;
-  &lt;dt&gt;blob_key&lt;/dt&gt;
-  &lt;dd&gt;The BlobKey that this input reader is processing. Either a string
-  containing a single key or a list of blob key strings.&lt;/dd&gt;
-  &lt;dt&gt;start_index&lt;/dt&gt;
-  &lt;dd&gt;the index of the first file to read.&lt;/dd&gt;
-  &lt;dt&gt;end_index&lt;/dt&gt;
-  &lt;dd&gt;The index of the last file that will not be read.&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;h4 id=&#34;toc_12&#34;&gt;BlobstoreZipLineInputReader&lt;/h4&gt;
-
-&lt;p&gt;Input reader for files from a zip archive stored in the Blobstore. Iterates over all compressed files in a zipfile in Blobstore. Each compressed file is expected to be a newline delimited file.&lt;/p&gt;
-
-&lt;dl class=&#34;dl-horizontal&#34;&gt;
-  &lt;dt&gt;blob_key&lt;/dt&gt;
-  &lt;dd&gt;The BlobKey that this input reader is processing. Either a string
-  containing a single key or a list of blob key strings.&lt;/dd&gt;
-  &lt;dt&gt;start_file_index&lt;/dt&gt;
-  &lt;dd&gt;the index of the first file to read within the zip.&lt;/dd&gt;
-  &lt;dt&gt;end_file_index&lt;/dt&gt;
-  &lt;dd&gt;the index of the last file that will not be read.&lt;/dd&gt;
-  &lt;dt&gt;offset&lt;/dt&gt;
-  &lt;dd&gt;The by offset with `BLOB_KEY.zip[start_file_index]` to start reading.&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;h4 id=&#34;toc_13&#34;&gt;DatastoreInputReader&lt;/h4&gt;
-
-&lt;p&gt;Iterates over a Model and yields model instances. Supports both db.model and ndb.model.&lt;/p&gt;
-
-&lt;dl class=&#34;dl-horizontal&#34;&gt;
-  &lt;dt&gt;entity_kind&lt;/dt&gt;
-  &lt;dd&gt;the datastore kind to map over.&lt;/dd&gt;
-  &lt;dt&gt;keys_only&lt;/dt&gt;
-  &lt;dd&gt;use a keys_only query.&lt;/dd&gt;
-  &lt;dt&gt;batch_size&lt;/dt&gt;
-  &lt;dd&gt;the number of entities to read from the datastore with each batch get.&lt;/dd&gt;
-  &lt;dt&gt;key_range&lt;/dt&gt;
-  &lt;dd&gt;a range of keys to return from your query&lt;/dd&gt;
-  &lt;dt&gt;filters&lt;/dt&gt;
-  &lt;dd&gt;Any filters to apply to the datastore query.&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;h4 id=&#34;toc_14&#34;&gt;DatastoreKeyInputReader&lt;/h4&gt;
-
-&lt;p&gt;Iterate over an entity kind and yields datastore.Key.&lt;/p&gt;
-
-&lt;dl class=&#34;dl-horizontal&#34;&gt;
-  &lt;dt&gt;entity_kind&lt;/dt&gt;
-  &lt;dd&gt;the datastore kind to map over.&lt;/dd&gt;
-  &lt;dt&gt;keys_only&lt;/dt&gt;
-  &lt;dd&gt;use a keys_only query.&lt;/dd&gt;
-  &lt;dt&gt;batch_size&lt;/dt&gt;
-  &lt;dd&gt;the number of entities to read from the datastore with each batch get.&lt;/dd&gt;
-  &lt;dt&gt;key_range&lt;/dt&gt;
-  &lt;dd&gt;a range of keys to return from your query&lt;/dd&gt;
-  &lt;dt&gt;filters&lt;/dt&gt;
-  &lt;dd&gt;Any filters to apply to the datastore query.&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;h4 id=&#34;toc_15&#34;&gt;FileInputReader&lt;/h4&gt;
-
-&lt;p&gt;Iterate over Google Cloud Storage files using the &lt;a href=&#34;https://developers.google.com/appengine/docs/python/googlestorage/&#34;&gt;Files API&lt;/a&gt;.&lt;/p&gt;
-
-&lt;dl class=&#34;dl-horizontal&#34;&gt;
-  &lt;dt&gt;files&lt;/dt&gt;
-  &lt;dd&gt;A list of filenames or globbed filename patterns. The format is
-  `/gs/bucket/filename` or `/gs/bucket/prefix*`.&lt;/dd&gt;
-  &lt;dt&gt;format&lt;/dt&gt;
-  &lt;dd&gt;One of &#34;lines&#34;, &#34;bytes&#34;, &#34;zip&#34;. &#34;lines&#34; reads the input file line-by-line,
-  &#34;bytes&#34; reads the whole file at once and &#34;zip&#34; iterates over every file within
-  the zip.&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;h4 id=&#34;toc_16&#34;&gt;LogInputReader&lt;/h4&gt;
-
-&lt;p&gt;Input reader for a time range of logs via the &lt;a href=&#34;https://developers.google.com/appengine/docs/python/logs/&#34;&gt;Logs API&lt;/a&gt;.&lt;/p&gt;
-
-&lt;dl class=&#34;dl-horizontal&#34;&gt;
-  &lt;dt&gt;start_time&lt;/dt&gt;
-  &lt;dd&gt;The earliest request completion or last-update time of logs that should be mapped over, in seconds since the Unix epoch.&lt;/dd&gt;
-  &lt;dt&gt;end_time&lt;/dt&gt;
-  &lt;dd&gt;The latest request completion or last-update time that logs should be mapped over, in seconds since the Unix epoch.&lt;/dd&gt;
-  &lt;dt&gt;minimum_log_level&lt;/dt&gt;
-  &lt;dd&gt;An application log level which serves as a filter on the requests mapped over.&lt;/dd&gt;
-  &lt;dt&gt;include_incomplete&lt;/dt&gt;
-  &lt;dd&gt;Whether or not to include requests that have started but not yet finished, as a boolean.&lt;/dd&gt;
-  &lt;dt&gt;include_app_logs&lt;/dt&gt;
-  &lt;dd&gt;Whether or not to include application level logs in the mapped logs, as a boolean.&lt;/dd&gt;
-  &lt;dt&gt;version_ids&lt;/dt&gt;
-  &lt;dd&gt;A list of version ids whose logs should be read. This can not be used with module_versions&lt;/dd&gt;
-  &lt;dt&gt;module_versions&lt;/dt&gt;
-  &lt;dd&gt;A list of tuples containing a module and version id whose logs should be read. This can not be used with version_ids.&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;h4 id=&#34;toc_17&#34;&gt;NamespaceInputReader&lt;/h4&gt;
-
-&lt;p&gt;An input reader to iterate over namespaces. This reader yields namespace names as string.&lt;/p&gt;
-
-&lt;dl class=&#34;dl-horizontal&#34;&gt;
-  &lt;dt&gt;namespace_range&lt;/dt&gt;
-  &lt;dd&gt;An alphabetic range for the namespace. As defined by [namespace_range.py](https://code.google.com/p/appengine-mapreduce/source/browse/trunk/python/src/mapreduce/namespace_range.py).&lt;/dd&gt;
-  &lt;dt&gt;batch_size&lt;/dt&gt;
-  &lt;dd&gt;The number of namespaces to read with each batch.&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;h4 id=&#34;toc_18&#34;&gt;RandomStringInputReader&lt;/h4&gt;
-
-&lt;p&gt;Yields random strings as output. Useful to populate output with testing entries.&lt;/p&gt;
-
-&lt;dl class=&#34;dl-horizontal&#34;&gt;
-  &lt;dt&gt;count&lt;/dt&gt;
-  &lt;dd&gt;The total number of entries this reader should generate.&lt;/dd&gt;
-  &lt;dt&gt;string_length&lt;/dt&gt;
-  &lt;dd&gt;The length of the generated strings.&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;h4 id=&#34;toc_19&#34;&gt;RawDatastoreInputReader&lt;/h4&gt;
-
-&lt;p&gt;Exactly the same as DatastoreInputReader but yields a datastore.Entity.&lt;/p&gt;
-
-&lt;dl class=&#34;dl-horizontal&#34;&gt;
-  &lt;dt&gt;entity_kind&lt;/dt&gt;
-  &lt;dd&gt;the datastore kind to map over.&lt;/dd&gt;
-  &lt;dt&gt;keys_only&lt;/dt&gt;
-  &lt;dd&gt;use a keys_only query.&lt;/dd&gt;
-  &lt;dt&gt;batch_size&lt;/dt&gt;
-  &lt;dd&gt;the number of entities to read from the datastore with each batch get.&lt;/dd&gt;
-  &lt;dt&gt;key_range&lt;/dt&gt;
-  &lt;dd&gt;a range of keys to return from your query&lt;/dd&gt;
-  &lt;dt&gt;filters&lt;/dt&gt;
-  &lt;dd&gt;Any filters to apply to the datastore query.&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;h4 id=&#34;toc_20&#34;&gt;RecordsReader&lt;/h4&gt;
-
-&lt;p&gt;Reads a list of Files API files in records format.&lt;/p&gt;
-
-&lt;dl class=&#34;dl-horizontal&#34;&gt;
-  &lt;dt&gt;files&lt;/dt&gt;
-  &lt;dd&gt;A comma separated string of files to read from.&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;h2 id=&#34;toc_21&#34;&gt;Conclusions&lt;/h2&gt;
-
-&lt;p&gt;Defining a MapReduce job via &lt;code&gt;mapreduce.yaml&lt;/code&gt; provides a convenient way to
-iterate over large datasets and run a function on each unit of work.
-Unfortunately, running a MapDeduce job this way has a few limitations.
-First, there is no way to specify a reduce phase, limiting the type of jobs we
-can perform. Second, you cannot start a MapReduce job programmatically.&lt;/p&gt;
-
-&lt;p&gt;The next article in this series will show how to overcome these limitations
-using MapReduce Pipelines to programmatically control your API.&lt;/p&gt;
 </description>
     </item>
     

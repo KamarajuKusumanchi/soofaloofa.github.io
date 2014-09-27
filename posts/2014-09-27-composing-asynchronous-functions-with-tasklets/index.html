@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 
-<title>Running Multiple App Engine Modules Locally with dev_appserver.py : sookocheff.com</title>
+<title>Composing Asynchronous Functions With Tasklets : sookocheff.com</title>
 
 <meta charset="utf-8">
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally">
+<link rel="canonical" href="http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -70,20 +70,128 @@
     <div class="col-md-8 col-md-offset-2">
       <section class="page">
         <article class="post">
-          <h1>Running Multiple App Engine Modules Locally with dev_appserver.py</h1>
+          <h1>Composing Asynchronous Functions With Tasklets</h1>
           <p>
             <small class="text-muted">
-              Posted on Tuesday, June 17, 2014 · <a href="http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally/#disqus_thread">0 Comments</a>
+              Posted on Saturday, September 27, 2014 · <a href="http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/#disqus_thread">0 Comments</a>
             </small>
           </p>
 
           <div class=".post-content">
-            <p>The recently released <a href="https://developers.google.com/appengine/docs/python/modules/">App Engine Modules API</a> allows developers to compartmentalize their applications into logical units that can share state using the datastore or memcache.</p>
+            
 
-<p>The documentation for this API is fairly complete but one part is lacking — running multiple modules locally using dev_appserver.py. Thankfully, the solution is not too complicated.  Just pass the list of <code>.yaml</code> files defining your modules to dev_appserver and it will run all of your modules locally.</p>
+<p>Asynchronous functions can provide a boon to application performance by allowing time consuming functions to operate in parallel and without blocking the main execution thread. This article explains how to use the Tasklet API to compose and execute asynchronous functions in Google App Engine.</p>
 
-<pre><code class="bash">dev_appserver.py src/app.yaml src/backend.yaml src/dispatch.yaml
+<h2 id="toc_0">ndb.Future</h2>
+
+<p>A <a href="https://developers.google.com/appengine/docs/python/ndb/futureclass">Future</a> is a class representing an asynchronous I/O operation. <code>ndb</code> provides asynchronous versions of datastore operations that will return a future instead of immediately returning data.</p>
+
+<pre><code class="python">future = User.get_by_id_async(uid)
 </code></pre>
+
+<p>When a Future is first created it has no data while the I/O operation is running. By calling <code>get_result()</code> on the Future the application will stop execution of the current thread until the data is available from the I/O operation.</p>
+
+<pre><code class="python">future = User.get_by_id_async(uid)
+user = future.get_result()  # Return the data, blocking execution until the data is ready.
+</code></pre>
+
+<p>The above code is equivalent to calling the non-asynchronous <code>ndb.get</code> function.</p>
+
+<pre><code class="python">user = User.get_by_id(uid)
+</code></pre>
+
+<p>Using futures in this way allows you to run multiple I/O operations in parallel.</p>
+
+<pre><code class="python"># Run two asynchronous operations in parallel
+user_future = User.get_by_id_async(uid)
+accounts_future = Account.query(Account.user_id==uid).fetch_async()
+</code></pre>
+
+<h2 id="toc_1">ndb.tasklet</h2>
+
+<p>Tasklets allow you to create your own asynchronous functions that return a Future. The application can call <code>get_result()</code> on that Future to return the data.</p>
+
+<pre><code class="python">tasklet_future = my_tasklet()  # A tasklet
+result = tasklet_future.get_result()
+</code></pre>
+
+<p>You can use Tasklets to create fine grained asynchronous functions, in some cases simplifying how a method is programmed.</p>
+
+<p>When AppEngine encounters a tasklet function the Tasklet framework inserts the tasklet into an event loop. The event loop will cycle through all tasklets and execute them until a <code>yield</code> statement is reached within the tasklet. The <code>yield</code> statement is where you put the asynchronous work so that the framework can execute your <code>yield</code> statement (asynchronously) and then move on to another tasklet to resume execution until its <code>yield</code> statement is reached. In this way all of the <code>yield</code> statements are done asynchronously. For even more performance, NDB implements a batch job framework that will bundle up multiple requests in a single batch RPC to the server.</p>
+
+<p>As a simple example, we can use a tasklet to define an asynchronous query and return the result.</p>
+
+<pre><code class="python">@ndb.tasklet
+def query_tasklet():
+    result = yield Model.query().fetch_async()
+    raise ndb.Return(result)
+</code></pre>
+
+<p>The line <code>result = yield Model.query().fetch_async()</code> will alert the tasklet framework that this is an asynchronous line of code and that the framework can wait here and execute other code while the asynchronous line completes. To force the asynchronous code to complete you call <code>get_result()</code> on the return value of the tasklet function.</p>
+
+<pre><code class="python">future = query_tasklet()
+future.get_result()
+</code></pre>
+
+<p>So how do we use this in our code? There are three distinct cases.</p>
+
+<h2 id="toc_2">Case 1: Processing an asynchronous result</h2>
+
+<p>Suppose that you have an asynchronous function that returns a Future and you want to do some processing on the result before returning from your function. In that case you may have code like this.</p>
+
+<pre><code class="python">def process_a_query():
+    future = Model.query().fetch_async()
+    return process_result(future.get_result())
+</code></pre>
+
+<p>To turn this into an asynchronous tasklet function you can add the tasklet decorator and yield your asynchronous fetch.</p>
+
+<pre><code class="python">@ndb.tasklet
+def process_a_query():
+    result = yield Model.query().fetch_async()
+    raise ndb.Return(process_result(result))
+</code></pre>
+
+<p>Now your function <code>process_a_query</code> can be called asynchronously.</p>
+
+<pre><code class="python">future = process_a_query()
+# ...
+future.get_result()
+</code></pre>
+
+<h2 id="toc_3">Case 2: Composing two asynchronous functions</h2>
+
+<p>In this case, suppose you have two asynchronous functions that depend on each other and you want to combine them with the tasklet framework.</p>
+
+<pre><code class="python">def multiple_query():
+    future_a = ModelA.query().fetch_async()
+    a = future_a.get_result()
+    future_b = ModelB.query(ModelB.id==a).fetch_async()
+    return future_b
+</code></pre>
+
+<p>The above code becomes simpler with tasklets.</p>
+
+<pre><code class="python">@ndb.tasklet
+def multiple_query():
+    a = yield ModelA.query().fetch_async()
+    b = yield ModelB.query(ModelB.id==a).fetch_async()
+    raise ndb.Return(b)
+</code></pre>
+
+<h2 id="toc_4">Case 3: Parallel Computation</h2>
+
+<p>The last case to discuss is parallel computation. In this scenario you have two independent asynchronous functions that you want to run in parallel.</p>
+
+<pre><code class="python">@ndb.tasklet
+def parallel_query():
+      a, b = yield ModelA.query().fetch_async(), yield ModelB.query().fetch_async()
+      raise ndb.Return((a,b))
+</code></pre>
+
+<h2 id="toc_5">Summary</h2>
+
+<p>In all of these cases we show how to combine and compose asynchronous functions using the tasklet framework. This allows you to define your own asynchronous functions that are can be used just like the ndb asynchronous functions.</p>
  
           </div>
 
@@ -91,27 +199,27 @@
             <ul class="list-inline">
   <li>Share this post:</li>
   <li>
-    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-06-23-running-multiple-app-engine-modules-locally&text=Running%20Multiple%20App%20Engine%20Modules%20Locally%20with%20dev_appserver.py&via=soofaloofa">
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-09-27-composing-asynchronous-functions-with-tasklets&text=Composing%20Asynchronous%20Functions%20With%20Tasklets&via=soofaloofa">
       <i class="fa fa-twitter fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-06-23-running-multiple-app-engine-modules-locally">
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-09-27-composing-asynchronous-functions-with-tasklets">
       <i class="fa fa-facebook fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-06-23-running-multiple-app-engine-modules-locally">
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-09-27-composing-asynchronous-functions-with-tasklets">
       <i class="fa fa-google-plus fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-06-23-running-multiple-app-engine-modules-locally">
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-09-27-composing-asynchronous-functions-with-tasklets">
       <i class="fa fa-linkedin fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-06-23-running-multiple-app-engine-modules-locally">
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-09-27-composing-asynchronous-functions-with-tasklets">
       <i class="fa fa-envelope fa-lg"></i>
     </a>
   </li>

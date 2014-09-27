@@ -3,8 +3,13 @@
   
   <url>
     <loc>http://sookocheff.com/</loc>
-    <lastmod>2014-09-18T12:57:32+00:00</lastmod>
+    <lastmod>2014-09-27T15:25:29+00:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets</loc>
+    <lastmod>2014-09-27T15:25:29+00:00</lastmod>
   </url>
   
   <url>

@@ -60,17 +60,20 @@ gs://**bucket**/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZ
 The next step is to import the backup into BigQuery. To do this, navigate to
 your project and create a new table in your desired dataset. 
 
-{{% img 2014-08-04-restoring-an-app-engine-backup/create-new-table.png %}}
+{{% img 2014-08-04-restoring-an-app-engine-backup/create-new-table.png "Create
+    new table." %}}
 
 In the `Choose destination` tab pick a name for your new table. In my case I'll
 name the table with the date of my backup for reference.
 
-{{% img 2014-08-04-restoring-an-app-engine-backup/choose-destination.png %}}
+{{% img 2014-08-04-restoring-an-app-engine-backup/choose-destination.png "Choose
+    destination" %}}
 
 Next, choose App Engine Datastore Backup as the source format and paste the
 Cloud Storage URL you arrived at above in the appropriate field. 
 
-{{% img 2014-08-04-restoring-an-app-engine-backup/select-data.png %}}
+{{% img 2014-08-04-restoring-an-app-engine-backup/select-data.png "Select Data
+    Source" %}}
 
 You can choose the defaults for the next tabs and, finally, import your App
 Engine backup into BigQuery and watch it being fully restored.

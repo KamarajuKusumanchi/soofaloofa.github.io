@@ -22,7 +22,7 @@ REST API.
 To support this discussion let's use a concrete resource for our API -- a `User`
 resource. We can give our `User` model a few simple attributes.
 
-{{% img 2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png %}}
+{{% img 2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png  "User Model" %}}
 
 A CRUD API for this resource would support a URL structure and HTTP verbs
 for each operation.

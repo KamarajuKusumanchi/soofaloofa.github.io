@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+      <title>Kevin Sookocheff</title>
+    <link>http://sookocheff.com/tags/search/index.xml</link>
+    <language>en-us</language>
+    <author>Kevin Sookocheff</author>
+    <copyright>Copyright Kevin Sookocheff.</copyright>
+    <updated>Mon, 06 Oct 2014 05:52:29 UTC</updated>
+    
+    <item>
+      <title>Suggested Searches with Google App Engine</title>
+      <link>http://sookocheff.com/posts/2014-10-06-suggested-searches</link>
+      <pubDate>Mon, 06 Oct 2014 05:52:29 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-10-06-suggested-searches</guid>
+      <description>
+
+&lt;p&gt;At &lt;a href=&#34;http://www.vendasta.com&#34;&gt;VendAsta&lt;/a&gt; we have a few APIs that are backed by
+search documents built using the &lt;a href=&#34;https://cloud.google.com/appengine/docs/python/search/&#34;&gt;App Engine Search
+API&lt;/a&gt;. These APIs are
+queried using a search string entered in a text box. One way to improve the user
+experience of this text box is to offer the user suggestions of popular searches
+to use as their query. This article describes how to achieve this.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;Finding the most likely search terms&lt;/h2&gt;
+
+&lt;p&gt;Before presenting suggestions to the user we need to collect the data
+determining which searches are popular. This data contains the most likely
+choice of search term given a prefix (i.e., an incomplete search term). For
+example, given the incomplete search term &lt;code&gt;ne&lt;/code&gt; we need to return the most
+frequent searches that have been made using that prefix.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search1.png&#34;&gt;
+&lt;img src=&#34;/img/2014-10-06-search-suggestions/search1.png&#34; alt=&#34;Incomplete Search.&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Suppose the user searches for the term &lt;code&gt;Netflix&lt;/code&gt;. Given the search term we
+increment the frequency of a &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple for each prefix of
+the search term &lt;code&gt;Netflix&lt;/code&gt;. The end result is a datastore model with entries for
+each &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search2.png&#34;&gt;
+&lt;img src=&#34;/img/2014-10-06-search-suggestions/search2.png&#34; alt=&#34;Netflix Search.&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;If that term &lt;code&gt;Netflix&lt;/code&gt; is searched for a second time we increment the frequency
+count of each &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search3.png&#34;&gt;
+&lt;img src=&#34;/img/2014-10-06-search-suggestions/search3.png&#34; alt=&#34;Tuples of Netflix.&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Now suppose one person searched for the term &lt;code&gt;news&lt;/code&gt;. We build up our frequency
+table with each &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple again, using &lt;code&gt;news&lt;/code&gt; as the search
+term.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search4.png&#34;&gt;
+&lt;img src=&#34;/img/2014-10-06-search-suggestions/search4.png&#34; alt=&#34;Tuples of news.&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Once we&amp;rsquo;ve assembled the data we can go back to our original problem of finding
+the most likely searches for a given incomplete search. Given our dataset this
+is lookup for each record matching our prefix in the dataset ordered by
+frequency.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search5.png&#34;&gt;
+&lt;img src=&#34;/img/2014-10-06-search-suggestions/search5.png&#34; alt=&#34;Ordered table.&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;A sample implementation&lt;/h2&gt;
+
+&lt;p&gt;The following is a sample implementation encapsulating the ideas presented
+above.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from google.appengine.ext import ndb
+
+
+class SearchSuggestionModel(ndb.Model):
+    &amp;quot;&amp;quot;&amp;quot; Model class for scoring of search frequency. &amp;quot;&amp;quot;&amp;quot;
+
+    created = ndb.DateTimeProperty(auto_now_add=True)
+    updated = ndb.DateTimeProperty(auto_now=True)
+
+    prefix = ndb.StringProperty(required=True)
+    search_term = ndb.StringProperty(required=True)
+    frequency = ndb.IntegerProperty(required=True, default=0)
+
+    @classmethod
+    def build_key(cls, prefix, search_term, pid):
+        &amp;quot;&amp;quot;&amp;quot; Builds a key in the default namespace. &amp;quot;&amp;quot;&amp;quot;
+        id_ = &amp;quot;%s:%s&amp;quot; % (prefix, search_term)
+        return ndb.Key(cls, id_, namespace=pid.upper())
+
+    @classmethod
+    def prefix_query(cls, prefix, pid):
+        &amp;quot;&amp;quot;&amp;quot; Return all models with the matching prefix. Ordered by frequency. &amp;quot;&amp;quot;&amp;quot;
+        return cls.query(cls.prefix == prefix, namespace=pid).order(-cls.frequency)
+
+    @classmethod
+    def increment(cls, search_term, partner_id):
+        &amp;quot;&amp;quot;&amp;quot;
+        Given a search_term, increment each (prefix, search_term) combination for all prefixes of that search_term
+        &amp;quot;&amp;quot;&amp;quot;
+        if not search_term:
+            return
+
+        entities = []
+
+        for index, _ in enumerate(search_term):
+            prefix = search_term[0:index]
+            if prefix:
+                key = cls.build_key(prefix, search_term, partner_id)
+                entity = key.get()
+                if entity:
+                    entity.frequency = entity.frequency + 1
+                else:
+                    # Put new entity
+                    entity = cls(key=key, prefix=prefix, search_term=search_term, frequency=1)
+
+                entities.append(entity)
+
+        ndb.put_multi(entities)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

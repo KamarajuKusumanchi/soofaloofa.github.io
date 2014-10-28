@@ -6,7 +6,73 @@
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Mon, 20 Oct 2014 06:23:04 UTC</updated>
+    <updated>Tue, 28 Oct 2014 06:03:42 UTC</updated>
+    
+    <item>
+      <title>Packaging a Compute Engine Virtual Machine Image</title>
+      <link>http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm</link>
+      <pubDate>Tue, 28 Oct 2014 06:03:42 UTC</pubDate>
+      <author>Kevin Sookocheff</author>
+      <guid>http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm</guid>
+      <description>
+
+&lt;p&gt;Google Compute Engine allows you to make custom images from a running virtual
+machine. The documentation provides a sufficient example but is a little bit
+scattered. This article collects and presents all the steps necessary to create
+your own Compute Engine images that you can use as a base for virtual machines.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;1. Create a Packaged Image&lt;/h2&gt;
+
+&lt;p&gt;Once your have booted your instanced and ssh&amp;rsquo;d in you can create your image
+using the &lt;code&gt;gcimagebundle&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;sudo gcimagebundle -d &amp;lt;boot-device&amp;gt; -o &amp;lt;output-directory&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The boot device is &lt;code&gt;/dev/sda&lt;/code&gt; so a complete example might look like this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;sudo gcimagebundle -d /dev/sda -o /tmp
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;2. Upload to Cloud Storage&lt;/h2&gt;
+
+&lt;p&gt;Once you have a Compute Engine image you need to upload it to Cloud Storage by
+logging into your gcloud account and copying your file to a Cloud Storage
+bucket. Thankfully, Compute Engine installs the necessary gcloud and gsutil
+executables in the base virtual machines.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;# login to your gcloud account
+gcloud auth login
+
+# make a bucket for compute engine images
+gsutil mb gs://&amp;lt;bucket-name&amp;gt;
+
+# copy your image to the bucket
+gsutil cp /tmp/&amp;lt;image-name&amp;gt;.image.tar.gz gs://&amp;lt;bucket-name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;3. Create a Compute Engine Image&lt;/h2&gt;
+
+&lt;p&gt;We don&amp;rsquo;t need our virtual machine any more. You can exit the machine and head
+back to your console. From your console you can create a compute engine image
+using &lt;code&gt;gcloud compute&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;gcloud compute images create &amp;lt;image-name&amp;gt; --source-uri gs://&amp;lt;bucket-name&amp;gt;/&amp;lt;image-name&amp;gt;.image.tar.gz
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_3&#34;&gt;4. Use your Image to Create a Compute Engine Instance&lt;/h2&gt;
+
+&lt;p&gt;Finally, now that we have a predefined image, you can create a compute engine
+instance using your image name.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;gcloud compute instances create --image &amp;lt;image-name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Your images offer the same functionality as the Google provided versions. You
+can mark them as &lt;code&gt;DEPRECATED&lt;/code&gt;, &lt;code&gt;OBSOLETE&lt;/code&gt; or &lt;code&gt;DELETED&lt;/code&gt; to manage your
+deployment.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Using the Google Prediction API to Predict the Sentiment of a Tweet</title>
@@ -1559,157 +1625,6 @@ article.put() # Puts the entity with the auto_now option set to True
 
 &lt;p&gt;For more information on ndb caching &lt;a href=&#34;https://developers.google.com/appengine/docs/python/ndb/cache&#34;&gt;refer to the
 documentation&lt;/a&gt;.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>App Engine MapReduce API - Part 5: Using Combiners to Reduce Data Throughput</title>
-      <link>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</link>
-      <pubDate>Tue, 20 May 2014 08:54:12 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</guid>
-      <description>
-
-&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;So far we&amp;rsquo;ve looked at using MapReduce pipelines to perform calculations over
-large data sets and combined multiple pipelines in succession. In this article
-we will look at how to reduce the amount of data transfer by using a combiner.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_1&#34;&gt;What is a combiner?&lt;/h2&gt;
-
-&lt;p&gt;A combiner is a function that takes the output of a series of map calls as input and outputs a value of the same format to be processed by the reducer. The combiner is run just before the output of the mapper is written to disk. In fact, the combiner may not be run at all if the data can reside completely in memory and so your algorithm must be able to complete with our without the combiner. By reducing the amount of data that needs to be written to disk you can increase performance of the reduce stage.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_2&#34;&gt;Example&lt;/h2&gt;
-
-&lt;p&gt;Let&amp;rsquo;s look at an example that uses a combiner to reduce data throughput. To drive this discussion we will use an example that counts the number of occurrences of a character in a string. We originally looked at this example &lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;here&lt;/a&gt;. In this version we will only include the character or characters that occur the most. The operation will work like this: the mapper function will count the occurrence of each character in a string. The combiner will take these (key, value) pairs and output only the character or characters that appear the most. Finally, the reducer will sum those values to find our result. This contrived problem will provide a working example of a combiner.&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s start with the MapReduce job from our previous example.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;quot;&amp;quot;&amp;quot;
-app.pipelines
-&amp;quot;&amp;quot;&amp;quot;
-import collections
-
-from mapreduce.lib import pipeline
-from mapreduce import mapreduce_pipeline
-
-###
-### MapReduce Pipeline
-###
-def character_count_map(random_string):
-    &amp;quot;&amp;quot;&amp;quot; yield the number of occurrences of each character in random_string. &amp;quot;&amp;quot;&amp;quot;
-    counter = collections.Counter(random_string)
-    for character in counter.elements():
-        yield (character, counter[character])
-
-def character_count_reduce(key, values):
-    &amp;quot;&amp;quot;&amp;quot; sum the number of characters found for the key. &amp;quot;&amp;quot;&amp;quot;
-    yield (key, sum([int(i) for i in values]))
-
-class CountCharactersPipeline(pipeline.Pipeline):
-    &amp;quot;&amp;quot;&amp;quot; Count the number of occurrences of a character in a set of strings. &amp;quot;&amp;quot;&amp;quot;
-
-    def run(self, *args, **kwargs):
-        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
-        mapper_params = {
-            &amp;quot;count&amp;quot;: 100,
-            &amp;quot;string_length&amp;quot;: 20,
-        }
-        reducer_params = {
-            &amp;quot;mime_type&amp;quot;: &amp;quot;text/plain&amp;quot;
-        }
-        output = yield mapreduce_pipeline.MapreducePipeline(
-            &amp;quot;character_count&amp;quot;,
-            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
-            mapper_params=mapper_params,
-            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
-            reducer_params=reducer_params,
-            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
-            output_writer_spec=&amp;quot;mapreduce.output_writers.BlobstoreOutputWriter&amp;quot;,
-            shards=16)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Given this base we add a combiner step to the &lt;code&gt;MapreducePipeline&lt;/code&gt; by passing the &lt;code&gt;combiner_spec&lt;/code&gt; argument to the initialization.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;       output = yield mapreduce_pipeline.MapreducePipeline(
-            &amp;quot;character_count&amp;quot;,
-            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
-            mapper_params=mapper_params,
-            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
-            reducer_params=reducer_params,
-            combiner_spec=&amp;quot;app.pipelines.character_count_combine&amp;quot;,
-            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
-            output_writer_spec=&amp;quot;mapreduce.output_writers.BlobstoreOutputWriter&amp;quot;,
-            shards=16)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Our combine function accepts a few parameters the key, a list of values for that key and a list of previously combined results. The combiner function yields combined values that might be processed by another combiner call and that will eventually end up in the reducer function.&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s write our simple combiner function. We yield only a value instead of a &lt;code&gt;(key, value)&lt;/code&gt; tuple because the key is assumed to stay the same.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;def character_count_combine(key, values, previously_combined_values):
-    &amp;quot;&amp;quot;&amp;quot; emit the maximum value in values and previously_combined_values &amp;quot;&amp;quot;&amp;quot;
-    yield max(values + previously_combined_values)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Our combiner function is not guaranteed to run so we need to update our reduce function to take the maximum of the list of values as well.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;def character_count_reduce(key, values):
-    &amp;quot;&amp;quot;&amp;quot; sum the number of characters found for the key. &amp;quot;&amp;quot;&amp;quot;
-    yield (key, max(values))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This gives us our final pipeline using map, reduce and combine.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;###
-### MapReduce Pipeline
-###
-def character_count_map(random_string):
-    &amp;quot;&amp;quot;&amp;quot; yield the number of occurrences of each character in random_string. &amp;quot;&amp;quot;&amp;quot;
-    counter = collections.Counter(random_string)
-    for character in counter.elements():
-        yield (character, counter[character])
-
-def character_count_reduce(key, values):
-    &amp;quot;&amp;quot;&amp;quot; sum the number of characters found for the key. &amp;quot;&amp;quot;&amp;quot;
-    yield (key, max(values))
-
-def character_count_combine(key, values, previously_combined_values):
-    &amp;quot;&amp;quot;&amp;quot; emit the maximum value in values and previously_combined_values &amp;quot;&amp;quot;&amp;quot;
-    yield max(values + previously_combined_values)
-
-class CountCharactersPipeline(pipeline.Pipeline):
-    &amp;quot;&amp;quot;&amp;quot; Count the number of occurrences of a character in a set of strings. &amp;quot;&amp;quot;&amp;quot;
-
-    def run(self, *args, **kwargs):
-        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
-        mapper_params = {
-            &amp;quot;count&amp;quot;: 100,
-            &amp;quot;string_length&amp;quot;: 20,
-        }
-        reducer_params = {
-            &amp;quot;mime_type&amp;quot;: &amp;quot;text/plain&amp;quot;
-        }
-        output = yield mapreduce_pipeline.MapreducePipeline(
-            &amp;quot;character_count&amp;quot;,
-            mapper_spec=&amp;quot;app.pipelines.character_count_map&amp;quot;,
-            mapper_params=mapper_params,
-            reducer_spec=&amp;quot;app.pipelines.character_count_reduce&amp;quot;,
-            reducer_params=reducer_params,
-            combiner_spec=&amp;quot;app.pipelines.character_count_combine&amp;quot;,
-            input_reader_spec=&amp;quot;mapreduce.input_readers.RandomStringInputReader&amp;quot;,
-            output_writer_spec=&amp;quot;mapreduce.output_writers.BlobstoreOutputWriter&amp;quot;,
-            shards=16)
-&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     

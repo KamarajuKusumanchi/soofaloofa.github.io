@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-      <title>Kevin Sookocheff</title>
+    <title>Os-X on Kevin Sookocheff</title>
     <link>http://sookocheff.com/tags/os-x/index.xml/</link>
     <language>en-us</language>
-    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Wed, 07 May 2014 10:26:45 UTC</updated>
+    <lastBuildDate>Wed, 07 May 2014 10:26:45 UTC</lastBuildDate>
     
     <item>
       <title>Installing lxml on OS X Mavericks</title>
       <link>http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks/</link>
       <pubDate>Wed, 07 May 2014 10:26:45 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks/</guid>
       <description>&lt;p&gt;I recently tried installing lxml for use within an App Engine project on OS X
 Mavericks only to be hit with an error message from &lt;code&gt;clang&lt;/code&gt;.&lt;/p&gt;

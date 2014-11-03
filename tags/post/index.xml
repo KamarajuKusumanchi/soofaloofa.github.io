@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-      <title>Kevin Sookocheff</title>
+    <title>Post on Kevin Sookocheff</title>
     <link>http://sookocheff.com/tags/post/index.xml/</link>
     <language>en-us</language>
-    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Thu, 27 Mar 2014 07:23:34 UTC</updated>
+    <lastBuildDate>Thu, 27 Mar 2014 07:23:34 UTC</lastBuildDate>
     
     <item>
       <title>When to Use HTTP PUT and HTTP POST</title>
       <link>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post/</link>
       <pubDate>Thu, 27 Mar 2014 07:23:34 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post/</guid>
       <description>
 

@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-      <title>Kevin Sookocheff</title>
+    <title>Authentication on Kevin Sookocheff</title>
     <link>http://sookocheff.com/tags/authentication/index.xml/</link>
     <language>en-us</language>
-    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Tue, 22 Jul 2014 06:29:56 UTC</updated>
+    <lastBuildDate>Tue, 22 Jul 2014 06:29:56 UTC</lastBuildDate>
     
     <item>
       <title>Generating a C# client for an App Engine Cloud Endpoints API</title>
       <link>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/</link>
       <pubDate>Tue, 22 Jul 2014 06:29:56 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/</guid>
       <description>&lt;p&gt;The Cloud Endpoints API comes packaged with endpointscfg.py to generate client
 libraries in JavaScript, Objective-C (for iOS) and Java (for Android). You can
@@ -73,7 +72,7 @@ client libraries in C++, C#, Dart, GWT, Java, PHP and Python.&lt;/p&gt;
       <title>Using Basic Authentication with Google Cloud Endpoints</title>
       <link>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/</link>
       <pubDate>Wed, 16 Jul 2014 01:02:25 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/</guid>
       <description>
 

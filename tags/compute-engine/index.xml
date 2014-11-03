@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-      <title>Kevin Sookocheff</title>
+    <title>Compute-Engine on Kevin Sookocheff</title>
     <link>http://sookocheff.com/tags/compute-engine/index.xml/</link>
     <language>en-us</language>
-    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Tue, 28 Oct 2014 06:03:42 UTC</updated>
+    <lastBuildDate>Tue, 28 Oct 2014 06:03:42 UTC</lastBuildDate>
     
     <item>
       <title>Packaging a Compute Engine Virtual Machine Image</title>
       <link>http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm/</link>
       <pubDate>Tue, 28 Oct 2014 06:03:42 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm/</guid>
       <description>
 

@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-      <title>Kevin Sookocheff</title>
+    <title>Tasklets on Kevin Sookocheff</title>
     <link>http://sookocheff.com/tags/tasklets/index.xml/</link>
     <language>en-us</language>
-    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Sat, 27 Sep 2014 15:25:29 UTC</updated>
+    <lastBuildDate>Sat, 27 Sep 2014 15:25:29 UTC</lastBuildDate>
     
     <item>
       <title>Composing Asynchronous Functions With Tasklets</title>
       <link>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/</link>
       <pubDate>Sat, 27 Sep 2014 15:25:29 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/</guid>
       <description>
 

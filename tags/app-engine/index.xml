@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-      <title>Kevin Sookocheff</title>
+    <title>App-Engine on Kevin Sookocheff</title>
     <link>http://sookocheff.com/tags/app-engine/index.xml/</link>
     <language>en-us</language>
-    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Mon, 06 Oct 2014 05:52:29 UTC</updated>
+    <lastBuildDate>Mon, 06 Oct 2014 05:52:29 UTC</lastBuildDate>
     
     <item>
       <title>Suggested Searches with Google App Engine</title>
       <link>http://sookocheff.com/posts/2014-10-06-suggested-searches/</link>
       <pubDate>Mon, 06 Oct 2014 05:52:29 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-10-06-suggested-searches/</guid>
       <description>
 
@@ -129,7 +128,7 @@ class SearchSuggestionModel(ndb.Model):
       <title>Composing Asynchronous Functions With Tasklets</title>
       <link>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/</link>
       <pubDate>Sat, 27 Sep 2014 15:25:29 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/</guid>
       <description>
 
@@ -252,7 +251,7 @@ def parallel_query():
       <title>Converting an ndb model to a BigQuery schema</title>
       <link>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/</link>
       <pubDate>Thu, 14 Aug 2014 17:58:03 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/</guid>
       <description>
 
@@ -404,7 +403,7 @@ comments.&lt;/p&gt;
       <title>Restoring an App Engine backup into a Big Query table</title>
       <link>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup/</link>
       <pubDate>Mon, 04 Aug 2014 21:18:13 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup/</guid>
       <description>
 
@@ -481,7 +480,7 @@ Engine backup into BigQuery and watch it being fully restored.&lt;/p&gt;
       <title>Bypassing ndb hooks with the RawDatastoreInputReader</title>
       <link>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader/</link>
       <pubDate>Tue, 29 Jul 2014 20:32:42 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader/</guid>
       <description>
 
@@ -527,7 +526,7 @@ repository&lt;/a&gt;.&lt;/p&gt;
       <title>Generating a C# client for an App Engine Cloud Endpoints API</title>
       <link>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/</link>
       <pubDate>Tue, 22 Jul 2014 06:29:56 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/</guid>
       <description>&lt;p&gt;The Cloud Endpoints API comes packaged with endpointscfg.py to generate client
 libraries in JavaScript, Objective-C (for iOS) and Java (for Android). You can
@@ -588,7 +587,7 @@ client libraries in C++, C#, Dart, GWT, Java, PHP and Python.&lt;/p&gt;
       <title>Using Basic Authentication with Google Cloud Endpoints</title>
       <link>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/</link>
       <pubDate>Wed, 16 Jul 2014 01:02:25 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/</guid>
       <description>
 
@@ -684,7 +683,7 @@ subscribe to this blog through &lt;a href=&#34;http://kevinsookocheff.us3.list-m
       <title>Unit Testing Cloud Endpoints</title>
       <link>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints/</link>
       <pubDate>Thu, 10 Jul 2014 14:32:15 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints/</guid>
       <description>
 
@@ -905,7 +904,7 @@ class GaeTestCase(unittest.TestCase):
       <title>Creating RESTful APIs with App Engine Cloud Endpoints</title>
       <link>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints/</link>
       <pubDate>Wed, 02 Jul 2014 06:14:23 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://developers.google.com/appengine/docs/python/endpoints/&#34;&gt;App Engine Cloud
 Endpoints&lt;/a&gt; is a
@@ -1052,7 +1051,7 @@ comments!&lt;/p&gt;
       <title>Running Multiple App Engine Modules Locally with dev_appserver.py</title>
       <link>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally/</link>
       <pubDate>Tue, 17 Jun 2014 13:09:42 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally/</guid>
       <description>&lt;p&gt;The recently released &lt;a href=&#34;https://developers.google.com/appengine/docs/python/modules/&#34;&gt;App Engine Modules API&lt;/a&gt; allows developers to compartmentalize their applications into logical units that can share state using the datastore or memcache.&lt;/p&gt;
 
@@ -1067,7 +1066,7 @@ comments!&lt;/p&gt;
       <title>How to bypass the auto_now property option during an ndb put</title>
       <link>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put/</link>
       <pubDate>Wed, 28 May 2014 05:55:48 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put/</guid>
       <description>&lt;p&gt;In App Engine the &lt;code&gt;auto_now&lt;/code&gt; option sets a property to the current date/time
 whenever the entity is created or updated. This is a great feature for tracking
@@ -1129,7 +1128,7 @@ documentation&lt;/a&gt;.&lt;/p&gt;
       <title>App Engine MapReduce API - Part 5: Using Combiners to Reduce Data Throughput</title>
       <link>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/</link>
       <pubDate>Tue, 20 May 2014 08:54:12 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/</guid>
       <description>
 
@@ -1280,7 +1279,7 @@ class CountCharactersPipeline(pipeline.Pipeline):
       <title>App Engine MapReduce API - Part 4: Combining Sequential MapReduce Jobs</title>
       <link>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/</link>
       <pubDate>Tue, 13 May 2014 10:40:38 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/</guid>
       <description>
 
@@ -1404,7 +1403,7 @@ execute.&lt;/p&gt;
       <title>App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines</title>
       <link>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/</link>
       <pubDate>Mon, 28 Apr 2014 21:51:22 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/</guid>
       <description>
 
@@ -1720,7 +1719,7 @@ class CountCharacters(webapp2.RequestHandler):
       <title>App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml</title>
       <link>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/</link>
       <pubDate>Tue, 22 Apr 2014 06:48:36 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/</guid>
       <description>
 

@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-      <title>Kevin Sookocheff</title>
+    <title>Posts on Kevin Sookocheff</title>
     <link>http://sookocheff.com/posts/index.xml/</link>
     <language>en-us</language>
-    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Mon, 03 Nov 2014 05:49:31 UTC</updated>
+    <lastBuildDate>Mon, 03 Nov 2014 05:49:31 UTC</lastBuildDate>
     
     <item>
       <title>Extracting the Start Sector of a Disk with fdisk</title>
       <link>http://sookocheff.com/posts/2014-11-03-extracting-the-start-sector-with-fdisk/</link>
       <pubDate>Mon, 03 Nov 2014 05:49:31 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-11-03-extracting-the-start-sector-with-fdisk/</guid>
       <description>&lt;p&gt;fdisk is a wonderful little utility for managing partitions. I recently had to
 script a series of fdisk commands for resizing a partition and needed to extract
@@ -45,7 +44,7 @@ w
       <title>Packaging a Compute Engine Virtual Machine Image</title>
       <link>http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm/</link>
       <pubDate>Tue, 28 Oct 2014 06:03:42 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm/</guid>
       <description>
 
@@ -111,7 +110,7 @@ deployment.&lt;/p&gt;
       <title>Using the Google Prediction API to Predict the Sentiment of a Tweet</title>
       <link>http://sookocheff.com/posts/2014-10-20-prediction-api/</link>
       <pubDate>Mon, 20 Oct 2014 06:23:04 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-10-20-prediction-api/</guid>
       <description>
 
@@ -195,7 +194,7 @@ and correct any data problems you may have.&lt;/p&gt;
       <title>Suggested Searches with Google App Engine</title>
       <link>http://sookocheff.com/posts/2014-10-06-suggested-searches/</link>
       <pubDate>Mon, 06 Oct 2014 05:52:29 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-10-06-suggested-searches/</guid>
       <description>
 
@@ -312,7 +311,7 @@ class SearchSuggestionModel(ndb.Model):
       <title>Composing Asynchronous Functions With Tasklets</title>
       <link>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/</link>
       <pubDate>Sat, 27 Sep 2014 15:25:29 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/</guid>
       <description>
 
@@ -435,7 +434,7 @@ def parallel_query():
       <title>Working From Home: A Retrospective</title>
       <link>http://sookocheff.com/posts/2014-09-15-working-from-home-retrospective/</link>
       <pubDate>Thu, 18 Sep 2014 12:57:32 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-09-15-working-from-home-retrospective/</guid>
       <description>
 
@@ -614,7 +613,7 @@ office. Things are not better or worse in either case. Just different.&lt;/p&gt;
       <title>Converting an ndb model to a BigQuery schema</title>
       <link>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/</link>
       <pubDate>Thu, 14 Aug 2014 17:58:03 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/</guid>
       <description>
 
@@ -766,7 +765,7 @@ comments.&lt;/p&gt;
       <title>Restoring an App Engine backup into a Big Query table</title>
       <link>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup/</link>
       <pubDate>Mon, 04 Aug 2014 21:18:13 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup/</guid>
       <description>
 
@@ -843,7 +842,7 @@ Engine backup into BigQuery and watch it being fully restored.&lt;/p&gt;
       <title>Bypassing ndb hooks with the RawDatastoreInputReader</title>
       <link>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader/</link>
       <pubDate>Tue, 29 Jul 2014 20:32:42 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader/</guid>
       <description>
 
@@ -889,7 +888,7 @@ repository&lt;/a&gt;.&lt;/p&gt;
       <title>Generating a C# client for an App Engine Cloud Endpoints API</title>
       <link>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/</link>
       <pubDate>Tue, 22 Jul 2014 06:29:56 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/</guid>
       <description>&lt;p&gt;The Cloud Endpoints API comes packaged with endpointscfg.py to generate client
 libraries in JavaScript, Objective-C (for iOS) and Java (for Android). You can
@@ -950,7 +949,7 @@ client libraries in C++, C#, Dart, GWT, Java, PHP and Python.&lt;/p&gt;
       <title>Using Basic Authentication with Google Cloud Endpoints</title>
       <link>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/</link>
       <pubDate>Wed, 16 Jul 2014 01:02:25 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/</guid>
       <description>
 
@@ -1046,7 +1045,7 @@ subscribe to this blog through &lt;a href=&#34;http://kevinsookocheff.us3.list-m
       <title>Unit Testing Cloud Endpoints</title>
       <link>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints/</link>
       <pubDate>Thu, 10 Jul 2014 14:32:15 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints/</guid>
       <description>
 
@@ -1267,7 +1266,7 @@ class GaeTestCase(unittest.TestCase):
       <title>Creating RESTful APIs with App Engine Cloud Endpoints</title>
       <link>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints/</link>
       <pubDate>Wed, 02 Jul 2014 06:14:23 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://developers.google.com/appengine/docs/python/endpoints/&#34;&gt;App Engine Cloud
 Endpoints&lt;/a&gt; is a
@@ -1414,7 +1413,7 @@ comments!&lt;/p&gt;
       <title>Running Multiple App Engine Modules Locally with dev_appserver.py</title>
       <link>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally/</link>
       <pubDate>Tue, 17 Jun 2014 13:09:42 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally/</guid>
       <description>&lt;p&gt;The recently released &lt;a href=&#34;https://developers.google.com/appengine/docs/python/modules/&#34;&gt;App Engine Modules API&lt;/a&gt; allows developers to compartmentalize their applications into logical units that can share state using the datastore or memcache.&lt;/p&gt;
 
@@ -1429,7 +1428,7 @@ comments!&lt;/p&gt;
       <title>Downloading directories of code from Github using the Github API</title>
       <link>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api/</link>
       <pubDate>Tue, 17 Jun 2014 06:14:23 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api/</guid>
       <description>
 

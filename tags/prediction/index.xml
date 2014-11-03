@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-      <title>Kevin Sookocheff</title>
+    <title>Prediction on Kevin Sookocheff</title>
     <link>http://sookocheff.com/tags/prediction/index.xml/</link>
     <language>en-us</language>
-    <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <updated>Mon, 20 Oct 2014 06:23:04 UTC</updated>
+    <lastBuildDate>Mon, 20 Oct 2014 06:23:04 UTC</lastBuildDate>
     
     <item>
       <title>Using the Google Prediction API to Predict the Sentiment of a Tweet</title>
       <link>http://sookocheff.com/posts/2014-10-20-prediction-api/</link>
       <pubDate>Mon, 20 Oct 2014 06:23:04 UTC</pubDate>
-      <author>Kevin Sookocheff</author>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2014-10-20-prediction-api/</guid>
       <description>
 

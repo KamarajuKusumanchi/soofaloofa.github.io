@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/samba/index.xml</link>
+    <link>http://sookocheff.com/tags/samba/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Mounting SAMBA shares from the command line</title>
-      <link>http://sookocheff.com/posts/2010-07-28-mounting-samba-shares-from-the-command-line</link>
+      <link>http://sookocheff.com/posts/2010-07-28-mounting-samba-shares-from-the-command-line/</link>
       <pubDate>Wed, 28 Jul 2010 18:12:37 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2010-07-28-mounting-samba-shares-from-the-command-line</guid>
+      <guid>http://sookocheff.com/posts/2010-07-28-mounting-samba-shares-from-the-command-line/</guid>
       <description>&lt;p&gt;I recently started using Xubuntu to see if the proclaimed speed differences actually made a difference in productivity. Unfortunately, the Thunar file manager does not automatically recognize network drives so I needed to manually mount SAMBA shares from the command line.  In my searches I stumbled across this &lt;a href=&#34;http://ubuntuforums.org/showthread.php?t=288534&#34;&gt;thread&lt;/a&gt; giving the exact solution I used.  Hopefully this helps someone else who is having this same problem.&lt;/p&gt;
 </description>
     </item>

@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/hypermedia/index.xml</link>
+    <link>http://sookocheff.com/tags/hypermedia/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>How to Version a REST API</title>
-      <link>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</link>
+      <link>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api/</link>
       <pubDate>Tue, 01 Apr 2014 14:16:18 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</guid>
+      <guid>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api/</guid>
       <description>
 
 &lt;p&gt;API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients.&lt;/p&gt;
@@ -22,19 +22,19 @@
 
 &lt;p&gt;URL versioning inserts a version number directly in the URL of the resource. As an example,  version one of the API could be accessed through the &lt;code&gt;v1&lt;/code&gt; URL.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http://sookocheff.com/api/v1/users/12345
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http://sookocheff.com/api/v1/users/12345
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Version two of the API could be accessed through the &lt;code&gt;v2&lt;/code&gt; URL.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http://sookocheff.com/api/v2/users/12345
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http://sookocheff.com/api/v2/users/12345
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;This solution has been widely adopted because it is easy to deploy and easy for client developers to understand. This method also makes each API version discoverable and browseable without using an advanced HTTP client — just alter the URL.&lt;/p&gt;
 
 &lt;p&gt;The drawback to using URL versioning is that by changing the URL of a resource with each new API version we are violating the REST constraint that &lt;a href=&#34;http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/&#34;&gt;each resource be accessible via a unique URL&lt;/a&gt;. To mitigate this you can map the current version of the API to a non-versioned URL.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http://sookocheff.com/api/users/
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http://sookocheff.com/api/users/
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Once this mapping is in place you can safely deprecate old URLs by redirecting to the non-versioned URL &amp;ndash; notifying the client to use the latest version. At all times the non-versioned URL represents the latest version of that resource.&lt;/p&gt;
@@ -99,7 +99,7 @@ Accept: application/vnd.sookocheff.user+json?version=2
 
 &lt;p&gt;The &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616-sec7.html#sec7.1&#34;&gt;HTTP specification&lt;/a&gt; states that unknown HTTP headers MUST be forwarded on to the recipient. This means that custom HTTP headers can be set by our client and received by our API.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET /users/12345 HTTP/1.1
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET /users/12345 HTTP/1.1
 Host: sookocheff.com
 Accept: application/json
 Users-Version: 2
@@ -168,10 +168,10 @@ Users-Version: 2
     
     <item>
       <title>When to Use HTTP PUT and HTTP POST</title>
-      <link>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</link>
+      <link>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post/</link>
       <pubDate>Thu, 27 Mar 2014 07:23:34 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</guid>
+      <guid>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post/</guid>
       <description>
 
 &lt;p&gt;The HTTP protocol defines two methods for updating a resource &amp;ndash; &lt;code&gt;PUT&lt;/code&gt; and
@@ -203,8 +203,8 @@ resource a PUT request will create the new resource at the specified URL.&lt;/p&
 Host: http://sookocheff.com
 
 {
-    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-    &amp;quot;website&amp;quot;: &amp;quot;http://kevinsookocheff.com&amp;quot;
+	&amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+	&amp;quot;website&amp;quot;: &amp;quot;http://kevinsookocheff.com&amp;quot;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -223,8 +223,8 @@ This example updates the user&amp;rsquo;s website.&lt;/p&gt;
 Host: http://sookocheff.com
 
 {
-    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-    &amp;quot;website&amp;quot;: &amp;quot;http://sookocheff.com&amp;quot;
+	&amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+	&amp;quot;website&amp;quot;: &amp;quot;http://sookocheff.com&amp;quot;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -296,10 +296,10 @@ client developers.&lt;/p&gt;
     
     <item>
       <title>How REST Constraints Affect API Design</title>
-      <link>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</link>
+      <link>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/</link>
       <pubDate>Wed, 19 Mar 2014 14:11:48 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</guid>
+      <guid>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/</guid>
       <description>
 
 &lt;p&gt;REST was developed and formalized by analyzing the existing Web and extracting
@@ -432,10 +432,10 @@ resilient APIs.&lt;/p&gt;
     
     <item>
       <title>On choosing a hypermedia type for your API - HAL, JSON-LD, Collection&#43;JSON, SIREN, Oh My!</title>
-      <link>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format</link>
+      <link>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format/</link>
       <pubDate>Tue, 11 Mar 2014 15:15:15 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format</guid>
+      <guid>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format/</guid>
       <description>
 
 &lt;p&gt;In recent years REST has been at the forefront of modern API
@@ -489,10 +489,10 @@ simple diagram.&lt;/p&gt;
 &lt;p&gt;Representing this as a typical JSON response would yield something like the
 following.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
     &amp;quot;alias&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
     &amp;quot;displayName&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
@@ -502,10 +502,10 @@ following.&lt;/p&gt;
 
 &lt;p&gt;And the list of this player&amp;rsquo;s friends could be retrieved with a separate API call.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;[
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;[
 {
     &amp;quot;playerId&amp;quot;: &amp;quot;1895638109&amp;quot;,
     &amp;quot;alias&amp;quot;: &amp;quot;sdong&amp;quot;,
@@ -540,7 +540,7 @@ JSON-LD defines a set of terms that are scoped and valid within the
 representation being discussed. A context is assigned to a JSON response using
 the &lt;code&gt;@context&lt;/code&gt; keyword.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
   &amp;quot;@context&amp;quot;: {}
 }
 &lt;/code&gt;&lt;/pre&gt;
@@ -548,7 +548,7 @@ the &lt;code&gt;@context&lt;/code&gt; keyword.&lt;/p&gt;
 &lt;p&gt;Within the context properties are assigned to a URL that provides documentation
 about the meaning of that property.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;@context&amp;quot;: {
         &amp;quot;displayName&amp;quot;: &amp;quot;https://schema.org/name&amp;quot;
     },
@@ -559,7 +559,7 @@ about the meaning of that property.&lt;/p&gt;
 &lt;p&gt;It&amp;rsquo;s a good idea to use standard naming for our APIs so we can go ahead and
 rename &lt;code&gt;displayName&lt;/code&gt; to &lt;code&gt;name&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;@context&amp;quot;: {
         &amp;quot;name&amp;quot;: &amp;quot;https://schema.org/name&amp;quot;
     },
@@ -573,10 +573,10 @@ semantics of this property. We can go further and add context to the rest of the
 properties. To be consistent with existent naming we will change
 &lt;code&gt;profilePhotoUrl&lt;/code&gt; to &lt;code&gt;image&lt;/code&gt; and &lt;code&gt;alias&lt;/code&gt; to &lt;code&gt;alternateName&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;@context&amp;quot;: {
         &amp;quot;name&amp;quot;: &amp;quot;https://schema.org/name&amp;quot;,
         &amp;quot;alternateName&amp;quot;: &amp;quot;https://schema.org/alternateName&amp;quot;,
@@ -605,10 +605,10 @@ array notation.  In this example we will represent friends by the identifiers
 that point to their resources. An HTTP GET request to those URLs would return
 the full representation of each friend.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;@context&amp;quot;: {
         &amp;quot;name&amp;quot;: &amp;quot;https://schema.org/name&amp;quot;,
         &amp;quot;alternateName&amp;quot;: &amp;quot;https://schema.org/alternateName&amp;quot;,
@@ -646,7 +646,7 @@ suggestions on how to simplify this even more. In this example we define a
 response. Our list of friends is provided as a simple link to a separate
 endpoint.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;pre&gt;&lt;code&gt;{
@@ -675,10 +675,10 @@ message format.&lt;/p&gt;
 &lt;p&gt;To specify the actions available on a resource we would use the &lt;code&gt;operation&lt;/code&gt;
 property.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;@context&amp;quot;: [
         &amp;quot;http://www.w3.org/ns/hydra/core&amp;quot;,
         {
@@ -779,10 +779,10 @@ become one of the leading hypermedia types in modern APIs.&lt;/p&gt;
 &lt;p&gt;State is the traditional JSON key-value pairs defining the current state of the
 resource.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
     &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
     &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
@@ -797,10 +797,10 @@ resource.&lt;/p&gt;
 the current resource and the link. At a minimum the &lt;code&gt;_links&lt;/code&gt; property should
 contain a &lt;code&gt;self&lt;/code&gt; entry pointing to the current resource.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;_links&amp;quot;: {
         &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; }
     },
@@ -814,10 +814,10 @@ contain a &lt;code&gt;self&lt;/code&gt; entry pointing to the current resource.&
 &lt;p&gt;We can easily add a link to the &lt;code&gt;Friends&lt;/code&gt; resource which can be used to retrieve
 the full list.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
 
     &amp;quot;_links&amp;quot;: {
         &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; },
@@ -839,10 +839,10 @@ state with additional, related resources. These resources are provided as a
 convenience to the client application and can be easily used to represent a
 list of items.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;_links&amp;quot;: {
         &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot; },
         &amp;quot;next&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends?page=2&amp;quot; }
@@ -886,10 +886,10 @@ documentation about that relation. This makes the API discoverable by always
 providing documentation about the links available from the current resource. In
 the next example a URL for &lt;code&gt;friends&lt;/code&gt; points to documentation about that resource.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;_links&amp;quot;: {
         &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; },
         &amp;quot;https://api.example.com/docs/rels/friends&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot; }
@@ -907,10 +907,10 @@ example we will define a &lt;code&gt;curie&lt;/code&gt; &lt;code&gt;ex&lt;/code&
 &lt;code&gt;https://api.example.com/docs/rels/{rel}&lt;/code&gt;. &lt;code&gt;Curies&lt;/code&gt; are expanded by postfixing
 the curie name with a &lt;code&gt;:&lt;/code&gt; followed by the name of the resource.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;_links&amp;quot;: {
         &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; },
         &amp;quot;curies&amp;quot;: [{ &amp;quot;name&amp;quot;: &amp;quot;ex&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/docs/rels/{rel}&amp;quot;, &amp;quot;templated&amp;quot;: true }],
@@ -938,10 +938,10 @@ Collection+JSON can elegantly handle most API responses.&lt;/p&gt;
 &lt;p&gt;At a minimum a Collection+JSON response must contain a &lt;code&gt;collection&lt;/code&gt; object with
 a &lt;code&gt;version&lt;/code&gt; and a URI pointing to itself.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;collection&amp;quot;: {
         &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
         &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot;
@@ -956,10 +956,10 @@ single resource, this collection would be a list of a single element. The
 properties of each element are given by explicit name/value pairs within a
 &lt;code&gt;data&lt;/code&gt; attribute as in the following example.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;collection&amp;quot;: {
         &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
         &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player&amp;quot;,
@@ -985,10 +985,10 @@ useful when creating HTML forms to reference the collection or item.&lt;/p&gt;
 
 &lt;p&gt;In this example we will add links for the &lt;code&gt;Players&lt;/code&gt; avatar and friends.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;collection&amp;quot;: {
         &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
         &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player&amp;quot;,
@@ -1020,10 +1020,10 @@ item.&lt;/p&gt;
 
 &lt;p&gt;In this example we define a template for adding to the user&amp;rsquo;s list of friends.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;collection&amp;quot;:
     {
         &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
@@ -1080,10 +1080,10 @@ template to the &lt;code&gt;href&lt;/code&gt; link defined by the collection
 name implies, define the queries that are supported by this collection. Here the
 &lt;code&gt;data&lt;/code&gt; object specifies the query parameters supported by the server.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;collection&amp;quot;:
     {
         &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
@@ -1159,10 +1159,10 @@ Think of this as a data model for your API. By defining our response as
 returning a &lt;code&gt;player&lt;/code&gt; class the API user can immediately gain insight about the
 data being returned.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;class&amp;quot;: &amp;quot;player&amp;quot;
 }
 &lt;/code&gt;&lt;/pre&gt;
@@ -1187,10 +1187,10 @@ data being returned.&lt;/p&gt;
 &lt;p&gt;Links are used in the same sense we&amp;rsquo;ve already seen in other media types &amp;ndash;
 navigating to related resources. With SIREN links have a relation and a URL.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;class&amp;quot;: &amp;quot;player&amp;quot;,
     &amp;quot;links&amp;quot;: [
         { &amp;quot;rel&amp;quot;: [ &amp;quot;self&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; },
@@ -1217,10 +1217,10 @@ the request along with fields or variables that the URL accepts. As an example,
 our resource for listing a players friends can offer an action to add a
 friend to the list, or search for a friend.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;class&amp;quot;: &amp;quot;player&amp;quot;,
     &amp;quot;links&amp;quot;: [
         {&amp;quot;rel&amp;quot;: [ &amp;quot;self&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;},

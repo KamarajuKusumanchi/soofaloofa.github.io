@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/raid/index.xml</link>
+    <link>http://sookocheff.com/tags/raid/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>How to monitor a RAID array in Ubuntu server</title>
-      <link>http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server</link>
+      <link>http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server/</link>
       <pubDate>Fri, 28 May 2010 02:15:45 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server</guid>
+      <guid>http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server/</guid>
       <description>
 
 &lt;p&gt;I’ve been searching for a way to reliably monitor a RAID array.  I found a few resources and decided to compile them in one post.  If you are running Ubuntu Server skip to the bottom for some good news.&lt;/p&gt;
@@ -28,7 +28,7 @@
 &lt;p&gt;Personalities : [raid1]&lt;br /&gt;
 read_ahead 1024 sectors&lt;br /&gt;
 md0 : active raid1 sdb5[1] sda5[0]&lt;br /&gt;
-4200896 blocks [2/2] [UU]&lt;/p&gt;
+4200896 blocks [&lt;sup&gt;2&lt;/sup&gt;&amp;frasl;&lt;sub&gt;2&lt;/sub&gt;] [UU]&lt;/p&gt;
 
 &lt;p&gt;unused devices: none&lt;/p&gt;
 

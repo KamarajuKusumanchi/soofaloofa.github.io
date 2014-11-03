@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/closure/index.xml</link>
+    <link>http://sookocheff.com/tags/closure/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Understanding Closures in JavaScript</title>
-      <link>http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript</link>
+      <link>http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript/</link>
       <pubDate>Wed, 19 Jan 2011 09:11:15 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript</guid>
+      <guid>http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript/</guid>
       <description>
 
 &lt;p&gt;Closures are easy. There I said it. Invest a little bit of time, and you will say it too. Follow along with me as I attempt to explain what closures are and how they are used.&lt;/p&gt;

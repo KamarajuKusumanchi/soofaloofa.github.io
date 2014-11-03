@@ -8,7 +8,7 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store">
+<link rel="canonical" href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -73,7 +73,7 @@
           <h1>Submitting a Unity3d Game to the Mac App Store</h1>
           <p>
             <small class="text-muted">
-              Posted on Tuesday, April 9, 2013 · <a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/#disqus_thread">0 Comments</a>
+              Posted on Tuesday, April 9, 2013 · <a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store//#disqus_thread">0 Comments</a>
             </small>
           </p>
 
@@ -100,7 +100,7 @@
 
 <p>Specifically, you will need to edit the following entries to correspond to your specific application.</p>
 
-<pre><code class="xml">CFBundleExecutable: The name of your game.
+<pre><code class="language-xml">CFBundleExecutable: The name of your game.
 CFBundleGetInfoString: Human readable information about your game.
 CFBundleIdentifier: The App identifier you registered at the Mac App Store.
 CFBundleName: The name of your game.
@@ -171,7 +171,7 @@ icon_512x512@2x.png
 
 <p>Place all of these icons in the same folder called icons.iconset. Now we have to drop in to Terminal and run the iconutil program to create your icns file which will be named the same as your icons folder. Running</p>
 
-<pre><code class="bash">iconutil -c icns
+<pre><code class="language-bash">iconutil -c icns
 </code></pre>
 
 <p>will generate a file called icons.icns. You will need to replace the file <code>UnityPlayer.icns</code> with this icon file using Finder. The <code>UnityPlayer.icns</code> file is located in <code>Contents -&gt; Resources</code> within your .App.</p>
@@ -196,7 +196,7 @@ icon_512x512@2x.png
 
 <p>Now that we have our iconset and entitlements ready we can codesign our App for delivery to the Mac App Store. We have to drop back to the Terminal to run the codesign application.</p>
 
-<pre><code class="bash">codesign --force --sign &quot;3rd Party Mac Developer Application: XXXX&quot; --entitlements yourapp.entitlements YourApp.app
+<pre><code class="language-bash">codesign --force --sign &quot;3rd Party Mac Developer Application: XXXX&quot; --entitlements yourapp.entitlements YourApp.app
 </code></pre>
 
 <p>You can find &rdquo;XXXX&rdquo; in the Keychain Access program. Look for a code signing certificate beginning with the text &ldquo;3rd Party Mac Developer Application&rdquo; you will need to copy this entire text to the codesign command above. You can find more details from the <a href="http://developer.apple.com/library/mac/#releasenotes/General/SubmittingToMacAppStore/index.html">App Store Submission documentation</a>.</p>
@@ -206,7 +206,7 @@ icon_512x512@2x.png
 
 <p>In addition to signing your app you must sign <code>libmono.dylib</code>.</p>
 
-<pre><code class="bash">codesign --force --sign &quot;3rd Party Mac Developer Application: XXXX&quot; --entitlements yourapp.entitlements YourApp.app/Contents/Frameworks/MonoEmbedRuntime/osx/libmono.0.dylib
+<pre><code class="language-bash">codesign --force --sign &quot;3rd Party Mac Developer Application: XXXX&quot; --entitlements yourapp.entitlements YourApp.app/Contents/Frameworks/MonoEmbedRuntime/osx/libmono.0.dylib
 </code></pre>
 
 <p>If you don’t have the required Keychain Access certificates you will need to create these using the Apple Member Center.</p>
@@ -215,7 +215,7 @@ icon_512x512@2x.png
 
 <p>To build your final product run productbuild from the command line.</p>
 
-<pre><code class="bash">productbuild --component /YourApp.app /Applications --sign &quot;3rd Party Mac Developer Installer: XXXX&quot; YourApp.pkg
+<pre><code class="language-bash">productbuild --component /YourApp.app /Applications --sign &quot;3rd Party Mac Developer Installer: XXXX&quot; YourApp.pkg
 </code></pre>
 
 <p>Where &rdquo;XXXX&rdquo; is again from Keychain Access. This time, use the certificate beginning with  &rdquo;3rd Party Mac Developer Installer&rdquo;.</p>
@@ -234,27 +234,27 @@ icon_512x512@2x.png
             <ul class="list-inline">
   <li>Share this post:</li>
   <li>
-    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store&text=Submitting%20a%20Unity3d%20Game%20to%20the%20Mac%20App%20Store&via=soofaloofa">
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store%2f&text=Submitting%20a%20Unity3d%20Game%20to%20the%20Mac%20App%20Store&via=soofaloofa">
       <i class="fa fa-twitter fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store">
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store%2f">
       <i class="fa fa-facebook fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store">
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store%2f">
       <i class="fa fa-google-plus fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store">
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store%2f">
       <i class="fa fa-linkedin fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store">
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store%2f">
       <i class="fa fa-envelope fa-lg"></i>
     </a>
   </li>

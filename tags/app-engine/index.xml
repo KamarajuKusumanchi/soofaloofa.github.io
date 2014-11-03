@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/app-engine/index.xml</link>
+    <link>http://sookocheff.com/tags/app-engine/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Suggested Searches with Google App Engine</title>
-      <link>http://sookocheff.com/posts/2014-10-06-suggested-searches</link>
+      <link>http://sookocheff.com/posts/2014-10-06-suggested-searches/</link>
       <pubDate>Mon, 06 Oct 2014 05:52:29 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-10-06-suggested-searches</guid>
+      <guid>http://sookocheff.com/posts/2014-10-06-suggested-searches/</guid>
       <description>
 
 &lt;p&gt;At &lt;a href=&#34;http://www.vendasta.com&#34;&gt;VendAsta&lt;/a&gt; we have a few APIs that are backed by
@@ -73,7 +73,7 @@ frequency.&lt;/p&gt;
 &lt;p&gt;The following is a sample implementation encapsulating the ideas presented
 above.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from google.appengine.ext import ndb
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from google.appengine.ext import ndb
 
 
 class SearchSuggestionModel(ndb.Model):
@@ -127,10 +127,10 @@ class SearchSuggestionModel(ndb.Model):
     
     <item>
       <title>Composing Asynchronous Functions With Tasklets</title>
-      <link>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets</link>
+      <link>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/</link>
       <pubDate>Sat, 27 Sep 2014 15:25:29 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets</guid>
+      <guid>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/</guid>
       <description>
 
 &lt;p&gt;Asynchronous functions can provide a boon to application performance by allowing time consuming functions to operate in parallel and without blocking the main execution thread. This article explains how to use the Tasklet API to compose and execute asynchronous functions in Google App Engine.&lt;/p&gt;
@@ -139,23 +139,23 @@ class SearchSuggestionModel(ndb.Model):
 
 &lt;p&gt;A &lt;a href=&#34;https://developers.google.com/appengine/docs/python/ndb/futureclass&#34;&gt;Future&lt;/a&gt; is a class representing an asynchronous I/O operation. &lt;code&gt;ndb&lt;/code&gt; provides asynchronous versions of datastore operations that will return a future instead of immediately returning data.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;future = User.get_by_id_async(uid)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;future = User.get_by_id_async(uid)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;When a Future is first created it has no data while the I/O operation is running. By calling &lt;code&gt;get_result()&lt;/code&gt; on the Future the application will stop execution of the current thread until the data is available from the I/O operation.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;future = User.get_by_id_async(uid)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;future = User.get_by_id_async(uid)
 user = future.get_result()  # Return the data, blocking execution until the data is ready.
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The above code is equivalent to calling the non-asynchronous &lt;code&gt;ndb.get&lt;/code&gt; function.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;user = User.get_by_id(uid)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;user = User.get_by_id(uid)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Using futures in this way allows you to run multiple I/O operations in parallel.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;# Run two asynchronous operations in parallel
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# Run two asynchronous operations in parallel
 user_future = User.get_by_id_async(uid)
 accounts_future = Account.query(Account.user_id==uid).fetch_async()
 &lt;/code&gt;&lt;/pre&gt;
@@ -164,7 +164,7 @@ accounts_future = Account.query(Account.user_id==uid).fetch_async()
 
 &lt;p&gt;Tasklets allow you to create your own asynchronous functions that return a Future. The application can call &lt;code&gt;get_result()&lt;/code&gt; on that Future to return the data.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;tasklet_future = my_tasklet()  # A tasklet
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;tasklet_future = my_tasklet()  # A tasklet
 result = tasklet_future.get_result()
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -174,7 +174,7 @@ result = tasklet_future.get_result()
 
 &lt;p&gt;As a simple example, we can use a tasklet to define an asynchronous query and return the result.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@ndb.tasklet
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@ndb.tasklet
 def query_tasklet():
     result = yield Model.query().fetch_async()
     raise ndb.Return(result)
@@ -182,7 +182,7 @@ def query_tasklet():
 
 &lt;p&gt;The line &lt;code&gt;result = yield Model.query().fetch_async()&lt;/code&gt; will alert the tasklet framework that this is an asynchronous line of code and that the framework can wait here and execute other code while the asynchronous line completes. To force the asynchronous code to complete you call &lt;code&gt;get_result()&lt;/code&gt; on the return value of the tasklet function.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;future = query_tasklet()
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;future = query_tasklet()
 future.get_result()
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -192,22 +192,22 @@ future.get_result()
 
 &lt;p&gt;Suppose that you have an asynchronous function that returns a Future and you want to do some processing on the result before returning from your function. In that case you may have code like this.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def process_a_query():
-    future = Model.query().fetch_async()
-    return process_result(future.get_result())
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def process_a_query():
+	future = Model.query().fetch_async()
+	return process_result(future.get_result())
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;To turn this into an asynchronous tasklet function you can add the tasklet decorator and yield your asynchronous fetch.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@ndb.tasklet
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@ndb.tasklet
 def process_a_query():
-    result = yield Model.query().fetch_async()
-    raise ndb.Return(process_result(result))
+	result = yield Model.query().fetch_async()
+	raise ndb.Return(process_result(result))
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Now your function &lt;code&gt;process_a_query&lt;/code&gt; can be called asynchronously.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;future = process_a_query()
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;future = process_a_query()
 # ...
 future.get_result()
 &lt;/code&gt;&lt;/pre&gt;
@@ -216,16 +216,16 @@ future.get_result()
 
 &lt;p&gt;In this case, suppose you have two asynchronous functions that depend on each other and you want to combine them with the tasklet framework.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def multiple_query():
-    future_a = ModelA.query().fetch_async()
-    a = future_a.get_result()
-    future_b = ModelB.query(ModelB.id==a).fetch_async()
-    return future_b
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def multiple_query():
+	future_a = ModelA.query().fetch_async()
+	a = future_a.get_result()
+	future_b = ModelB.query(ModelB.id==a).fetch_async()
+	return future_b
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The above code becomes simpler with tasklets.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@ndb.tasklet
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@ndb.tasklet
 def multiple_query():
     a = yield ModelA.query().fetch_async()
     b = yield ModelB.query(ModelB.id==a).fetch_async()
@@ -236,10 +236,10 @@ def multiple_query():
 
 &lt;p&gt;The last case to discuss is parallel computation. In this scenario you have two independent asynchronous functions that you want to run in parallel.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@ndb.tasklet
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@ndb.tasklet
 def parallel_query():
-      a, b = yield ModelA.query().fetch_async(), yield ModelB.query().fetch_async()
-      raise ndb.Return((a,b))
+	  a, b = yield ModelA.query().fetch_async(), yield ModelB.query().fetch_async()
+	  raise ndb.Return((a,b))
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;toc_5&#34;&gt;Summary&lt;/h2&gt;
@@ -250,10 +250,10 @@ def parallel_query():
     
     <item>
       <title>Converting an ndb model to a BigQuery schema</title>
-      <link>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema</link>
+      <link>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/</link>
       <pubDate>Thu, 14 Aug 2014 17:58:03 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema</guid>
+      <guid>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/</guid>
       <description>
 
 &lt;p&gt;I have been working on the problem of recording changes to an ndb model. One way to accomplish this is to stream data changes to a BigQuery table corresponding to the ndb model. It would be great to do this in a generic way which gives us the problem of generating a BigQuery table given an ndb model. This article will describe one solution to this problem.&lt;/p&gt;
@@ -264,7 +264,7 @@ def parallel_query():
 ndb &lt;code&gt;_properties&lt;/code&gt; accessor. By iterating over this field we can find all of the
 properties on the class and their ndb types.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def tablify(ndb_model):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def tablify(ndb_model):
     &amp;quot;&amp;quot;&amp;quot;
     Convert ndb_model into a BigQuery table schema.
     &amp;quot;&amp;quot;&amp;quot;
@@ -278,7 +278,7 @@ properties on the class and their ndb types.&lt;/p&gt;
 each property to a BigQuery type. Here is a helper function that provides a
 simple mapping.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def ndb_type_to_bigquery_type(_type):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def ndb_type_to_bigquery_type(_type):
     &amp;quot;&amp;quot;&amp;quot;
     Convert a python type to a bigquery type.
     &amp;quot;&amp;quot;&amp;quot;
@@ -299,7 +299,7 @@ resource&lt;/a&gt;. This
 involves adding some boiler-plate around each field in our BigQuery schema and
 fleshing out the structure of the JSON.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;
 from google.appengine.ext import ndb
 
 SUPPORTED_TYPES = [ndb.IntegerProperty,
@@ -381,7 +381,7 @@ def tablify(obj, project_id, dataset_id, table_id):
 
 &lt;p&gt;Now that we have a BigQuery schema we can create the table in BigQuery using the BigQuery api client.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from oauth2client.appengine import AppAssertionCredentials
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from oauth2client.appengine import AppAssertionCredentials
 from apiclient.discovery import build
 
 credentials = AppAssertionCredentials(scope=&#39;https://www.googleapis.com/auth/bigquery&#39;)
@@ -402,10 +402,10 @@ comments.&lt;/p&gt;
     
     <item>
       <title>Restoring an App Engine backup into a Big Query table</title>
-      <link>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup</link>
+      <link>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup/</link>
       <pubDate>Mon, 04 Aug 2014 21:18:13 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup</guid>
+      <guid>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup/</guid>
       <description>
 
 &lt;p&gt;An unfortunate DevOps task for any team running App Engine is restoring data
@@ -423,7 +423,7 @@ followed by the name of your model. The file extension will be &lt;code&gt;.back
 As an example, this is the filename of backup for an Account model used in one
 of our projects.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Right click on your backup and copy the URL to your clipboard. The URL will be
@@ -431,24 +431,24 @@ of the form below. The name of your cloud storage bucket and the identifier for
 you app have been highlighted below. Replace these with appropriate values for
 your project.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;https://console.developers.google.com/m/cloudstorage/b/**bucket**/o/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;https://console.developers.google.com/m/cloudstorage/b/**bucket**/o/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;To get the cloud storage URL in the format expected by a BigQuery import remove
 everything up to the bucket name.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;**bucket**/o/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;**bucket**/o/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Now remove the &lt;code&gt;o&lt;/code&gt; between the bucket name and your app identifier.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;**bucket**/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;**bucket**/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Finally, append &lt;code&gt;gs://&lt;/code&gt; to the file to arrive at your final Google Cloud Storage
 URL.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;gs://**bucket**/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info 
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gs://**bucket**/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info 
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The next step is to import the backup into BigQuery. To do this, navigate to
@@ -479,10 +479,10 @@ Engine backup into BigQuery and watch it being fully restored.&lt;/p&gt;
     
     <item>
       <title>Bypassing ndb hooks with the RawDatastoreInputReader</title>
-      <link>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader</link>
+      <link>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader/</link>
       <pubDate>Tue, 29 Jul 2014 20:32:42 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader</guid>
+      <guid>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader/</guid>
       <description>
 
 &lt;p&gt;When doing a MapReduce operation there are times when you want to edit a set of entities without triggering the post or pre put hooks associated with those entities. On such ocassions using the raw datastore entity allows you to process the data without unwanted side effects.&lt;/p&gt;
@@ -525,10 +525,10 @@ repository&lt;/a&gt;.&lt;/p&gt;
     
     <item>
       <title>Generating a C# client for an App Engine Cloud Endpoints API</title>
-      <link>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client</link>
+      <link>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/</link>
       <pubDate>Tue, 22 Jul 2014 06:29:56 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client</guid>
+      <guid>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/</guid>
       <description>&lt;p&gt;The Cloud Endpoints API comes packaged with endpointscfg.py to generate client
 libraries in JavaScript, Objective-C (for iOS) and Java (for Android). You can
 also generate a few additional client libraries using the &lt;a href=&#34;https://code.google.com/p/google-apis-client-generator/&#34;&gt;Google APIs client
@@ -537,7 +537,7 @@ article will show you how to use the generator to create a C# client library.&lt
 
 &lt;p&gt;The client generator is a Python application you can install with &lt;code&gt;pip&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;pip install google-apis-client-generator
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;pip install google-apis-client-generator
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The client generator works by taking an API discovery document, parsing it into
@@ -548,10 +548,10 @@ model to running code.&lt;/p&gt;
 find this document from the root API discovery URL. First, download the root API
 discovery document using &lt;a href=&#34;https://github.com/jakubroztocil/httpie&#34;&gt;httpie&lt;/a&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http --download https://example.appspot.com/_ah/api/discovery/v1/apis
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http --download https://example.appspot.com/_ah/api/discovery/v1/apis
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;&amp;quot;items&amp;quot;: [
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;items&amp;quot;: [
     {
         &amp;quot;description&amp;quot;: &amp;quot;Example Api&amp;quot;,
         &amp;quot;discoveryLink&amp;quot;: &amp;quot;./apis/example/v1/rest&amp;quot;,
@@ -574,7 +574,7 @@ APIs and a &lt;code&gt;discoveryLink&lt;/code&gt; for each API. The &lt;code&gt;
 for the API. We can download this schema and use it as input to the client
 generator.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http --download https://example.appspot.com/_ah/api/discovery/v1/apis/example/v1/rest
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http --download https://example.appspot.com/_ah/api/discovery/v1/apis/example/v1/rest
 
 generate_library --input=rest.json --language=csharp --output_dir=tmp/csharp
 &lt;/code&gt;&lt;/pre&gt;
@@ -586,10 +586,10 @@ client libraries in C++, C#, Dart, GWT, Java, PHP and Python.&lt;/p&gt;
     
     <item>
       <title>Using Basic Authentication with Google Cloud Endpoints</title>
-      <link>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints</link>
+      <link>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/</link>
       <pubDate>Wed, 16 Jul 2014 01:02:25 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints</guid>
+      <guid>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/</guid>
       <description>
 
 &lt;p&gt;Cloud Endpoints provides strong integration with OAuth 2.0. If you can use this
@@ -603,7 +603,7 @@ for whatever authentication method you choose.&lt;/p&gt;
 &lt;p&gt;As a starting point let&amp;rsquo;s define a basic endpoint that will return a
 hypothetical UserMessage defining a User resource.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
 class UsersApi(remote.Service):
 
     @endpoints.method(message_types.VoidMessage,
@@ -620,7 +620,7 @@ Authorization header. We can access the HTTP headers of the request through the
 &lt;a href=&#34;https://developers.google.com/appengine/docs/python/tools/protorpc/remote/httprequeststateclass&#34;&gt;HTTPRequestState&lt;/a&gt;
 using the instance variable &lt;code&gt;request_state&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
 class UsersApi(remote.Service):
 
     @endpoints.method(message_types.VoidMessage,
@@ -642,12 +642,12 @@ class UsersApi(remote.Service):
 &lt;p&gt;Examing the logs will show that we receive the HTTP Authorization header in its
 base64 encoded form.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The header can be decoded with the &lt;code&gt;base64&lt;/code&gt; module.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;basic_auth = self.request_state.headers.get(&#39;authorization&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;basic_auth = self.request_state.headers.get(&#39;authorization&#39;)
 auth_type, credentials = basic_auth.split(&#39; &#39;)
 print base64.b64decode(credentials)  # prints username:password
 &lt;/code&gt;&lt;/pre&gt;
@@ -655,7 +655,7 @@ print base64.b64decode(credentials)  # prints username:password
 &lt;p&gt;Using the username and password we can check the datastore for a User model with
 the same credentials and return a &lt;code&gt;UserMessage&lt;/code&gt; based on the model .&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
 class UsersApi(remote.Service):
 
     @endpoints.method(message_types.VoidMessage,
@@ -682,10 +682,10 @@ subscribe to this blog through &lt;a href=&#34;http://kevinsookocheff.us3.list-m
     
     <item>
       <title>Unit Testing Cloud Endpoints</title>
-      <link>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints</link>
+      <link>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints/</link>
       <pubDate>Thu, 10 Jul 2014 14:32:15 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints</guid>
+      <guid>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints/</guid>
       <description>
 
 &lt;p&gt;Writing unit tests for App Engine Cloud Endpoints is a fairly straight forward
@@ -700,7 +700,7 @@ model has two properties &amp;ndash; a username and an email address. The class 
 provides &lt;code&gt;to_message&lt;/code&gt; function that converts the model to a ProtoRPC Message for
 transmission by the Cloud Endpoints API.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class User(ndb.Model):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class User(ndb.Model):
     &amp;quot;&amp;quot;&amp;quot;
     A basic user model.
     &amp;quot;&amp;quot;&amp;quot;
@@ -763,7 +763,7 @@ class UsersApi(remote.Service):
 &lt;p&gt;The setup for our tests is similar to many App Engine test cases. We set our
 environment and initialize any test stubs we may need.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class GaeTestCase(unittest.TestCase):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class GaeTestCase(unittest.TestCase):
     &amp;quot;&amp;quot;&amp;quot;
     API unit tests.
     &amp;quot;&amp;quot;&amp;quot;
@@ -789,7 +789,7 @@ parameter to the function. The &lt;code&gt;ResourceContainer&lt;/code&gt; class 
 instantiated and passed to our endpoint. We instantiate our container with the
 identifier we expect for our User resource.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def test_get_returns_entity(self):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def test_get_returns_entity(self):
     user = User(username=&#39;soofaloofa&#39;, email=&#39;soofaloofa@example.com&#39;)
     user.put()
 
@@ -803,14 +803,14 @@ identifier we expect for our User resource.&lt;/p&gt;
 &lt;p&gt;We can also add a test for the &lt;code&gt;404&lt;/code&gt; condition by calling &lt;code&gt;assertRaises&lt;/code&gt; on our
 endpoint with an identifier that does not correspond to a User resource.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def test_get_returns_404_if_no_entity(self):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def test_get_returns_404_if_no_entity(self):
     container = ID_RESOURCE.combined_message_class(id=1)
     self.assertRaises(endpoints.NotFoundException, self.api.users_get, container)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Full source code follows.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;import unittest
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import unittest
 import endpoints
 
 from protorpc import remote
@@ -903,10 +903,10 @@ class GaeTestCase(unittest.TestCase):
     
     <item>
       <title>Creating RESTful APIs with App Engine Cloud Endpoints</title>
-      <link>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints</link>
+      <link>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints/</link>
       <pubDate>Wed, 02 Jul 2014 06:14:23 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints</guid>
+      <guid>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://developers.google.com/appengine/docs/python/endpoints/&#34;&gt;App Engine Cloud
 Endpoints&lt;/a&gt; is a
 great way to quickly and easily create JSON API endpoints. What&amp;rsquo;s not clear is
@@ -925,7 +925,7 @@ resource. We can give our &lt;code&gt;User&lt;/code&gt; model a few simple attri
 &lt;p&gt;A CRUD API for this resource would support a URL structure and HTTP verbs
 for each operation.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;# Create a new user
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Create a new user
 HTTP POST /users/
 
 # Read a user by id
@@ -940,7 +940,7 @@ HTTP DELETE /users/{id}
 
 &lt;p&gt;Given this model we can define a basic Cloud Endpoints message representing a &lt;code&gt;User&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class UserMessage(messages.Message):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class UserMessage(messages.Message):
     id = messages.StringField(1)
     email = messages.StringField(2)
     username = messages.StringField(3)
@@ -949,7 +949,7 @@ HTTP DELETE /users/{id}
 &lt;p&gt;Now we can write the &lt;strong&gt;C&lt;/strong&gt; (create) portion of the CRUD API using HTTP POST
 and a &lt;code&gt;ResourceContainer&lt;/code&gt; to hold the message we wish to submit to the API.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;POST_RESOURCE = endpoints.ResourceContainer(UserMessage)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;POST_RESOURCE = endpoints.ResourceContainer(UserMessage)
 
 ...
 
@@ -973,7 +973,7 @@ API endpoint other than the &lt;code&gt;id&lt;/code&gt; parameter.&lt;/p&gt;
 &lt;p&gt;The response retrieves the entity from the datastore and returns it as a
 message.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,
                                           id=messages.StringField(1,
                                                                   variant=messages.Variant.STRING,
                                                                   required=True))
@@ -999,7 +999,7 @@ access a User given an id. We augment this request with the &lt;code&gt;UserMess
 defines the content of the body of the message. The endpoint takes the content
 of the message and updates the entity with that content.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;PUT_RESOURCE = endpoints.ResourceContainer(UserMessage,
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;PUT_RESOURCE = endpoints.ResourceContainer(UserMessage,
                                            id=messages.StringField(1,
                                                                    variant=messages.Variant.STRING,
                                                                    required=True))
@@ -1025,7 +1025,7 @@ defined as &lt;code&gt;ID_RESOURCE&lt;/code&gt;. The endpoint deletes the entity
 identifier and returns a &lt;code&gt;VoidMessage&lt;/code&gt; which is converted to an &lt;code&gt;HTTP 204 No
 Content&lt;/code&gt; response by the cloud endpoints API.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@endpoints.method(ID_RESOURCE,
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@endpoints.method(ID_RESOURCE,
                   message_types.VoidMessage,
                   http_method=&#39;DELETE&#39;,
                   path=&#39;users/{id}&#39;,
@@ -1050,25 +1050,25 @@ comments!&lt;/p&gt;
     
     <item>
       <title>Running Multiple App Engine Modules Locally with dev_appserver.py</title>
-      <link>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally</link>
+      <link>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally/</link>
       <pubDate>Tue, 17 Jun 2014 13:09:42 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally</guid>
+      <guid>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally/</guid>
       <description>&lt;p&gt;The recently released &lt;a href=&#34;https://developers.google.com/appengine/docs/python/modules/&#34;&gt;App Engine Modules API&lt;/a&gt; allows developers to compartmentalize their applications into logical units that can share state using the datastore or memcache.&lt;/p&gt;
 
 &lt;p&gt;The documentation for this API is fairly complete but one part is lacking — running multiple modules locally using dev_appserver.py. Thankfully, the solution is not too complicated.  Just pass the list of &lt;code&gt;.yaml&lt;/code&gt; files defining your modules to dev_appserver and it will run all of your modules locally.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;dev_appserver.py src/app.yaml src/backend.yaml src/dispatch.yaml
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;dev_appserver.py src/app.yaml src/backend.yaml src/dispatch.yaml
 &lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     
     <item>
       <title>How to bypass the auto_now property option during an ndb put</title>
-      <link>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</link>
+      <link>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put/</link>
       <pubDate>Wed, 28 May 2014 05:55:48 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</guid>
+      <guid>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put/</guid>
       <description>&lt;p&gt;In App Engine the &lt;code&gt;auto_now&lt;/code&gt; option sets a property to the current date/time
 whenever the entity is created or updated. This is a great feature for tracking
 the time when an entity was last updated. However, sometimes you may want to put
@@ -1078,7 +1078,7 @@ how.&lt;/p&gt;
 &lt;p&gt;First, let&amp;rsquo;s start with a very basic ndb model with an &lt;code&gt;updated&lt;/code&gt; property having
 the &lt;code&gt;auto_now&lt;/code&gt; option set to &lt;code&gt;True&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from google.appengine.ext import ndb
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from google.appengine.ext import ndb
 
 class Article(ndb.model):
     title = ndb.model.StringProperty()
@@ -1088,7 +1088,7 @@ class Article(ndb.model):
 &lt;p&gt;Now, let&amp;rsquo;s put the entity to the datastore &lt;em&gt;without updating the timestamp&lt;/em&gt; and
 &lt;em&gt;completely bypassing the &lt;code&gt;auto_now&lt;/code&gt; option&lt;/em&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
 article._properties[&#39;updated&#39;]._auto_now = False
 article.put()
 &lt;/code&gt;&lt;/pre&gt;
@@ -1099,7 +1099,7 @@ the entity it will be retrieved from the instance cache with the &lt;code&gt;aut
 property still set to &lt;code&gt;False&lt;/code&gt;. This can have unwanted side-effects because
 subsequent updates to the entity will not trigger the &lt;code&gt;auto_now&lt;/code&gt; functionality.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
 article._properties[&#39;updated&#39;]._auto_now = False
 key = article.put() # Put the entity with the auto_now option set to False
 
@@ -1110,7 +1110,7 @@ article.put() # Put the entity with the auto_now option *still* set to False
 
 &lt;p&gt;You can set the &lt;code&gt;auto_now&lt;/code&gt; option to &lt;code&gt;True&lt;/code&gt; again to re-enable the functionality.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
 article._properties[&#39;updated&#39;]._auto_now = False
 key = article.put()
 
@@ -1127,10 +1127,10 @@ documentation&lt;/a&gt;.&lt;/p&gt;
     
     <item>
       <title>App Engine MapReduce API - Part 5: Using Combiners to Reduce Data Throughput</title>
-      <link>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</link>
+      <link>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/</link>
       <pubDate>Tue, 20 May 2014 08:54:12 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput</guid>
+      <guid>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/</guid>
       <description>
 
 &lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
@@ -1278,10 +1278,10 @@ class CountCharactersPipeline(pipeline.Pipeline):
     
     <item>
       <title>App Engine MapReduce API - Part 4: Combining Sequential MapReduce Jobs</title>
-      <link>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs</link>
+      <link>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/</link>
       <pubDate>Tue, 13 May 2014 10:40:38 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs</guid>
+      <guid>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/</guid>
       <description>
 
 &lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
@@ -1307,7 +1307,7 @@ want to clean up some data by deleting a business entity from the datastore.
 Each business has employees stored that also need to be deleted. Our simplified
 models look like this.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from google.appengine.ext import ndb
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from google.appengine.ext import ndb
 
 class Business(ndb.model):
     &amp;quot;&amp;quot;&amp;quot;
@@ -1329,7 +1329,7 @@ class Employee(ndb.model):
 the &lt;code&gt;filters&lt;/code&gt; parameter of the &lt;code&gt;DatastoreInputReader&lt;/code&gt; to find all employees
 working at a business with a matching name.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def delete_employee(entity):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def delete_employee(entity):
     &amp;quot;&amp;quot;&amp;quot; Delete an employee entity. &amp;quot;&amp;quot;&amp;quot;
     yield op.db.Delete(entity)
 
@@ -1354,7 +1354,7 @@ class DeleteBusinessPipeline(pipeline.Pipeline):
 pipeline to our execution that will delete the business by simply yielding the
 return value of the first pipeline to the Pipeline API.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def delete_employee(entity):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def delete_employee(entity):
     &amp;quot;&amp;quot;&amp;quot; Delete an employee entity. &amp;quot;&amp;quot;&amp;quot;
     yield op.db.Delete(entity)
 
@@ -1402,10 +1402,10 @@ execute.&lt;/p&gt;
     
     <item>
       <title>App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines</title>
-      <link>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines</link>
+      <link>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/</link>
       <pubDate>Mon, 28 Apr 2014 21:51:22 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines</guid>
+      <guid>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/</guid>
       <description>
 
 &lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
@@ -1426,7 +1426,7 @@ execute.&lt;/p&gt;
 
 &lt;p&gt;To create a pipeline we inherit from the &lt;code&gt;Pipeline&lt;/code&gt; object.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from mapreduce.lib import pipeline
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from mapreduce.lib import pipeline
 
 class TouchPipeline(pipeline.Pipeline):
     &amp;quot;&amp;quot;&amp;quot;
@@ -1460,7 +1460,7 @@ class TouchPipeline(pipeline.Pipeline):
 
 &lt;p&gt;In this piece of code we define a MapperPipeline and pass it the parameters used to initialize the pipeline. The map function is specified by the&lt;code&gt;handler_spec&lt;/code&gt; parameter and our InputReader is given by the &lt;code&gt;input_reader_spec&lt;/code&gt; parameter.  You&amp;rsquo;ll notice from our &lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;previous article on running a MapReduce job using mapreduce.yaml&lt;/a&gt; that the parameters passed here match the specification supplied by the &lt;code&gt;mapreduce.yaml&lt;/code&gt; file in that article. In effect, we are looking at two different ways to define the same specification for a MapReduce job. The benefit of the pipelined approach here is that we can easily start our job programmatically by instantiating our &lt;code&gt;Pipeline&lt;/code&gt; object and executing the &lt;code&gt;start()&lt;/code&gt; method.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;pipeline = TouchPipeline()
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;pipeline = TouchPipeline()
 pipeline.start()
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -1498,7 +1498,7 @@ etc.
 
 &lt;p&gt;Let&amp;rsquo;s start by setting up a &lt;code&gt;MapreducePipeline&lt;/code&gt; object using the &lt;code&gt;RandomStringInputReader&lt;/code&gt; reader as our &lt;code&gt;input_reader_spec&lt;/code&gt; along with a skeleton &lt;code&gt;map&lt;/code&gt; and &lt;code&gt;reduce&lt;/code&gt; function.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from mapreduce.lib import pipeline
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from mapreduce.lib import pipeline
 from mapreduce import mapreduce_pipeline
 
 def character_count_map(random_string):
@@ -1527,7 +1527,7 @@ class CountCharactersPipeline(pipeline.Pipeline):
 
 &lt;p&gt;We can use a standard &lt;code&gt;RequestHandler&lt;/code&gt; to execute our mock MapReduce Pipeline.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;import webapp2
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import webapp2
 
 class CountCharacters(webapp2.RequestHandler):
 
@@ -1538,7 +1538,7 @@ class CountCharacters(webapp2.RequestHandler):
 
 &lt;p&gt;Let&amp;rsquo;s flesh out our MapReduce template to actually count the characters in a string. To do so our map function will yield a tuple of &lt;code&gt;(character, count)&lt;/code&gt; for each character encountered in our string and the number of times it was encountered. So for our input string &lt;code&gt;nzkeasmekjwewmvxgdre&lt;/code&gt; we would yield &lt;code&gt;(n, 1)&lt;/code&gt;, &lt;code&gt;(z, 1)&lt;/code&gt;, &lt;code&gt;(k, 2)&lt;/code&gt;, and so on. We update our &lt;code&gt;map&lt;/code&gt; function to do this work.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;import collections
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import collections
 
 def character_count_map(random_string):
     counter = collections.Counter(random_string)
@@ -1551,7 +1551,7 @@ def character_count_map(random_string):
 &lt;p&gt;Our reduce function takes the list of values returned by the Shuffle stage and
 sums them.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def character_count_reduce(key, values):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def character_count_reduce(key, values):
     yield (key, sum([int(i) for i in values]))
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -1565,7 +1565,7 @@ sums them.&lt;/p&gt;
 
 &lt;p&gt;How does the output of the &lt;code&gt;map&lt;/code&gt; function arrive at the &lt;code&gt;reduce&lt;/code&gt; function? If you look at the application logs you will see periodic writes to the blobstore.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;Shard 1578130350583CAC16BCF-11 finalized blobstore file /blobstore/writable:RDlESEY4Q1U2UkRXT0pCVUpUTFQySlQ5VEJaTkJGUEpQS0RITVgzQ1lVREtKSzVUWTJVRlhTQjYwWFAzSE02OQ==.
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Shard 1578130350583CAC16BCF-11 finalized blobstore file /blobstore/writable:RDlESEY4Q1U2UkRXT0pCVUpUTFQySlQ5VEJaTkJGUEpQS0RITVgzQ1lVREtKSzVUWTJVRlhTQjYwWFAzSE02OQ==.
 Finalized name is /blobstore/7BpFYTPsvNp95XA2uS1MlBm1DsVegjTEO9EP6TAbXZAtsxV5C7HjuZmYnqPuXdJC.
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -1575,7 +1575,7 @@ Finalized name is /blobstore/7BpFYTPsvNp95XA2uS1MlBm1DsVegjTEO9EP6TAbXZAtsxV5C7H
 
 &lt;p&gt;The last thing we need to finish our MapReduce job is outputting the result. To do so we add an &lt;code&gt;output_writer_spec&lt;/code&gt; to our MapReduce initialization.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class CountCharactersPipeline(pipeline.Pipeline):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class CountCharactersPipeline(pipeline.Pipeline):
     &amp;quot;&amp;quot;&amp;quot; Count the number of occurrences of a character. &amp;quot;&amp;quot;&amp;quot;
 
     def run(self, *args, **kwargs):
@@ -1596,7 +1596,7 @@ Finalized name is /blobstore/7BpFYTPsvNp95XA2uS1MlBm1DsVegjTEO9EP6TAbXZAtsxV5C7H
 
 &lt;p&gt;Unfortunately we don&amp;rsquo;t know where the &lt;code&gt;BlobstoreOutputWriter&lt;/code&gt; saves our result. To access this we can capture the output of the &lt;code&gt;MapreducePipeline&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class CountCharactersPipeline(pipeline.Pipeline):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class CountCharactersPipeline(pipeline.Pipeline):
     &amp;quot;&amp;quot;&amp;quot; Count the number of occurrences of a character. &amp;quot;&amp;quot;&amp;quot;
 
     def run(self, *args, **kwargs):
@@ -1619,7 +1619,7 @@ Finalized name is /blobstore/7BpFYTPsvNp95XA2uS1MlBm1DsVegjTEO9EP6TAbXZAtsxV5C7H
 
 &lt;p&gt;&lt;code&gt;output&lt;/code&gt; is a &lt;code&gt;PipelineFuture&lt;/code&gt; object &amp;ndash; a generator that takes on a value after the execution of the &lt;code&gt;MapreducePipeline&lt;/code&gt; is complete. We can access the value of this generator from within a second pipeline object that writes the location of the blobkey to the datastore for future retrievals..&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class CharacterCounter(ndb.Model):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class CharacterCounter(ndb.Model):
     count = ndb.StringProperty(required=True)
 
 class StoreOutput(pipeline.Pipeline):
@@ -1636,7 +1636,7 @@ class StoreOutput(pipeline.Pipeline):
 
 &lt;p&gt;In this article we&amp;rsquo;ve shown how to perform a full MapReduce job using the Google App Engine MapReduce API for Python. MapReduce is a powerful abstraction to use when processing large datasets. This article should provide a good starting point for defining and running your own MapReduce jobs. For reference here is the full source code used in this post.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;&amp;quot;&amp;quot;&amp;quot;
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;quot;&amp;quot;&amp;quot;
 app.mapreduce
 &amp;quot;&amp;quot;&amp;quot;
 import webapp2
@@ -1718,10 +1718,10 @@ class CountCharacters(webapp2.RequestHandler):
     
     <item>
       <title>App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml</title>
-      <link>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml</link>
+      <link>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/</link>
       <pubDate>Tue, 22 Apr 2014 06:48:36 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml</guid>
+      <guid>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/</guid>
       <description>
 
 &lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
@@ -1740,12 +1740,12 @@ class CountCharacters(webapp2.RequestHandler):
 
 &lt;p&gt;First, let&amp;rsquo;s install the MapReduce API for Python. The API is constantly changing so the best way to install the latest version is to checkout the code directly from the &lt;a href=&#34;https://code.google.com/p/appengine-mapreduce/&#34;&gt;SVN repository&lt;/a&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;svn checkout http://appengine-mapreduce.googlecode.com/svn/trunk/python/src/mapreduce
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;svn checkout http://appengine-mapreduce.googlecode.com/svn/trunk/python/src/mapreduce
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Place the &lt;code&gt;mapreduce&lt;/code&gt; folder into your application root directory and add the mapreduce handler to your &lt;code&gt;app.yaml&lt;/code&gt; file.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;includes:
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;includes:
 - lib/mapreduce/include.yaml
 
 handlers:
@@ -1762,7 +1762,7 @@ handlers:
 
 &lt;p&gt;To get a proper view of the data you will also need to add two indexes to your &lt;code&gt;index.yaml&lt;/code&gt; file to allow the MapReduce library to query for MapReduce jobs that are run via Pipelines and display them in the GUI.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;indexes:
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;indexes:
 - kind: _AE_Pipeline_Record
   properties:
   - name: is_root_pipeline
@@ -1779,7 +1779,7 @@ handlers:
 
 &lt;p&gt;The easiest way to get started with MapReduce is to use the &lt;code&gt;mapreduce.yaml&lt;/code&gt; file. This file allows you define a &lt;code&gt;mapper&lt;/code&gt; function that will be executed for each entity passed to it. Let&amp;rsquo;s go straight to an example and  create a &lt;code&gt;mapreduce.yaml&lt;/code&gt; file (in your applications root directory) that will iterate over all entities of a certain Kind and put them to the datastore (updating their timestamp).&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;mapreduce:
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;mapreduce:
 - name: Touch all entity_kind Models
   mapper:
     input_reader: mapreduce.input_readers.DatastoreInputReader
@@ -1803,7 +1803,7 @@ handlers:
 
 &lt;p&gt;This is a great time to edit your yaml file point to an actual model in your application to continue with this tutorial. Now that our InputReader is pointing to a model we can define the &lt;code&gt;map&lt;/code&gt; function specified by our yaml files &lt;code&gt;handler&lt;/code&gt; parameter. The &lt;code&gt;map&lt;/code&gt; function is iteratively passed entities from our InputReader and we can take actions on those entities.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def touch(entity):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def touch(entity):
     &amp;quot;&amp;quot;&amp;quot;
     Update the entities timestamp.
     &amp;quot;&amp;quot;&amp;quot;
@@ -1830,7 +1830,7 @@ handlers:
 
 &lt;p&gt;We can re-write our map function to take advantage of the MutationPool by yielding a database operation from within our map function. If you are unfamiliar with &lt;code&gt;yield&lt;/code&gt; you can think of it as returning a value to the MapReduce job. You can have multiple &lt;code&gt;yield&lt;/code&gt; statements in a function that will all return values to be handled by the MapReduce job.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from mapreduce import operation as op
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from mapreduce import operation as op
 
 def touch(entity):
     &amp;quot;&amp;quot;&amp;quot;
@@ -1873,7 +1873,7 @@ def touch(entity):
 
 &lt;p&gt;Let&amp;rsquo;s add an additional parameter for the map function that will only touch the entity if it is older than a specific date.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;- name: Touch all entity_kind Models
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;- name: Touch all entity_kind Models
   mapper:
     input_reader: mapreduce.input_readers.DatastoreInputReader
     handler: app.pipelines.touch
@@ -1886,7 +1886,7 @@ def touch(entity):
 
 &lt;p&gt;The mapreduce context holds the specifation for the job as defined by the &lt;code&gt;mapreduce.yaml&lt;/code&gt; file. Within this context we can access our parameters.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from mapreduce import operation as op, context
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from mapreduce import operation as op, context
 from datetime import datetime
 
 def touch(entity):
@@ -1898,8 +1898,8 @@ def touch(entity):
     older_than = datetime.strptime(if_older_than, &#39;%b %d %Y&#39;) if if_older_than else datetime.now()
 
     if entity.updated &amp;lt; older_than:
-        yield op.db.Put(entity)
-        yield op.counters.Increment(&#39;touched&#39;)
+    	yield op.db.Put(entity)
+    	yield op.counters.Increment(&#39;touched&#39;)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Now our map function will operate on entities that have been updated previous to our &lt;code&gt;if_older_than&lt;/code&gt; parameter.&lt;/p&gt;
@@ -1942,7 +1942,7 @@ def touch(entity):
 
 &lt;p&gt;The MapReduce library allows you to specify a callback function that is called after the MapReduce completes. This can be used for logging purposes or to trigger a specific event in code. The callback is specified in your &lt;code&gt;mapreduce.yaml&lt;/code&gt; file as &lt;code&gt;done_callback&lt;/code&gt; and points to a user specified function. This is a parameter of the MapReduce itself and not the map function &amp;ndash; note the independent entry in &lt;code&gt;mapreduce.yaml&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;- name: Touch all entity_kind Models
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;- name: Touch all entity_kind Models
   params:
   - name: done_callback
     value: /done_touch
@@ -1959,7 +1959,7 @@ def touch(entity):
 
 &lt;p&gt;Upon completion a POST request is made to the URL given by the &lt;code&gt;done_callback&lt;/code&gt; parameter. The MapReduce library sets a custom header in this request with the jobs &lt;code&gt;Mapreduce-Id&lt;/code&gt;. You can use this header to retrieve details on the job that just completed. This is also a great place to do any cleanup such as deleting temporary files. In our example we will just log the original specification for this job that we set via &lt;code&gt;mapreduce.yaml&lt;/code&gt;&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;import webapp2
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import webapp2
 import logging
 from mapreduce.model import MapreduceState
 

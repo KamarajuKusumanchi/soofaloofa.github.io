@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/search/index.xml</link>
+    <link>http://sookocheff.com/tags/search/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Suggested Searches with Google App Engine</title>
-      <link>http://sookocheff.com/posts/2014-10-06-suggested-searches</link>
+      <link>http://sookocheff.com/posts/2014-10-06-suggested-searches/</link>
       <pubDate>Mon, 06 Oct 2014 05:52:29 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-10-06-suggested-searches</guid>
+      <guid>http://sookocheff.com/posts/2014-10-06-suggested-searches/</guid>
       <description>
 
 &lt;p&gt;At &lt;a href=&#34;http://www.vendasta.com&#34;&gt;VendAsta&lt;/a&gt; we have a few APIs that are backed by
@@ -73,7 +73,7 @@ frequency.&lt;/p&gt;
 &lt;p&gt;The following is a sample implementation encapsulating the ideas presented
 above.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from google.appengine.ext import ndb
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from google.appengine.ext import ndb
 
 
 class SearchSuggestionModel(ndb.Model):

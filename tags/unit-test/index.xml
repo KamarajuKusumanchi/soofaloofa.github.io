@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/unit-test/index.xml</link>
+    <link>http://sookocheff.com/tags/unit-test/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Unit Testing Cloud Endpoints</title>
-      <link>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints</link>
+      <link>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints/</link>
       <pubDate>Thu, 10 Jul 2014 14:32:15 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints</guid>
+      <guid>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints/</guid>
       <description>
 
 &lt;p&gt;Writing unit tests for App Engine Cloud Endpoints is a fairly straight forward
@@ -28,7 +28,7 @@ model has two properties &amp;ndash; a username and an email address. The class 
 provides &lt;code&gt;to_message&lt;/code&gt; function that converts the model to a ProtoRPC Message for
 transmission by the Cloud Endpoints API.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class User(ndb.Model):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class User(ndb.Model):
     &amp;quot;&amp;quot;&amp;quot;
     A basic user model.
     &amp;quot;&amp;quot;&amp;quot;
@@ -91,7 +91,7 @@ class UsersApi(remote.Service):
 &lt;p&gt;The setup for our tests is similar to many App Engine test cases. We set our
 environment and initialize any test stubs we may need.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class GaeTestCase(unittest.TestCase):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class GaeTestCase(unittest.TestCase):
     &amp;quot;&amp;quot;&amp;quot;
     API unit tests.
     &amp;quot;&amp;quot;&amp;quot;
@@ -117,7 +117,7 @@ parameter to the function. The &lt;code&gt;ResourceContainer&lt;/code&gt; class 
 instantiated and passed to our endpoint. We instantiate our container with the
 identifier we expect for our User resource.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def test_get_returns_entity(self):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def test_get_returns_entity(self):
     user = User(username=&#39;soofaloofa&#39;, email=&#39;soofaloofa@example.com&#39;)
     user.put()
 
@@ -131,14 +131,14 @@ identifier we expect for our User resource.&lt;/p&gt;
 &lt;p&gt;We can also add a test for the &lt;code&gt;404&lt;/code&gt; condition by calling &lt;code&gt;assertRaises&lt;/code&gt; on our
 endpoint with an identifier that does not correspond to a User resource.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def test_get_returns_404_if_no_entity(self):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def test_get_returns_404_if_no_entity(self):
     container = ID_RESOURCE.combined_message_class(id=1)
     self.assertRaises(endpoints.NotFoundException, self.api.users_get, container)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Full source code follows.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;import unittest
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import unittest
 import endpoints
 
 from protorpc import remote

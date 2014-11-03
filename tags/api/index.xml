@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/api/index.xml</link>
+    <link>http://sookocheff.com/tags/api/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Creating RESTful APIs with App Engine Cloud Endpoints</title>
-      <link>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints</link>
+      <link>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints/</link>
       <pubDate>Wed, 02 Jul 2014 06:14:23 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints</guid>
+      <guid>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://developers.google.com/appengine/docs/python/endpoints/&#34;&gt;App Engine Cloud
 Endpoints&lt;/a&gt; is a
 great way to quickly and easily create JSON API endpoints. What&amp;rsquo;s not clear is
@@ -32,7 +32,7 @@ resource. We can give our &lt;code&gt;User&lt;/code&gt; model a few simple attri
 &lt;p&gt;A CRUD API for this resource would support a URL structure and HTTP verbs
 for each operation.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;# Create a new user
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Create a new user
 HTTP POST /users/
 
 # Read a user by id
@@ -47,7 +47,7 @@ HTTP DELETE /users/{id}
 
 &lt;p&gt;Given this model we can define a basic Cloud Endpoints message representing a &lt;code&gt;User&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;class UserMessage(messages.Message):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class UserMessage(messages.Message):
     id = messages.StringField(1)
     email = messages.StringField(2)
     username = messages.StringField(3)
@@ -56,7 +56,7 @@ HTTP DELETE /users/{id}
 &lt;p&gt;Now we can write the &lt;strong&gt;C&lt;/strong&gt; (create) portion of the CRUD API using HTTP POST
 and a &lt;code&gt;ResourceContainer&lt;/code&gt; to hold the message we wish to submit to the API.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;POST_RESOURCE = endpoints.ResourceContainer(UserMessage)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;POST_RESOURCE = endpoints.ResourceContainer(UserMessage)
 
 ...
 
@@ -80,7 +80,7 @@ API endpoint other than the &lt;code&gt;id&lt;/code&gt; parameter.&lt;/p&gt;
 &lt;p&gt;The response retrieves the entity from the datastore and returns it as a
 message.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,
                                           id=messages.StringField(1,
                                                                   variant=messages.Variant.STRING,
                                                                   required=True))
@@ -106,7 +106,7 @@ access a User given an id. We augment this request with the &lt;code&gt;UserMess
 defines the content of the body of the message. The endpoint takes the content
 of the message and updates the entity with that content.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;PUT_RESOURCE = endpoints.ResourceContainer(UserMessage,
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;PUT_RESOURCE = endpoints.ResourceContainer(UserMessage,
                                            id=messages.StringField(1,
                                                                    variant=messages.Variant.STRING,
                                                                    required=True))
@@ -132,7 +132,7 @@ defined as &lt;code&gt;ID_RESOURCE&lt;/code&gt;. The endpoint deletes the entity
 identifier and returns a &lt;code&gt;VoidMessage&lt;/code&gt; which is converted to an &lt;code&gt;HTTP 204 No
 Content&lt;/code&gt; response by the cloud endpoints API.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@endpoints.method(ID_RESOURCE,
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@endpoints.method(ID_RESOURCE,
                   message_types.VoidMessage,
                   http_method=&#39;DELETE&#39;,
                   path=&#39;users/{id}&#39;,
@@ -157,15 +157,15 @@ comments!&lt;/p&gt;
     
     <item>
       <title>Understanding JSON Patch</title>
-      <link>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</link>
+      <link>http://sookocheff.com/posts/2014-04-08-understanding-json-patch/</link>
       <pubDate>Tue, 08 Apr 2014 16:12:14 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</guid>
+      <guid>http://sookocheff.com/posts/2014-04-08-understanding-json-patch/</guid>
       <description>
 
 &lt;p&gt;The typical update cycle for an API resource is to (1) GET the representation, (2) modify it and (3) PUT back the entire representation. This can waste bandwidth and processing time for large resources. An alternative is to use the &lt;a href=&#34;https://tools.ietf.org/html/rfc5789&#34;&gt;HTTP PATCH&lt;/a&gt; extension method to only send the differences between two resources. HTTP PATCH applies a set of changes to the document referenced by the HTTP request.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;PATCH /file.txt HTTP/1.1
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;PATCH /file.txt HTTP/1.1
 Host: sookocheff.com
 Content-Type: application/json
 If-Match: &amp;quot;e0036bbc6f&amp;quot;
@@ -178,13 +178,13 @@ If-Match: &amp;quot;e0036bbc6f&amp;quot;
 &lt;p&gt;A JSON Patch document is a sequential list of operations to be applied to an object. Each operation is a JSON object having exactly one &lt;code&gt;op&lt;/code&gt; member.
 Valid operations are &lt;code&gt;add&lt;/code&gt;, &lt;code&gt;remove&lt;/code&gt;, &lt;code&gt;replace&lt;/code&gt;, &lt;code&gt;move&lt;/code&gt;, &lt;code&gt;copy&lt;/code&gt; and &lt;code&gt;test&lt;/code&gt;. Any other operation is considered an error.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot; }
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Each operation must also have exactly one &lt;code&gt;path&lt;/code&gt; member.
 The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf.org/html/rfc6901&#34;&gt;JSON Pointer&lt;/a&gt; that determines a location within the JSON document to modify.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/player/name&amp;quot; }
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/player/name&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The remaining elements of a JSON Patch operation depend on the particular operation being performed.&lt;/p&gt;
@@ -197,19 +197,19 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;To append a value to a list you use an existing list as the &lt;code&gt;path&lt;/code&gt; of the operation. So, given the JSON document.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}]
 }
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;We can append an order to the list using the &lt;code&gt;add&lt;/code&gt; operation.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/orders&amp;quot;, &amp;quot;value&amp;quot;: {&amp;quot;id&amp;quot;: 789} }
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/orders&amp;quot;, &amp;quot;value&amp;quot;: {&amp;quot;id&amp;quot;: 789} }
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;After applying the patch we get the final document.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}]
 }
 &lt;/code&gt;&lt;/pre&gt;
@@ -218,14 +218,14 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;If the &lt;code&gt;path&lt;/code&gt; references a member of an object that does not exist, a new member is added to the object. We start with our JSON document listing our orders.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789&amp;quot;}]
 }
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Using this JSON Patch document we can add a total and a currency member to the document.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;[
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;[
 { &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot;, &amp;quot;value&amp;quot;: 20.00 },
 { &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/currency&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;USD&amp;quot; }
 ]
@@ -233,7 +233,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;After applying the patch we get the final representation.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 20.00,
     &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
@@ -246,7 +246,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;Given the JSON document.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 20.00,
     &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
@@ -255,12 +255,12 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;We can update the total by using an &lt;code&gt;add&lt;/code&gt; operation.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot;, &amp;quot;value&amp;quot;: 30.00 },
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot;, &amp;quot;value&amp;quot;: 30.00 },
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Leaving the final result.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 30.00,
     &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
@@ -273,7 +273,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;Starting with the following document.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 30.00,
     &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
@@ -282,10 +282,10 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;We can remove the &lt;code&gt;currency&lt;/code&gt; member with a &lt;code&gt;remove&lt;/code&gt; operation.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;remove&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/currency&amp;quot; }
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;remove&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/currency&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 30.00
 }
@@ -293,10 +293,10 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;We can also remove an element from an array. All remaining elements are shifted one position to the left. To remove order &lt;code&gt;456&lt;/code&gt; we can remove the array index referencing this order.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;remove&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/orders/1&amp;quot; }
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;remove&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/orders/1&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 30.00
 }
@@ -308,7 +308,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;Given the following JSON document.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 20.00,
     &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
@@ -317,10 +317,10 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;We can apply the &lt;code&gt;replace&lt;/code&gt; operation to update the order total.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;replace&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot;, &amp;quot;value&amp;quot;: 30.00 },
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;replace&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot;, &amp;quot;value&amp;quot;: 30.00 },
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 30.00,
     &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
@@ -333,7 +333,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;Given this starting document.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 30.00,
     &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
@@ -346,7 +346,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 { &amp;quot;op&amp;quot;: &amp;quot;move&amp;quot;, &amp;quot;from&amp;quot;: &amp;quot;/orders/0&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/rootOrder&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;rootOrder&amp;quot;: {&amp;quot;id&amp;quot;: 123}, 
     &amp;quot;total&amp;quot;: 30.00,
@@ -358,14 +358,14 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;&lt;code&gt;copy&lt;/code&gt; is like &lt;code&gt;move&lt;/code&gt;. It copies the value at the &lt;code&gt;from&lt;/code&gt; location to the  &lt;code&gt;path&lt;/code&gt; location, leaving duplicates of the data at each location.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;copy&amp;quot;, &amp;quot;from&amp;quot;: &amp;quot;/orders/0&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/rootOrder&amp;quot; }
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;copy&amp;quot;, &amp;quot;from&amp;quot;: &amp;quot;/orders/0&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/rootOrder&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h3 id=&#34;toc_8&#34;&gt;test&lt;/h3&gt;
 
 &lt;p&gt;The HTTP PATCH method is atomic and the patch should only be applied if all operations can be safely applied. The &lt;code&gt;test&lt;/code&gt; operation can offer additional validation to ensure that patch preconditions or postconditions are met. If the test fails the whole patch is discarded. &lt;code&gt;test&lt;/code&gt; is strictly an equality check.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;test&amp;quot;, &amp;quot;value&amp;quot;: 30.00, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot; }
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;test&amp;quot;, &amp;quot;value&amp;quot;: 30.00, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h3 id=&#34;toc_9&#34;&gt;Conclusion&lt;/h3&gt;
@@ -376,10 +376,10 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
     
     <item>
       <title>How to Version a REST API</title>
-      <link>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</link>
+      <link>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api/</link>
       <pubDate>Tue, 01 Apr 2014 14:16:18 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</guid>
+      <guid>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api/</guid>
       <description>
 
 &lt;p&gt;API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients.&lt;/p&gt;
@@ -388,19 +388,19 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;URL versioning inserts a version number directly in the URL of the resource. As an example,  version one of the API could be accessed through the &lt;code&gt;v1&lt;/code&gt; URL.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http://sookocheff.com/api/v1/users/12345
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http://sookocheff.com/api/v1/users/12345
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Version two of the API could be accessed through the &lt;code&gt;v2&lt;/code&gt; URL.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http://sookocheff.com/api/v2/users/12345
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http://sookocheff.com/api/v2/users/12345
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;This solution has been widely adopted because it is easy to deploy and easy for client developers to understand. This method also makes each API version discoverable and browseable without using an advanced HTTP client — just alter the URL.&lt;/p&gt;
 
 &lt;p&gt;The drawback to using URL versioning is that by changing the URL of a resource with each new API version we are violating the REST constraint that &lt;a href=&#34;http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/&#34;&gt;each resource be accessible via a unique URL&lt;/a&gt;. To mitigate this you can map the current version of the API to a non-versioned URL.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http://sookocheff.com/api/users/
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http://sookocheff.com/api/users/
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Once this mapping is in place you can safely deprecate old URLs by redirecting to the non-versioned URL &amp;ndash; notifying the client to use the latest version. At all times the non-versioned URL represents the latest version of that resource.&lt;/p&gt;
@@ -465,7 +465,7 @@ Accept: application/vnd.sookocheff.user+json?version=2
 
 &lt;p&gt;The &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616-sec7.html#sec7.1&#34;&gt;HTTP specification&lt;/a&gt; states that unknown HTTP headers MUST be forwarded on to the recipient. This means that custom HTTP headers can be set by our client and received by our API.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET /users/12345 HTTP/1.1
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET /users/12345 HTTP/1.1
 Host: sookocheff.com
 Accept: application/json
 Users-Version: 2
@@ -534,10 +534,10 @@ Users-Version: 2
     
     <item>
       <title>When to Use HTTP PUT and HTTP POST</title>
-      <link>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</link>
+      <link>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post/</link>
       <pubDate>Thu, 27 Mar 2014 07:23:34 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</guid>
+      <guid>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post/</guid>
       <description>
 
 &lt;p&gt;The HTTP protocol defines two methods for updating a resource &amp;ndash; &lt;code&gt;PUT&lt;/code&gt; and
@@ -569,8 +569,8 @@ resource a PUT request will create the new resource at the specified URL.&lt;/p&
 Host: http://sookocheff.com
 
 {
-    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-    &amp;quot;website&amp;quot;: &amp;quot;http://kevinsookocheff.com&amp;quot;
+	&amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+	&amp;quot;website&amp;quot;: &amp;quot;http://kevinsookocheff.com&amp;quot;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -589,8 +589,8 @@ This example updates the user&amp;rsquo;s website.&lt;/p&gt;
 Host: http://sookocheff.com
 
 {
-    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-    &amp;quot;website&amp;quot;: &amp;quot;http://sookocheff.com&amp;quot;
+	&amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+	&amp;quot;website&amp;quot;: &amp;quot;http://sookocheff.com&amp;quot;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -662,10 +662,10 @@ client developers.&lt;/p&gt;
     
     <item>
       <title>How REST Constraints Affect API Design</title>
-      <link>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</link>
+      <link>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/</link>
       <pubDate>Wed, 19 Mar 2014 14:11:48 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design</guid>
+      <guid>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/</guid>
       <description>
 
 &lt;p&gt;REST was developed and formalized by analyzing the existing Web and extracting
@@ -798,10 +798,10 @@ resilient APIs.&lt;/p&gt;
     
     <item>
       <title>On choosing a hypermedia type for your API - HAL, JSON-LD, Collection&#43;JSON, SIREN, Oh My!</title>
-      <link>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format</link>
+      <link>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format/</link>
       <pubDate>Tue, 11 Mar 2014 15:15:15 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format</guid>
+      <guid>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format/</guid>
       <description>
 
 &lt;p&gt;In recent years REST has been at the forefront of modern API
@@ -855,10 +855,10 @@ simple diagram.&lt;/p&gt;
 &lt;p&gt;Representing this as a typical JSON response would yield something like the
 following.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
     &amp;quot;alias&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
     &amp;quot;displayName&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
@@ -868,10 +868,10 @@ following.&lt;/p&gt;
 
 &lt;p&gt;And the list of this player&amp;rsquo;s friends could be retrieved with a separate API call.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;[
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;[
 {
     &amp;quot;playerId&amp;quot;: &amp;quot;1895638109&amp;quot;,
     &amp;quot;alias&amp;quot;: &amp;quot;sdong&amp;quot;,
@@ -906,7 +906,7 @@ JSON-LD defines a set of terms that are scoped and valid within the
 representation being discussed. A context is assigned to a JSON response using
 the &lt;code&gt;@context&lt;/code&gt; keyword.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
   &amp;quot;@context&amp;quot;: {}
 }
 &lt;/code&gt;&lt;/pre&gt;
@@ -914,7 +914,7 @@ the &lt;code&gt;@context&lt;/code&gt; keyword.&lt;/p&gt;
 &lt;p&gt;Within the context properties are assigned to a URL that provides documentation
 about the meaning of that property.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;@context&amp;quot;: {
         &amp;quot;displayName&amp;quot;: &amp;quot;https://schema.org/name&amp;quot;
     },
@@ -925,7 +925,7 @@ about the meaning of that property.&lt;/p&gt;
 &lt;p&gt;It&amp;rsquo;s a good idea to use standard naming for our APIs so we can go ahead and
 rename &lt;code&gt;displayName&lt;/code&gt; to &lt;code&gt;name&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;@context&amp;quot;: {
         &amp;quot;name&amp;quot;: &amp;quot;https://schema.org/name&amp;quot;
     },
@@ -939,10 +939,10 @@ semantics of this property. We can go further and add context to the rest of the
 properties. To be consistent with existent naming we will change
 &lt;code&gt;profilePhotoUrl&lt;/code&gt; to &lt;code&gt;image&lt;/code&gt; and &lt;code&gt;alias&lt;/code&gt; to &lt;code&gt;alternateName&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;@context&amp;quot;: {
         &amp;quot;name&amp;quot;: &amp;quot;https://schema.org/name&amp;quot;,
         &amp;quot;alternateName&amp;quot;: &amp;quot;https://schema.org/alternateName&amp;quot;,
@@ -971,10 +971,10 @@ array notation.  In this example we will represent friends by the identifiers
 that point to their resources. An HTTP GET request to those URLs would return
 the full representation of each friend.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;@context&amp;quot;: {
         &amp;quot;name&amp;quot;: &amp;quot;https://schema.org/name&amp;quot;,
         &amp;quot;alternateName&amp;quot;: &amp;quot;https://schema.org/alternateName&amp;quot;,
@@ -1012,7 +1012,7 @@ suggestions on how to simplify this even more. In this example we define a
 response. Our list of friends is provided as a simple link to a separate
 endpoint.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;pre&gt;&lt;code&gt;{
@@ -1041,10 +1041,10 @@ message format.&lt;/p&gt;
 &lt;p&gt;To specify the actions available on a resource we would use the &lt;code&gt;operation&lt;/code&gt;
 property.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;@context&amp;quot;: [
         &amp;quot;http://www.w3.org/ns/hydra/core&amp;quot;,
         {
@@ -1145,10 +1145,10 @@ become one of the leading hypermedia types in modern APIs.&lt;/p&gt;
 &lt;p&gt;State is the traditional JSON key-value pairs defining the current state of the
 resource.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;playerId&amp;quot;: &amp;quot;1234567890&amp;quot;,
     &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
     &amp;quot;alternateName&amp;quot;: &amp;quot;soofaloofa&amp;quot;,
@@ -1163,10 +1163,10 @@ resource.&lt;/p&gt;
 the current resource and the link. At a minimum the &lt;code&gt;_links&lt;/code&gt; property should
 contain a &lt;code&gt;self&lt;/code&gt; entry pointing to the current resource.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;_links&amp;quot;: {
         &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; }
     },
@@ -1180,10 +1180,10 @@ contain a &lt;code&gt;self&lt;/code&gt; entry pointing to the current resource.&
 &lt;p&gt;We can easily add a link to the &lt;code&gt;Friends&lt;/code&gt; resource which can be used to retrieve
 the full list.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
 
     &amp;quot;_links&amp;quot;: {
         &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; },
@@ -1205,10 +1205,10 @@ state with additional, related resources. These resources are provided as a
 convenience to the client application and can be easily used to represent a
 list of items.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;_links&amp;quot;: {
         &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot; },
         &amp;quot;next&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends?page=2&amp;quot; }
@@ -1252,10 +1252,10 @@ documentation about that relation. This makes the API discoverable by always
 providing documentation about the links available from the current resource. In
 the next example a URL for &lt;code&gt;friends&lt;/code&gt; points to documentation about that resource.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;_links&amp;quot;: {
         &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; },
         &amp;quot;https://api.example.com/docs/rels/friends&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot; }
@@ -1273,10 +1273,10 @@ example we will define a &lt;code&gt;curie&lt;/code&gt; &lt;code&gt;ex&lt;/code&
 &lt;code&gt;https://api.example.com/docs/rels/{rel}&lt;/code&gt;. &lt;code&gt;Curies&lt;/code&gt; are expanded by postfixing
 the curie name with a &lt;code&gt;:&lt;/code&gt; followed by the name of the resource.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;_links&amp;quot;: {
         &amp;quot;self&amp;quot;: { &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; },
         &amp;quot;curies&amp;quot;: [{ &amp;quot;name&amp;quot;: &amp;quot;ex&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/docs/rels/{rel}&amp;quot;, &amp;quot;templated&amp;quot;: true }],
@@ -1304,10 +1304,10 @@ Collection+JSON can elegantly handle most API responses.&lt;/p&gt;
 &lt;p&gt;At a minimum a Collection+JSON response must contain a &lt;code&gt;collection&lt;/code&gt; object with
 a &lt;code&gt;version&lt;/code&gt; and a URI pointing to itself.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;collection&amp;quot;: {
         &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
         &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot;
@@ -1322,10 +1322,10 @@ single resource, this collection would be a list of a single element. The
 properties of each element are given by explicit name/value pairs within a
 &lt;code&gt;data&lt;/code&gt; attribute as in the following example.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;collection&amp;quot;: {
         &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
         &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player&amp;quot;,
@@ -1351,10 +1351,10 @@ useful when creating HTML forms to reference the collection or item.&lt;/p&gt;
 
 &lt;p&gt;In this example we will add links for the &lt;code&gt;Players&lt;/code&gt; avatar and friends.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;collection&amp;quot;: {
         &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
         &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player&amp;quot;,
@@ -1386,10 +1386,10 @@ item.&lt;/p&gt;
 
 &lt;p&gt;In this example we define a template for adding to the user&amp;rsquo;s list of friends.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;collection&amp;quot;:
     {
         &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
@@ -1446,10 +1446,10 @@ template to the &lt;code&gt;href&lt;/code&gt; link defined by the collection
 name implies, define the queries that are supported by this collection. Here the
 &lt;code&gt;data&lt;/code&gt; object specifies the query parameters supported by the server.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;collection&amp;quot;:
     {
         &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
@@ -1525,10 +1525,10 @@ Think of this as a data model for your API. By defining our response as
 returning a &lt;code&gt;player&lt;/code&gt; class the API user can immediately gain insight about the
 data being returned.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;class&amp;quot;: &amp;quot;player&amp;quot;
 }
 &lt;/code&gt;&lt;/pre&gt;
@@ -1553,10 +1553,10 @@ data being returned.&lt;/p&gt;
 &lt;p&gt;Links are used in the same sense we&amp;rsquo;ve already seen in other media types &amp;ndash;
 navigating to related resources. With SIREN links have a relation and a URL.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;class&amp;quot;: &amp;quot;player&amp;quot;,
     &amp;quot;links&amp;quot;: [
         { &amp;quot;rel&amp;quot;: [ &amp;quot;self&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890&amp;quot; },
@@ -1583,10 +1583,10 @@ the request along with fields or variables that the URL accepts. As an example,
 our resource for listing a players friends can offer an action to add a
 friend to the list, or search for a friend.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET https://api.example.com/player/1234567890/friends
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;class&amp;quot;: &amp;quot;player&amp;quot;,
     &amp;quot;links&amp;quot;: [
         {&amp;quot;rel&amp;quot;: [ &amp;quot;self&amp;quot; ], &amp;quot;href&amp;quot;: &amp;quot;https://api.example.com/player/1234567890/friends&amp;quot;},

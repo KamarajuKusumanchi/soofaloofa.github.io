@@ -8,7 +8,7 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm">
+<link rel="canonical" href="http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -73,7 +73,7 @@
           <h1>Packaging a Compute Engine Virtual Machine Image</h1>
           <p>
             <small class="text-muted">
-              Posted on Tuesday, October 28, 2014 · <a href="http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm/#disqus_thread">0 Comments</a>
+              Posted on Tuesday, October 28, 2014 · <a href="http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm//#disqus_thread">0 Comments</a>
             </small>
           </p>
 
@@ -90,12 +90,12 @@ your own Compute Engine images that you can use as a base for virtual machines.<
 <p>Once your have booted your instanced and ssh&rsquo;d in you can create your image
 using the <code>gcimagebundle</code> command.</p>
 
-<pre><code class="bash">sudo gcimagebundle -d &lt;boot-device&gt; -o &lt;output-directory&gt;
+<pre><code class="language-bash">sudo gcimagebundle -d &lt;boot-device&gt; -o &lt;output-directory&gt;
 </code></pre>
 
 <p>The boot device is <code>/dev/sda</code> so a complete example might look like this.</p>
 
-<pre><code class="bash">sudo gcimagebundle -d /dev/sda -o /tmp
+<pre><code class="language-bash">sudo gcimagebundle -d /dev/sda -o /tmp
 </code></pre>
 
 <h2 id="toc_1">2. Upload to Cloud Storage</h2>
@@ -105,7 +105,7 @@ logging into your gcloud account and copying your file to a Cloud Storage
 bucket. Thankfully, Compute Engine installs the necessary gcloud and gsutil
 executables in the base virtual machines.</p>
 
-<pre><code class="bash"># login to your gcloud account
+<pre><code class="language-bash"># login to your gcloud account
 gcloud auth login
 
 # make a bucket for compute engine images
@@ -121,7 +121,7 @@ gsutil cp /tmp/&lt;image-name&gt;.image.tar.gz gs://&lt;bucket-name&gt;
 back to your console. From your console you can create a compute engine image
 using <code>gcloud compute</code>.</p>
 
-<pre><code class="bash">gcloud compute images create &lt;image-name&gt; --source-uri gs://&lt;bucket-name&gt;/&lt;image-name&gt;.image.tar.gz
+<pre><code class="language-bash">gcloud compute images create &lt;image-name&gt; --source-uri gs://&lt;bucket-name&gt;/&lt;image-name&gt;.image.tar.gz
 </code></pre>
 
 <h2 id="toc_3">4. Use your Image to Create a Compute Engine Instance</h2>
@@ -129,7 +129,7 @@ using <code>gcloud compute</code>.</p>
 <p>Finally, now that we have a predefined image, you can create a compute engine
 instance using your image name.</p>
 
-<pre><code class="bash">gcloud compute instances create --image &lt;image-name&gt;
+<pre><code class="language-bash">gcloud compute instances create --image &lt;image-name&gt;
 </code></pre>
 
 <p>Your images offer the same functionality as the Google provided versions. You
@@ -142,27 +142,27 @@ deployment.</p>
             <ul class="list-inline">
   <li>Share this post:</li>
   <li>
-    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-10-28-packaging-a-compute-engine-vm&text=Packaging%20a%20Compute%20Engine%20Virtual%20Machine%20Image&via=soofaloofa">
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-10-28-packaging-a-compute-engine-vm%2f&text=Packaging%20a%20Compute%20Engine%20Virtual%20Machine%20Image&via=soofaloofa">
       <i class="fa fa-twitter fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-10-28-packaging-a-compute-engine-vm">
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-10-28-packaging-a-compute-engine-vm%2f">
       <i class="fa fa-facebook fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-10-28-packaging-a-compute-engine-vm">
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-10-28-packaging-a-compute-engine-vm%2f">
       <i class="fa fa-google-plus fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-10-28-packaging-a-compute-engine-vm">
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-10-28-packaging-a-compute-engine-vm%2f">
       <i class="fa fa-linkedin fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-10-28-packaging-a-compute-engine-vm">
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-10-28-packaging-a-compute-engine-vm%2f">
       <i class="fa fa-envelope fa-lg"></i>
     </a>
   </li>

@@ -8,7 +8,7 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format">
+<link rel="canonical" href="http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -73,7 +73,7 @@
           <h1>On choosing a hypermedia type for your API - HAL, JSON-LD, Collection&#43;JSON, SIREN, Oh My!</h1>
           <p>
             <small class="text-muted">
-              Posted on Tuesday, March 11, 2014 · <a href="http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format/#disqus_thread">0 Comments</a>
+              Posted on Tuesday, March 11, 2014 · <a href="http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format//#disqus_thread">0 Comments</a>
             </small>
           </p>
 
@@ -131,10 +131,10 @@ simple diagram.</p>
 <p>Representing this as a typical JSON response would yield something like the
 following.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;playerId&quot;: &quot;1234567890&quot;,
     &quot;alias&quot;: &quot;soofaloofa&quot;,
     &quot;displayName&quot;: &quot;Kevin Sookocheff&quot;,
@@ -144,10 +144,10 @@ following.</p>
 
 <p>And the list of this player&rsquo;s friends could be retrieved with a separate API call.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890/friends
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890/friends
 </code></pre>
 
-<pre><code class="json">[
+<pre><code class="language-json">[
 {
     &quot;playerId&quot;: &quot;1895638109&quot;,
     &quot;alias&quot;: &quot;sdong&quot;,
@@ -182,7 +182,7 @@ JSON-LD defines a set of terms that are scoped and valid within the
 representation being discussed. A context is assigned to a JSON response using
 the <code>@context</code> keyword.</p>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
   &quot;@context&quot;: {}
 }
 </code></pre>
@@ -190,7 +190,7 @@ the <code>@context</code> keyword.</p>
 <p>Within the context properties are assigned to a URL that provides documentation
 about the meaning of that property.</p>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;@context&quot;: {
         &quot;displayName&quot;: &quot;https://schema.org/name&quot;
     },
@@ -201,7 +201,7 @@ about the meaning of that property.</p>
 <p>It&rsquo;s a good idea to use standard naming for our APIs so we can go ahead and
 rename <code>displayName</code> to <code>name</code>.</p>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;@context&quot;: {
         &quot;name&quot;: &quot;https://schema.org/name&quot;
     },
@@ -215,10 +215,10 @@ semantics of this property. We can go further and add context to the rest of the
 properties. To be consistent with existent naming we will change
 <code>profilePhotoUrl</code> to <code>image</code> and <code>alias</code> to <code>alternateName</code>.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;@context&quot;: {
         &quot;name&quot;: &quot;https://schema.org/name&quot;,
         &quot;alternateName&quot;: &quot;https://schema.org/alternateName&quot;,
@@ -247,10 +247,10 @@ array notation.  In this example we will represent friends by the identifiers
 that point to their resources. An HTTP GET request to those URLs would return
 the full representation of each friend.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;@context&quot;: {
         &quot;name&quot;: &quot;https://schema.org/name&quot;,
         &quot;alternateName&quot;: &quot;https://schema.org/alternateName&quot;,
@@ -288,7 +288,7 @@ suggestions on how to simplify this even more. In this example we define a
 response. Our list of friends is provided as a simple link to a separate
 endpoint.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890
 </code></pre>
 
 <pre><code>{
@@ -317,10 +317,10 @@ message format.</p>
 <p>To specify the actions available on a resource we would use the <code>operation</code>
 property.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890/friends
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890/friends
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;@context&quot;: [
         &quot;http://www.w3.org/ns/hydra/core&quot;,
         {
@@ -421,10 +421,10 @@ become one of the leading hypermedia types in modern APIs.</p>
 <p>State is the traditional JSON key-value pairs defining the current state of the
 resource.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;playerId&quot;: &quot;1234567890&quot;,
     &quot;name&quot;: &quot;Kevin Sookocheff&quot;,
     &quot;alternateName&quot;: &quot;soofaloofa&quot;,
@@ -439,10 +439,10 @@ resource.</p>
 the current resource and the link. At a minimum the <code>_links</code> property should
 contain a <code>self</code> entry pointing to the current resource.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;_links&quot;: {
         &quot;self&quot;: { &quot;href&quot;: &quot;https://api.example.com/player/1234567890&quot; }
     },
@@ -456,10 +456,10 @@ contain a <code>self</code> entry pointing to the current resource.</p>
 <p>We can easily add a link to the <code>Friends</code> resource which can be used to retrieve
 the full list.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
 
     &quot;_links&quot;: {
         &quot;self&quot;: { &quot;href&quot;: &quot;https://api.example.com/player/1234567890&quot; },
@@ -481,10 +481,10 @@ state with additional, related resources. These resources are provided as a
 convenience to the client application and can be easily used to represent a
 list of items.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890/friends
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890/friends
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;_links&quot;: {
         &quot;self&quot;: { &quot;href&quot;: &quot;https://api.example.com/player/1234567890/friends&quot; },
         &quot;next&quot;: { &quot;href&quot;: &quot;https://api.example.com/player/1234567890/friends?page=2&quot; }
@@ -528,10 +528,10 @@ documentation about that relation. This makes the API discoverable by always
 providing documentation about the links available from the current resource. In
 the next example a URL for <code>friends</code> points to documentation about that resource.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;_links&quot;: {
         &quot;self&quot;: { &quot;href&quot;: &quot;https://api.example.com/player/1234567890&quot; },
         &quot;https://api.example.com/docs/rels/friends&quot;: { &quot;href&quot;: &quot;https://api.example.com/player/1234567890/friends&quot; }
@@ -549,10 +549,10 @@ example we will define a <code>curie</code> <code>ex</code> that references the 
 <code>https://api.example.com/docs/rels/{rel}</code>. <code>Curies</code> are expanded by postfixing
 the curie name with a <code>:</code> followed by the name of the resource.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;_links&quot;: {
         &quot;self&quot;: { &quot;href&quot;: &quot;https://api.example.com/player/1234567890&quot; },
         &quot;curies&quot;: [{ &quot;name&quot;: &quot;ex&quot;, &quot;href&quot;: &quot;https://api.example.com/docs/rels/{rel}&quot;, &quot;templated&quot;: true }],
@@ -580,10 +580,10 @@ Collection+JSON can elegantly handle most API responses.</p>
 <p>At a minimum a Collection+JSON response must contain a <code>collection</code> object with
 a <code>version</code> and a URI pointing to itself.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;collection&quot;: {
         &quot;version&quot;: &quot;1.0&quot;,
         &quot;href&quot;: &quot;https://api.example.com/player/1234567890&quot;
@@ -598,10 +598,10 @@ single resource, this collection would be a list of a single element. The
 properties of each element are given by explicit name/value pairs within a
 <code>data</code> attribute as in the following example.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;collection&quot;: {
         &quot;version&quot;: &quot;1.0&quot;,
         &quot;href&quot;: &quot;https://api.example.com/player&quot;,
@@ -627,10 +627,10 @@ useful when creating HTML forms to reference the collection or item.</p>
 
 <p>In this example we will add links for the <code>Players</code> avatar and friends.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;collection&quot;: {
         &quot;version&quot;: &quot;1.0&quot;,
         &quot;href&quot;: &quot;https://api.example.com/player&quot;,
@@ -662,10 +662,10 @@ item.</p>
 
 <p>In this example we define a template for adding to the user&rsquo;s list of friends.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890/friends
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890/friends
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;collection&quot;:
     {
         &quot;version&quot;: &quot;1.0&quot;,
@@ -722,10 +722,10 @@ template to the <code>href</code> link defined by the collection
 name implies, define the queries that are supported by this collection. Here the
 <code>data</code> object specifies the query parameters supported by the server.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890/friends
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890/friends
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;collection&quot;:
     {
         &quot;version&quot;: &quot;1.0&quot;,
@@ -801,10 +801,10 @@ Think of this as a data model for your API. By defining our response as
 returning a <code>player</code> class the API user can immediately gain insight about the
 data being returned.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;class&quot;: &quot;player&quot;
 }
 </code></pre>
@@ -829,10 +829,10 @@ data being returned.</p>
 <p>Links are used in the same sense we&rsquo;ve already seen in other media types &ndash;
 navigating to related resources. With SIREN links have a relation and a URL.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;class&quot;: &quot;player&quot;,
     &quot;links&quot;: [
         { &quot;rel&quot;: [ &quot;self&quot; ], &quot;href&quot;: &quot;https://api.example.com/player/1234567890&quot; },
@@ -859,10 +859,10 @@ the request along with fields or variables that the URL accepts. As an example,
 our resource for listing a players friends can offer an action to add a
 friend to the list, or search for a friend.</p>
 
-<pre><code class="bash">GET https://api.example.com/player/1234567890/friends
+<pre><code class="language-bash">GET https://api.example.com/player/1234567890/friends
 </code></pre>
 
-<pre><code class="json">{
+<pre><code class="language-json">{
     &quot;class&quot;: &quot;player&quot;,
     &quot;links&quot;: [
         {&quot;rel&quot;: [ &quot;self&quot; ], &quot;href&quot;: &quot;https://api.example.com/player/1234567890/friends&quot;},
@@ -974,27 +974,27 @@ comments!</p>
             <ul class="list-inline">
   <li>Share this post:</li>
   <li>
-    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-03-11-on-choosing-a-hypermedia-format&text=On%20choosing%20a%20hypermedia%20type%20for%20your%20API%20-%20HAL%2c%20JSON-LD%2c%20Collection%2bJSON%2c%20SIREN%2c%20Oh%20My%21&via=soofaloofa">
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-03-11-on-choosing-a-hypermedia-format%2f&text=On%20choosing%20a%20hypermedia%20type%20for%20your%20API%20-%20HAL%2c%20JSON-LD%2c%20Collection%2bJSON%2c%20SIREN%2c%20Oh%20My%21&via=soofaloofa">
       <i class="fa fa-twitter fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-03-11-on-choosing-a-hypermedia-format">
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-03-11-on-choosing-a-hypermedia-format%2f">
       <i class="fa fa-facebook fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-03-11-on-choosing-a-hypermedia-format">
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-03-11-on-choosing-a-hypermedia-format%2f">
       <i class="fa fa-google-plus fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-03-11-on-choosing-a-hypermedia-format">
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-03-11-on-choosing-a-hypermedia-format%2f">
       <i class="fa fa-linkedin fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-03-11-on-choosing-a-hypermedia-format">
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-03-11-on-choosing-a-hypermedia-format%2f">
       <i class="fa fa-envelope fa-lg"></i>
     </a>
   </li>

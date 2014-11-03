@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/packaging/index.xml</link>
+    <link>http://sookocheff.com/tags/packaging/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Downloading directories of code from Github using the Github API</title>
-      <link>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api</link>
+      <link>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api/</link>
       <pubDate>Tue, 17 Jun 2014 06:14:23 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api</guid>
+      <guid>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api/</guid>
       <description>
 
 &lt;p&gt;At &lt;a href=&#34;http://www.vendAsta.com&#34;&gt;VendAsta&lt;/a&gt; we frequently share libraries of code
@@ -32,7 +32,7 @@ interact with the Github API.&lt;/p&gt;
 instantiate a new Github object given our username and password and access the
 associated user by calling &lt;code&gt;get_user&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from github import Github
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from github import Github
 
 github = Github(&#39;soofaloofa&#39;, &#39;password&#39;)
 user = github.get_user()
@@ -44,7 +44,7 @@ request&lt;/a&gt; to get the currently
 user&lt;/a&gt; and
 storing the result in a local representation.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;curl -u soofaloofa https://api.github.com/user
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -u soofaloofa https://api.github.com/user
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;toc_1&#34;&gt;Accessing a repository&lt;/h2&gt;
@@ -53,7 +53,7 @@ storing the result in a local representation.&lt;/p&gt;
 the repository for this website we make a request to &lt;a href=&#34;https://developer.github.com/v3/repos/#get&#34;&gt;get a repo by
 owner&lt;/a&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;repository = user.get_repo(&#39;soofaloofa.github.io&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;repository = user.get_repo(&#39;soofaloofa.github.io&#39;)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;toc_2&#34;&gt;Downloading a single file&lt;/h2&gt;
@@ -61,7 +61,7 @@ owner&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;To download a single file from a repository we make a call to &lt;a href=&#34;https://developer.github.com/v3/repos/contents/#get-contents&#34;&gt;get the contents
 of a file&lt;/a&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;file_content = repository.get_contents(&#39;README.md&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;file_content = repository.get_contents(&#39;README.md&#39;)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;toc_3&#34;&gt;Referencing commits&lt;/h2&gt;
@@ -72,7 +72,7 @@ expects SHA values to reference a commit. To make this a bit more user friendly
 we can write a function that will search for a SHA given a git tag or branch
 name.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def get_sha_for_tag(repository, tag):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def get_sha_for_tag(repository, tag):
     &amp;quot;&amp;quot;&amp;quot;
     Returns a commit PyGithub object for the specified repository and tag.
     &amp;quot;&amp;quot;&amp;quot;
@@ -91,7 +91,7 @@ name.&lt;/p&gt;
 &lt;p&gt;Now we can pass this SHA to the &lt;code&gt;get_contents&lt;/code&gt; function to get a file for that
 specific commit.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;sha = get_sha_for_tag(repository, &#39;develop&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;sha = get_sha_for_tag(repository, &#39;develop&#39;)
 file_content = repository.get_contents(&#39;README.md&#39;, ref=sha)
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -113,7 +113,7 @@ environment. The basic workflow is:&lt;/p&gt;
 &lt;p&gt;For this code I&amp;rsquo;ll assume that the Github user belongs to a single organization
 and that this organization is sharing code between repositories.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from github import Github
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from github import Github
 import getpass
 
 username = raw_input(&amp;quot;Github username: &amp;quot;)
@@ -137,7 +137,7 @@ download_directory(repository, sha, directory_to_download)
 SHA commit hash given a branch or tag and &lt;code&gt;download_directory&lt;/code&gt; will recursively
 download the files in the given directory.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def get_sha_for_tag(repository, tag):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def get_sha_for_tag(repository, tag):
     &amp;quot;&amp;quot;&amp;quot;
     Returns a commit PyGithub object for the specified repository and tag.
     &amp;quot;&amp;quot;&amp;quot;

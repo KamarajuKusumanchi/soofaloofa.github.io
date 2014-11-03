@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/patch/index.xml</link>
+    <link>http://sookocheff.com/tags/patch/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,15 +10,15 @@
     
     <item>
       <title>Understanding JSON Patch</title>
-      <link>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</link>
+      <link>http://sookocheff.com/posts/2014-04-08-understanding-json-patch/</link>
       <pubDate>Tue, 08 Apr 2014 16:12:14 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-04-08-understanding-json-patch</guid>
+      <guid>http://sookocheff.com/posts/2014-04-08-understanding-json-patch/</guid>
       <description>
 
 &lt;p&gt;The typical update cycle for an API resource is to (1) GET the representation, (2) modify it and (3) PUT back the entire representation. This can waste bandwidth and processing time for large resources. An alternative is to use the &lt;a href=&#34;https://tools.ietf.org/html/rfc5789&#34;&gt;HTTP PATCH&lt;/a&gt; extension method to only send the differences between two resources. HTTP PATCH applies a set of changes to the document referenced by the HTTP request.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;PATCH /file.txt HTTP/1.1
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;PATCH /file.txt HTTP/1.1
 Host: sookocheff.com
 Content-Type: application/json
 If-Match: &amp;quot;e0036bbc6f&amp;quot;
@@ -31,13 +31,13 @@ If-Match: &amp;quot;e0036bbc6f&amp;quot;
 &lt;p&gt;A JSON Patch document is a sequential list of operations to be applied to an object. Each operation is a JSON object having exactly one &lt;code&gt;op&lt;/code&gt; member.
 Valid operations are &lt;code&gt;add&lt;/code&gt;, &lt;code&gt;remove&lt;/code&gt;, &lt;code&gt;replace&lt;/code&gt;, &lt;code&gt;move&lt;/code&gt;, &lt;code&gt;copy&lt;/code&gt; and &lt;code&gt;test&lt;/code&gt;. Any other operation is considered an error.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot; }
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Each operation must also have exactly one &lt;code&gt;path&lt;/code&gt; member.
 The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf.org/html/rfc6901&#34;&gt;JSON Pointer&lt;/a&gt; that determines a location within the JSON document to modify.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/player/name&amp;quot; }
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/player/name&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The remaining elements of a JSON Patch operation depend on the particular operation being performed.&lt;/p&gt;
@@ -50,19 +50,19 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;To append a value to a list you use an existing list as the &lt;code&gt;path&lt;/code&gt; of the operation. So, given the JSON document.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}]
 }
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;We can append an order to the list using the &lt;code&gt;add&lt;/code&gt; operation.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/orders&amp;quot;, &amp;quot;value&amp;quot;: {&amp;quot;id&amp;quot;: 789} }
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/orders&amp;quot;, &amp;quot;value&amp;quot;: {&amp;quot;id&amp;quot;: 789} }
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;After applying the patch we get the final document.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}]
 }
 &lt;/code&gt;&lt;/pre&gt;
@@ -71,14 +71,14 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;If the &lt;code&gt;path&lt;/code&gt; references a member of an object that does not exist, a new member is added to the object. We start with our JSON document listing our orders.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789&amp;quot;}]
 }
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Using this JSON Patch document we can add a total and a currency member to the document.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;[
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;[
 { &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot;, &amp;quot;value&amp;quot;: 20.00 },
 { &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/currency&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;USD&amp;quot; }
 ]
@@ -86,7 +86,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;After applying the patch we get the final representation.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 20.00,
     &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
@@ -99,7 +99,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;Given the JSON document.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 20.00,
     &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
@@ -108,12 +108,12 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;We can update the total by using an &lt;code&gt;add&lt;/code&gt; operation.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot;, &amp;quot;value&amp;quot;: 30.00 },
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot;, &amp;quot;value&amp;quot;: 30.00 },
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Leaving the final result.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 30.00,
     &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
@@ -126,7 +126,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;Starting with the following document.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 30.00,
     &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
@@ -135,10 +135,10 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;We can remove the &lt;code&gt;currency&lt;/code&gt; member with a &lt;code&gt;remove&lt;/code&gt; operation.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;remove&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/currency&amp;quot; }
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;remove&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/currency&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 30.00
 }
@@ -146,10 +146,10 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;We can also remove an element from an array. All remaining elements are shifted one position to the left. To remove order &lt;code&gt;456&lt;/code&gt; we can remove the array index referencing this order.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;remove&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/orders/1&amp;quot; }
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;remove&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/orders/1&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 30.00
 }
@@ -161,7 +161,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;Given the following JSON document.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 20.00,
     &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
@@ -170,10 +170,10 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;We can apply the &lt;code&gt;replace&lt;/code&gt; operation to update the order total.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;replace&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot;, &amp;quot;value&amp;quot;: 30.00 },
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;replace&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot;, &amp;quot;value&amp;quot;: 30.00 },
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 30.00,
     &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
@@ -186,7 +186,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;Given this starting document.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 123}, {&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;total&amp;quot;: 30.00,
     &amp;quot;currency&amp;quot;: &amp;quot;USD&amp;quot;
@@ -199,7 +199,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 { &amp;quot;op&amp;quot;: &amp;quot;move&amp;quot;, &amp;quot;from&amp;quot;: &amp;quot;/orders/0&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/rootOrder&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
     &amp;quot;orders&amp;quot;: [{&amp;quot;id&amp;quot;: 456}, {&amp;quot;id&amp;quot;: 789}],
     &amp;quot;rootOrder&amp;quot;: {&amp;quot;id&amp;quot;: 123}, 
     &amp;quot;total&amp;quot;: 30.00,
@@ -211,14 +211,14 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;&lt;code&gt;copy&lt;/code&gt; is like &lt;code&gt;move&lt;/code&gt;. It copies the value at the &lt;code&gt;from&lt;/code&gt; location to the  &lt;code&gt;path&lt;/code&gt; location, leaving duplicates of the data at each location.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;copy&amp;quot;, &amp;quot;from&amp;quot;: &amp;quot;/orders/0&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/rootOrder&amp;quot; }
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;copy&amp;quot;, &amp;quot;from&amp;quot;: &amp;quot;/orders/0&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/rootOrder&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h3 id=&#34;toc_8&#34;&gt;test&lt;/h3&gt;
 
 &lt;p&gt;The HTTP PATCH method is atomic and the patch should only be applied if all operations can be safely applied. The &lt;code&gt;test&lt;/code&gt; operation can offer additional validation to ensure that patch preconditions or postconditions are met. If the test fails the whole patch is discarded. &lt;code&gt;test&lt;/code&gt; is strictly an equality check.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;test&amp;quot;, &amp;quot;value&amp;quot;: 30.00, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot; }
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;test&amp;quot;, &amp;quot;value&amp;quot;: 30.00, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h3 id=&#34;toc_9&#34;&gt;Conclusion&lt;/h3&gt;

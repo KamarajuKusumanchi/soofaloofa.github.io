@@ -8,7 +8,7 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics">
+<link rel="canonical" href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -73,7 +73,7 @@
           <h1>App Engine MapReduce API - Part 1: The Basics</h1>
           <p>
             <small class="text-muted">
-              Posted on Tuesday, April 15, 2014 · <a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/#disqus_thread">0 Comments</a>
+              Posted on Tuesday, April 15, 2014 · <a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics//#disqus_thread">0 Comments</a>
             </small>
           </p>
 
@@ -172,12 +172,12 @@ document id and the text of that document.</p>
 <p>Using the App Engine MapReduce API we can define a map function to output a
 key-value pair for each occurrence of a word in the document.</p>
 
-<pre><code class="python">def map(document):
+<pre><code class="language-python">def map(document):
     &quot;&quot;&quot;
-    Count the occurrence of each word in a document.
+	Count the occurrence of each word in a document.
     &quot;&quot;&quot;
     for word in document:
-        yield (word.lower(), 1)
+    	yield (word.lower(), 1)
 </code></pre>
 
 <p>Our output would record each time a word was encountered within a document.</p>
@@ -235,9 +235,9 @@ shuffled temporary data. The <em>reduce</em> function emits a final value based 
 input. To count the number of occurrences of a word our reduce function will
 look like this.</p>
 
-<pre><code class="python">def reduce(key, values):
+<pre><code class="language-python">def reduce(key, values):
    &quot;&quot;&quot;
-    Sum the list of values.
+	Sum the list of values.
     &quot;&quot;&quot;
     yield (key, sum(values))
 </code></pre>
@@ -295,27 +295,27 @@ App Engine to process entities from the datastore.</p>
             <ul class="list-inline">
   <li>Share this post:</li>
   <li>
-    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-15-app-engine-mapreduce-api-part-1-the-basics&text=App%20Engine%20MapReduce%20API%20-%20Part%201%3a%20The%20Basics&via=soofaloofa">
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-15-app-engine-mapreduce-api-part-1-the-basics%2f&text=App%20Engine%20MapReduce%20API%20-%20Part%201%3a%20The%20Basics&via=soofaloofa">
       <i class="fa fa-twitter fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-15-app-engine-mapreduce-api-part-1-the-basics">
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-15-app-engine-mapreduce-api-part-1-the-basics%2f">
       <i class="fa fa-facebook fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-15-app-engine-mapreduce-api-part-1-the-basics">
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-15-app-engine-mapreduce-api-part-1-the-basics%2f">
       <i class="fa fa-google-plus fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-15-app-engine-mapreduce-api-part-1-the-basics">
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-15-app-engine-mapreduce-api-part-1-the-basics%2f">
       <i class="fa fa-linkedin fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-15-app-engine-mapreduce-api-part-1-the-basics">
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-15-app-engine-mapreduce-api-part-1-the-basics%2f">
       <i class="fa fa-envelope fa-lg"></i>
     </a>
   </li>

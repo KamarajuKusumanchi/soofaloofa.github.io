@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/work-from-home/index.xml</link>
+    <link>http://sookocheff.com/tags/work-from-home/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Working From Home: A Retrospective</title>
-      <link>http://sookocheff.com/posts/2014-09-15-working-from-home-retrospective</link>
+      <link>http://sookocheff.com/posts/2014-09-15-working-from-home-retrospective/</link>
       <pubDate>Thu, 18 Sep 2014 12:57:32 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-09-15-working-from-home-retrospective</guid>
+      <guid>http://sookocheff.com/posts/2014-09-15-working-from-home-retrospective/</guid>
       <description>
 
 &lt;p&gt;I&amp;rsquo;ve spent the past eight months working from home thanks to some great support

@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/pulse-audio/index.xml</link>
+    <link>http://sookocheff.com/tags/pulse-audio/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>How to get Pulse Audio to recognize your Delta 44 (and other ICE1712 cards)</title>
-      <link>http://sookocheff.com/posts/2010-09-28-how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards</link>
+      <link>http://sookocheff.com/posts/2010-09-28-how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards/</link>
       <pubDate>Tue, 28 Sep 2010 14:23:34 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2010-09-28-how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards</guid>
+      <guid>http://sookocheff.com/posts/2010-09-28-how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards/</guid>
       <description>&lt;p&gt;I bought a used Delta 44 soundcard with the intention of recording my guitar playing. Pairing this with Rockit 5 powered monitors, a Mackie 802-VLZ3 mixer and the classic Shure SM57 microphone made for a good quality, inexpensive home studio. Using the PCI-based Delta 44 meant that any old computer would work and my idea was to use vanilla Ubuntu and install the Ardour digital audio workstation to push costs even further down. So far so good. Now the only issue is getting everything up and running. Ubuntu is a fairly mature distribution; you can expect a certain level of quality with each release. Unfortunately, this has not been the case with PulseAudio. I won’t go into details; suffice it to say it had a tumultuous upbringing and many of the kinks have since been worked out. Anyways, I quickly discovered that PulseAudio does not recognize the Delta 44. Don’t worry, this is a known problem and a workaround exists. Finding the workaround, however, did take some time.&lt;/p&gt;
 
 &lt;p&gt;By writing this, I hope to spare some time of yours. I’m going to copy the solution almost verbatim from the Launchpad bug report on this issue and hope that it gets a little more visibility than being buried in a long bug report with cross-references to other forum discussions. Make sure you entirely remove any leftovers from previous attempts to fix the problem. First, create the file&lt;/p&gt;

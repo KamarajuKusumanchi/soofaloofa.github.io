@@ -8,7 +8,7 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines">
+<link rel="canonical" href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -73,7 +73,7 @@
           <h1>App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines</h1>
           <p>
             <small class="text-muted">
-              Posted on Monday, April 28, 2014 · <a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/#disqus_thread">0 Comments</a>
+              Posted on Monday, April 28, 2014 · <a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines//#disqus_thread">0 Comments</a>
             </small>
           </p>
 
@@ -98,7 +98,7 @@
 
 <p>To create a pipeline we inherit from the <code>Pipeline</code> object.</p>
 
-<pre><code class="python">from mapreduce.lib import pipeline
+<pre><code class="language-python">from mapreduce.lib import pipeline
 
 class TouchPipeline(pipeline.Pipeline):
     &quot;&quot;&quot;
@@ -132,7 +132,7 @@ class TouchPipeline(pipeline.Pipeline):
 
 <p>In this piece of code we define a MapperPipeline and pass it the parameters used to initialize the pipeline. The map function is specified by the<code>handler_spec</code> parameter and our InputReader is given by the <code>input_reader_spec</code> parameter.  You&rsquo;ll notice from our <a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">previous article on running a MapReduce job using mapreduce.yaml</a> that the parameters passed here match the specification supplied by the <code>mapreduce.yaml</code> file in that article. In effect, we are looking at two different ways to define the same specification for a MapReduce job. The benefit of the pipelined approach here is that we can easily start our job programmatically by instantiating our <code>Pipeline</code> object and executing the <code>start()</code> method.</p>
 
-<pre><code class="python">pipeline = TouchPipeline()
+<pre><code class="language-python">pipeline = TouchPipeline()
 pipeline.start()
 </code></pre>
 
@@ -170,7 +170,7 @@ etc.
 
 <p>Let&rsquo;s start by setting up a <code>MapreducePipeline</code> object using the <code>RandomStringInputReader</code> reader as our <code>input_reader_spec</code> along with a skeleton <code>map</code> and <code>reduce</code> function.</p>
 
-<pre><code class="python">from mapreduce.lib import pipeline
+<pre><code class="language-python">from mapreduce.lib import pipeline
 from mapreduce import mapreduce_pipeline
 
 def character_count_map(random_string):
@@ -199,7 +199,7 @@ class CountCharactersPipeline(pipeline.Pipeline):
 
 <p>We can use a standard <code>RequestHandler</code> to execute our mock MapReduce Pipeline.</p>
 
-<pre><code class="python">import webapp2
+<pre><code class="language-python">import webapp2
 
 class CountCharacters(webapp2.RequestHandler):
 
@@ -210,7 +210,7 @@ class CountCharacters(webapp2.RequestHandler):
 
 <p>Let&rsquo;s flesh out our MapReduce template to actually count the characters in a string. To do so our map function will yield a tuple of <code>(character, count)</code> for each character encountered in our string and the number of times it was encountered. So for our input string <code>nzkeasmekjwewmvxgdre</code> we would yield <code>(n, 1)</code>, <code>(z, 1)</code>, <code>(k, 2)</code>, and so on. We update our <code>map</code> function to do this work.</p>
 
-<pre><code class="python">import collections
+<pre><code class="language-python">import collections
 
 def character_count_map(random_string):
     counter = collections.Counter(random_string)
@@ -223,7 +223,7 @@ def character_count_map(random_string):
 <p>Our reduce function takes the list of values returned by the Shuffle stage and
 sums them.</p>
 
-<pre><code class="python">def character_count_reduce(key, values):
+<pre><code class="language-python">def character_count_reduce(key, values):
     yield (key, sum([int(i) for i in values]))
 </code></pre>
 
@@ -237,7 +237,7 @@ sums them.</p>
 
 <p>How does the output of the <code>map</code> function arrive at the <code>reduce</code> function? If you look at the application logs you will see periodic writes to the blobstore.</p>
 
-<pre><code class="bash">Shard 1578130350583CAC16BCF-11 finalized blobstore file /blobstore/writable:RDlESEY4Q1U2UkRXT0pCVUpUTFQySlQ5VEJaTkJGUEpQS0RITVgzQ1lVREtKSzVUWTJVRlhTQjYwWFAzSE02OQ==.
+<pre><code class="language-bash">Shard 1578130350583CAC16BCF-11 finalized blobstore file /blobstore/writable:RDlESEY4Q1U2UkRXT0pCVUpUTFQySlQ5VEJaTkJGUEpQS0RITVgzQ1lVREtKSzVUWTJVRlhTQjYwWFAzSE02OQ==.
 Finalized name is /blobstore/7BpFYTPsvNp95XA2uS1MlBm1DsVegjTEO9EP6TAbXZAtsxV5C7HjuZmYnqPuXdJC.
 </code></pre>
 
@@ -247,7 +247,7 @@ Finalized name is /blobstore/7BpFYTPsvNp95XA2uS1MlBm1DsVegjTEO9EP6TAbXZAtsxV5C7H
 
 <p>The last thing we need to finish our MapReduce job is outputting the result. To do so we add an <code>output_writer_spec</code> to our MapReduce initialization.</p>
 
-<pre><code class="python">class CountCharactersPipeline(pipeline.Pipeline):
+<pre><code class="language-python">class CountCharactersPipeline(pipeline.Pipeline):
     &quot;&quot;&quot; Count the number of occurrences of a character. &quot;&quot;&quot;
 
     def run(self, *args, **kwargs):
@@ -268,7 +268,7 @@ Finalized name is /blobstore/7BpFYTPsvNp95XA2uS1MlBm1DsVegjTEO9EP6TAbXZAtsxV5C7H
 
 <p>Unfortunately we don&rsquo;t know where the <code>BlobstoreOutputWriter</code> saves our result. To access this we can capture the output of the <code>MapreducePipeline</code>.</p>
 
-<pre><code class="python">class CountCharactersPipeline(pipeline.Pipeline):
+<pre><code class="language-python">class CountCharactersPipeline(pipeline.Pipeline):
     &quot;&quot;&quot; Count the number of occurrences of a character. &quot;&quot;&quot;
 
     def run(self, *args, **kwargs):
@@ -291,7 +291,7 @@ Finalized name is /blobstore/7BpFYTPsvNp95XA2uS1MlBm1DsVegjTEO9EP6TAbXZAtsxV5C7H
 
 <p><code>output</code> is a <code>PipelineFuture</code> object &ndash; a generator that takes on a value after the execution of the <code>MapreducePipeline</code> is complete. We can access the value of this generator from within a second pipeline object that writes the location of the blobkey to the datastore for future retrievals..</p>
 
-<pre><code class="python">class CharacterCounter(ndb.Model):
+<pre><code class="language-python">class CharacterCounter(ndb.Model):
     count = ndb.StringProperty(required=True)
 
 class StoreOutput(pipeline.Pipeline):
@@ -308,7 +308,7 @@ class StoreOutput(pipeline.Pipeline):
 
 <p>In this article we&rsquo;ve shown how to perform a full MapReduce job using the Google App Engine MapReduce API for Python. MapReduce is a powerful abstraction to use when processing large datasets. This article should provide a good starting point for defining and running your own MapReduce jobs. For reference here is the full source code used in this post.</p>
 
-<pre><code class="python">&quot;&quot;&quot;
+<pre><code class="language-python">&quot;&quot;&quot;
 app.mapreduce
 &quot;&quot;&quot;
 import webapp2
@@ -392,27 +392,27 @@ class CountCharacters(webapp2.RequestHandler):
             <ul class="list-inline">
   <li>Share this post:</li>
   <li>
-    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines&text=App%20Engine%20MapReduce%20API%20-%20Part%203%3a%20Programmatic%20MapReduce%20using%20Pipelines&via=soofaloofa">
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines%2f&text=App%20Engine%20MapReduce%20API%20-%20Part%203%3a%20Programmatic%20MapReduce%20using%20Pipelines&via=soofaloofa">
       <i class="fa fa-twitter fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines">
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines%2f">
       <i class="fa fa-facebook fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines">
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines%2f">
       <i class="fa fa-google-plus fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines">
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines%2f">
       <i class="fa fa-linkedin fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines">
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines%2f">
       <i class="fa fa-envelope fa-lg"></i>
     </a>
   </li>

@@ -8,7 +8,7 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml">
+<link rel="canonical" href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -73,7 +73,7 @@
           <h1>App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml</h1>
           <p>
             <small class="text-muted">
-              Posted on Tuesday, April 22, 2014 · <a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/#disqus_thread">0 Comments</a>
+              Posted on Tuesday, April 22, 2014 · <a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml//#disqus_thread">0 Comments</a>
             </small>
           </p>
 
@@ -96,12 +96,12 @@
 
 <p>First, let&rsquo;s install the MapReduce API for Python. The API is constantly changing so the best way to install the latest version is to checkout the code directly from the <a href="https://code.google.com/p/appengine-mapreduce/">SVN repository</a>.</p>
 
-<pre><code class="bash">svn checkout http://appengine-mapreduce.googlecode.com/svn/trunk/python/src/mapreduce
+<pre><code class="language-bash">svn checkout http://appengine-mapreduce.googlecode.com/svn/trunk/python/src/mapreduce
 </code></pre>
 
 <p>Place the <code>mapreduce</code> folder into your application root directory and add the mapreduce handler to your <code>app.yaml</code> file.</p>
 
-<pre><code class="yaml">includes:
+<pre><code class="language-yaml">includes:
 - lib/mapreduce/include.yaml
 
 handlers:
@@ -118,7 +118,7 @@ handlers:
 
 <p>To get a proper view of the data you will also need to add two indexes to your <code>index.yaml</code> file to allow the MapReduce library to query for MapReduce jobs that are run via Pipelines and display them in the GUI.</p>
 
-<pre><code class="yaml">indexes:
+<pre><code class="language-yaml">indexes:
 - kind: _AE_Pipeline_Record
   properties:
   - name: is_root_pipeline
@@ -135,7 +135,7 @@ handlers:
 
 <p>The easiest way to get started with MapReduce is to use the <code>mapreduce.yaml</code> file. This file allows you define a <code>mapper</code> function that will be executed for each entity passed to it. Let&rsquo;s go straight to an example and  create a <code>mapreduce.yaml</code> file (in your applications root directory) that will iterate over all entities of a certain Kind and put them to the datastore (updating their timestamp).</p>
 
-<pre><code class="yaml">mapreduce:
+<pre><code class="language-yaml">mapreduce:
 - name: Touch all entity_kind Models
   mapper:
     input_reader: mapreduce.input_readers.DatastoreInputReader
@@ -159,7 +159,7 @@ handlers:
 
 <p>This is a great time to edit your yaml file point to an actual model in your application to continue with this tutorial. Now that our InputReader is pointing to a model we can define the <code>map</code> function specified by our yaml files <code>handler</code> parameter. The <code>map</code> function is iteratively passed entities from our InputReader and we can take actions on those entities.</p>
 
-<pre><code class="python">def touch(entity):
+<pre><code class="language-python">def touch(entity):
     &quot;&quot;&quot;
     Update the entities timestamp.
     &quot;&quot;&quot;
@@ -186,7 +186,7 @@ handlers:
 
 <p>We can re-write our map function to take advantage of the MutationPool by yielding a database operation from within our map function. If you are unfamiliar with <code>yield</code> you can think of it as returning a value to the MapReduce job. You can have multiple <code>yield</code> statements in a function that will all return values to be handled by the MapReduce job.</p>
 
-<pre><code class="python">from mapreduce import operation as op
+<pre><code class="language-python">from mapreduce import operation as op
 
 def touch(entity):
     &quot;&quot;&quot;
@@ -229,7 +229,7 @@ def touch(entity):
 
 <p>Let&rsquo;s add an additional parameter for the map function that will only touch the entity if it is older than a specific date.</p>
 
-<pre><code class="yaml">- name: Touch all entity_kind Models
+<pre><code class="language-yaml">- name: Touch all entity_kind Models
   mapper:
     input_reader: mapreduce.input_readers.DatastoreInputReader
     handler: app.pipelines.touch
@@ -242,7 +242,7 @@ def touch(entity):
 
 <p>The mapreduce context holds the specifation for the job as defined by the <code>mapreduce.yaml</code> file. Within this context we can access our parameters.</p>
 
-<pre><code class="python">from mapreduce import operation as op, context
+<pre><code class="language-python">from mapreduce import operation as op, context
 from datetime import datetime
 
 def touch(entity):
@@ -254,8 +254,8 @@ def touch(entity):
     older_than = datetime.strptime(if_older_than, '%b %d %Y') if if_older_than else datetime.now()
 
     if entity.updated &lt; older_than:
-        yield op.db.Put(entity)
-        yield op.counters.Increment('touched')
+    	yield op.db.Put(entity)
+    	yield op.counters.Increment('touched')
 </code></pre>
 
 <p>Now our map function will operate on entities that have been updated previous to our <code>if_older_than</code> parameter.</p>
@@ -298,7 +298,7 @@ def touch(entity):
 
 <p>The MapReduce library allows you to specify a callback function that is called after the MapReduce completes. This can be used for logging purposes or to trigger a specific event in code. The callback is specified in your <code>mapreduce.yaml</code> file as <code>done_callback</code> and points to a user specified function. This is a parameter of the MapReduce itself and not the map function &ndash; note the independent entry in <code>mapreduce.yaml</code>.</p>
 
-<pre><code class="yaml">- name: Touch all entity_kind Models
+<pre><code class="language-yaml">- name: Touch all entity_kind Models
   params:
   - name: done_callback
     value: /done_touch
@@ -315,7 +315,7 @@ def touch(entity):
 
 <p>Upon completion a POST request is made to the URL given by the <code>done_callback</code> parameter. The MapReduce library sets a custom header in this request with the jobs <code>Mapreduce-Id</code>. You can use this header to retrieve details on the job that just completed. This is also a great place to do any cleanup such as deleting temporary files. In our example we will just log the original specification for this job that we set via <code>mapreduce.yaml</code></p>
 
-<pre><code class="python">import webapp2
+<pre><code class="language-python">import webapp2
 import logging
 from mapreduce.model import MapreduceState
 
@@ -536,27 +536,27 @@ using MapReduce Pipelines to programmatically control your API.</p>
             <ul class="list-inline">
   <li>Share this post:</li>
   <li>
-    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml&text=App%20Engine%20MapReduce%20API%20-%20Part%202%3a%20Running%20a%20MapReduce%20Job%20Using%20mapreduce.yaml&via=soofaloofa">
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml%2f&text=App%20Engine%20MapReduce%20API%20-%20Part%202%3a%20Running%20a%20MapReduce%20Job%20Using%20mapreduce.yaml&via=soofaloofa">
       <i class="fa fa-twitter fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml">
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml%2f">
       <i class="fa fa-facebook fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml">
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml%2f">
       <i class="fa fa-google-plus fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml">
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml%2f">
       <i class="fa fa-linkedin fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml">
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml%2f">
       <i class="fa fa-envelope fa-lg"></i>
     </a>
   </li>

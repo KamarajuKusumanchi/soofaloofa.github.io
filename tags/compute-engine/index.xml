@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/compute-engine/index.xml</link>
+    <link>http://sookocheff.com/tags/compute-engine/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Packaging a Compute Engine Virtual Machine Image</title>
-      <link>http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm</link>
+      <link>http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm/</link>
       <pubDate>Tue, 28 Oct 2014 06:03:42 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm</guid>
+      <guid>http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm/</guid>
       <description>
 
 &lt;p&gt;Google Compute Engine allows you to make custom images from a running virtual
@@ -26,12 +26,12 @@ your own Compute Engine images that you can use as a base for virtual machines.&
 &lt;p&gt;Once your have booted your instanced and ssh&amp;rsquo;d in you can create your image
 using the &lt;code&gt;gcimagebundle&lt;/code&gt; command.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;sudo gcimagebundle -d &amp;lt;boot-device&amp;gt; -o &amp;lt;output-directory&amp;gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo gcimagebundle -d &amp;lt;boot-device&amp;gt; -o &amp;lt;output-directory&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The boot device is &lt;code&gt;/dev/sda&lt;/code&gt; so a complete example might look like this.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;sudo gcimagebundle -d /dev/sda -o /tmp
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo gcimagebundle -d /dev/sda -o /tmp
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;toc_1&#34;&gt;2. Upload to Cloud Storage&lt;/h2&gt;
@@ -41,7 +41,7 @@ logging into your gcloud account and copying your file to a Cloud Storage
 bucket. Thankfully, Compute Engine installs the necessary gcloud and gsutil
 executables in the base virtual machines.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;# login to your gcloud account
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# login to your gcloud account
 gcloud auth login
 
 # make a bucket for compute engine images
@@ -57,7 +57,7 @@ gsutil cp /tmp/&amp;lt;image-name&amp;gt;.image.tar.gz gs://&amp;lt;bucket-name&
 back to your console. From your console you can create a compute engine image
 using &lt;code&gt;gcloud compute&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;gcloud compute images create &amp;lt;image-name&amp;gt; --source-uri gs://&amp;lt;bucket-name&amp;gt;/&amp;lt;image-name&amp;gt;.image.tar.gz
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute images create &amp;lt;image-name&amp;gt; --source-uri gs://&amp;lt;bucket-name&amp;gt;/&amp;lt;image-name&amp;gt;.image.tar.gz
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;toc_3&#34;&gt;4. Use your Image to Create a Compute Engine Instance&lt;/h2&gt;
@@ -65,7 +65,7 @@ using &lt;code&gt;gcloud compute&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Finally, now that we have a predefined image, you can create a compute engine
 instance using your image name.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;gcloud compute instances create --image &amp;lt;image-name&amp;gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute instances create --image &amp;lt;image-name&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Your images offer the same functionality as the Google provided versions. You

@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/versioning/index.xml</link>
+    <link>http://sookocheff.com/tags/versioning/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>How to Version a REST API</title>
-      <link>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</link>
+      <link>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api/</link>
       <pubDate>Tue, 01 Apr 2014 14:16:18 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api</guid>
+      <guid>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api/</guid>
       <description>
 
 &lt;p&gt;API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients.&lt;/p&gt;
@@ -22,19 +22,19 @@
 
 &lt;p&gt;URL versioning inserts a version number directly in the URL of the resource. As an example,  version one of the API could be accessed through the &lt;code&gt;v1&lt;/code&gt; URL.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http://sookocheff.com/api/v1/users/12345
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http://sookocheff.com/api/v1/users/12345
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Version two of the API could be accessed through the &lt;code&gt;v2&lt;/code&gt; URL.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http://sookocheff.com/api/v2/users/12345
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http://sookocheff.com/api/v2/users/12345
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;This solution has been widely adopted because it is easy to deploy and easy for client developers to understand. This method also makes each API version discoverable and browseable without using an advanced HTTP client — just alter the URL.&lt;/p&gt;
 
 &lt;p&gt;The drawback to using URL versioning is that by changing the URL of a resource with each new API version we are violating the REST constraint that &lt;a href=&#34;http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/&#34;&gt;each resource be accessible via a unique URL&lt;/a&gt;. To mitigate this you can map the current version of the API to a non-versioned URL.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http://sookocheff.com/api/users/
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http://sookocheff.com/api/users/
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Once this mapping is in place you can safely deprecate old URLs by redirecting to the non-versioned URL &amp;ndash; notifying the client to use the latest version. At all times the non-versioned URL represents the latest version of that resource.&lt;/p&gt;
@@ -99,7 +99,7 @@ Accept: application/vnd.sookocheff.user+json?version=2
 
 &lt;p&gt;The &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616-sec7.html#sec7.1&#34;&gt;HTTP specification&lt;/a&gt; states that unknown HTTP headers MUST be forwarded on to the recipient. This means that custom HTTP headers can be set by our client and received by our API.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;GET /users/12345 HTTP/1.1
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;GET /users/12345 HTTP/1.1
 Host: sookocheff.com
 Accept: application/json
 Users-Version: 2

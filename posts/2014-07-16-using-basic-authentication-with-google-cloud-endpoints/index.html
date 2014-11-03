@@ -8,7 +8,7 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints">
+<link rel="canonical" href="http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -73,7 +73,7 @@
           <h1>Using Basic Authentication with Google Cloud Endpoints</h1>
           <p>
             <small class="text-muted">
-              Posted on Wednesday, July 16, 2014 · <a href="http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/#disqus_thread">0 Comments</a>
+              Posted on Wednesday, July 16, 2014 · <a href="http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints//#disqus_thread">0 Comments</a>
             </small>
           </p>
 
@@ -91,7 +91,7 @@ for whatever authentication method you choose.</p>
 <p>As a starting point let&rsquo;s define a basic endpoint that will return a
 hypothetical UserMessage defining a User resource.</p>
 
-<pre><code class="python">@endpoints.api(name='users', version='v1', description='Users Api')
+<pre><code class="language-python">@endpoints.api(name='users', version='v1', description='Users Api')
 class UsersApi(remote.Service):
 
     @endpoints.method(message_types.VoidMessage,
@@ -108,7 +108,7 @@ Authorization header. We can access the HTTP headers of the request through the
 <a href="https://developers.google.com/appengine/docs/python/tools/protorpc/remote/httprequeststateclass">HTTPRequestState</a>
 using the instance variable <code>request_state</code>.</p>
 
-<pre><code class="python">@endpoints.api(name='users', version='v1', description='Users Api')
+<pre><code class="language-python">@endpoints.api(name='users', version='v1', description='Users Api')
 class UsersApi(remote.Service):
 
     @endpoints.method(message_types.VoidMessage,
@@ -130,12 +130,12 @@ class UsersApi(remote.Service):
 <p>Examing the logs will show that we receive the HTTP Authorization header in its
 base64 encoded form.</p>
 
-<pre><code class="python">Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+<pre><code class="language-python">Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 </code></pre>
 
 <p>The header can be decoded with the <code>base64</code> module.</p>
 
-<pre><code class="python">basic_auth = self.request_state.headers.get('authorization')
+<pre><code class="language-python">basic_auth = self.request_state.headers.get('authorization')
 auth_type, credentials = basic_auth.split(' ')
 print base64.b64decode(credentials)  # prints username:password
 </code></pre>
@@ -143,7 +143,7 @@ print base64.b64decode(credentials)  # prints username:password
 <p>Using the username and password we can check the datastore for a User model with
 the same credentials and return a <code>UserMessage</code> based on the model .</p>
 
-<pre><code class="python">@endpoints.api(name='users', version='v1', description='Users Api')
+<pre><code class="language-python">@endpoints.api(name='users', version='v1', description='Users Api')
 class UsersApi(remote.Service):
 
     @endpoints.method(message_types.VoidMessage,
@@ -172,27 +172,27 @@ subscribe to this blog through <a href="http://kevinsookocheff.us3.list-manage2.
             <ul class="list-inline">
   <li>Share this post:</li>
   <li>
-    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-16-using-basic-authentication-with-google-cloud-endpoints&text=Using%20Basic%20Authentication%20with%20Google%20Cloud%20Endpoints&via=soofaloofa">
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-16-using-basic-authentication-with-google-cloud-endpoints%2f&text=Using%20Basic%20Authentication%20with%20Google%20Cloud%20Endpoints&via=soofaloofa">
       <i class="fa fa-twitter fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-16-using-basic-authentication-with-google-cloud-endpoints">
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-16-using-basic-authentication-with-google-cloud-endpoints%2f">
       <i class="fa fa-facebook fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-16-using-basic-authentication-with-google-cloud-endpoints">
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-16-using-basic-authentication-with-google-cloud-endpoints%2f">
       <i class="fa fa-google-plus fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-16-using-basic-authentication-with-google-cloud-endpoints">
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-16-using-basic-authentication-with-google-cloud-endpoints%2f">
       <i class="fa fa-linkedin fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-16-using-basic-authentication-with-google-cloud-endpoints">
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-16-using-basic-authentication-with-google-cloud-endpoints%2f">
       <i class="fa fa-envelope fa-lg"></i>
     </a>
   </li>

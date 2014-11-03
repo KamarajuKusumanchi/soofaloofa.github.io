@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/nerdtree/index.xml</link>
+    <link>http://sookocheff.com/tags/nerdtree/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Creating a new file or directory in Vim using NERDTree</title>
-      <link>http://sookocheff.com/posts/2013-04-19-creating-a-new-file-or-directoryin-vim-using-nerdtree</link>
+      <link>http://sookocheff.com/posts/2013-04-19-creating-a-new-file-or-directoryin-vim-using-nerdtree/</link>
       <pubDate>Fri, 19 Apr 2013 12:18:19 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2013-04-19-creating-a-new-file-or-directoryin-vim-using-nerdtree</guid>
+      <guid>http://sookocheff.com/posts/2013-04-19-creating-a-new-file-or-directoryin-vim-using-nerdtree/</guid>
       <description>&lt;p&gt;I’m not sure why this was so difficult to discover. For the longest time I was not sure how to create a new file using NERDTree. I finally sat down and figure out how it works.&lt;/p&gt;
 
 &lt;p&gt;First, bring up NERDTree and navigate to the directory where you want to create the new file. Press &lt;code&gt;m&lt;/code&gt; to bring up the NERDTree Filesystem Menu. This menu allows you to create, rename, and delete files and directories. Type &lt;code&gt;a&lt;/code&gt; to add a child node and then simply enter the filename. You’re done! To create a directory follow the same steps but append a &lt;code&gt;/&lt;/code&gt; to the filename.&lt;/p&gt;

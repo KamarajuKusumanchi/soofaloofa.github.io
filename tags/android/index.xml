@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/android/index.xml</link>
+    <link>http://sookocheff.com/tags/android/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Apple has a Software Problem - Why I&#39;ll be Switching to Android</title>
-      <link>http://sookocheff.com/posts/2013-04-30-apple-has-a-software-problem-why-ill-be-switching-to-android</link>
+      <link>http://sookocheff.com/posts/2013-04-30-apple-has-a-software-problem-why-ill-be-switching-to-android/</link>
       <pubDate>Tue, 30 Apr 2013 22:10:18 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2013-04-30-apple-has-a-software-problem-why-ill-be-switching-to-android</guid>
+      <guid>http://sookocheff.com/posts/2013-04-30-apple-has-a-software-problem-why-ill-be-switching-to-android/</guid>
       <description>&lt;p&gt;No one can question Apple’s dominance in hardware. The build quality and user experience of the iPod, iPhone and iPad positioned Apple as the most profitable company in the world. However, with the build quality of rival devices quickly approaching Apple quality, software will be the next battleground for consumer loyalty. And Apple has a software problem.&lt;/p&gt;
 
 &lt;p&gt;The release of &lt;a href=&#34;http://googleblog.blogspot.ca/2013/04/google-now-on-your-iphone-and-ipad-with.html&#34;&gt;Google Now&lt;/a&gt; for iOS has shown that Google’s software engineering and user interface design can combine to release high quality, functional products surpassing those custom-built by Apple on Apple’s own hardware. Cloud-based mobile apps will continue to gain users and Google’s cloud based offerings are on a completely different level than Apples meagre offerings. In my personal experience Apple’s Reminders App constantly goes out of sync between my iPad and iPhone — with only a simple to-do list on two devices! As more and more data is pushed to the cloud Google’s offerings will continue to outpace what Apple’s — Google has solved so many distributed and cloud computing problems and their infrastructure is not easily replicated.&lt;/p&gt;

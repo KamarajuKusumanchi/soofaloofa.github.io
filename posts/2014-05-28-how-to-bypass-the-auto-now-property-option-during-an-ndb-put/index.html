@@ -8,7 +8,7 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put">
+<link rel="canonical" href="http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -73,7 +73,7 @@
           <h1>How to bypass the auto_now property option during an ndb put</h1>
           <p>
             <small class="text-muted">
-              Posted on Wednesday, May 28, 2014 · <a href="http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put/#disqus_thread">0 Comments</a>
+              Posted on Wednesday, May 28, 2014 · <a href="http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put//#disqus_thread">0 Comments</a>
             </small>
           </p>
 
@@ -87,7 +87,7 @@ how.</p>
 <p>First, let&rsquo;s start with a very basic ndb model with an <code>updated</code> property having
 the <code>auto_now</code> option set to <code>True</code>.</p>
 
-<pre><code class="python">from google.appengine.ext import ndb
+<pre><code class="language-python">from google.appengine.ext import ndb
 
 class Article(ndb.model):
     title = ndb.model.StringProperty()
@@ -97,7 +97,7 @@ class Article(ndb.model):
 <p>Now, let&rsquo;s put the entity to the datastore <em>without updating the timestamp</em> and
 <em>completely bypassing the <code>auto_now</code> option</em>.</p>
 
-<pre><code class="python">article = Article(title='Python versus Ruby')
+<pre><code class="language-python">article = Article(title='Python versus Ruby')
 article._properties['updated']._auto_now = False
 article.put()
 </code></pre>
@@ -108,7 +108,7 @@ the entity it will be retrieved from the instance cache with the <code>auto_now<
 property still set to <code>False</code>. This can have unwanted side-effects because
 subsequent updates to the entity will not trigger the <code>auto_now</code> functionality.</p>
 
-<pre><code class="python">article = Article(title='Python versus Ruby')
+<pre><code class="language-python">article = Article(title='Python versus Ruby')
 article._properties['updated']._auto_now = False
 key = article.put() # Put the entity with the auto_now option set to False
 
@@ -119,7 +119,7 @@ article.put() # Put the entity with the auto_now option *still* set to False
 
 <p>You can set the <code>auto_now</code> option to <code>True</code> again to re-enable the functionality.</p>
 
-<pre><code class="python">article = Article(title='Python versus Ruby')
+<pre><code class="language-python">article = Article(title='Python versus Ruby')
 article._properties['updated']._auto_now = False
 key = article.put()
 
@@ -138,27 +138,27 @@ documentation</a>.</p>
             <ul class="list-inline">
   <li>Share this post:</li>
   <li>
-    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put&text=How%20to%20bypass%20the%20auto_now%20property%20option%20during%20an%20ndb%20put&via=soofaloofa">
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put%2f&text=How%20to%20bypass%20the%20auto_now%20property%20option%20during%20an%20ndb%20put&via=soofaloofa">
       <i class="fa fa-twitter fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put">
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put%2f">
       <i class="fa fa-facebook fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put">
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put%2f">
       <i class="fa fa-google-plus fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put">
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put%2f">
       <i class="fa fa-linkedin fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put">
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put%2f">
       <i class="fa fa-envelope fa-lg"></i>
     </a>
   </li>

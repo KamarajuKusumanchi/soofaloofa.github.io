@@ -8,7 +8,7 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets">
+<link rel="canonical" href="http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -73,7 +73,7 @@
           <h1>Composing Asynchronous Functions With Tasklets</h1>
           <p>
             <small class="text-muted">
-              Posted on Saturday, September 27, 2014 · <a href="http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/#disqus_thread">0 Comments</a>
+              Posted on Saturday, September 27, 2014 · <a href="http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets//#disqus_thread">0 Comments</a>
             </small>
           </p>
 
@@ -86,23 +86,23 @@
 
 <p>A <a href="https://developers.google.com/appengine/docs/python/ndb/futureclass">Future</a> is a class representing an asynchronous I/O operation. <code>ndb</code> provides asynchronous versions of datastore operations that will return a future instead of immediately returning data.</p>
 
-<pre><code class="python">future = User.get_by_id_async(uid)
+<pre><code class="language-python">future = User.get_by_id_async(uid)
 </code></pre>
 
 <p>When a Future is first created it has no data while the I/O operation is running. By calling <code>get_result()</code> on the Future the application will stop execution of the current thread until the data is available from the I/O operation.</p>
 
-<pre><code class="python">future = User.get_by_id_async(uid)
+<pre><code class="language-python">future = User.get_by_id_async(uid)
 user = future.get_result()  # Return the data, blocking execution until the data is ready.
 </code></pre>
 
 <p>The above code is equivalent to calling the non-asynchronous <code>ndb.get</code> function.</p>
 
-<pre><code class="python">user = User.get_by_id(uid)
+<pre><code class="language-python">user = User.get_by_id(uid)
 </code></pre>
 
 <p>Using futures in this way allows you to run multiple I/O operations in parallel.</p>
 
-<pre><code class="python"># Run two asynchronous operations in parallel
+<pre><code class="language-python"># Run two asynchronous operations in parallel
 user_future = User.get_by_id_async(uid)
 accounts_future = Account.query(Account.user_id==uid).fetch_async()
 </code></pre>
@@ -111,7 +111,7 @@ accounts_future = Account.query(Account.user_id==uid).fetch_async()
 
 <p>Tasklets allow you to create your own asynchronous functions that return a Future. The application can call <code>get_result()</code> on that Future to return the data.</p>
 
-<pre><code class="python">tasklet_future = my_tasklet()  # A tasklet
+<pre><code class="language-python">tasklet_future = my_tasklet()  # A tasklet
 result = tasklet_future.get_result()
 </code></pre>
 
@@ -121,7 +121,7 @@ result = tasklet_future.get_result()
 
 <p>As a simple example, we can use a tasklet to define an asynchronous query and return the result.</p>
 
-<pre><code class="python">@ndb.tasklet
+<pre><code class="language-python">@ndb.tasklet
 def query_tasklet():
     result = yield Model.query().fetch_async()
     raise ndb.Return(result)
@@ -129,7 +129,7 @@ def query_tasklet():
 
 <p>The line <code>result = yield Model.query().fetch_async()</code> will alert the tasklet framework that this is an asynchronous line of code and that the framework can wait here and execute other code while the asynchronous line completes. To force the asynchronous code to complete you call <code>get_result()</code> on the return value of the tasklet function.</p>
 
-<pre><code class="python">future = query_tasklet()
+<pre><code class="language-python">future = query_tasklet()
 future.get_result()
 </code></pre>
 
@@ -139,22 +139,22 @@ future.get_result()
 
 <p>Suppose that you have an asynchronous function that returns a Future and you want to do some processing on the result before returning from your function. In that case you may have code like this.</p>
 
-<pre><code class="python">def process_a_query():
-    future = Model.query().fetch_async()
-    return process_result(future.get_result())
+<pre><code class="language-python">def process_a_query():
+	future = Model.query().fetch_async()
+	return process_result(future.get_result())
 </code></pre>
 
 <p>To turn this into an asynchronous tasklet function you can add the tasklet decorator and yield your asynchronous fetch.</p>
 
-<pre><code class="python">@ndb.tasklet
+<pre><code class="language-python">@ndb.tasklet
 def process_a_query():
-    result = yield Model.query().fetch_async()
-    raise ndb.Return(process_result(result))
+	result = yield Model.query().fetch_async()
+	raise ndb.Return(process_result(result))
 </code></pre>
 
 <p>Now your function <code>process_a_query</code> can be called asynchronously.</p>
 
-<pre><code class="python">future = process_a_query()
+<pre><code class="language-python">future = process_a_query()
 # ...
 future.get_result()
 </code></pre>
@@ -163,16 +163,16 @@ future.get_result()
 
 <p>In this case, suppose you have two asynchronous functions that depend on each other and you want to combine them with the tasklet framework.</p>
 
-<pre><code class="python">def multiple_query():
-    future_a = ModelA.query().fetch_async()
-    a = future_a.get_result()
-    future_b = ModelB.query(ModelB.id==a).fetch_async()
-    return future_b
+<pre><code class="language-python">def multiple_query():
+	future_a = ModelA.query().fetch_async()
+	a = future_a.get_result()
+	future_b = ModelB.query(ModelB.id==a).fetch_async()
+	return future_b
 </code></pre>
 
 <p>The above code becomes simpler with tasklets.</p>
 
-<pre><code class="python">@ndb.tasklet
+<pre><code class="language-python">@ndb.tasklet
 def multiple_query():
     a = yield ModelA.query().fetch_async()
     b = yield ModelB.query(ModelB.id==a).fetch_async()
@@ -183,10 +183,10 @@ def multiple_query():
 
 <p>The last case to discuss is parallel computation. In this scenario you have two independent asynchronous functions that you want to run in parallel.</p>
 
-<pre><code class="python">@ndb.tasklet
+<pre><code class="language-python">@ndb.tasklet
 def parallel_query():
-      a, b = yield ModelA.query().fetch_async(), yield ModelB.query().fetch_async()
-      raise ndb.Return((a,b))
+	  a, b = yield ModelA.query().fetch_async(), yield ModelB.query().fetch_async()
+	  raise ndb.Return((a,b))
 </code></pre>
 
 <h2 id="toc_5">Summary</h2>
@@ -199,27 +199,27 @@ def parallel_query():
             <ul class="list-inline">
   <li>Share this post:</li>
   <li>
-    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-09-27-composing-asynchronous-functions-with-tasklets&text=Composing%20Asynchronous%20Functions%20With%20Tasklets&via=soofaloofa">
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-09-27-composing-asynchronous-functions-with-tasklets%2f&text=Composing%20Asynchronous%20Functions%20With%20Tasklets&via=soofaloofa">
       <i class="fa fa-twitter fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-09-27-composing-asynchronous-functions-with-tasklets">
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-09-27-composing-asynchronous-functions-with-tasklets%2f">
       <i class="fa fa-facebook fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-09-27-composing-asynchronous-functions-with-tasklets">
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-09-27-composing-asynchronous-functions-with-tasklets%2f">
       <i class="fa fa-google-plus fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-09-27-composing-asynchronous-functions-with-tasklets">
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-09-27-composing-asynchronous-functions-with-tasklets%2f">
       <i class="fa fa-linkedin fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-09-27-composing-asynchronous-functions-with-tasklets">
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-09-27-composing-asynchronous-functions-with-tasklets%2f">
       <i class="fa fa-envelope fa-lg"></i>
     </a>
   </li>

@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/leiningen/index.xml</link>
+    <link>http://sookocheff.com/tags/leiningen/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Using Leiningen behind a Windows proxy</title>
-      <link>http://sookocheff.com/posts/2011-06-28-using-leiningen-behind-a-windows-proxy</link>
+      <link>http://sookocheff.com/posts/2011-06-28-using-leiningen-behind-a-windows-proxy/</link>
       <pubDate>Tue, 28 Jun 2011 11:15:08 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2011-06-28-using-leiningen-behind-a-windows-proxy</guid>
+      <guid>http://sookocheff.com/posts/2011-06-28-using-leiningen-behind-a-windows-proxy/</guid>
       <description>&lt;p&gt;I’ve been getting familiar with the &lt;a href=&#34;https://github.com/technomancy/leiningen&#34;&gt;Leiningen&lt;/a&gt; build tool for &lt;a href=&#34;http://clojure.org/&#34;&gt;Clojure&lt;/a&gt; but had trouble connecting to the Clojar and Maven repositories behind a proxy.&lt;/p&gt;
 
 &lt;p&gt;I ended up adding my proxy to Maven’s &lt;code&gt;settings.xml&lt;/code&gt; and everything worked out.&lt;/p&gt;

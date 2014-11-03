@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/notifications/index.xml</link>
+    <link>http://sookocheff.com/tags/notifications/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>How to Display HTML5 Notifications</title>
-      <link>http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications</link>
+      <link>http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications/</link>
       <pubDate>Fri, 06 May 2011 10:10:10 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications</guid>
+      <guid>http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications/</guid>
       <description>&lt;p&gt;Chrome recently introduced support for HTML Notifications.&lt;/p&gt;
 
 &lt;p&gt;Following the brief tutorial at &lt;a href=&#34;http://www.html5rocks.com/tutorials/notifications/quick/&#34;&gt;HTML5 Rocks&lt;/a&gt; I was able to implement this in a matter of minutes and I couldn’t be happier with the results.&lt;/p&gt;

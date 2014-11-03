@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/prediction/index.xml</link>
+    <link>http://sookocheff.com/tags/prediction/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Using the Google Prediction API to Predict the Sentiment of a Tweet</title>
-      <link>http://sookocheff.com/posts/2014-10-20-prediction-api</link>
+      <link>http://sookocheff.com/posts/2014-10-20-prediction-api/</link>
       <pubDate>Mon, 20 Oct 2014 06:23:04 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-10-20-prediction-api</guid>
+      <guid>http://sookocheff.com/posts/2014-10-20-prediction-api/</guid>
       <description>
 
 &lt;p&gt;The &lt;a href=&#34;https://cloud.google.com/prediction/&#34;&gt;Google Prediction API&lt;/a&gt; offers the

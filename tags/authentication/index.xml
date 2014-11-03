@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/authentication/index.xml</link>
+    <link>http://sookocheff.com/tags/authentication/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Generating a C# client for an App Engine Cloud Endpoints API</title>
-      <link>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client</link>
+      <link>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/</link>
       <pubDate>Tue, 22 Jul 2014 06:29:56 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client</guid>
+      <guid>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/</guid>
       <description>&lt;p&gt;The Cloud Endpoints API comes packaged with endpointscfg.py to generate client
 libraries in JavaScript, Objective-C (for iOS) and Java (for Android). You can
 also generate a few additional client libraries using the &lt;a href=&#34;https://code.google.com/p/google-apis-client-generator/&#34;&gt;Google APIs client
@@ -22,7 +22,7 @@ article will show you how to use the generator to create a C# client library.&lt
 
 &lt;p&gt;The client generator is a Python application you can install with &lt;code&gt;pip&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;pip install google-apis-client-generator
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;pip install google-apis-client-generator
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The client generator works by taking an API discovery document, parsing it into
@@ -33,10 +33,10 @@ model to running code.&lt;/p&gt;
 find this document from the root API discovery URL. First, download the root API
 discovery document using &lt;a href=&#34;https://github.com/jakubroztocil/httpie&#34;&gt;httpie&lt;/a&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http --download https://example.appspot.com/_ah/api/discovery/v1/apis
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http --download https://example.appspot.com/_ah/api/discovery/v1/apis
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;&amp;quot;items&amp;quot;: [
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;items&amp;quot;: [
     {
         &amp;quot;description&amp;quot;: &amp;quot;Example Api&amp;quot;,
         &amp;quot;discoveryLink&amp;quot;: &amp;quot;./apis/example/v1/rest&amp;quot;,
@@ -59,7 +59,7 @@ APIs and a &lt;code&gt;discoveryLink&lt;/code&gt; for each API. The &lt;code&gt;
 for the API. We can download this schema and use it as input to the client
 generator.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;http --download https://example.appspot.com/_ah/api/discovery/v1/apis/example/v1/rest
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http --download https://example.appspot.com/_ah/api/discovery/v1/apis/example/v1/rest
 
 generate_library --input=rest.json --language=csharp --output_dir=tmp/csharp
 &lt;/code&gt;&lt;/pre&gt;
@@ -71,10 +71,10 @@ client libraries in C++, C#, Dart, GWT, Java, PHP and Python.&lt;/p&gt;
     
     <item>
       <title>Using Basic Authentication with Google Cloud Endpoints</title>
-      <link>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints</link>
+      <link>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/</link>
       <pubDate>Wed, 16 Jul 2014 01:02:25 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints</guid>
+      <guid>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/</guid>
       <description>
 
 &lt;p&gt;Cloud Endpoints provides strong integration with OAuth 2.0. If you can use this
@@ -88,7 +88,7 @@ for whatever authentication method you choose.&lt;/p&gt;
 &lt;p&gt;As a starting point let&amp;rsquo;s define a basic endpoint that will return a
 hypothetical UserMessage defining a User resource.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
 class UsersApi(remote.Service):
 
     @endpoints.method(message_types.VoidMessage,
@@ -105,7 +105,7 @@ Authorization header. We can access the HTTP headers of the request through the
 &lt;a href=&#34;https://developers.google.com/appengine/docs/python/tools/protorpc/remote/httprequeststateclass&#34;&gt;HTTPRequestState&lt;/a&gt;
 using the instance variable &lt;code&gt;request_state&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
 class UsersApi(remote.Service):
 
     @endpoints.method(message_types.VoidMessage,
@@ -127,12 +127,12 @@ class UsersApi(remote.Service):
 &lt;p&gt;Examing the logs will show that we receive the HTTP Authorization header in its
 base64 encoded form.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The header can be decoded with the &lt;code&gt;base64&lt;/code&gt; module.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;basic_auth = self.request_state.headers.get(&#39;authorization&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;basic_auth = self.request_state.headers.get(&#39;authorization&#39;)
 auth_type, credentials = basic_auth.split(&#39; &#39;)
 print base64.b64decode(credentials)  # prints username:password
 &lt;/code&gt;&lt;/pre&gt;
@@ -140,7 +140,7 @@ print base64.b64decode(credentials)  # prints username:password
 &lt;p&gt;Using the username and password we can check the datastore for a User model with
 the same credentials and return a &lt;code&gt;UserMessage&lt;/code&gt; based on the model .&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
 class UsersApi(remote.Service):
 
     @endpoints.method(message_types.VoidMessage,

@@ -8,7 +8,7 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api">
+<link rel="canonical" href="http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -73,7 +73,7 @@
           <h1>Downloading directories of code from Github using the Github API</h1>
           <p>
             <small class="text-muted">
-              Posted on Tuesday, June 17, 2014 · <a href="http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api/#disqus_thread">0 Comments</a>
+              Posted on Tuesday, June 17, 2014 · <a href="http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api//#disqus_thread">0 Comments</a>
             </small>
           </p>
 
@@ -96,7 +96,7 @@ interact with the Github API.</p>
 instantiate a new Github object given our username and password and access the
 associated user by calling <code>get_user</code>.</p>
 
-<pre><code class="python">from github import Github
+<pre><code class="language-python">from github import Github
 
 github = Github('soofaloofa', 'password')
 user = github.get_user()
@@ -108,7 +108,7 @@ request</a> to get the currently
 user</a> and
 storing the result in a local representation.</p>
 
-<pre><code class="bash">curl -u soofaloofa https://api.github.com/user
+<pre><code class="language-bash">curl -u soofaloofa https://api.github.com/user
 </code></pre>
 
 <h2 id="toc_1">Accessing a repository</h2>
@@ -117,7 +117,7 @@ storing the result in a local representation.</p>
 the repository for this website we make a request to <a href="https://developer.github.com/v3/repos/#get">get a repo by
 owner</a>.</p>
 
-<pre><code class="python">repository = user.get_repo('soofaloofa.github.io')
+<pre><code class="language-python">repository = user.get_repo('soofaloofa.github.io')
 </code></pre>
 
 <h2 id="toc_2">Downloading a single file</h2>
@@ -125,7 +125,7 @@ owner</a>.</p>
 <p>To download a single file from a repository we make a call to <a href="https://developer.github.com/v3/repos/contents/#get-contents">get the contents
 of a file</a>.</p>
 
-<pre><code class="python">file_content = repository.get_contents('README.md')
+<pre><code class="language-python">file_content = repository.get_contents('README.md')
 </code></pre>
 
 <h2 id="toc_3">Referencing commits</h2>
@@ -136,7 +136,7 @@ expects SHA values to reference a commit. To make this a bit more user friendly
 we can write a function that will search for a SHA given a git tag or branch
 name.</p>
 
-<pre><code class="python">def get_sha_for_tag(repository, tag):
+<pre><code class="language-python">def get_sha_for_tag(repository, tag):
     &quot;&quot;&quot;
     Returns a commit PyGithub object for the specified repository and tag.
     &quot;&quot;&quot;
@@ -155,7 +155,7 @@ name.</p>
 <p>Now we can pass this SHA to the <code>get_contents</code> function to get a file for that
 specific commit.</p>
 
-<pre><code class="python">sha = get_sha_for_tag(repository, 'develop')
+<pre><code class="language-python">sha = get_sha_for_tag(repository, 'develop')
 file_content = repository.get_contents('README.md', ref=sha)
 </code></pre>
 
@@ -177,7 +177,7 @@ environment. The basic workflow is:</p>
 <p>For this code I&rsquo;ll assume that the Github user belongs to a single organization
 and that this organization is sharing code between repositories.</p>
 
-<pre><code class="python">from github import Github
+<pre><code class="language-python">from github import Github
 import getpass
 
 username = raw_input(&quot;Github username: &quot;)
@@ -201,7 +201,7 @@ download_directory(repository, sha, directory_to_download)
 SHA commit hash given a branch or tag and <code>download_directory</code> will recursively
 download the files in the given directory.</p>
 
-<pre><code class="python">def get_sha_for_tag(repository, tag):
+<pre><code class="language-python">def get_sha_for_tag(repository, tag):
     &quot;&quot;&quot;
     Returns a commit PyGithub object for the specified repository and tag.
     &quot;&quot;&quot;
@@ -250,27 +250,27 @@ find it useful!</p>
             <ul class="list-inline">
   <li>Share this post:</li>
   <li>
-    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-06-17-downloading-directories-of-code-from-github-using-the-github-api&text=Downloading%20directories%20of%20code%20from%20Github%20using%20the%20Github%20API&via=soofaloofa">
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-06-17-downloading-directories-of-code-from-github-using-the-github-api%2f&text=Downloading%20directories%20of%20code%20from%20Github%20using%20the%20Github%20API&via=soofaloofa">
       <i class="fa fa-twitter fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-06-17-downloading-directories-of-code-from-github-using-the-github-api">
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-06-17-downloading-directories-of-code-from-github-using-the-github-api%2f">
       <i class="fa fa-facebook fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-06-17-downloading-directories-of-code-from-github-using-the-github-api">
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-06-17-downloading-directories-of-code-from-github-using-the-github-api%2f">
       <i class="fa fa-google-plus fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-06-17-downloading-directories-of-code-from-github-using-the-github-api">
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-06-17-downloading-directories-of-code-from-github-using-the-github-api%2f">
       <i class="fa fa-linkedin fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-06-17-downloading-directories-of-code-from-github-using-the-github-api">
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-06-17-downloading-directories-of-code-from-github-using-the-github-api%2f">
       <i class="fa fa-envelope fa-lg"></i>
     </a>
   </li>

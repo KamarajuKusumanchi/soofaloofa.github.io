@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/chef/index.xml</link>
+    <link>http://sookocheff.com/tags/chef/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Install node.js packages via npm with a Chef Cookbook</title>
-      <link>http://sookocheff.com/posts/2013-06-04-install-npm-packages-with-a-chef-cookbook</link>
+      <link>http://sookocheff.com/posts/2013-06-04-install-npm-packages-with-a-chef-cookbook/</link>
       <pubDate>Thu, 06 Jun 2013 08:45:51 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2013-06-04-install-npm-packages-with-a-chef-cookbook</guid>
+      <guid>http://sookocheff.com/posts/2013-06-04-install-npm-packages-with-a-chef-cookbook/</guid>
       <description>&lt;p&gt;I wanted to set up a Vagrant instance with node.js and some specific packages pre-installed. I found a Chef cookbook to install node and after a bit of work have a cookbook that will install arbitrary node packages through npm.  I based this heavily on &lt;a href=&#34;https://github.com/balbeko/chef-npm&#34;&gt;balbeko&lt;/a&gt;&amp;rsquo;s chef-npm cookbook with modifications to accept a data bag list of npm packages. Any packages in this list will be installed by Chef.&lt;/p&gt;
 
 &lt;p&gt;Behold! My first &lt;a href=&#34;https://github.com/soofaloofa/chef-npm-package-install&#34;&gt;Chef cookbook&lt;/a&gt;.&lt;/p&gt;

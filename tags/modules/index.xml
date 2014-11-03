@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/modules/index.xml</link>
+    <link>http://sookocheff.com/tags/modules/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,15 +10,15 @@
     
     <item>
       <title>Running Multiple App Engine Modules Locally with dev_appserver.py</title>
-      <link>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally</link>
+      <link>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally/</link>
       <pubDate>Tue, 17 Jun 2014 13:09:42 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally</guid>
+      <guid>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally/</guid>
       <description>&lt;p&gt;The recently released &lt;a href=&#34;https://developers.google.com/appengine/docs/python/modules/&#34;&gt;App Engine Modules API&lt;/a&gt; allows developers to compartmentalize their applications into logical units that can share state using the datastore or memcache.&lt;/p&gt;
 
 &lt;p&gt;The documentation for this API is fairly complete but one part is lacking — running multiple modules locally using dev_appserver.py. Thankfully, the solution is not too complicated.  Just pass the list of &lt;code&gt;.yaml&lt;/code&gt; files defining your modules to dev_appserver and it will run all of your modules locally.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;dev_appserver.py src/app.yaml src/backend.yaml src/dispatch.yaml
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;dev_appserver.py src/app.yaml src/backend.yaml src/dispatch.yaml
 &lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>

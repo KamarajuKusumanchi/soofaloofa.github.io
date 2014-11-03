@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/ndb/index.xml</link>
+    <link>http://sookocheff.com/tags/ndb/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Composing Asynchronous Functions With Tasklets</title>
-      <link>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets</link>
+      <link>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/</link>
       <pubDate>Sat, 27 Sep 2014 15:25:29 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets</guid>
+      <guid>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/</guid>
       <description>
 
 &lt;p&gt;Asynchronous functions can provide a boon to application performance by allowing time consuming functions to operate in parallel and without blocking the main execution thread. This article explains how to use the Tasklet API to compose and execute asynchronous functions in Google App Engine.&lt;/p&gt;
@@ -22,23 +22,23 @@
 
 &lt;p&gt;A &lt;a href=&#34;https://developers.google.com/appengine/docs/python/ndb/futureclass&#34;&gt;Future&lt;/a&gt; is a class representing an asynchronous I/O operation. &lt;code&gt;ndb&lt;/code&gt; provides asynchronous versions of datastore operations that will return a future instead of immediately returning data.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;future = User.get_by_id_async(uid)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;future = User.get_by_id_async(uid)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;When a Future is first created it has no data while the I/O operation is running. By calling &lt;code&gt;get_result()&lt;/code&gt; on the Future the application will stop execution of the current thread until the data is available from the I/O operation.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;future = User.get_by_id_async(uid)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;future = User.get_by_id_async(uid)
 user = future.get_result()  # Return the data, blocking execution until the data is ready.
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The above code is equivalent to calling the non-asynchronous &lt;code&gt;ndb.get&lt;/code&gt; function.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;user = User.get_by_id(uid)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;user = User.get_by_id(uid)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Using futures in this way allows you to run multiple I/O operations in parallel.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;# Run two asynchronous operations in parallel
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# Run two asynchronous operations in parallel
 user_future = User.get_by_id_async(uid)
 accounts_future = Account.query(Account.user_id==uid).fetch_async()
 &lt;/code&gt;&lt;/pre&gt;
@@ -47,7 +47,7 @@ accounts_future = Account.query(Account.user_id==uid).fetch_async()
 
 &lt;p&gt;Tasklets allow you to create your own asynchronous functions that return a Future. The application can call &lt;code&gt;get_result()&lt;/code&gt; on that Future to return the data.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;tasklet_future = my_tasklet()  # A tasklet
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;tasklet_future = my_tasklet()  # A tasklet
 result = tasklet_future.get_result()
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -57,7 +57,7 @@ result = tasklet_future.get_result()
 
 &lt;p&gt;As a simple example, we can use a tasklet to define an asynchronous query and return the result.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@ndb.tasklet
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@ndb.tasklet
 def query_tasklet():
     result = yield Model.query().fetch_async()
     raise ndb.Return(result)
@@ -65,7 +65,7 @@ def query_tasklet():
 
 &lt;p&gt;The line &lt;code&gt;result = yield Model.query().fetch_async()&lt;/code&gt; will alert the tasklet framework that this is an asynchronous line of code and that the framework can wait here and execute other code while the asynchronous line completes. To force the asynchronous code to complete you call &lt;code&gt;get_result()&lt;/code&gt; on the return value of the tasklet function.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;future = query_tasklet()
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;future = query_tasklet()
 future.get_result()
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -75,22 +75,22 @@ future.get_result()
 
 &lt;p&gt;Suppose that you have an asynchronous function that returns a Future and you want to do some processing on the result before returning from your function. In that case you may have code like this.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def process_a_query():
-    future = Model.query().fetch_async()
-    return process_result(future.get_result())
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def process_a_query():
+	future = Model.query().fetch_async()
+	return process_result(future.get_result())
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;To turn this into an asynchronous tasklet function you can add the tasklet decorator and yield your asynchronous fetch.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@ndb.tasklet
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@ndb.tasklet
 def process_a_query():
-    result = yield Model.query().fetch_async()
-    raise ndb.Return(process_result(result))
+	result = yield Model.query().fetch_async()
+	raise ndb.Return(process_result(result))
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Now your function &lt;code&gt;process_a_query&lt;/code&gt; can be called asynchronously.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;future = process_a_query()
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;future = process_a_query()
 # ...
 future.get_result()
 &lt;/code&gt;&lt;/pre&gt;
@@ -99,16 +99,16 @@ future.get_result()
 
 &lt;p&gt;In this case, suppose you have two asynchronous functions that depend on each other and you want to combine them with the tasklet framework.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def multiple_query():
-    future_a = ModelA.query().fetch_async()
-    a = future_a.get_result()
-    future_b = ModelB.query(ModelB.id==a).fetch_async()
-    return future_b
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def multiple_query():
+	future_a = ModelA.query().fetch_async()
+	a = future_a.get_result()
+	future_b = ModelB.query(ModelB.id==a).fetch_async()
+	return future_b
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The above code becomes simpler with tasklets.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@ndb.tasklet
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@ndb.tasklet
 def multiple_query():
     a = yield ModelA.query().fetch_async()
     b = yield ModelB.query(ModelB.id==a).fetch_async()
@@ -119,10 +119,10 @@ def multiple_query():
 
 &lt;p&gt;The last case to discuss is parallel computation. In this scenario you have two independent asynchronous functions that you want to run in parallel.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;@ndb.tasklet
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@ndb.tasklet
 def parallel_query():
-      a, b = yield ModelA.query().fetch_async(), yield ModelB.query().fetch_async()
-      raise ndb.Return((a,b))
+	  a, b = yield ModelA.query().fetch_async(), yield ModelB.query().fetch_async()
+	  raise ndb.Return((a,b))
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;toc_5&#34;&gt;Summary&lt;/h2&gt;
@@ -133,10 +133,10 @@ def parallel_query():
     
     <item>
       <title>Converting an ndb model to a BigQuery schema</title>
-      <link>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema</link>
+      <link>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/</link>
       <pubDate>Thu, 14 Aug 2014 17:58:03 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema</guid>
+      <guid>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/</guid>
       <description>
 
 &lt;p&gt;I have been working on the problem of recording changes to an ndb model. One way to accomplish this is to stream data changes to a BigQuery table corresponding to the ndb model. It would be great to do this in a generic way which gives us the problem of generating a BigQuery table given an ndb model. This article will describe one solution to this problem.&lt;/p&gt;
@@ -147,7 +147,7 @@ def parallel_query():
 ndb &lt;code&gt;_properties&lt;/code&gt; accessor. By iterating over this field we can find all of the
 properties on the class and their ndb types.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def tablify(ndb_model):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def tablify(ndb_model):
     &amp;quot;&amp;quot;&amp;quot;
     Convert ndb_model into a BigQuery table schema.
     &amp;quot;&amp;quot;&amp;quot;
@@ -161,7 +161,7 @@ properties on the class and their ndb types.&lt;/p&gt;
 each property to a BigQuery type. Here is a helper function that provides a
 simple mapping.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def ndb_type_to_bigquery_type(_type):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def ndb_type_to_bigquery_type(_type):
     &amp;quot;&amp;quot;&amp;quot;
     Convert a python type to a bigquery type.
     &amp;quot;&amp;quot;&amp;quot;
@@ -182,7 +182,7 @@ resource&lt;/a&gt;. This
 involves adding some boiler-plate around each field in our BigQuery schema and
 fleshing out the structure of the JSON.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;
 from google.appengine.ext import ndb
 
 SUPPORTED_TYPES = [ndb.IntegerProperty,
@@ -264,7 +264,7 @@ def tablify(obj, project_id, dataset_id, table_id):
 
 &lt;p&gt;Now that we have a BigQuery schema we can create the table in BigQuery using the BigQuery api client.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from oauth2client.appengine import AppAssertionCredentials
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from oauth2client.appengine import AppAssertionCredentials
 from apiclient.discovery import build
 
 credentials = AppAssertionCredentials(scope=&#39;https://www.googleapis.com/auth/bigquery&#39;)
@@ -285,10 +285,10 @@ comments.&lt;/p&gt;
     
     <item>
       <title>Bypassing ndb hooks with the RawDatastoreInputReader</title>
-      <link>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader</link>
+      <link>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader/</link>
       <pubDate>Tue, 29 Jul 2014 20:32:42 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader</guid>
+      <guid>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader/</guid>
       <description>
 
 &lt;p&gt;When doing a MapReduce operation there are times when you want to edit a set of entities without triggering the post or pre put hooks associated with those entities. On such ocassions using the raw datastore entity allows you to process the data without unwanted side effects.&lt;/p&gt;
@@ -331,10 +331,10 @@ repository&lt;/a&gt;.&lt;/p&gt;
     
     <item>
       <title>How to bypass the auto_now property option during an ndb put</title>
-      <link>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</link>
+      <link>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put/</link>
       <pubDate>Wed, 28 May 2014 05:55:48 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put</guid>
+      <guid>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put/</guid>
       <description>&lt;p&gt;In App Engine the &lt;code&gt;auto_now&lt;/code&gt; option sets a property to the current date/time
 whenever the entity is created or updated. This is a great feature for tracking
 the time when an entity was last updated. However, sometimes you may want to put
@@ -344,7 +344,7 @@ how.&lt;/p&gt;
 &lt;p&gt;First, let&amp;rsquo;s start with a very basic ndb model with an &lt;code&gt;updated&lt;/code&gt; property having
 the &lt;code&gt;auto_now&lt;/code&gt; option set to &lt;code&gt;True&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from google.appengine.ext import ndb
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from google.appengine.ext import ndb
 
 class Article(ndb.model):
     title = ndb.model.StringProperty()
@@ -354,7 +354,7 @@ class Article(ndb.model):
 &lt;p&gt;Now, let&amp;rsquo;s put the entity to the datastore &lt;em&gt;without updating the timestamp&lt;/em&gt; and
 &lt;em&gt;completely bypassing the &lt;code&gt;auto_now&lt;/code&gt; option&lt;/em&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
 article._properties[&#39;updated&#39;]._auto_now = False
 article.put()
 &lt;/code&gt;&lt;/pre&gt;
@@ -365,7 +365,7 @@ the entity it will be retrieved from the instance cache with the &lt;code&gt;aut
 property still set to &lt;code&gt;False&lt;/code&gt;. This can have unwanted side-effects because
 subsequent updates to the entity will not trigger the &lt;code&gt;auto_now&lt;/code&gt; functionality.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
 article._properties[&#39;updated&#39;]._auto_now = False
 key = article.put() # Put the entity with the auto_now option set to False
 
@@ -376,7 +376,7 @@ article.put() # Put the entity with the auto_now option *still* set to False
 
 &lt;p&gt;You can set the &lt;code&gt;auto_now&lt;/code&gt; option to &lt;code&gt;True&lt;/code&gt; again to re-enable the functionality.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
 article._properties[&#39;updated&#39;]._auto_now = False
 key = article.put()
 

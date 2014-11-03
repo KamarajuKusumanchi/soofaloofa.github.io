@@ -8,7 +8,7 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client">
+<link rel="canonical" href="http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -73,7 +73,7 @@
           <h1>Generating a C# client for an App Engine Cloud Endpoints API</h1>
           <p>
             <small class="text-muted">
-              Posted on Tuesday, July 22, 2014 · <a href="http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/#disqus_thread">0 Comments</a>
+              Posted on Tuesday, July 22, 2014 · <a href="http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client//#disqus_thread">0 Comments</a>
             </small>
           </p>
 
@@ -86,7 +86,7 @@ article will show you how to use the generator to create a C# client library.</p
 
 <p>The client generator is a Python application you can install with <code>pip</code>.</p>
 
-<pre><code class="bash">pip install google-apis-client-generator
+<pre><code class="language-bash">pip install google-apis-client-generator
 </code></pre>
 
 <p>The client generator works by taking an API discovery document, parsing it into
@@ -97,10 +97,10 @@ model to running code.</p>
 find this document from the root API discovery URL. First, download the root API
 discovery document using <a href="https://github.com/jakubroztocil/httpie">httpie</a>.</p>
 
-<pre><code class="bash">http --download https://example.appspot.com/_ah/api/discovery/v1/apis
+<pre><code class="language-bash">http --download https://example.appspot.com/_ah/api/discovery/v1/apis
 </code></pre>
 
-<pre><code class="json">&quot;items&quot;: [
+<pre><code class="language-json">&quot;items&quot;: [
     {
         &quot;description&quot;: &quot;Example Api&quot;,
         &quot;discoveryLink&quot;: &quot;./apis/example/v1/rest&quot;,
@@ -123,7 +123,7 @@ APIs and a <code>discoveryLink</code> for each API. The <code>discoveryLink</cod
 for the API. We can download this schema and use it as input to the client
 generator.</p>
 
-<pre><code class="bash">http --download https://example.appspot.com/_ah/api/discovery/v1/apis/example/v1/rest
+<pre><code class="language-bash">http --download https://example.appspot.com/_ah/api/discovery/v1/apis/example/v1/rest
 
 generate_library --input=rest.json --language=csharp --output_dir=tmp/csharp
 </code></pre>
@@ -137,27 +137,27 @@ client libraries in C++, C#, Dart, GWT, Java, PHP and Python.</p>
             <ul class="list-inline">
   <li>Share this post:</li>
   <li>
-    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-22-generating-a-c-sharp-client&text=Generating%20a%20C%23%20client%20for%20an%20App%20Engine%20Cloud%20Endpoints%20API&via=soofaloofa">
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-22-generating-a-c-sharp-client%2f&text=Generating%20a%20C%23%20client%20for%20an%20App%20Engine%20Cloud%20Endpoints%20API&via=soofaloofa">
       <i class="fa fa-twitter fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-22-generating-a-c-sharp-client">
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-22-generating-a-c-sharp-client%2f">
       <i class="fa fa-facebook fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-22-generating-a-c-sharp-client">
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-22-generating-a-c-sharp-client%2f">
       <i class="fa fa-google-plus fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-22-generating-a-c-sharp-client">
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-22-generating-a-c-sharp-client%2f">
       <i class="fa fa-linkedin fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-22-generating-a-c-sharp-client">
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-07-22-generating-a-c-sharp-client%2f">
       <i class="fa fa-envelope fa-lg"></i>
     </a>
   </li>

@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/bigquery/index.xml</link>
+    <link>http://sookocheff.com/tags/bigquery/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Converting an ndb model to a BigQuery schema</title>
-      <link>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema</link>
+      <link>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/</link>
       <pubDate>Thu, 14 Aug 2014 17:58:03 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema</guid>
+      <guid>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/</guid>
       <description>
 
 &lt;p&gt;I have been working on the problem of recording changes to an ndb model. One way to accomplish this is to stream data changes to a BigQuery table corresponding to the ndb model. It would be great to do this in a generic way which gives us the problem of generating a BigQuery table given an ndb model. This article will describe one solution to this problem.&lt;/p&gt;
@@ -24,7 +24,7 @@
 ndb &lt;code&gt;_properties&lt;/code&gt; accessor. By iterating over this field we can find all of the
 properties on the class and their ndb types.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def tablify(ndb_model):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def tablify(ndb_model):
     &amp;quot;&amp;quot;&amp;quot;
     Convert ndb_model into a BigQuery table schema.
     &amp;quot;&amp;quot;&amp;quot;
@@ -38,7 +38,7 @@ properties on the class and their ndb types.&lt;/p&gt;
 each property to a BigQuery type. Here is a helper function that provides a
 simple mapping.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;def ndb_type_to_bigquery_type(_type):
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def ndb_type_to_bigquery_type(_type):
     &amp;quot;&amp;quot;&amp;quot;
     Convert a python type to a bigquery type.
     &amp;quot;&amp;quot;&amp;quot;
@@ -59,7 +59,7 @@ resource&lt;/a&gt;. This
 involves adding some boiler-plate around each field in our BigQuery schema and
 fleshing out the structure of the JSON.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;
 from google.appengine.ext import ndb
 
 SUPPORTED_TYPES = [ndb.IntegerProperty,
@@ -141,7 +141,7 @@ def tablify(obj, project_id, dataset_id, table_id):
 
 &lt;p&gt;Now that we have a BigQuery schema we can create the table in BigQuery using the BigQuery api client.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;from oauth2client.appengine import AppAssertionCredentials
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from oauth2client.appengine import AppAssertionCredentials
 from apiclient.discovery import build
 
 credentials = AppAssertionCredentials(scope=&#39;https://www.googleapis.com/auth/bigquery&#39;)
@@ -162,10 +162,10 @@ comments.&lt;/p&gt;
     
     <item>
       <title>Restoring an App Engine backup into a Big Query table</title>
-      <link>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup</link>
+      <link>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup/</link>
       <pubDate>Mon, 04 Aug 2014 21:18:13 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup</guid>
+      <guid>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup/</guid>
       <description>
 
 &lt;p&gt;An unfortunate DevOps task for any team running App Engine is restoring data
@@ -183,7 +183,7 @@ followed by the name of your model. The file extension will be &lt;code&gt;.back
 As an example, this is the filename of backup for an Account model used in one
 of our projects.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Right click on your backup and copy the URL to your clipboard. The URL will be
@@ -191,24 +191,24 @@ of the form below. The name of your cloud storage bucket and the identifier for
 you app have been highlighted below. Replace these with appropriate values for
 your project.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;https://console.developers.google.com/m/cloudstorage/b/**bucket**/o/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;https://console.developers.google.com/m/cloudstorage/b/**bucket**/o/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;To get the cloud storage URL in the format expected by a BigQuery import remove
 everything up to the bucket name.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;**bucket**/o/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;**bucket**/o/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Now remove the &lt;code&gt;o&lt;/code&gt; between the bucket name and your app identifier.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;**bucket**/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;**bucket**/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Finally, append &lt;code&gt;gs://&lt;/code&gt; to the file to arrive at your final Google Cloud Storage
 URL.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;gs://**bucket**/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info 
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gs://**bucket**/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info 
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The next step is to import the backup into BigQuery. To do this, navigate to

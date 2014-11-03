@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/put/index.xml</link>
+    <link>http://sookocheff.com/tags/put/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>When to Use HTTP PUT and HTTP POST</title>
-      <link>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</link>
+      <link>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post/</link>
       <pubDate>Thu, 27 Mar 2014 07:23:34 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post</guid>
+      <guid>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post/</guid>
       <description>
 
 &lt;p&gt;The HTTP protocol defines two methods for updating a resource &amp;ndash; &lt;code&gt;PUT&lt;/code&gt; and
@@ -45,8 +45,8 @@ resource a PUT request will create the new resource at the specified URL.&lt;/p&
 Host: http://sookocheff.com
 
 {
-    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-    &amp;quot;website&amp;quot;: &amp;quot;http://kevinsookocheff.com&amp;quot;
+	&amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+	&amp;quot;website&amp;quot;: &amp;quot;http://kevinsookocheff.com&amp;quot;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -65,8 +65,8 @@ This example updates the user&amp;rsquo;s website.&lt;/p&gt;
 Host: http://sookocheff.com
 
 {
-    &amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
-    &amp;quot;website&amp;quot;: &amp;quot;http://sookocheff.com&amp;quot;
+	&amp;quot;name&amp;quot;: &amp;quot;Kevin Sookocheff&amp;quot;,
+	&amp;quot;website&amp;quot;: &amp;quot;http://sookocheff.com&amp;quot;
 }
 &lt;/code&gt;&lt;/pre&gt;
 

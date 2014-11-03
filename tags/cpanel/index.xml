@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/cpanel/index.xml</link>
+    <link>http://sookocheff.com/tags/cpanel/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Custom Posterous Subdomains with CPanel</title>
-      <link>http://sookocheff.com/posts/2011-03-23-custom-posterous-subdomains-with-cpanel</link>
+      <link>http://sookocheff.com/posts/2011-03-23-custom-posterous-subdomains-with-cpanel/</link>
       <pubDate>Wed, 23 Mar 2011 12:41:18 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2011-03-23-custom-posterous-subdomains-with-cpanel</guid>
+      <guid>http://sookocheff.com/posts/2011-03-23-custom-posterous-subdomains-with-cpanel/</guid>
       <description>&lt;p&gt;I recently started using Posterous and will be converting my WordPress blog to the service.  One thing I wanted was a custom subdomain (i.e., blog.kevinsookocheff.com); I couldn’t easily find clear instructions for  subdomains (just for domains) so I thought I’d share how I did it from a basic cPanel hosting environment.&lt;/p&gt;
 
 &lt;ol&gt;

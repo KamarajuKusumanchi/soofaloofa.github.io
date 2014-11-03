@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/pomodoro/index.xml</link>
+    <link>http://sookocheff.com/tags/pomodoro/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Simply Pomodoro for Windows Phone 7 Released</title>
-      <link>http://sookocheff.com/posts/2011-02-10-simply-pomodoro-for-windows-phone-7-released</link>
+      <link>http://sookocheff.com/posts/2011-02-10-simply-pomodoro-for-windows-phone-7-released/</link>
       <pubDate>Thu, 10 Feb 2011 09:14:23 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2011-02-10-simply-pomodoro-for-windows-phone-7-released</guid>
+      <guid>http://sookocheff.com/posts/2011-02-10-simply-pomodoro-for-windows-phone-7-released/</guid>
       <description>&lt;p&gt;I just finished my latest application for Windows Phone 7: Simply Pomodoro.&lt;/p&gt;
 
 &lt;p&gt;Simply Pomodoro provides a simple timer to follow the &lt;a href=&#34;http://www.pomodorotechnique.com/&#34;&gt;Pomodoro Technique&lt;/a&gt;™ created by Francesco Cirillo. If you don’t know anything about the Pomodoro Technique here’s a quick overview.&lt;/p&gt;

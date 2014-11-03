@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
       <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/mac-app-store/index.xml</link>
+    <link>http://sookocheff.com/tags/mac-app-store/index.xml/</link>
     <language>en-us</language>
     <author>Kevin Sookocheff</author>
     <copyright>Copyright Kevin Sookocheff.</copyright>
@@ -10,10 +10,10 @@
     
     <item>
       <title>Submitting a Unity3d Game to the Mac App Store</title>
-      <link>http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store</link>
+      <link>http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/</link>
       <pubDate>Tue, 09 Apr 2013 14:43:12 UTC</pubDate>
       <author>Kevin Sookocheff</author>
-      <guid>http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store</guid>
+      <guid>http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/</guid>
       <description>
 
 &lt;p&gt;Submitting a Unity3d game to the Mac App Store is a somewhat painful process. This guide refers to Unity3d 3.5 but should apply to Unity 4.0 and up.&lt;/p&gt;
@@ -36,7 +36,7 @@
 
 &lt;p&gt;Specifically, you will need to edit the following entries to correspond to your specific application.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;xml&#34;&gt;CFBundleExecutable: The name of your game.
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;CFBundleExecutable: The name of your game.
 CFBundleGetInfoString: Human readable information about your game.
 CFBundleIdentifier: The App identifier you registered at the Mac App Store.
 CFBundleName: The name of your game.
@@ -107,7 +107,7 @@ icon_512x512@2x.png
 
 &lt;p&gt;Place all of these icons in the same folder called icons.iconset. Now we have to drop in to Terminal and run the iconutil program to create your icns file which will be named the same as your icons folder. Running&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;iconutil -c icns
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;iconutil -c icns
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;will generate a file called icons.icns. You will need to replace the file &lt;code&gt;UnityPlayer.icns&lt;/code&gt; with this icon file using Finder. The &lt;code&gt;UnityPlayer.icns&lt;/code&gt; file is located in &lt;code&gt;Contents -&amp;gt; Resources&lt;/code&gt; within your .App.&lt;/p&gt;
@@ -132,7 +132,7 @@ icon_512x512@2x.png
 
 &lt;p&gt;Now that we have our iconset and entitlements ready we can codesign our App for delivery to the Mac App Store. We have to drop back to the Terminal to run the codesign application.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;codesign --force --sign &amp;quot;3rd Party Mac Developer Application: XXXX&amp;quot; --entitlements yourapp.entitlements YourApp.app
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;codesign --force --sign &amp;quot;3rd Party Mac Developer Application: XXXX&amp;quot; --entitlements yourapp.entitlements YourApp.app
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;You can find &amp;rdquo;XXXX&amp;rdquo; in the Keychain Access program. Look for a code signing certificate beginning with the text &amp;ldquo;3rd Party Mac Developer Application&amp;rdquo; you will need to copy this entire text to the codesign command above. You can find more details from the &lt;a href=&#34;http://developer.apple.com/library/mac/#releasenotes/General/SubmittingToMacAppStore/index.html&#34;&gt;App Store Submission documentation&lt;/a&gt;.&lt;/p&gt;
@@ -142,7 +142,7 @@ icon_512x512@2x.png
 
 &lt;p&gt;In addition to signing your app you must sign &lt;code&gt;libmono.dylib&lt;/code&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;codesign --force --sign &amp;quot;3rd Party Mac Developer Application: XXXX&amp;quot; --entitlements yourapp.entitlements YourApp.app/Contents/Frameworks/MonoEmbedRuntime/osx/libmono.0.dylib
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;codesign --force --sign &amp;quot;3rd Party Mac Developer Application: XXXX&amp;quot; --entitlements yourapp.entitlements YourApp.app/Contents/Frameworks/MonoEmbedRuntime/osx/libmono.0.dylib
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;If you don’t have the required Keychain Access certificates you will need to create these using the Apple Member Center.&lt;/p&gt;
@@ -151,7 +151,7 @@ icon_512x512@2x.png
 
 &lt;p&gt;To build your final product run productbuild from the command line.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;productbuild --component /YourApp.app /Applications --sign &amp;quot;3rd Party Mac Developer Installer: XXXX&amp;quot; YourApp.pkg
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;productbuild --component /YourApp.app /Applications --sign &amp;quot;3rd Party Mac Developer Installer: XXXX&amp;quot; YourApp.pkg
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Where &amp;rdquo;XXXX&amp;rdquo; is again from Keychain Access. This time, use the certificate beginning with  &amp;rdquo;3rd Party Mac Developer Installer&amp;rdquo;.&lt;/p&gt;

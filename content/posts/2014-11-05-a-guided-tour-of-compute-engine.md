@@ -10,13 +10,12 @@ tags:
 
 ## Overview
 
-The Goole[Compute Engine core
-concepts](https://www.youtube.com/watch?v=43gvHZyPRVk) video provides a great
+The Google [Compute Engine core
+concepts video](https://www.youtube.com/watch?v=43gvHZyPRVk) provides a great
 overview of the technology. Please take a moment to watch it. As the video
 shows, Compute Engine is defined by Resources, and each of these Resources is
 available through the Compute Engine API. You can access this API through the
-Google API Explorer or by installing the [https://cloud.google.com/sdk/](gcloud
-sdk).
+Google API Explorer or by installing the [gcloud sdk](https://cloud.google.com/sdk/).
 
 ## Key Resources
 

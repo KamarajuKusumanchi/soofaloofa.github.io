@@ -17,13 +17,12 @@
 
 &lt;h2 id=&#34;toc_0&#34;&gt;Overview&lt;/h2&gt;
 
-&lt;p&gt;The Goole&lt;a href=&#34;https://www.youtube.com/watch?v=43gvHZyPRVk&#34;&gt;Compute Engine core
-concepts&lt;/a&gt; video provides a great
+&lt;p&gt;The Google &lt;a href=&#34;https://www.youtube.com/watch?v=43gvHZyPRVk&#34;&gt;Compute Engine core
+concepts video&lt;/a&gt; provides a great
 overview of the technology. Please take a moment to watch it. As the video
 shows, Compute Engine is defined by Resources, and each of these Resources is
 available through the Compute Engine API. You can access this API through the
-Google API Explorer or by installing the &lt;a href=&#34;gcloud
-sdk&#34;&gt;https://cloud.google.com/sdk/&lt;/a&gt;.&lt;/p&gt;
+Google API Explorer or by installing the &lt;a href=&#34;https://cloud.google.com/sdk/&#34;&gt;gcloud sdk&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h2 id=&#34;toc_1&#34;&gt;Key Resources&lt;/h2&gt;
 

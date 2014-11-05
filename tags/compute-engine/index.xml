@@ -5,7 +5,182 @@
     <link>http://sookocheff.com/tags/compute-engine/index.xml/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Tue, 28 Oct 2014 06:03:42 UTC</lastBuildDate>
+    <lastBuildDate>Wed, 05 Nov 2014 04:45:05 UTC</lastBuildDate>
+    
+    <item>
+      <title>A Guided Tour of Google Compute Engine</title>
+      <link>http://sookocheff.com/posts/2014-11-05-a-guided-tour-of-compute-engine/</link>
+      <pubDate>Wed, 05 Nov 2014 04:45:05 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-11-05-a-guided-tour-of-compute-engine/</guid>
+      <description>
+
+&lt;h2 id=&#34;toc_0&#34;&gt;Overview&lt;/h2&gt;
+
+&lt;p&gt;The Goole&lt;a href=&#34;https://www.youtube.com/watch?v=43gvHZyPRVk&#34;&gt;Compute Engine core
+concepts&lt;/a&gt; video provides a great
+overview of the technology. Please take a moment to watch it. As the video
+shows, Compute Engine is defined by Resources, and each of these Resources is
+available through the Compute Engine API. You can access this API through the
+Google API Explorer or by installing the &lt;a href=&#34;gcloud
+sdk&#34;&gt;https://cloud.google.com/sdk/&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Key Resources&lt;/h2&gt;
+
+&lt;p&gt;There are few basic resources required to get up and running with any virtual
+machine running on Compute Engine. These are Images, Instances and
+Disks.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/ImagesInstancesDisks.png&#34;&gt;
+  &lt;img src=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/ImagesInstancesDisks.png&#34; alt=&#34;Images, Instances and Disks&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_2&#34;&gt;Images&lt;/h3&gt;
+
+&lt;p&gt;An Image contains a boot loader, an operating system and a root file system that
+are necessary for starting up an instance.  For all intents and purposes, you
+can think of the Image as the OS that you are running.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_3&#34;&gt;Disks&lt;/h3&gt;
+
+&lt;p&gt;The Disk acts as a filesystem. They operate as physical disks attached to your
+virtual machine but are more analogous to a network attached file system. As an
+example, we can separate a disk from a virtual machine and reattach it to
+another virtual machine.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_4&#34;&gt;Instances&lt;/h3&gt;
+
+&lt;p&gt;An Instance encapsulates the concept of a virtual machine. The virtual machine
+runs the OS and root filesystem defined by the image you choose at create time.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_5&#34;&gt;Instance Groups&lt;/h2&gt;
+
+&lt;p&gt;The Key Resources show how a single virtual machine as viewed through the lens of
+the Compute Engine ecosystem.&lt;/p&gt;
+
+&lt;p&gt;A single virtual machine is great, but modern web services usually require
+multiple machines working in concert to provide a scalable and fault tolerant
+system. Compute Engine offers the abstraction of &lt;code&gt;Instance Groups&lt;/code&gt; to represent
+a group of virtual machines.&lt;/p&gt;
+
+&lt;p&gt;Instance Groups allow you to collectively manage a set of virtual machines and
+attach services to that group of machines. A service is a simple label attached
+to the group that advertises this group of virtual machines as providing the
+same backend web service.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroup.png&#34;&gt;
+  &lt;img src=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroup.png&#34; alt=&#34;Instance Groups&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_6&#34;&gt;Instance Group Manager&lt;/h2&gt;
+
+&lt;p&gt;Instance Groups operate over a set of virtual machines. To add a virtual machine
+to an Instance Group you first spin up your virtual machine and then call the
+Instance Group API to tell Compute Engine that this Instance is now part of an
+Instance Group.&lt;/p&gt;
+
+&lt;p&gt;The Instance Group Manager automates how virtual machines are added to the
+Instance Group. There are a few caveats. First, instances in a managed Instance
+Group must be homogenous.  That means they must all be created using the same
+base image, disk and machine type. To facilitate this homogeneity the Instance
+Group Manager operates over an Instance abstraction called an Instance Template.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_7&#34;&gt;Instance Templates&lt;/h3&gt;
+
+&lt;p&gt;Instance templates are configuration files that define the settings of an
+Instance (and by extension of an Image and Disk). Instance templates can define
+some or all of the configuration options. For example, the OS, the RAM, or the
+hard drive size. Instance templates separate the configuration of your virtual
+machine from the creation and running of the virtual machine.&lt;/p&gt;
+
+&lt;p&gt;When creating a new managed Instance Group you specify the Instance Template to
+use for the Group. You also tell the Instance Group Manager the size of your
+Instance Group. The Instance Group Manager will create that number of instances
+and assign them to your managed group. You can then resize your Group with one
+command and those Instances will be brought to life and join your Instance
+Group. If any Instances are destroyed or deleted the manager will bring them
+back to life for you.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroupManager.png&#34;&gt;
+  &lt;img src=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroupManager.png&#34; alt=&#34;Instance Group Manager.&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_8&#34;&gt;Regions &amp;amp; Zones&lt;/h2&gt;
+
+&lt;p&gt;Compute Engine allows you to specify the region and zone where your virtual
+machine exists. This gives you control over where your data is stored and used.&lt;/p&gt;
+
+&lt;p&gt;Regions are broad categories such as central US or eastern Asia. Zones are
+subdivisions within a region such as zone &lt;code&gt;a&lt;/code&gt; or zone &lt;code&gt;b&lt;/code&gt;. The way to reference
+a zone is as &lt;code&gt;&amp;lt;region&amp;gt;-&amp;lt;zone&amp;gt;&lt;/code&gt;. For example &lt;code&gt;&amp;lt;us-central1-a&amp;gt;&lt;/code&gt; has the region
+us-central1 and the zone &lt;code&gt;a&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;To build a fault tolerant system ideally you want to have your Instances spread
+out over multiple zones. To distribute your system globally you can spread your
+instances across multiple regions. In the following example, we have two
+separate Managed Instance Groups in two different zones.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/RegionsAndZones.png&#34;&gt;
+  &lt;img src=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/RegionsAndZones.png&#34; alt=&#34;Instance Group Manager&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_9&#34;&gt;Load Balancing&lt;/h2&gt;
+
+&lt;p&gt;Now we have a group of virtual machines running the same hardware that can be
+easily resized with the Instance Group Manager. The question now is how do we
+address these machines?  This is where a load balancer comes into play. There
+are a lot of moving parts in the load balancer. Thankfully they all perform very
+particular tasks and once you set it up you don&amp;rsquo;t have to worry about it
+anymore.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_10&#34;&gt;The Backend Service&lt;/h3&gt;
+
+&lt;p&gt;To use HTTP load balancing we need to declare our instance groups as backend
+services. This is a simple label attached to the group. In effect we are telling
+Compute Engine which groups are related to one another.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/BackendServices.png&#34;&gt;
+  &lt;img src=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/BackendServices.png&#34; alt=&#34;Backend Services&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_11&#34;&gt;URL Maps&lt;/h3&gt;
+
+&lt;p&gt;URL maps define what URL requests to send to what backend service. For example ,
+we can route requests to the url &lt;code&gt;/static&lt;/code&gt; to a different backend service
+than requests to the url &lt;code&gt;/&lt;/code&gt;. In this example we have a URL Map that routes
+requests with the pattern &lt;code&gt;/static&lt;/code&gt; and &lt;code&gt;/images&lt;/code&gt; to the &lt;code&gt;static&lt;/code&gt; Backend
+Service. Any other requests are routed to the &lt;code&gt;web&lt;/code&gt; service.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/UrlMap.png&#34;&gt;
+  &lt;img src=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/UrlMap.png&#34; alt=&#34;Url Map&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_12&#34;&gt;Target HTTP Proxy&lt;/h3&gt;
+
+&lt;p&gt;The Target HTTP Proxy is a simple proxy that receives requests and routes them
+to the URL Maps.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/TargetHttpProxy.png&#34;&gt;
+  &lt;img src=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/TargetHttpProxy.png&#34; alt=&#34;Target HTTP Proxy&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_13&#34;&gt;Global Forwarding Rule&lt;/h3&gt;
+
+&lt;p&gt;The global forwarding rule provides an external IP address that we can use to
+address our instances. This IP address routes to the target HTTP proxy which
+ultimately directs our traffic to the proper Backend Service through the URL Map.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/GlobalForwardingRule.png&#34;&gt;
+  &lt;img src=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/GlobalForwardingRule.png&#34; alt=&#34;Global Forwarding Rule&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_14&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;That completes our guided tour of Compute Engine. Given this foundation you
+should have a solid base with which to navigate the documentation and explore
+the API.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Packaging a Compute Engine Virtual Machine Image</title>

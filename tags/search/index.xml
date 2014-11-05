@@ -31,7 +31,7 @@ example, given the incomplete search term &lt;code&gt;ne&lt;/code&gt; we need to
 frequent searches that have been made using that prefix.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search1.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-06-search-suggestions/search1.png&#34; alt=&#34;Incomplete Search.&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search1.png&#34; alt=&#34;Incomplete Search.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Suppose the user searches for the term &lt;code&gt;Netflix&lt;/code&gt;. Given the search term we
@@ -40,14 +40,14 @@ the search term &lt;code&gt;Netflix&lt;/code&gt;. The end result is a datastore 
 each &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search2.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-06-search-suggestions/search2.png&#34; alt=&#34;Netflix Search.&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search2.png&#34; alt=&#34;Netflix Search.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;If that term &lt;code&gt;Netflix&lt;/code&gt; is searched for a second time we increment the frequency
 count of each &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search3.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-06-search-suggestions/search3.png&#34; alt=&#34;Tuples of Netflix.&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search3.png&#34; alt=&#34;Tuples of Netflix.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Now suppose one person searched for the term &lt;code&gt;news&lt;/code&gt;. We build up our frequency
@@ -55,7 +55,7 @@ table with each &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple again, usin
 term.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search4.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-06-search-suggestions/search4.png&#34; alt=&#34;Tuples of news.&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search4.png&#34; alt=&#34;Tuples of news.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Once we&amp;rsquo;ve assembled the data we can go back to our original problem of finding
@@ -64,7 +64,7 @@ is lookup for each record matching our prefix in the dataset ordered by
 frequency.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search5.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-06-search-suggestions/search5.png&#34; alt=&#34;Ordered table.&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search5.png&#34; alt=&#34;Ordered table.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;toc_1&#34;&gt;A sample implementation&lt;/h2&gt;

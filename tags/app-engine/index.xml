@@ -31,7 +31,7 @@ example, given the incomplete search term &lt;code&gt;ne&lt;/code&gt; we need to
 frequent searches that have been made using that prefix.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search1.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-06-search-suggestions/search1.png&#34; alt=&#34;Incomplete Search.&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search1.png&#34; alt=&#34;Incomplete Search.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Suppose the user searches for the term &lt;code&gt;Netflix&lt;/code&gt;. Given the search term we
@@ -40,14 +40,14 @@ the search term &lt;code&gt;Netflix&lt;/code&gt;. The end result is a datastore 
 each &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search2.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-06-search-suggestions/search2.png&#34; alt=&#34;Netflix Search.&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search2.png&#34; alt=&#34;Netflix Search.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;If that term &lt;code&gt;Netflix&lt;/code&gt; is searched for a second time we increment the frequency
 count of each &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search3.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-06-search-suggestions/search3.png&#34; alt=&#34;Tuples of Netflix.&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search3.png&#34; alt=&#34;Tuples of Netflix.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Now suppose one person searched for the term &lt;code&gt;news&lt;/code&gt;. We build up our frequency
@@ -55,7 +55,7 @@ table with each &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple again, usin
 term.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search4.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-06-search-suggestions/search4.png&#34; alt=&#34;Tuples of news.&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search4.png&#34; alt=&#34;Tuples of news.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Once we&amp;rsquo;ve assembled the data we can go back to our original problem of finding
@@ -64,7 +64,7 @@ is lookup for each record matching our prefix in the dataset ordered by
 frequency.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search5.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-06-search-suggestions/search5.png&#34; alt=&#34;Ordered table.&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search5.png&#34; alt=&#34;Ordered table.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;toc_1&#34;&gt;A sample implementation&lt;/h2&gt;
@@ -454,21 +454,21 @@ URL.&lt;/p&gt;
 your project and create a new table in your desired dataset.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34;&gt;
-&lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34; alt=&#34;Create new table.&#34;&gt;
+  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34; alt=&#34;Create new table.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;In the &lt;code&gt;Choose destination&lt;/code&gt; tab pick a name for your new table. In my case I&amp;rsquo;ll
 name the table with the date of my backup for reference.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34;&gt;
-&lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34; alt=&#34;Choose destination&#34;&gt;
+  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34; alt=&#34;Choose destination&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Next, choose App Engine Datastore Backup as the source format and paste the
 Cloud Storage URL you arrived at above in the appropriate field.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34;&gt;
-&lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34; alt=&#34;Select Data Source&#34;&gt;
+  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34; alt=&#34;Select Data Source&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;You can choose the defaults for the next tabs and, finally, import your App
@@ -918,7 +918,7 @@ REST API.&lt;/p&gt;
 resource. We can give our &lt;code&gt;User&lt;/code&gt; model a few simple attributes.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34;&gt;
-&lt;img src=&#34;/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34; alt=&#34;User Model&#34;&gt;
+  &lt;img src=&#34;/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34; alt=&#34;User Model&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;A CRUD API for this resource would support a URL structure and HTTP verbs

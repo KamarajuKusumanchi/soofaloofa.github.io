@@ -5,7 +5,182 @@
     <link>http://sookocheff.com/posts/index.xml/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Mon, 03 Nov 2014 05:49:31 UTC</lastBuildDate>
+    <lastBuildDate>Wed, 05 Nov 2014 04:45:05 UTC</lastBuildDate>
+    
+    <item>
+      <title>A Guided Tour of Google Compute Engine</title>
+      <link>http://sookocheff.com/posts/2014-11-05-a-guided-tour-of-compute-engine/</link>
+      <pubDate>Wed, 05 Nov 2014 04:45:05 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-11-05-a-guided-tour-of-compute-engine/</guid>
+      <description>
+
+&lt;h2 id=&#34;toc_0&#34;&gt;Overview&lt;/h2&gt;
+
+&lt;p&gt;The Goole&lt;a href=&#34;https://www.youtube.com/watch?v=43gvHZyPRVk&#34;&gt;Compute Engine core
+concepts&lt;/a&gt; video provides a great
+overview of the technology. Please take a moment to watch it. As the video
+shows, Compute Engine is defined by Resources, and each of these Resources is
+available through the Compute Engine API. You can access this API through the
+Google API Explorer or by installing the &lt;a href=&#34;gcloud
+sdk&#34;&gt;https://cloud.google.com/sdk/&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Key Resources&lt;/h2&gt;
+
+&lt;p&gt;There are few basic resources required to get up and running with any virtual
+machine running on Compute Engine. These are Images, Instances and
+Disks.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/ImagesInstancesDisks.png&#34;&gt;
+  &lt;img src=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/ImagesInstancesDisks.png&#34; alt=&#34;Images, Instances and Disks&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_2&#34;&gt;Images&lt;/h3&gt;
+
+&lt;p&gt;An Image contains a boot loader, an operating system and a root file system that
+are necessary for starting up an instance.  For all intents and purposes, you
+can think of the Image as the OS that you are running.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_3&#34;&gt;Disks&lt;/h3&gt;
+
+&lt;p&gt;The Disk acts as a filesystem. They operate as physical disks attached to your
+virtual machine but are more analogous to a network attached file system. As an
+example, we can separate a disk from a virtual machine and reattach it to
+another virtual machine.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_4&#34;&gt;Instances&lt;/h3&gt;
+
+&lt;p&gt;An Instance encapsulates the concept of a virtual machine. The virtual machine
+runs the OS and root filesystem defined by the image you choose at create time.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_5&#34;&gt;Instance Groups&lt;/h2&gt;
+
+&lt;p&gt;The Key Resources show how a single virtual machine as viewed through the lens of
+the Compute Engine ecosystem.&lt;/p&gt;
+
+&lt;p&gt;A single virtual machine is great, but modern web services usually require
+multiple machines working in concert to provide a scalable and fault tolerant
+system. Compute Engine offers the abstraction of &lt;code&gt;Instance Groups&lt;/code&gt; to represent
+a group of virtual machines.&lt;/p&gt;
+
+&lt;p&gt;Instance Groups allow you to collectively manage a set of virtual machines and
+attach services to that group of machines. A service is a simple label attached
+to the group that advertises this group of virtual machines as providing the
+same backend web service.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroup.png&#34;&gt;
+  &lt;img src=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroup.png&#34; alt=&#34;Instance Groups&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_6&#34;&gt;Instance Group Manager&lt;/h2&gt;
+
+&lt;p&gt;Instance Groups operate over a set of virtual machines. To add a virtual machine
+to an Instance Group you first spin up your virtual machine and then call the
+Instance Group API to tell Compute Engine that this Instance is now part of an
+Instance Group.&lt;/p&gt;
+
+&lt;p&gt;The Instance Group Manager automates how virtual machines are added to the
+Instance Group. There are a few caveats. First, instances in a managed Instance
+Group must be homogenous.  That means they must all be created using the same
+base image, disk and machine type. To facilitate this homogeneity the Instance
+Group Manager operates over an Instance abstraction called an Instance Template.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_7&#34;&gt;Instance Templates&lt;/h3&gt;
+
+&lt;p&gt;Instance templates are configuration files that define the settings of an
+Instance (and by extension of an Image and Disk). Instance templates can define
+some or all of the configuration options. For example, the OS, the RAM, or the
+hard drive size. Instance templates separate the configuration of your virtual
+machine from the creation and running of the virtual machine.&lt;/p&gt;
+
+&lt;p&gt;When creating a new managed Instance Group you specify the Instance Template to
+use for the Group. You also tell the Instance Group Manager the size of your
+Instance Group. The Instance Group Manager will create that number of instances
+and assign them to your managed group. You can then resize your Group with one
+command and those Instances will be brought to life and join your Instance
+Group. If any Instances are destroyed or deleted the manager will bring them
+back to life for you.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroupManager.png&#34;&gt;
+  &lt;img src=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroupManager.png&#34; alt=&#34;Instance Group Manager.&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_8&#34;&gt;Regions &amp;amp; Zones&lt;/h2&gt;
+
+&lt;p&gt;Compute Engine allows you to specify the region and zone where your virtual
+machine exists. This gives you control over where your data is stored and used.&lt;/p&gt;
+
+&lt;p&gt;Regions are broad categories such as central US or eastern Asia. Zones are
+subdivisions within a region such as zone &lt;code&gt;a&lt;/code&gt; or zone &lt;code&gt;b&lt;/code&gt;. The way to reference
+a zone is as &lt;code&gt;&amp;lt;region&amp;gt;-&amp;lt;zone&amp;gt;&lt;/code&gt;. For example &lt;code&gt;&amp;lt;us-central1-a&amp;gt;&lt;/code&gt; has the region
+us-central1 and the zone &lt;code&gt;a&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;To build a fault tolerant system ideally you want to have your Instances spread
+out over multiple zones. To distribute your system globally you can spread your
+instances across multiple regions. In the following example, we have two
+separate Managed Instance Groups in two different zones.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/RegionsAndZones.png&#34;&gt;
+  &lt;img src=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/RegionsAndZones.png&#34; alt=&#34;Instance Group Manager&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_9&#34;&gt;Load Balancing&lt;/h2&gt;
+
+&lt;p&gt;Now we have a group of virtual machines running the same hardware that can be
+easily resized with the Instance Group Manager. The question now is how do we
+address these machines?  This is where a load balancer comes into play. There
+are a lot of moving parts in the load balancer. Thankfully they all perform very
+particular tasks and once you set it up you don&amp;rsquo;t have to worry about it
+anymore.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_10&#34;&gt;The Backend Service&lt;/h3&gt;
+
+&lt;p&gt;To use HTTP load balancing we need to declare our instance groups as backend
+services. This is a simple label attached to the group. In effect we are telling
+Compute Engine which groups are related to one another.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/BackendServices.png&#34;&gt;
+  &lt;img src=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/BackendServices.png&#34; alt=&#34;Backend Services&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_11&#34;&gt;URL Maps&lt;/h3&gt;
+
+&lt;p&gt;URL maps define what URL requests to send to what backend service. For example ,
+we can route requests to the url &lt;code&gt;/static&lt;/code&gt; to a different backend service
+than requests to the url &lt;code&gt;/&lt;/code&gt;. In this example we have a URL Map that routes
+requests with the pattern &lt;code&gt;/static&lt;/code&gt; and &lt;code&gt;/images&lt;/code&gt; to the &lt;code&gt;static&lt;/code&gt; Backend
+Service. Any other requests are routed to the &lt;code&gt;web&lt;/code&gt; service.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/UrlMap.png&#34;&gt;
+  &lt;img src=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/UrlMap.png&#34; alt=&#34;Url Map&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_12&#34;&gt;Target HTTP Proxy&lt;/h3&gt;
+
+&lt;p&gt;The Target HTTP Proxy is a simple proxy that receives requests and routes them
+to the URL Maps.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/TargetHttpProxy.png&#34;&gt;
+  &lt;img src=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/TargetHttpProxy.png&#34; alt=&#34;Target HTTP Proxy&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_13&#34;&gt;Global Forwarding Rule&lt;/h3&gt;
+
+&lt;p&gt;The global forwarding rule provides an external IP address that we can use to
+address our instances. This IP address routes to the target HTTP proxy which
+ultimately directs our traffic to the proper Backend Service through the URL Map.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/GlobalForwardingRule.png&#34;&gt;
+  &lt;img src=&#34;/img/2014-11-05-a-guided-tour-of-compute-engine/GlobalForwardingRule.png&#34; alt=&#34;Global Forwarding Rule&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_14&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;That completes our guided tour of Compute Engine. Given this foundation you
+should have a solid base with which to navigate the documentation and explore
+the API.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Extracting the Start Sector of a Disk with fdisk</title>
@@ -155,7 +330,7 @@ to classify the text &amp;ldquo;this restaurant has the best soup in town&amp;rd
 receive a &amp;ldquo;very positive&amp;rdquo; result.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-20-prediction-api/bestsoup.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-20-prediction-api/bestsoup.png&#34; alt=&#34;The Best Soup in Town&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-20-prediction-api/bestsoup.png&#34; alt=&#34;The Best Soup in Town&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;As a counter example, the text &amp;ldquo;this restaurant has the worst soup in town&amp;rdquo; also
@@ -163,7 +338,7 @@ recieves a &amp;ldquo;very positive&amp;rdquo; result, although with less confid
 negative&amp;rdquo; being the most likely second choice.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-20-prediction-api/worstsoup.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-20-prediction-api/worstsoup.png&#34; alt=&#34;The Worst Soup in Town&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-20-prediction-api/worstsoup.png&#34; alt=&#34;The Worst Soup in Town&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;toc_2&#34;&gt;Conclusions&lt;/h2&gt;
@@ -214,7 +389,7 @@ example, given the incomplete search term &lt;code&gt;ne&lt;/code&gt; we need to
 frequent searches that have been made using that prefix.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search1.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-06-search-suggestions/search1.png&#34; alt=&#34;Incomplete Search.&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search1.png&#34; alt=&#34;Incomplete Search.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Suppose the user searches for the term &lt;code&gt;Netflix&lt;/code&gt;. Given the search term we
@@ -223,14 +398,14 @@ the search term &lt;code&gt;Netflix&lt;/code&gt;. The end result is a datastore 
 each &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search2.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-06-search-suggestions/search2.png&#34; alt=&#34;Netflix Search.&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search2.png&#34; alt=&#34;Netflix Search.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;If that term &lt;code&gt;Netflix&lt;/code&gt; is searched for a second time we increment the frequency
 count of each &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search3.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-06-search-suggestions/search3.png&#34; alt=&#34;Tuples of Netflix.&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search3.png&#34; alt=&#34;Tuples of Netflix.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Now suppose one person searched for the term &lt;code&gt;news&lt;/code&gt;. We build up our frequency
@@ -238,7 +413,7 @@ table with each &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple again, usin
 term.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search4.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-06-search-suggestions/search4.png&#34; alt=&#34;Tuples of news.&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search4.png&#34; alt=&#34;Tuples of news.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Once we&amp;rsquo;ve assembled the data we can go back to our original problem of finding
@@ -247,7 +422,7 @@ is lookup for each record matching our prefix in the dataset ordered by
 frequency.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search5.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-06-search-suggestions/search5.png&#34; alt=&#34;Ordered table.&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search5.png&#34; alt=&#34;Ordered table.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;toc_1&#34;&gt;A sample implementation&lt;/h2&gt;
@@ -816,21 +991,21 @@ URL.&lt;/p&gt;
 your project and create a new table in your desired dataset.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34;&gt;
-&lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34; alt=&#34;Create new table.&#34;&gt;
+  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34; alt=&#34;Create new table.&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;In the &lt;code&gt;Choose destination&lt;/code&gt; tab pick a name for your new table. In my case I&amp;rsquo;ll
 name the table with the date of my backup for reference.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34;&gt;
-&lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34; alt=&#34;Choose destination&#34;&gt;
+  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34; alt=&#34;Choose destination&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Next, choose App Engine Datastore Backup as the source format and paste the
 Cloud Storage URL you arrived at above in the appropriate field.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34;&gt;
-&lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34; alt=&#34;Select Data Source&#34;&gt;
+  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34; alt=&#34;Select Data Source&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;You can choose the defaults for the next tabs and, finally, import your App
@@ -1280,7 +1455,7 @@ REST API.&lt;/p&gt;
 resource. We can give our &lt;code&gt;User&lt;/code&gt; model a few simple attributes.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34;&gt;
-&lt;img src=&#34;/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34; alt=&#34;User Model&#34;&gt;
+  &lt;img src=&#34;/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34; alt=&#34;User Model&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;A CRUD API for this resource would support a URL structure and HTTP verbs
@@ -1421,180 +1596,6 @@ comments!&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;dev_appserver.py src/app.yaml src/backend.yaml src/dispatch.yaml
 &lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Downloading directories of code from Github using the Github API</title>
-      <link>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api/</link>
-      <pubDate>Tue, 17 Jun 2014 06:14:23 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api/</guid>
-      <description>
-
-&lt;p&gt;At &lt;a href=&#34;http://www.vendAsta.com&#34;&gt;VendAsta&lt;/a&gt; we frequently share libraries of code
-between projects. To make it easier to share this code I&amp;rsquo;ve developed a small
-package manager that downloads code within a directory from Github to be copied
-in to your current project. It&amp;rsquo;s a quick and dirty alternative to cloning an
-entire repository, grabbing the set of files you want and placing them in your
-project.&lt;/p&gt;
-
-&lt;p&gt;We&amp;rsquo;ll use the &lt;a href=&#34;https://github.com/jacquev6/PyGithub&#34;&gt;PyGithub&lt;/a&gt; Python library to
-interact with the Github API.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_0&#34;&gt;Logging in to Github&lt;/h2&gt;
-
-&lt;p&gt;The first step is to log in to Github using our credentials. To do this we
-instantiate a new Github object given our username and password and access the
-associated user by calling &lt;code&gt;get_user&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from github import Github
-
-github = Github(&#39;soofaloofa&#39;, &#39;password&#39;)
-user = github.get_user()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This is equivalent to making a &lt;a href=&#34;https://developer.github.com/v3/#authentication&#34;&gt;basic authentication
-request&lt;/a&gt; to get the currently
-&lt;a href=&#34;https://developer.github.com/v3/users/#get-the-authenticated-user&#34;&gt;authenticated
-user&lt;/a&gt; and
-storing the result in a local representation.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -u soofaloofa https://api.github.com/user
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;toc_1&#34;&gt;Accessing a repository&lt;/h2&gt;
-
-&lt;p&gt;Now that we have a user we can get a repository for that user by name. To get
-the repository for this website we make a request to &lt;a href=&#34;https://developer.github.com/v3/repos/#get&#34;&gt;get a repo by
-owner&lt;/a&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;repository = user.get_repo(&#39;soofaloofa.github.io&#39;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;toc_2&#34;&gt;Downloading a single file&lt;/h2&gt;
-
-&lt;p&gt;To download a single file from a repository we make a call to &lt;a href=&#34;https://developer.github.com/v3/repos/contents/#get-contents&#34;&gt;get the contents
-of a file&lt;/a&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;file_content = repository.get_contents(&#39;README.md&#39;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;toc_3&#34;&gt;Referencing commits&lt;/h2&gt;
-
-&lt;p&gt;We have all the building blocks to download a resource from Github. The next
-step is to download a resource referenced by a specific commit. The Github API
-expects SHA values to reference a commit. To make this a bit more user friendly
-we can write a function that will search for a SHA given a git tag or branch
-name.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def get_sha_for_tag(repository, tag):
-    &amp;quot;&amp;quot;&amp;quot;
-    Returns a commit PyGithub object for the specified repository and tag.
-    &amp;quot;&amp;quot;&amp;quot;
-    branches = repository.get_branches()
-    matched_branches = [match for match in branches if match.name == tag]
-    if matched_branches:
-        return matched_branches[0].commit.sha
-
-    tags = repository.get_tags()
-    matched_tags = [match for match in tags if match.name == tag]
-    if not matched_tags:
-        raise ValueError(&#39;No Tag or Branch exists with that name&#39;)
-    return matched_tags[0].commit.sha
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now we can pass this SHA to the &lt;code&gt;get_contents&lt;/code&gt; function to get a file for that
-specific commit.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;sha = get_sha_for_tag(repository, &#39;develop&#39;)
-file_content = repository.get_contents(&#39;README.md&#39;, ref=sha)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;toc_4&#34;&gt;Putting it all together&lt;/h2&gt;
-
-&lt;p&gt;By putting a bit more polish on this we can easily download entire directories
-of code that reference a single tag or branch and copy them to our local
-environment. The basic workflow is:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Choose a repository.&lt;/li&gt;
-&lt;li&gt;Choose a branch or tag.&lt;/li&gt;
-&lt;li&gt;Choose a directory.&lt;/li&gt;
-&lt;li&gt;Iteratively download all the files in that directory.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Let&amp;rsquo;s make that happen.&lt;/p&gt;
-
-&lt;p&gt;For this code I&amp;rsquo;ll assume that the Github user belongs to a single organization
-and that this organization is sharing code between repositories.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from github import Github
-import getpass
-
-username = raw_input(&amp;quot;Github username: &amp;quot;)
-password = getpass.getpass(&amp;quot;Github password: &amp;quot;)
-
-github = Github(username, password)
-organization = github.get_user().get_orgs()[0]
-
-repository_name = raw_input(&amp;quot;Github repository: &amp;quot;)
-repository = organization.get_repo(repository_name)
-
-branch_or_tag_to_download = raw_input(&amp;quot;Branch or tag to download: &amp;quot;)
-sha = get_sha_for_tag(repository, branch_or_tag_to_download)
-
-directory_to_download = raw_input(&amp;quot;Directory to download: &amp;quot;)
-download_directory(repository, sha, directory_to_download)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This piece of code is fairly simple and relies on a couple of helper functions:
-&lt;code&gt;get_sha_for_tag&lt;/code&gt; and &lt;code&gt;download_directory&lt;/code&gt;. &lt;code&gt;get_sha_for_tag&lt;/code&gt; will return the
-SHA commit hash given a branch or tag and &lt;code&gt;download_directory&lt;/code&gt; will recursively
-download the files in the given directory.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def get_sha_for_tag(repository, tag):
-    &amp;quot;&amp;quot;&amp;quot;
-    Returns a commit PyGithub object for the specified repository and tag.
-    &amp;quot;&amp;quot;&amp;quot;
-    branches = repository.get_branches()
-    matched_branches = [match for match in branches if match.name == tag]
-    if matched_branches:
-        return matched_branches[0].commit.sha
-
-    tags = repository.get_tags()
-    matched_tags = [match for match in tags if match.name == tag]
-    if not matched_tags:
-        raise ValueError(&#39;No Tag or Branch exists with that name&#39;)
-    return matched_tags[0].commit.sha
-
-
-def download_directory(repository, sha, server_path):
-    &amp;quot;&amp;quot;&amp;quot;
-    Download all contents at server_path with commit tag sha in 
-    the repository.
-    &amp;quot;&amp;quot;&amp;quot;
-    contents = repository.get_dir_contents(server_path, ref=sha)
-
-    for content in contents:
-        print &amp;quot;Processing %s&amp;quot; % content.path
-        if content.type == &#39;dir&#39;:
-            download_directory(repository, sha, content.path)
-        else:
-            try:
-                path = content.path
-                file_content = repository.get_contents(path, ref=sha)
-                file_data = base64.b64decode(file_content.content)
-                file_out = open(content.name, &amp;quot;w&amp;quot;)
-                file_out.write(file_data)
-                file_out.close()
-            except (GithubException, IOError) as exc:
-                logging.error(&#39;Error processing %s: %s&#39;, content.path, exc)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We&amp;rsquo;ve been using a variation of this simple script to share code between Github
-repositories and appreciate it&amp;rsquo;s flexibility and ease of use. Let me know if you
-find it useful!&lt;/p&gt;
 </description>
     </item>
     

@@ -56,7 +56,7 @@ to classify the text &amp;ldquo;this restaurant has the best soup in town&amp;rd
 receive a &amp;ldquo;very positive&amp;rdquo; result.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-20-prediction-api/bestsoup.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-20-prediction-api/bestsoup.png&#34; alt=&#34;The Best Soup in Town&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-20-prediction-api/bestsoup.png&#34; alt=&#34;The Best Soup in Town&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;As a counter example, the text &amp;ldquo;this restaurant has the worst soup in town&amp;rdquo; also
@@ -64,7 +64,7 @@ recieves a &amp;ldquo;very positive&amp;rdquo; result, although with less confid
 negative&amp;rdquo; being the most likely second choice.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-20-prediction-api/worstsoup.png&#34;&gt;
-&lt;img src=&#34;/img/2014-10-20-prediction-api/worstsoup.png&#34; alt=&#34;The Worst Soup in Town&#34;&gt;
+  &lt;img src=&#34;/img/2014-10-20-prediction-api/worstsoup.png&#34; alt=&#34;The Worst Soup in Town&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;toc_2&#34;&gt;Conclusions&lt;/h2&gt;

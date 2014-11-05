@@ -8,7 +8,7 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://localhost:1313/posts/2014-11-05-a-guided-tour-of-compute-engine/">
+<link rel="canonical" href="http://sookocheff.com/posts/2014-11-05-a-guided-tour-of-compute-engine/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -73,7 +73,7 @@
           <h1>A Guided Tour of Google Compute Engine</h1>
           <p>
             <small class="text-muted">
-              Posted on Wednesday, November 5, 2014 · <a href="http://localhost:1313/posts/2014-11-05-a-guided-tour-of-compute-engine//#disqus_thread">0 Comments</a>
+              Posted on Wednesday, November 5, 2014 · <a href="http://sookocheff.com/posts/2014-11-05-a-guided-tour-of-compute-engine//#disqus_thread">0 Comments</a>
             </small>
           </p>
 
@@ -82,66 +82,67 @@
 
 <h2 id="toc_0">Overview</h2>
 
-<p>To start, take a few minutes to watch this video overview of
-<a href="https://www.youtube.com/watch?v=43gvHZyPRVk">Compute Engine core concepts</a>. As
-this video shows, Compute Engine is defined by Resources, and each of these
-Resources is available through the Compute Engine API. You can access this API
-through the Google API Explorer or by installing the
-<a href="gcloud sdk">https://cloud.google.com/sdk/</a>.</p>
+<p>The Goole<a href="https://www.youtube.com/watch?v=43gvHZyPRVk">Compute Engine core
+concepts</a> video provides a great
+overview of the technology. Please take a moment to watch it. As the video
+shows, Compute Engine is defined by Resources, and each of these Resources is
+available through the Compute Engine API. You can access this API through the
+Google API Explorer or by installing the <a href="gcloud
+sdk">https://cloud.google.com/sdk/</a>.</p>
 
 <h2 id="toc_1">Key Resources</h2>
 
 <p>There are few basic resources required to get up and running with any virtual
-machine running on Compute Engine. These key resources are Images, Instances and
+machine running on Compute Engine. These are Images, Instances and
 Disks.</p>
 
 <p><a class="thumbnail" href="/img/2014-11-05-a-guided-tour-of-compute-engine/ImagesInstancesDisks.png">
-<img src="/img/2014-11-05-a-guided-tour-of-compute-engine/ImagesInstancesDisks.png" alt="Images, Instances and Disks">
+  <img src="/img/2014-11-05-a-guided-tour-of-compute-engine/ImagesInstancesDisks.png" alt="Images, Instances and Disks">
 </a></p>
 
 <h3 id="toc_2">Images</h3>
 
 <p>An Image contains a boot loader, an operating system and a root file system that
-is necessary for starting up an instance.  For all intents and purposes, the
-Image is the OS that you are running.</p>
+are necessary for starting up an instance.  For all intents and purposes, you
+can think of the Image as the OS that you are running.</p>
 
 <h3 id="toc_3">Disks</h3>
 
-<p>The disk acts as a filesystem. They operate as physical disks attached to your
+<p>The Disk acts as a filesystem. They operate as physical disks attached to your
 virtual machine but are more analogous to a network attached file system. As an
 example, we can separate a disk from a virtual machine and reattach it to
 another virtual machine.</p>
 
 <h3 id="toc_4">Instances</h3>
 
-<p>An instance encapsulates the concept of a virtual machine. The virtual machine
+<p>An Instance encapsulates the concept of a virtual machine. The virtual machine
 runs the OS and root filesystem defined by the image you choose at create time.</p>
 
 <h2 id="toc_5">Instance Groups</h2>
 
-<p>Given the Key Resources we should have an understanding of a single virtual
-machine as viewed through the lens of the Compute Engine ecosystem.</p>
+<p>The Key Resources show how a single virtual machine as viewed through the lens of
+the Compute Engine ecosystem.</p>
 
 <p>A single virtual machine is great, but modern web services usually require
 multiple machines working in concert to provide a scalable and fault tolerant
 system. Compute Engine offers the abstraction of <code>Instance Groups</code> to represent
 a group of virtual machines.</p>
 
-<p>Instance groups allow you to collectively manage a set of virtual machines and
+<p>Instance Groups allow you to collectively manage a set of virtual machines and
 attach services to that group of machines. A service is a simple label attached
 to the group that advertises this group of virtual machines as providing the
 same backend web service.</p>
 
 <p><a class="thumbnail" href="/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroup.png">
-<img src="/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroup.png" alt="Instance Groups">
+  <img src="/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroup.png" alt="Instance Groups">
 </a></p>
 
 <h2 id="toc_6">Instance Group Manager</h2>
 
 <p>Instance Groups operate over a set of virtual machines. To add a virtual machine
 to an Instance Group you first spin up your virtual machine and then call the
-Instance Group API to tell it Compute Engine that this instance is now part of
-that group.</p>
+Instance Group API to tell Compute Engine that this Instance is now part of an
+Instance Group.</p>
 
 <p>The Instance Group Manager automates how virtual machines are added to the
 Instance Group. There are a few caveats. First, instances in a managed Instance
@@ -157,16 +158,16 @@ some or all of the configuration options. For example, the OS, the RAM, or the
 hard drive size. Instance templates separate the configuration of your virtual
 machine from the creation and running of the virtual machine.</p>
 
-<p>When creating a new managed Instance Group using the Instance Group Manager you
-specify the Instance Template to use for the Group. You also tell the Instance
-Group Manager the size of your instance group the Manager will create those
-instances and assign them to your managed group. You can then resize your group
-with one command and those instances will be brought to life and join your
-instance group. If any instances are destroyed or deleted the manager will bring
-them back to life for you.</p>
+<p>When creating a new managed Instance Group you specify the Instance Template to
+use for the Group. You also tell the Instance Group Manager the size of your
+Instance Group. The Instance Group Manager will create that number of instances
+and assign them to your managed group. You can then resize your Group with one
+command and those Instances will be brought to life and join your Instance
+Group. If any Instances are destroyed or deleted the manager will bring them
+back to life for you.</p>
 
 <p><a class="thumbnail" href="/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroupManager.png">
-<img src="/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroupManager.png" alt="Instance Group Manager.">
+  <img src="/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroupManager.png" alt="Instance Group Manager.">
 </a></p>
 
 <h2 id="toc_8">Regions &amp; Zones</h2>
@@ -179,23 +180,23 @@ subdivisions within a region such as zone <code>a</code> or zone <code>b</code>.
 a zone is as <code>&lt;region&gt;-&lt;zone&gt;</code>. For example <code>&lt;us-central1-a&gt;</code> has the region
 us-central1 and the zone <code>a</code>.</p>
 
-<p>To build a fault tolerant system ideally you want to have your instances spread
+<p>To build a fault tolerant system ideally you want to have your Instances spread
 out over multiple zones. To distribute your system globally you can spread your
 instances across multiple regions. In the following example, we have two
 separate Managed Instance Groups in two different zones.</p>
 
 <p><a class="thumbnail" href="/img/2014-11-05-a-guided-tour-of-compute-engine/RegionsAndZones.png">
-<img src="/img/2014-11-05-a-guided-tour-of-compute-engine/RegionsAndZones.png" alt="Instance Group Manager">
+  <img src="/img/2014-11-05-a-guided-tour-of-compute-engine/RegionsAndZones.png" alt="Instance Group Manager">
 </a></p>
 
 <h2 id="toc_9">Load Balancing</h2>
 
-<p>If we&rsquo;ve built a system along these lines, at this point we have a group of
-virtual machines running the same hardware that can be easily resized with the
-Instance Group Manager. The question now is how do we address these machines?
-This is where a load balancer comes into play. There are a lot of moving parts
-in the load balancer. Thankfully they all perform very particular tasks and
-once you set it up you don&rsquo;t have to worry about it anymore.</p>
+<p>Now we have a group of virtual machines running the same hardware that can be
+easily resized with the Instance Group Manager. The question now is how do we
+address these machines?  This is where a load balancer comes into play. There
+are a lot of moving parts in the load balancer. Thankfully they all perform very
+particular tasks and once you set it up you don&rsquo;t have to worry about it
+anymore.</p>
 
 <h3 id="toc_10">The Backend Service</h3>
 
@@ -204,7 +205,7 @@ services. This is a simple label attached to the group. In effect we are telling
 Compute Engine which groups are related to one another.</p>
 
 <p><a class="thumbnail" href="/img/2014-11-05-a-guided-tour-of-compute-engine/BackendServices.png">
-<img src="/img/2014-11-05-a-guided-tour-of-compute-engine/BackendServices.png" alt="Backend Services">
+  <img src="/img/2014-11-05-a-guided-tour-of-compute-engine/BackendServices.png" alt="Backend Services">
 </a></p>
 
 <h3 id="toc_11">URL Maps</h3>
@@ -216,7 +217,7 @@ requests with the pattern <code>/static</code> and <code>/images</code> to the <
 Service. Any other requests are routed to the <code>web</code> service.</p>
 
 <p><a class="thumbnail" href="/img/2014-11-05-a-guided-tour-of-compute-engine/UrlMap.png">
-<img src="/img/2014-11-05-a-guided-tour-of-compute-engine/UrlMap.png" alt="Url Map">
+  <img src="/img/2014-11-05-a-guided-tour-of-compute-engine/UrlMap.png" alt="Url Map">
 </a></p>
 
 <h3 id="toc_12">Target HTTP Proxy</h3>
@@ -225,7 +226,7 @@ Service. Any other requests are routed to the <code>web</code> service.</p>
 to the URL Maps.</p>
 
 <p><a class="thumbnail" href="/img/2014-11-05-a-guided-tour-of-compute-engine/TargetHttpProxy.png">
-<img src="/img/2014-11-05-a-guided-tour-of-compute-engine/TargetHttpProxy.png" alt="Target HTTP Proxy">
+  <img src="/img/2014-11-05-a-guided-tour-of-compute-engine/TargetHttpProxy.png" alt="Target HTTP Proxy">
 </a></p>
 
 <h3 id="toc_13">Global Forwarding Rule</h3>
@@ -235,7 +236,7 @@ address our instances. This IP address routes to the target HTTP proxy which
 ultimately directs our traffic to the proper Backend Service through the URL Map.</p>
 
 <p><a class="thumbnail" href="/img/2014-11-05-a-guided-tour-of-compute-engine/GlobalForwardingRule.png">
-<img src="/img/2014-11-05-a-guided-tour-of-compute-engine/GlobalForwardingRule.png" alt="Global Forwarding Rule">
+  <img src="/img/2014-11-05-a-guided-tour-of-compute-engine/GlobalForwardingRule.png" alt="Global Forwarding Rule">
 </a></p>
 
 <h2 id="toc_14">Conclusion</h2>
@@ -250,27 +251,27 @@ the API.</p>
             <ul class="list-inline">
   <li>Share this post:</li>
   <li>
-    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2flocalhost%3a1313%2fposts%2f2014-11-05-a-guided-tour-of-compute-engine%2f&text=A%20Guided%20Tour%20of%20Google%20Compute%20Engine&via=soofaloofa">
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-11-05-a-guided-tour-of-compute-engine%2f&text=A%20Guided%20Tour%20of%20Google%20Compute%20Engine&via=soofaloofa">
       <i class="fa fa-twitter fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fposts%2f2014-11-05-a-guided-tour-of-compute-engine%2f">
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-11-05-a-guided-tour-of-compute-engine%2f">
       <i class="fa fa-facebook fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://plus.google.com/share?url=http%3a%2f%2flocalhost%3a1313%2fposts%2f2014-11-05-a-guided-tour-of-compute-engine%2f">
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-11-05-a-guided-tour-of-compute-engine%2f">
       <i class="fa fa-google-plus fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2flocalhost%3a1313%2fposts%2f2014-11-05-a-guided-tour-of-compute-engine%2f">
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-11-05-a-guided-tour-of-compute-engine%2f">
       <i class="fa fa-linkedin fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2flocalhost%3a1313%2fposts%2f2014-11-05-a-guided-tour-of-compute-engine%2f">
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-11-05-a-guided-tour-of-compute-engine%2f">
       <i class="fa fa-envelope fa-lg"></i>
     </a>
   </li>
@@ -413,9 +414,6 @@ s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
 (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
 }());
 </script>
-<script>document.write('<script src="http://'
-        + (location.host || 'localhost').split(':')[0]
-		+ ':1313/livereload.js?mindelay=10"></'
-        + 'script>')</script></body>
+</body>
 </html>
 

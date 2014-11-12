@@ -5,7 +5,122 @@
     <link>http://sookocheff.com/tags/compute-engine/index.xml/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Wed, 05 Nov 2014 04:45:05 UTC</lastBuildDate>
+    <lastBuildDate>Tue, 11 Nov 2014 19:21:45 UTC</lastBuildDate>
+    
+    <item>
+      <title>Automatically Resizing a Compute Engine Disk</title>
+      <link>http://sookocheff.com/posts/2014-11-11-automatically-resizing-a-compute-engine-disk/</link>
+      <pubDate>Tue, 11 Nov 2014 19:21:45 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-11-11-automatically-resizing-a-compute-engine-disk/</guid>
+      <description>&lt;p&gt;A recurring issue when working with &lt;a href=&#34;https://cloud.google.com/compute/&#34;&gt;Compute
+Engine&lt;/a&gt; is that newly created Instances have
+only 10GB of free space available. To take advantage of the full disk size you
+need to manually partition and resize it. This article shows one method of
+accomplishing this task.&lt;/p&gt;
+
+&lt;p&gt;To correctly partition the disk we need to find the start sector. We can find this using &lt;code&gt;fdisk&lt;/code&gt; with the &lt;code&gt;-l&lt;/code&gt;
+option to list the full disk output.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; sudo fdisk -l
+
+Disk /dev/sda: 10.7 GB, 10737418240 bytes
+4 heads, 32 sectors/track, 163840 cylinders, total 20971520 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+Disk identifier: 0x0009c3f5
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1   *        4096    20971519    10483712   83  Linux
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Only one disk exists and its size is 10.7 GB. We need to resize this disk
+ourselves to make it fully useable. The last line of the &lt;code&gt;fdisk&lt;/code&gt; output lists the start
+sector. We can extract it using a combination of &lt;code&gt;grep&lt;/code&gt; and &lt;code&gt;awk&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# fisk -l: get the full disk output
+# grep ^/dev/sda1: filter the line for the boot disk
+# awk -F&amp;quot; &amp;quot; &#39;{ print $3 }&#39;: get the third token where the separator is space
+start_sector=$(sudo fdisk -l | grep ^/dev/sda1 |  awk -F&amp;quot; &amp;quot;  &#39;{ print $3 }&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now that we have the start sector we can run through the sequence of commands
+required for &lt;code&gt;fdisk&lt;/code&gt; to create a new partition of the full disk size.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;cat &amp;lt;&amp;lt;EOF | sudo fdisk -c -u /dev/sda
+d
+n
+p
+1
+$start_sector
+
+w
+EOF
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;-c&lt;/code&gt; and &lt;code&gt;-u&lt;/code&gt; option make &lt;code&gt;fdisk&lt;/code&gt; behave the same on both CentOS and Debian.
+&lt;code&gt;d&lt;/code&gt; deletes the first (default) partition. &lt;code&gt;n&lt;/code&gt; creates a new partition. &lt;code&gt;p&lt;/code&gt;
+selects the new partition as a primary. &lt;code&gt;1&lt;/code&gt; is the partition number.
+&lt;code&gt;$start_sector&lt;/code&gt; is the value we extracted from &lt;code&gt;fdisk -l&lt;/code&gt;. The blank line
+specifies the default end sector. Finally, &lt;code&gt;w&lt;/code&gt; writes our changes.&lt;/p&gt;
+
+&lt;p&gt;We need to reboot our machine for these changes to take effect.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo reboot
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once our machine comes back to life we need to resize our disk to the full
+partition size. This is done withe the &lt;code&gt;resize2fs&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;resize2fs /dev/sda1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Putting this all together, we can write a script that will automatically resize
+a Compute Engine disk. Using this as a startup script will make any Compute
+Engine instance you create have a fully sized disk available for use.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;STARTUP_VERSION=1
+PARTITION_MARK=/var/startup.partition.$STARTUP_VERSION
+RESIZE_MARK=/var/startup.resize.$STARTUP_VERSION
+
+# Repartition the disk to full size
+function partition() {
+  start_sector=$(sudo fdisk -l | grep ^/dev/sda1 |  awk -F&amp;quot; &amp;quot;  &#39;{ print $3 }&#39;)
+
+  cat &amp;lt;&amp;lt;EOF | sudo fdisk -c -u /dev/sda
+d
+n
+p
+1
+$start_sector
+
+w
+EOF
+
+  # We&#39;ve made the changes to the partition table, they haven&#39;t taken effect; we need to reboot.
+  touch $PARTITION_MARK
+
+  sudo reboot
+  exit
+}
+
+# Resize the filesystem
+function resize() {
+  resize2fs /dev/sda1
+  touch $RESIZE_MARK
+}
+
+if [ ! -f $PARTITION_MARK ]; then
+  partition
+fi
+
+if [ ! -f $RESIZE_MARK ]; then
+  resize
+fi
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>A Guided Tour of Google Compute Engine</title>

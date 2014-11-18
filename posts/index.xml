@@ -5,7 +5,31 @@
     <link>http://sookocheff.com/posts/index.xml/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Tue, 11 Nov 2014 19:21:45 UTC</lastBuildDate>
+    <lastBuildDate>Tue, 18 Nov 2014 11:15:23 UTC</lastBuildDate>
+    
+    <item>
+      <title>Installing MySQL-Python on OS X Yosemite</title>
+      <link>http://sookocheff.com/posts/2014-11-18-installing-mysql-python-on-yosemite/</link>
+      <pubDate>Tue, 18 Nov 2014 11:15:23 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-11-18-installing-mysql-python-on-yosemite/</guid>
+      <description>&lt;p&gt;Installing the MySQL-Python package requires a few steps. In an effort to aid
+future Internet travellers, this post will document how to install the
+MySQL-Python package on OS X Yosemite.&lt;/p&gt;
+
+&lt;p&gt;First, install MariaDB, the drop-in replacement for MySQL. I chose MacPorts for
+this task, though Homebrew would work just fine. Second, update your PATH to
+include the mariadb executables. Third, install the Python MySQL connector.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo port install mariadb.
+PATH=/opt/local/lib/mariadb/bin:$PATH
+pip install MySQL-Python
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That&amp;rsquo;s it! You should be able to &lt;code&gt;import MySQLdb&lt;/code&gt; in your Python code and
+interact with your MariaDB database.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Automatically Resizing a Compute Engine Disk</title>
@@ -1548,153 +1572,6 @@ class GaeTestCase(unittest.TestCase):
         container = ID_RESOURCE.combined_message_class(id=1)
         self.assertRaises(endpoints.NotFoundException, self.api.users_get, container)
 &lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Creating RESTful APIs with App Engine Cloud Endpoints</title>
-      <link>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints/</link>
-      <pubDate>Wed, 02 Jul 2014 06:14:23 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints/</guid>
-      <description>&lt;p&gt;&lt;a href=&#34;https://developers.google.com/appengine/docs/python/endpoints/&#34;&gt;App Engine Cloud
-Endpoints&lt;/a&gt; is a
-great way to quickly and easily create JSON API endpoints. What&amp;rsquo;s not clear is
-how to structure your &lt;code&gt;Message&lt;/code&gt; code to support a RESTful
-create-read-update-delete (CRUD) API. This article will show the basic CRUD
-operations for one Resource. The results can easily be adapted to support a full
-REST API.&lt;/p&gt;
-
-&lt;p&gt;To support this discussion let&amp;rsquo;s use a concrete resource for our API &amp;ndash; a &lt;code&gt;User&lt;/code&gt;
-resource. We can give our &lt;code&gt;User&lt;/code&gt; model a few simple attributes.&lt;/p&gt;
-
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34; alt=&#34;User Model&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;A CRUD API for this resource would support a URL structure and HTTP verbs
-for each operation.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Create a new user
-HTTP POST /users/
-
-# Read a user by id
-HTTP GET /users/{id}
-
-# Update a user by id
-HTTP PUT /users/{id}
-
-# Delete a user by id
-HTTP DELETE /users/{id}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Given this model we can define a basic Cloud Endpoints message representing a &lt;code&gt;User&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class UserMessage(messages.Message):
-    id = messages.StringField(1)
-    email = messages.StringField(2)
-    username = messages.StringField(3)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now we can write the &lt;strong&gt;C&lt;/strong&gt; (create) portion of the CRUD API using HTTP POST
-and a &lt;code&gt;ResourceContainer&lt;/code&gt; to hold the message we wish to submit to the API.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;POST_RESOURCE = endpoints.ResourceContainer(UserMessage)
-
-...
-
-@endpoints.method(POST_RESOURCE,
-                  UserMessage,
-                  path=&#39;/users&#39;,
-                  http_method=&#39;POST&#39;,
-                  name=&#39;users.create&#39;)
-def create(self, request):
-    user = User(username=request.username, email=request.email)
-    user.put()
-    return user.to_message()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Similarly we can define the &lt;strong&gt;R&lt;/strong&gt; (read) portion of the API using an HTTP GET
-method. To parameterize our cloud endpoint we need to add the parameter to our
-&lt;code&gt;ResourceContainer&lt;/code&gt;. I&amp;rsquo;ll call it &lt;code&gt;id&lt;/code&gt; here. The actual message type is
-&lt;code&gt;VoidMessage&lt;/code&gt; because we are not passing any information in our request to the
-API endpoint other than the &lt;code&gt;id&lt;/code&gt; parameter.&lt;/p&gt;
-
-&lt;p&gt;The response retrieves the entity from the datastore and returns it as a
-message.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,
-                                          id=messages.StringField(1,
-                                                                  variant=messages.Variant.STRING,
-                                                                  required=True))
-
-...
-
-@endpoints.method(ID_RESOURCE,
-                  UserMessage,
-                  http_method=&#39;GET&#39;,
-                  path=&#39;users/{id}&#39;,
-                  name=&#39;users.read&#39;)
-def read(self, request):
-    entity = User.get_by_id(request.id)
-    if not entity:
-        message = &#39;No User with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
-        raise endpoints.NotFoundException(message)
-
-    return entity.to_message()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The &lt;strong&gt;U&lt;/strong&gt; (update) operation uses a similar parameterized &lt;code&gt;ResourceContainer&lt;/code&gt; to
-access a User given an id. We augment this request with the &lt;code&gt;UserMessage&lt;/code&gt; which
-defines the content of the body of the message. The endpoint takes the content
-of the message and updates the entity with that content.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;PUT_RESOURCE = endpoints.ResourceContainer(UserMessage,
-                                           id=messages.StringField(1,
-                                                                   variant=messages.Variant.STRING,
-                                                                   required=True))
-
-...
-
-@endpoints.method(PUT_RESOURCE,
-                  UserMessage,
-                  http_method=&#39;PUT&#39;,
-                  path=&#39;users/{id}&#39;,
-                  name=&#39;users.update&#39;)
-def update(self, request):
-    entity = User.update_from_message(request.id, request)
-    if not entity:
-        message = &#39;No User with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
-        raise endpoints.NotFoundException(message)
-
-    return entity.to_message()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Lastly, the &lt;strong&gt;D&lt;/strong&gt; (delete) endpoint takes an identifier which we have previously
-defined as &lt;code&gt;ID_RESOURCE&lt;/code&gt;. The endpoint deletes the entity referred to by that
-identifier and returns a &lt;code&gt;VoidMessage&lt;/code&gt; which is converted to an &lt;code&gt;HTTP 204 No
-Content&lt;/code&gt; response by the cloud endpoints API.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@endpoints.method(ID_RESOURCE,
-                  message_types.VoidMessage,
-                  http_method=&#39;DELETE&#39;,
-                  path=&#39;users/{id}&#39;,
-                  name=&#39;users.delete&#39;)
-def delete(self, request):
-    entity = User.get_by_id(request.id)
-    if not entity:
-        message = &#39;No User with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
-        raise endpoints.NotFoundException(message)
-
-    entity.key.delete()
-    return message_types.VoidMessage()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This basic pattern can be used with any resource that your API wishes to
-support and gives a basic pattern with which to build out your full API.&lt;/p&gt;
-
-&lt;p&gt;If you have any questions please send me an email or let me know in the
-comments!&lt;/p&gt;
 </description>
     </item>
     

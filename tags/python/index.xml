@@ -5,7 +5,358 @@
     <link>http://sookocheff.com/tags/python/index.xml/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Tue, 20 May 2014 08:54:12 UTC</lastBuildDate>
+    <lastBuildDate>Thu, 04 Dec 2014 22:54:12 UTC</lastBuildDate>
+    
+    <item>
+      <title>App Engine MapReduce API - Part 6: Writing a Custom Input Reader</title>
+      <link>http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/</link>
+      <pubDate>Thu, 04 Dec 2014 22:54:12 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/</guid>
+      <description>
+
+&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/&#34;&gt;Part 6: Writing a Custom Input Reader&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;One of the great things about the MapReduce library is the abilitiy to write a
+cutom InputReader to process data from any data source. In this post we will
+explore how to write an InputReader the leases tasks from an AppEngine pull
+queue by implementing the &lt;code&gt;InputReader&lt;/code&gt; interface.&lt;/p&gt;
+
+&lt;p&gt;The interface we need to implement is available at
+&lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-mapreduce/blob/master/python/src/mapreduce/input_readers.py#L119&#34;&gt;&lt;code&gt;mapreduce.input_readers.InputReader&lt;/code&gt;&lt;/a&gt;.
+Take a minute to examine the abstract methods that need to be implmemented.
+Relevant portions of the source are copied below.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class InputReader(json_util.JsonMixin):
+  &amp;quot;&amp;quot;&amp;quot;Abstract base class for input readers.
+  InputReaders have the following properties:
+   * They are created by using the split_input method to generate a set of
+     InputReaders from a MapperSpec.
+   * They generate inputs to the mapper via the iterator interface.
+   * After creation, they can be serialized and resumed using the JsonMixin
+     interface.
+  &amp;quot;&amp;quot;&amp;quot;
+
+  def next(self):
+    &amp;quot;&amp;quot;&amp;quot;Returns the next input from this input reader as a key, value pair.
+    Returns:
+      The next input from this input reader.
+    &amp;quot;&amp;quot;&amp;quot;
+    raise NotImplementedError(&amp;quot;next() not implemented in %s&amp;quot; % self.__class__)
+
+  @classmethod
+  def from_json(cls, input_shard_state):
+    &amp;quot;&amp;quot;&amp;quot;Creates an instance of the InputReader for the given input shard state.
+    Args:
+      input_shard_state: The InputReader state as a dict-like object.
+    Returns:
+      An instance of the InputReader configured using the values of json.
+    &amp;quot;&amp;quot;&amp;quot;
+    raise NotImplementedError(&amp;quot;from_json() not implemented in %s&amp;quot; % cls)
+
+  def to_json(self):
+    &amp;quot;&amp;quot;&amp;quot;Returns an input shard state for the remaining inputs.
+    Returns:
+      A json-izable version of the remaining InputReader.
+    &amp;quot;&amp;quot;&amp;quot;
+    raise NotImplementedError(&amp;quot;to_json() not implemented in %s&amp;quot; %
+                              self.__class__)
+
+  @classmethod
+  def split_input(cls, mapper_spec):
+    &amp;quot;&amp;quot;&amp;quot;Returns a list of input readers.
+    This method creates a list of input readers, each for one shard.
+    It attempts to split inputs among readers evenly.
+    Args:
+      mapper_spec: model.MapperSpec specifies the inputs and additional
+        parameters to define the behavior of input readers.
+    Returns:
+      A list of InputReaders. None or [] when no input data can be found.
+    &amp;quot;&amp;quot;&amp;quot;
+    raise NotImplementedError(&amp;quot;split_input() not implemented in %s&amp;quot; % cls)
+
+  @classmethod
+  def validate(cls, mapper_spec):
+    &amp;quot;&amp;quot;&amp;quot;Validates mapper spec and all mapper parameters.
+    Input reader parameters are expected to be passed as &amp;quot;input_reader&amp;quot;
+    subdictionary in mapper_spec.params.
+    Pre 1.6.4 API mixes input reader parameters with all other parameters. Thus
+    to be compatible, input reader check mapper_spec.params as well and
+    issue a warning if &amp;quot;input_reader&amp;quot; subdicationary is not present.
+    Args:
+      mapper_spec: The MapperSpec for this InputReader.
+    Raises:
+      BadReaderParamsError: required parameters are missing or invalid.
+    &amp;quot;&amp;quot;&amp;quot;
+    if mapper_spec.input_reader_class() != cls:
+      raise BadReaderParamsError(&amp;quot;Input reader class mismatch&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let&amp;rsquo;s fill out this interface with our InputReader that leases tasks from an
+AppEngine pull queue. To start, we implement the &lt;code&gt;split_input&lt;/code&gt; method that
+instantiates a list of InputReaders, splitting the work among each reader. One
+of the standard parameters for a MapReduce job is the number of shards you want
+to use. For leasing tasks we will create one InputReader for shard
+parameter.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@classmethod
+def split_input(cls, mapper_spec):
+    &amp;quot;&amp;quot;&amp;quot;
+    Returns a list of input readers
+    &amp;quot;&amp;quot;&amp;quot;
+    shard_count = mapper_spec.shard_count
+
+    return [cls()] * shard_count
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;split_input&lt;/code&gt; is called to start our InputReader and returns a list of readers.
+Each of these reader instances must implement a the &lt;code&gt;next&lt;/code&gt; method which returns
+a single value from our Reader. This method is part of the generator interface
+and will be called during MapReduce operation. We can use &lt;code&gt;next&lt;/code&gt; to attempt to lease
+a single task from our queue, returning the task as a key-value tuple.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def next(self):
+    &amp;quot;&amp;quot;&amp;quot;
+    Returns the queue, and a task leased from it as a tuple
+    Returns:
+      The next input from this input reader.
+    &amp;quot;&amp;quot;&amp;quot;
+    ctx = context.get()
+    input_reader_params = ctx.mapreduce_spec.mapper.params.get(&#39;input_reader&#39;, {})
+    queue_name = input_reader_params.get(self.QUEUE_PARAM)
+    tag = input_reader_params.get(self.TAG_PARAM)
+    lease_seconds = input_reader_params.get(self.LEASE_SECONDS_PARAM, 60)
+
+    # Attempt to lease a task
+    queue = taskqueue.Queue(queue_name)
+    if tag:
+        tasks = queue.lease_tasks_by_tag(lease_seconds, 1, tag=tag)
+    else:
+        tasks = queue.lease_tasks(lease_seconds, 1)
+
+    if tasks:
+        operation.counters.Increment(self.TASKS_LEASED_COUNTER)(ctx)
+        return (queue, tasks[0])
+    raise StopIteration()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We begin this function by reading in our parameters, using the context helper to
+find the current parameters for this InputReder. We then attempt to lease a
+task. If tasks are available to lease we return the task, otherwise we raise
+&lt;code&gt;StopIteration&lt;/code&gt; to halt the generator.&lt;/p&gt;
+
+&lt;p&gt;This basic implementation is all that&amp;rsquo;s needed to write an InputReader &amp;ndash; split
+our source into multiple shards and return a single &lt;code&gt;next&lt;/code&gt; value from within
+each shard. The MapReduce library will use this skeleton to call your &lt;code&gt;map&lt;/code&gt;
+function for each &lt;code&gt;next&lt;/code&gt; value that is returned by the input reader.&lt;/p&gt;
+
+&lt;p&gt;To finish this up, we add some boilerplate required for serialization of reader
+state and parameter validation.&lt;/p&gt;
+
+&lt;p&gt;If your InputReader needs to hold any state between execution of the &lt;code&gt;next&lt;/code&gt;
+method you must serialize that state using the &lt;code&gt;to_json&lt;/code&gt; and &lt;code&gt;from_json&lt;/code&gt;
+methods. &lt;code&gt;to_json&lt;/code&gt; returns the current state of the reader in JSON format.
+&lt;code&gt;from_json&lt;/code&gt; creates an instance of an InputReader given a JSON format. Typically
+we use this to save the constructor values used to create our InputReader. We&amp;rsquo;ll
+also need to formally define our constructor here.&lt;/p&gt;
+
+&lt;p&gt;The constructor takes only a few parameters. A queue name, a tag to lease tasks
+with and the number of seconds to hold the lease.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def __init__(self, queue_name=&#39;default&#39;, tag=None, lease_seconds=60):
+    super(TaskInputReader, self).__init__()
+    self.queue_name = queue_name
+    self.tag = tag
+    self.lease_seconds = lease_seconds
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we can define how to serialize and deserialize the state of our reader.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@classmethod
+def from_json(cls, input_shard_state):
+    &amp;quot;&amp;quot;&amp;quot;Creates an instance of the InputReader for the given input shard state.
+    Args:
+      input_shard_state: The InputReader state as a dict-like object.
+    Returns:
+      An instance of the InputReader configured using the values of json.
+    &amp;quot;&amp;quot;&amp;quot;
+    return cls(input_shard_state.get(&#39;queue_name&#39;),
+               input_shard_state.get(&#39;tag&#39;),
+               input_shard_state.get(&#39;lease_seconds&#39;)))
+
+def to_json(self):
+    &amp;quot;&amp;quot;&amp;quot;Returns an input shard state for the remaining inputs.
+    Returns:
+      A json-izable version of the remaining InputReader.
+    &amp;quot;&amp;quot;&amp;quot;
+    return {
+        &#39;queue_name&#39;: self.queue_name,
+        &#39;tag&#39;: self.tag,
+        &#39;lease_seconds&#39;: self.lease_seconds,
+    }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The last method to implement is &lt;code&gt;validate&lt;/code&gt;. This method parses the parameters
+used to start your InputReader to make sure they are valid. In our example we
+validate that the &lt;code&gt;queue_name&lt;/code&gt; we are attempting to lease tasks from is valid
+and that the number of seconds we wish to lease is an integer.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@classmethod
+def validate(cls, mapper_spec):
+    &amp;quot;&amp;quot;&amp;quot;
+    Validates mapper spec and all mapper parameters.
+    Input reader parameters are expected to be passed as &amp;quot;input_reader&amp;quot;
+    subdictionary in mapper_spec.params.
+    Args:
+      mapper_spec: The MapperSpec for this InputReader.
+    Raises:
+      BadReaderParamsError: required parameters are missing or invalid.
+    &amp;quot;&amp;quot;&amp;quot;
+    if mapper_spec.input_reader_class() != cls:
+        raise BadReaderParamsError(&amp;quot;Input reader class mismatch&amp;quot;)
+
+    # Check that a valid queue is specified
+    input_reader_params = mapper_spec.params.get(&#39;input_reader&#39;, {})
+    queue_name = input_reader_params.get(&#39;queue_name&#39;)
+    lease_seconds = input_reader_params.get(&#39;lease_seconds&#39;, 60)
+    if not queue_name:
+        raise BadReaderParamsError(&#39;queue_name is required&#39;)
+    if not isinstance(lease_seconds, int):
+        raise BadReaderParamsError(&#39;lease_seconds must be an integer&#39;)
+    try:
+        queue = taskqueue.Queue(name=queue_name)
+        queue.fetch_statistics()
+    except Exception as e:
+        raise BadReaderParamsError(&#39;queue_name is invalid&#39;, e.message)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Putting this all together we get our final InputReader. We can use this as a
+basis to make more complex readers for additional data sources.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;quot;&amp;quot;&amp;quot;
+TaskInputReader
+&amp;quot;&amp;quot;&amp;quot;
+from google.appengine.api import taskqueue
+
+from mapreduce.input_readers import InputReader
+from mapreduce.errors import BadReaderParamsError
+from mapreduce import context
+from mapreduce import operation
+
+
+class TaskInputReader(InputReader):
+    &amp;quot;&amp;quot;&amp;quot;
+    Input reader for Pull-queue tasks
+    &amp;quot;&amp;quot;&amp;quot;
+
+    QUEUE_PARAM = &#39;queue&#39;
+    TAG_PARAM = &#39;tag&#39;
+    LEASE_SECONDS_PARAM = &#39;lease-seconds&#39;
+
+    TASKS_LEASED_COUNTER = &#39;tasks leased&#39;
+
+    def next(self):
+        &amp;quot;&amp;quot;&amp;quot;
+        Returns the queue, and a task leased from it as a tuple
+
+        Returns:
+          The next input from this input reader.
+        &amp;quot;&amp;quot;&amp;quot;
+        ctx = context.get()
+        input_reader_params = ctx.mapreduce_spec.mapper.params.get(&#39;input_reader&#39;, {})
+        queue_name = input_reader_params.get(self.QUEUE_PARAM)
+        tag = input_reader_params.get(self.TAG_PARAM)
+        lease_seconds = input_reader_params.get(self.LEASE_SECONDS_PARAM, 60)
+
+        # Attempt to lease a task
+        queue = taskqueue.Queue(queue_name)
+        if tag:
+            tasks = queue.lease_tasks_by_tag(lease_seconds, 1, tag=tag)
+        else:
+            tasks = queue.lease_tasks(lease_seconds, 1)
+
+        if tasks:
+            operation.counters.Increment(self.TASKS_LEASED_COUNTER)(ctx)
+            return (queue, tasks[0])
+        raise StopIteration()
+
+    @classmethod
+    def from_json(cls, input_shard_state):
+        &amp;quot;&amp;quot;&amp;quot;Creates an instance of the InputReader for the given input shard state.
+
+        Args:
+          input_shard_state: The InputReader state as a dict-like object.
+
+        Returns:
+          An instance of the InputReader configured using the values of json.
+        &amp;quot;&amp;quot;&amp;quot;
+        return cls(input_shard_state.get(cls.QUEUE_NAME),
+               input_shard_state.get(cls.TAG),
+               input_shard_state.get(cls.LEASE_SECONDS)))
+
+    def to_json(self):
+        &amp;quot;&amp;quot;&amp;quot;Returns an input shard state for the remaining inputs.
+
+        Returns:
+          A json-izable version of the remaining InputReader.
+        &amp;quot;&amp;quot;&amp;quot;
+        return {
+            &#39;queue_name&#39;: self.queue_name,
+            &#39;tag&#39;: self.tag,
+            &#39;lease_seconds&#39;: self.lease_seconds,
+        }
+
+    @classmethod
+    def split_input(cls, mapper_spec):
+        &amp;quot;&amp;quot;&amp;quot;
+        Returns a list of input readers
+        &amp;quot;&amp;quot;&amp;quot;
+        shard_count = mapper_spec.shard_count
+
+        return [cls()] * shard_count
+
+    @classmethod
+    def validate(cls, mapper_spec):
+        &amp;quot;&amp;quot;&amp;quot;
+        Validates mapper spec and all mapper parameters.
+
+        Input reader parameters are expected to be passed as &amp;quot;input_reader&amp;quot;
+        subdictionary in mapper_spec.params.
+
+        Args:
+          mapper_spec: The MapperSpec for this InputReader.
+
+        Raises:
+          BadReaderParamsError: required parameters are missing or invalid.
+        &amp;quot;&amp;quot;&amp;quot;
+        if mapper_spec.input_reader_class() != cls:
+            raise BadReaderParamsError(&amp;quot;Input reader class mismatch&amp;quot;)
+
+        # Check that a valid queue is specified
+        input_reader_params = mapper_spec.params.get(&#39;input_reader&#39;, {})
+        queue_name = input_reader_params.get(cls.QUEUE_NAME)
+        lease_seconds = input_reader_params.get(cls.LEASE_SECONDS, 60)
+        if not queue_name:
+            raise BadReaderParamsError(&#39;%s is required&#39; % cls.QUEUE_NAME)
+        if not isinstance(lease_seconds, int):
+            raise BadReaderParamsError(&#39;%s must be an integer&#39; % cls.LEASE_SECONDS)
+        try:
+            queue = taskqueue.Queue(name=queue_name)
+            queue.fetch_statistics()
+        except Exception as e:
+            raise BadReaderParamsError(&#39;%s is invalid&#39; % cls.QUEUE_NAME, e.message)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>App Engine MapReduce API - Part 5: Using Combiners to Reduce Data Throughput</title>
@@ -23,6 +374,7 @@
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/&#34;&gt;Part 6: Writing a Custom Input Reader&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;So far we&amp;rsquo;ve looked at using MapReduce pipelines to perform calculations over
@@ -174,6 +526,7 @@ class CountCharactersPipeline(pipeline.Pipeline):
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/&#34;&gt;Part 6: Writing a Custom Input Reader&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Last
@@ -298,6 +651,7 @@ execute.&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/&#34;&gt;Part 6: Writing a Custom Input Reader&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;In the last article&lt;/a&gt; we examined how to run one-off tasks that operate on a large dataset using a &lt;code&gt;mapreduce.yaml&lt;/code&gt; configuration file. This article will take us a step further and look at how to run a MapReduce job programmatically using the App Engine Pipeline API.&lt;/p&gt;
@@ -614,6 +968,7 @@ class CountCharacters(webapp2.RequestHandler):
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/&#34;&gt;Part 6: Writing a Custom Input Reader&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Last time&lt;/a&gt; we looked at an overview of how MapReduce works. In this article we&amp;rsquo;ll be getting our hands dirty writing some code to handle the Map Stage. If you&amp;rsquo;ll recall, the Map Stage is composed of two separate components: an InputReader and a &lt;code&gt;map&lt;/code&gt; function. We&amp;rsquo;ll look at each of these in turn.&lt;/p&gt;
@@ -1074,6 +1429,7 @@ using MapReduce Pipelines to programmatically control your API.&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/&#34;&gt;Part 6: Writing a Custom Input Reader&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;The first arcticle in this series provides an overview of the &lt;a href=&#34;https://developers.google.com/appengine/docs/python/dataprocessing/&#34;&gt;App Engine MapReduce

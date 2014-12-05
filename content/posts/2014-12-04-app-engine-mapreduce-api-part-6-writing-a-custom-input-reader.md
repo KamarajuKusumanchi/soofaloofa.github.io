@@ -1,7 +1,7 @@
 ---
 title: "App Engine MapReduce API - Part 6: Writing a Custom Input Reader"
 date: 2014-12-04T22:54:12Z
-description: "In this post we will explore how to write an InputReader the leases tasks from an AppEngine pull queue by implementing the `InputReader` interface."
+description: "In this post we will explore how to write an InputReader the leases tasks from an AppEngine pull queue by implementing the InputReader interface."
 tags: 
   - "app engine"
   - "mapreduce"

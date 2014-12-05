@@ -242,5 +242,116 @@ Putting this all together we get our final InputReader. We can use this as a
 basis to make more complex readers for additional data sources.
 
 ```python
+"""
+TaskInputReader
+"""
+from google.appengine.api import taskqueue
 
+from mapreduce.input_readers import InputReader
+from mapreduce.errors import BadReaderParamsError
+from mapreduce import context
+from mapreduce import operation
+
+
+class TaskInputReader(InputReader):
+    """
+    Input reader for Pull-queue tasks
+    """
+
+    QUEUE_PARAM = 'queue'
+    TAG_PARAM = 'tag'
+    LEASE_SECONDS_PARAM = 'lease-seconds'
+
+    TASKS_LEASED_COUNTER = 'tasks leased'
+
+    def next(self):
+        """
+        Returns the queue, and a task leased from it as a tuple
+
+        Returns:
+          The next input from this input reader.
+        """
+        ctx = context.get()
+        input_reader_params = ctx.mapreduce_spec.mapper.params.get('input_reader', {})
+        queue_name = input_reader_params.get(self.QUEUE_PARAM)
+        tag = input_reader_params.get(self.TAG_PARAM)
+        lease_seconds = input_reader_params.get(self.LEASE_SECONDS_PARAM, 60)
+
+        # Attempt to lease a task
+        queue = taskqueue.Queue(queue_name)
+        if tag:
+            tasks = queue.lease_tasks_by_tag(lease_seconds, 1, tag=tag)
+        else:
+            tasks = queue.lease_tasks(lease_seconds, 1)
+
+        if tasks:
+            operation.counters.Increment(self.TASKS_LEASED_COUNTER)(ctx)
+            return (queue, tasks[0])
+        raise StopIteration()
+
+    @classmethod
+    def from_json(cls, input_shard_state):
+        """Creates an instance of the InputReader for the given input shard state.
+
+        Args:
+          input_shard_state: The InputReader state as a dict-like object.
+
+        Returns:
+          An instance of the InputReader configured using the values of json.
+        """
+        return cls(input_shard_state.get(cls.QUEUE_NAME),
+               input_shard_state.get(cls.TAG),
+               input_shard_state.get(cls.LEASE_SECONDS)))
+
+    def to_json(self):
+        """Returns an input shard state for the remaining inputs.
+
+        Returns:
+          A json-izable version of the remaining InputReader.
+        """
+        return {
+            'queue_name': self.queue_name,
+            'tag': self.tag,
+            'lease_seconds': self.lease_seconds,
+        }
+
+    @classmethod
+    def split_input(cls, mapper_spec):
+        """
+        Returns a list of input readers
+        """
+        shard_count = mapper_spec.shard_count
+
+        return [cls()] * shard_count
+
+    @classmethod
+    def validate(cls, mapper_spec):
+        """
+        Validates mapper spec and all mapper parameters.
+
+        Input reader parameters are expected to be passed as "input_reader"
+        subdictionary in mapper_spec.params.
+
+        Args:
+          mapper_spec: The MapperSpec for this InputReader.
+
+        Raises:
+          BadReaderParamsError: required parameters are missing or invalid.
+        """
+        if mapper_spec.input_reader_class() != cls:
+            raise BadReaderParamsError("Input reader class mismatch")
+
+        # Check that a valid queue is specified
+        input_reader_params = mapper_spec.params.get('input_reader', {})
+        queue_name = input_reader_params.get(cls.QUEUE_NAME)
+        lease_seconds = input_reader_params.get(cls.LEASE_SECONDS, 60)
+        if not queue_name:
+            raise BadReaderParamsError('%s is required' % cls.QUEUE_NAME)
+        if not isinstance(lease_seconds, int):
+            raise BadReaderParamsError('%s must be an integer' % cls.LEASE_SECONDS)
+        try:
+            queue = taskqueue.Queue(name=queue_name)
+            queue.fetch_statistics()
+        except Exception as e:
+            raise BadReaderParamsError('%s is invalid' % cls.QUEUE_NAME, e.message)
 ```

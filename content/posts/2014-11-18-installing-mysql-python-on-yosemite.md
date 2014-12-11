@@ -16,7 +16,7 @@ this task, though Homebrew would work just fine. Second, update your PATH to
 include the mariadb executables. Third, install the Python MySQL connector.
 
 ```bash
-sudo port install mariadb.
+sudo port install mariadb
 PATH=/opt/local/lib/mariadb/bin:$PATH
 pip install MySQL-Python
 ```

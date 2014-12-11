@@ -73,6 +73,151 @@
 
         
           <article>
+            <h2><a href="http://sookocheff.com/posts/2014-12-11-bash-string-operators/">The Bash String Operators</a></h2>
+            <small class="text-muted">
+              Posted on Thursday, December 11, 2014 · <a href="http://sookocheff.com/posts/2014-12-11-bash-string-operators//#disqus_thread">0 Comments</a>
+            </small>
+            
+              <p>
+                
+
+<p>A common task in <em>bash</em> programming is to manipulate portions of a string and
+return the result. <em>bash</em> provides rich support for these manipulations via
+string operators. The syntax is not always intuitive so I wanted to use this
+blog post to serve as a permanent reminder of the operators.</p>
+
+<p>The string operators are signified with the <code>${}</code> notation. The operations can be
+grouped in to a few classes. Each heading in this article describes a class of
+operation.</p>
+
+<h2 id="toc_0">Substring Extraction</h2>
+
+<hr />
+
+<h3 id="toc_1">Extract from a position</h3>
+
+<pre><code class="language-bash">${string:position}
+</code></pre>
+
+<p>Extraction returns a substring of <code>string</code> starting at <code>position</code> and ending at the end of <code>string</code>. <code>string</code> is treated as an array of characters starting at 0.</p>
+
+<pre><code class="language-bash">&gt; string=&quot;hello world&quot;
+&gt; echo ${string:1}
+ello world
+&gt; echo ${string:6}
+world
+</code></pre>
+
+<hr />
+
+<h3 id="toc_2">Extract from a position with a length</h3>
+
+<pre><code class="language-bash">${string:position:length}
+</code></pre>
+
+<p>Adding a length returns a substring only as long as the <code>length</code> parameter.</p>
+
+<pre><code class="language-bash">&gt; string=&quot;hello world&quot;
+&gt; echo ${string:1:2}
+el
+&gt; echo ${string:6:3}
+wor
+</code></pre>
+
+<h2 id="toc_3">Substring Removal</h2>
+
+<hr />
+
+<h3 id="toc_4">Remove shortest starting match</h3>
+
+<pre><code class="language-bash">${variable#pattern}
+</code></pre>
+
+<p>If <code>variable</code> <em>starts</em> with <code>pattern</code>, delete the <em>shortest</em> part that matches the pattern.</p>
+
+<pre><code class="language-bash">&gt; string=&quot;hello world, hello jim&quot;
+&gt; echo ${string#*hello}
+world, hello jim
+</code></pre>
+
+<hr />
+
+<h3 id="toc_5">Remove longest starting match</h3>
+
+<pre><code class="language-bash">${variable##pattern}
+</code></pre>
+
+<p>If <code>variable</code> <em>starts</em> with <code>pattern</code>, delete the <em>longest</em> match from <code>variable</code> and return the rest.</p>
+
+<pre><code class="language-bash">&gt; string=&quot;hello world, hello jim&quot;
+&gt; echo ${string##*hello}
+jim
+</code></pre>
+
+<hr />
+
+<h3 id="toc_6">Remove shortest ending match</h3>
+
+<pre><code class="language-bash">${variable%pattern}
+</code></pre>
+
+<p>If <code>variable</code> ends with <code>pattern</code>, delete the longest match from the end of <code>variable</code> and return the rest.</p>
+
+<pre><code class="language-bash">&gt; string=&quot;hello world, hello jim&quot;
+&gt; echo ${string%hello*}
+hello world,
+</code></pre>
+
+<hr />
+
+<h3 id="toc_7">Remove longest ending match</h3>
+
+<pre><code class="language-bash">${variable%%pattern}
+</code></pre>
+
+<p>If <code>variable</code> ends with <code>pattern</code>, delete the longest match from the end of <code>variable</code> and return the rest.</p>
+
+<pre><code class="language-bash">&gt; string=&quot;hello world, hello jim&quot;
+&gt; echo ${string%%hello*}
+
+</code></pre>
+
+<h2 id="toc_8">Substring Replacement</h2>
+
+<hr />
+
+<h3 id="toc_9">Replace first occurrence of word</h3>
+
+<pre><code class="language-bash">${variable/pattern/string}
+</code></pre>
+
+<p>Find the first occurrence of <code>pattern</code> in <code>variable</code> and replace it with <code>string</code>. If <code>string</code> is null, <code>pattern</code> is deleted from <code>variable</code>. If <code>pattern</code> starts with <code>#</code>, the match must occur at the beginning of <code>variable</code>. If <code>pattern</code> starts with <code>%</code>, the match must occur at the end of the <code>variable</code>.</p>
+
+<pre><code class="language-bash">&gt; string=&quot;hello world, hello jim&quot;
+&gt; echo ${string/hello/goodbye}
+goodbye world, hello jim
+</code></pre>
+
+<hr />
+
+<h3 id="toc_10">Replace all occurrences of word</h3>
+
+<pre><code class="language-bash">${variable//pattern/string}
+</code></pre>
+
+<p>Same as above but finds <strong>all</strong> occurrences of <code>pattern</code> in <code>variable</code> and replace them with <code>string</code>. If <code>string</code> is null, <code>pattern</code> is deleted from <code>variable</code>.</p>
+
+<pre><code class="language-bash">&gt; string=&quot;hello world, hello jim&quot;
+&gt; echo ${string//hello/goodbye}
+goodbye world, goodbye jim
+</code></pre>
+
+              </p>
+            
+            <hr>
+          </article>
+        
+          <article>
             <h2><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">App Engine MapReduce API - Part 6: Writing a Custom Input Reader</a></h2>
             <small class="text-muted">
               Posted on Thursday, December 4, 2014 · <a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader//#disqus_thread">0 Comments</a>

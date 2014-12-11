@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Bash on Kevin Sookocheff</title>
+    <link>http://sookocheff.com/tags/bash/index.xml/</link>
+    <language>en-us</language>
+    <copyright>Copyright Kevin Sookocheff.</copyright>
+    <lastBuildDate>Thu, 11 Dec 2014 19:54:12 UTC</lastBuildDate>
+    
+    <item>
+      <title>The Bash String Operators</title>
+      <link>http://sookocheff.com/posts/2014-12-11-bash-string-operators/</link>
+      <pubDate>Thu, 11 Dec 2014 19:54:12 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-12-11-bash-string-operators/</guid>
+      <description>
+
+&lt;p&gt;A common task in &lt;em&gt;bash&lt;/em&gt; programming is to manipulate portions of a string and
+return the result. &lt;em&gt;bash&lt;/em&gt; provides rich support for these manipulations via
+string operators. The syntax is not always intuitive so I wanted to use this
+blog post to serve as a permanent reminder of the operators.&lt;/p&gt;
+
+&lt;p&gt;The string operators are signified with the &lt;code&gt;${}&lt;/code&gt; notation. The operations can be
+grouped in to a few classes. Each heading in this article describes a class of
+operation.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;Substring Extraction&lt;/h2&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;toc_1&#34;&gt;Extract from a position&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${string:position}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Extraction returns a substring of &lt;code&gt;string&lt;/code&gt; starting at &lt;code&gt;position&lt;/code&gt; and ending at the end of &lt;code&gt;string&lt;/code&gt;. &lt;code&gt;string&lt;/code&gt; is treated as an array of characters starting at 0.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world&amp;quot;
+&amp;gt; echo ${string:1}
+ello world
+&amp;gt; echo ${string:6}
+world
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;toc_2&#34;&gt;Extract from a position with a length&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${string:position:length}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Adding a length returns a substring only as long as the &lt;code&gt;length&lt;/code&gt; parameter.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world&amp;quot;
+&amp;gt; echo ${string:1:2}
+el
+&amp;gt; echo ${string:6:3}
+wor
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_3&#34;&gt;Substring Removal&lt;/h2&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;toc_4&#34;&gt;Remove shortest starting match&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable#pattern}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If &lt;code&gt;variable&lt;/code&gt; &lt;em&gt;starts&lt;/em&gt; with &lt;code&gt;pattern&lt;/code&gt;, delete the &lt;em&gt;shortest&lt;/em&gt; part that matches the pattern.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
+&amp;gt; echo ${string#*hello}
+world, hello jim
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;toc_5&#34;&gt;Remove longest starting match&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable##pattern}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If &lt;code&gt;variable&lt;/code&gt; &lt;em&gt;starts&lt;/em&gt; with &lt;code&gt;pattern&lt;/code&gt;, delete the &lt;em&gt;longest&lt;/em&gt; match from &lt;code&gt;variable&lt;/code&gt; and return the rest.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
+&amp;gt; echo ${string##*hello}
+jim
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;toc_6&#34;&gt;Remove shortest ending match&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable%pattern}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If &lt;code&gt;variable&lt;/code&gt; ends with &lt;code&gt;pattern&lt;/code&gt;, delete the longest match from the end of &lt;code&gt;variable&lt;/code&gt; and return the rest.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
+&amp;gt; echo ${string%hello*}
+hello world,
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;toc_7&#34;&gt;Remove longest ending match&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable%%pattern}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If &lt;code&gt;variable&lt;/code&gt; ends with &lt;code&gt;pattern&lt;/code&gt;, delete the longest match from the end of &lt;code&gt;variable&lt;/code&gt; and return the rest.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
+&amp;gt; echo ${string%%hello*}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_8&#34;&gt;Substring Replacement&lt;/h2&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;toc_9&#34;&gt;Replace first occurrence of word&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable/pattern/string}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Find the first occurrence of &lt;code&gt;pattern&lt;/code&gt; in &lt;code&gt;variable&lt;/code&gt; and replace it with &lt;code&gt;string&lt;/code&gt;. If &lt;code&gt;string&lt;/code&gt; is null, &lt;code&gt;pattern&lt;/code&gt; is deleted from &lt;code&gt;variable&lt;/code&gt;. If &lt;code&gt;pattern&lt;/code&gt; starts with &lt;code&gt;#&lt;/code&gt;, the match must occur at the beginning of &lt;code&gt;variable&lt;/code&gt;. If &lt;code&gt;pattern&lt;/code&gt; starts with &lt;code&gt;%&lt;/code&gt;, the match must occur at the end of the &lt;code&gt;variable&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
+&amp;gt; echo ${string/hello/goodbye}
+goodbye world, hello jim
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;toc_10&#34;&gt;Replace all occurrences of word&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable//pattern/string}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Same as above but finds &lt;strong&gt;all&lt;/strong&gt; occurrences of &lt;code&gt;pattern&lt;/code&gt; in &lt;code&gt;variable&lt;/code&gt; and replace them with &lt;code&gt;string&lt;/code&gt;. If &lt;code&gt;string&lt;/code&gt; is null, &lt;code&gt;pattern&lt;/code&gt; is deleted from &lt;code&gt;variable&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
+&amp;gt; echo ${string//hello/goodbye}
+goodbye world, goodbye jim
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -5,7 +5,148 @@
     <link>http://sookocheff.com/posts/index.xml/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Thu, 04 Dec 2014 22:54:12 UTC</lastBuildDate>
+    <lastBuildDate>Thu, 11 Dec 2014 19:54:12 UTC</lastBuildDate>
+    
+    <item>
+      <title>The Bash String Operators</title>
+      <link>http://sookocheff.com/posts/2014-12-11-bash-string-operators/</link>
+      <pubDate>Thu, 11 Dec 2014 19:54:12 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-12-11-bash-string-operators/</guid>
+      <description>
+
+&lt;p&gt;A common task in &lt;em&gt;bash&lt;/em&gt; programming is to manipulate portions of a string and
+return the result. &lt;em&gt;bash&lt;/em&gt; provides rich support for these manipulations via
+string operators. The syntax is not always intuitive so I wanted to use this
+blog post to serve as a permanent reminder of the operators.&lt;/p&gt;
+
+&lt;p&gt;The string operators are signified with the &lt;code&gt;${}&lt;/code&gt; notation. The operations can be
+grouped in to a few classes. Each heading in this article describes a class of
+operation.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;Substring Extraction&lt;/h2&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;toc_1&#34;&gt;Extract from a position&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${string:position}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Extraction returns a substring of &lt;code&gt;string&lt;/code&gt; starting at &lt;code&gt;position&lt;/code&gt; and ending at the end of &lt;code&gt;string&lt;/code&gt;. &lt;code&gt;string&lt;/code&gt; is treated as an array of characters starting at 0.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world&amp;quot;
+&amp;gt; echo ${string:1}
+ello world
+&amp;gt; echo ${string:6}
+world
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;toc_2&#34;&gt;Extract from a position with a length&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${string:position:length}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Adding a length returns a substring only as long as the &lt;code&gt;length&lt;/code&gt; parameter.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world&amp;quot;
+&amp;gt; echo ${string:1:2}
+el
+&amp;gt; echo ${string:6:3}
+wor
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_3&#34;&gt;Substring Removal&lt;/h2&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;toc_4&#34;&gt;Remove shortest starting match&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable#pattern}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If &lt;code&gt;variable&lt;/code&gt; &lt;em&gt;starts&lt;/em&gt; with &lt;code&gt;pattern&lt;/code&gt;, delete the &lt;em&gt;shortest&lt;/em&gt; part that matches the pattern.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
+&amp;gt; echo ${string#*hello}
+world, hello jim
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;toc_5&#34;&gt;Remove longest starting match&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable##pattern}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If &lt;code&gt;variable&lt;/code&gt; &lt;em&gt;starts&lt;/em&gt; with &lt;code&gt;pattern&lt;/code&gt;, delete the &lt;em&gt;longest&lt;/em&gt; match from &lt;code&gt;variable&lt;/code&gt; and return the rest.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
+&amp;gt; echo ${string##*hello}
+jim
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;toc_6&#34;&gt;Remove shortest ending match&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable%pattern}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If &lt;code&gt;variable&lt;/code&gt; ends with &lt;code&gt;pattern&lt;/code&gt;, delete the longest match from the end of &lt;code&gt;variable&lt;/code&gt; and return the rest.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
+&amp;gt; echo ${string%hello*}
+hello world,
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;toc_7&#34;&gt;Remove longest ending match&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable%%pattern}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If &lt;code&gt;variable&lt;/code&gt; ends with &lt;code&gt;pattern&lt;/code&gt;, delete the longest match from the end of &lt;code&gt;variable&lt;/code&gt; and return the rest.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
+&amp;gt; echo ${string%%hello*}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_8&#34;&gt;Substring Replacement&lt;/h2&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;toc_9&#34;&gt;Replace first occurrence of word&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable/pattern/string}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Find the first occurrence of &lt;code&gt;pattern&lt;/code&gt; in &lt;code&gt;variable&lt;/code&gt; and replace it with &lt;code&gt;string&lt;/code&gt;. If &lt;code&gt;string&lt;/code&gt; is null, &lt;code&gt;pattern&lt;/code&gt; is deleted from &lt;code&gt;variable&lt;/code&gt;. If &lt;code&gt;pattern&lt;/code&gt; starts with &lt;code&gt;#&lt;/code&gt;, the match must occur at the beginning of &lt;code&gt;variable&lt;/code&gt;. If &lt;code&gt;pattern&lt;/code&gt; starts with &lt;code&gt;%&lt;/code&gt;, the match must occur at the end of the &lt;code&gt;variable&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
+&amp;gt; echo ${string/hello/goodbye}
+goodbye world, hello jim
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;toc_10&#34;&gt;Replace all occurrences of word&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable//pattern/string}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Same as above but finds &lt;strong&gt;all&lt;/strong&gt; occurrences of &lt;code&gt;pattern&lt;/code&gt; in &lt;code&gt;variable&lt;/code&gt; and replace them with &lt;code&gt;string&lt;/code&gt;. If &lt;code&gt;string&lt;/code&gt; is null, &lt;code&gt;pattern&lt;/code&gt; is deleted from &lt;code&gt;variable&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
+&amp;gt; echo ${string//hello/goodbye}
+goodbye world, goodbye jim
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>App Engine MapReduce API - Part 6: Writing a Custom Input Reader</title>
@@ -1606,102 +1747,6 @@ generate_library --input=rest.json --language=csharp --output_dir=tmp/csharp
 
 &lt;p&gt;Your C# client library is now ready to use. As of this writing you can generate
 client libraries in C++, C#, Dart, GWT, Java, PHP and Python.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Using Basic Authentication with Google Cloud Endpoints</title>
-      <link>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/</link>
-      <pubDate>Wed, 16 Jul 2014 01:02:25 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/</guid>
-      <description>
-
-&lt;p&gt;Cloud Endpoints provides strong integration with OAuth 2.0. If you can use this
-integration &amp;ndash; do it. However, some legacy systems require supporting
-alternative authentication mechanisms. This article will show you how to secure
-an API endpoint using Basic Authentication. You can use this as a starting point
-for whatever authentication method you choose.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_0&#34;&gt;A basic endpoint&lt;/h2&gt;
-
-&lt;p&gt;As a starting point let&amp;rsquo;s define a basic endpoint that will return a
-hypothetical UserMessage defining a User resource.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
-class UsersApi(remote.Service):
-
-    @endpoints.method(message_types.VoidMessage,
-                      UserMessage,
-                      http_method=&#39;GET&#39;,
-                      path=&#39;user&#39;,
-                      name=&#39;user.auth&#39;)
-    def user_auth(self, request):
-        ## Return a UserMessage
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Let&amp;rsquo;s build up a UserMessage based on the credentials set in the HTTP
-Authorization header. We can access the HTTP headers of the request through the
-&lt;a href=&#34;https://developers.google.com/appengine/docs/python/tools/protorpc/remote/httprequeststateclass&#34;&gt;HTTPRequestState&lt;/a&gt;
-using the instance variable &lt;code&gt;request_state&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
-class UsersApi(remote.Service):
-
-    @endpoints.method(message_types.VoidMessage,
-                      UserMessage,
-                      http_method=&#39;GET&#39;,
-                      path=&#39;user&#39;,
-                      name=&#39;user.auth&#39;)
-    def user_auth(self, request):
-        basic_auth = self.request_state.headers.get(&#39;authorization&#39;)
-        print basic_auth
-        ## Return a UserMessage
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We can test this endpoint using &lt;a href=&#34;https://github.com/jakubroztocil/httpie&#34;&gt;httpie&lt;/a&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;http -a username:password GET :8888/_ah/api/users/v1/user
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Examing the logs will show that we receive the HTTP Authorization header in its
-base64 encoded form.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;Basic dXNlcm5hbWU6cGFzc3dvcmQ=
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The header can be decoded with the &lt;code&gt;base64&lt;/code&gt; module.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;basic_auth = self.request_state.headers.get(&#39;authorization&#39;)
-auth_type, credentials = basic_auth.split(&#39; &#39;)
-print base64.b64decode(credentials)  # prints username:password
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Using the username and password we can check the datastore for a User model with
-the same credentials and return a &lt;code&gt;UserMessage&lt;/code&gt; based on the model .&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
-class UsersApi(remote.Service):
-
-    @endpoints.method(message_types.VoidMessage,
-                      UserMessage,
-                      http_method=&#39;GET&#39;,
-                      path=&#39;user&#39;,
-                      name=&#39;user.auth&#39;)
-    def user_auth(self, request):
-        basic_auth = self.request_state.headers.get(&#39;authorization&#39;)
-        auth_type, credentials = basic_auth.split(&#39; &#39;)
-        username, password = base64.b64decode(credentials).split(&#39;:&#39;)
-        user = User.get_by_username(username)
-        if user and user.verify_password(password):
-            return user.to_message()
-        else:
-            raise endpoints.UnauthorizedException
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This should serve as a starting point for anyone wishing to use Basic
-Authentication with Google Cloud Endpoints. If you&amp;rsquo;ve read this far, why not
-subscribe to this blog through &lt;a href=&#34;http://kevinsookocheff.us3.list-manage2.com/subscribe?u=8b57d632b8677f07ca57dc9cb&amp;amp;id=ec7ddaa3ba&#34;&gt;email&lt;/a&gt; or &lt;a href=&#34;http://sookocheff.com/index.xml&#34;&gt;RSS&lt;/a&gt;?&lt;/p&gt;
 </description>
     </item>
     

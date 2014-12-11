@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<title>Bash : sookocheff.com</title>
+
+<meta charset="utf-8">
+<meta http-equiv="content-type", content="text/html; charset=utf-8">
+<meta name="viewport", content="width=device-width, initial-scale=1.0">
+
+<link rel="canonical" href="http://sookocheff.com/tags/bash/">
+
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/styles/default.min.css">
+
+<link rel="stylesheet" href="/css/vendor/bootstrap.min.css">
+<link rel="stylesheet" href="/css/vendor/monokai_sublime.css">
+<link rel="stylesheet" href="/css/style.css">
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-20611089-6', 'sookocheff.com');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand">Kevin Sookocheff</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="">
+          <a href="/posts/">Blog</a>
+        </li>
+        <li class="dropdown">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+            Subscribe <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="http://eepurl.com/KJE01">email</a></li>
+            <li><a href="http://sookocheff.com/index.xml">RSS</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="container page-container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <section class="page">
+        <h1>Bash</h1>
+
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2014-12-11-bash-string-operators/">The Bash String Operators</a></h2>
+            <small class="text-muted">
+              Posted on Thursday, December 11, 2014 · <a href="http://sookocheff.com/posts/2014-12-11-bash-string-operators//#disqus_thread">0 Comments</a>
+            </small>
+            
+              <p>
+                
+
+<p>A common task in <em>bash</em> programming is to manipulate portions of a string and
+return the result. <em>bash</em> provides rich support for these manipulations via
+string operators. The syntax is not always intuitive so I wanted to use this
+blog post to serve as a permanent reminder of the operators.</p>
+
+<p>The string operators are signified with the <code>${}</code> notation. The operations can be
+grouped in to a few classes. Each heading in this article describes a class of
+operation.</p>
+
+<h2 id="toc_0">Substring Extraction</h2>
+
+<hr />
+
+<h3 id="toc_1">Extract from a position</h3>
+
+<pre><code class="language-bash">${string:position}
+</code></pre>
+
+<p>Extraction returns a substring of <code>string</code> starting at <code>position</code> and ending at the end of <code>string</code>. <code>string</code> is treated as an array of characters starting at 0.</p>
+
+<pre><code class="language-bash">&gt; string=&quot;hello world&quot;
+&gt; echo ${string:1}
+ello world
+&gt; echo ${string:6}
+world
+</code></pre>
+
+<hr />
+
+<h3 id="toc_2">Extract from a position with a length</h3>
+
+<pre><code class="language-bash">${string:position:length}
+</code></pre>
+
+<p>Adding a length returns a substring only as long as the <code>length</code> parameter.</p>
+
+<pre><code class="language-bash">&gt; string=&quot;hello world&quot;
+&gt; echo ${string:1:2}
+el
+&gt; echo ${string:6:3}
+wor
+</code></pre>
+
+<h2 id="toc_3">Substring Removal</h2>
+
+<hr />
+
+<h3 id="toc_4">Remove shortest starting match</h3>
+
+<pre><code class="language-bash">${variable#pattern}
+</code></pre>
+
+<p>If <code>variable</code> <em>starts</em> with <code>pattern</code>, delete the <em>shortest</em> part that matches the pattern.</p>
+
+<pre><code class="language-bash">&gt; string=&quot;hello world, hello jim&quot;
+&gt; echo ${string#*hello}
+world, hello jim
+</code></pre>
+
+<hr />
+
+<h3 id="toc_5">Remove longest starting match</h3>
+
+<pre><code class="language-bash">${variable##pattern}
+</code></pre>
+
+<p>If <code>variable</code> <em>starts</em> with <code>pattern</code>, delete the <em>longest</em> match from <code>variable</code> and return the rest.</p>
+
+<pre><code class="language-bash">&gt; string=&quot;hello world, hello jim&quot;
+&gt; echo ${string##*hello}
+jim
+</code></pre>
+
+<hr />
+
+<h3 id="toc_6">Remove shortest ending match</h3>
+
+<pre><code class="language-bash">${variable%pattern}
+</code></pre>
+
+<p>If <code>variable</code> ends with <code>pattern</code>, delete the longest match from the end of <code>variable</code> and return the rest.</p>
+
+<pre><code class="language-bash">&gt; string=&quot;hello world, hello jim&quot;
+&gt; echo ${string%hello*}
+hello world,
+</code></pre>
+
+<hr />
+
+<h3 id="toc_7">Remove longest ending match</h3>
+
+<pre><code class="language-bash">${variable%%pattern}
+</code></pre>
+
+<p>If <code>variable</code> ends with <code>pattern</code>, delete the longest match from the end of <code>variable</code> and return the rest.</p>
+
+<pre><code class="language-bash">&gt; string=&quot;hello world, hello jim&quot;
+&gt; echo ${string%%hello*}
+
+</code></pre>
+
+<h2 id="toc_8">Substring Replacement</h2>
+
+<hr />
+
+<h3 id="toc_9">Replace first occurrence of word</h3>
+
+<pre><code class="language-bash">${variable/pattern/string}
+</code></pre>
+
+<p>Find the first occurrence of <code>pattern</code> in <code>variable</code> and replace it with <code>string</code>. If <code>string</code> is null, <code>pattern</code> is deleted from <code>variable</code>. If <code>pattern</code> starts with <code>#</code>, the match must occur at the beginning of <code>variable</code>. If <code>pattern</code> starts with <code>%</code>, the match must occur at the end of the <code>variable</code>.</p>
+
+<pre><code class="language-bash">&gt; string=&quot;hello world, hello jim&quot;
+&gt; echo ${string/hello/goodbye}
+goodbye world, hello jim
+</code></pre>
+
+<hr />
+
+<h3 id="toc_10">Replace all occurrences of word</h3>
+
+<pre><code class="language-bash">${variable//pattern/string}
+</code></pre>
+
+<p>Same as above but finds <strong>all</strong> occurrences of <code>pattern</code> in <code>variable</code> and replace them with <code>string</code>. If <code>string</code> is null, <code>pattern</code> is deleted from <code>variable</code>.</p>
+
+<pre><code class="language-bash">&gt; string=&quot;hello world, hello jim&quot;
+&gt; echo ${string//hello/goodbye}
+goodbye world, goodbye jim
+</code></pre>
+
+              </p>
+            
+            <hr>
+          </article>
+        
+      </section>
+    </div>
+  </div>
+</div>
+
+<footer>
+ <div class="footer-above text-center">
+   <div class="container">
+     <div class="row">
+       <div class="footer-col col-md-3">
+         <h3>App Engine</h3>
+         <ul class="list-unstyled">
+           <li><a href="/series/mapreduce-api/">MapReduce API</a></li>
+           <li><a href="/series/cloud-endpoints/">Cloud Endpoints</a></li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>APIs</h3>
+         <ul class="list-unstyled">
+           <li>
+             <a href="/posts/2014-03-11-on-choosing-a-hypermedia-format/">On Choosing a Hypermedia Format</a>
+           </li>
+           <li>
+             <a href="/posts/2014-03-27-when-to-use-http-put-and-http-post/">When to use HTTP PUT</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Random</h3>
+         <ul class="list-unstyled">
+           <li>
+           <a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/"> Unity3d on the Mac App Store</a>
+           </li>
+           <li>
+             <a href="http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/">Saving Canvas Data to an Image</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Social</h3>
+         <ul class="list-unstyled">
+           <li><a href="http://www.twitter.com/soofaloofa">Twitter</a></li>
+           <li><a href="http://www.facebook.com/kevin.sookocheff">Facebook</a></li>
+           <li><a href="http://www.linkedin.com/in/kevinsookocheff">LinkedIn</a></li>
+           <li><a href="https://plus.google.com/+KevinSookocheff">Google+</a></li>
+           <li><a href="https://github.com/soofaloofa">Github</a></li>
+         </ul>
+       </div>
+     </div>
+   </div>
+ </div>
+ <div class="footer-below text-center">
+     <div class="container">
+         <div class="row">
+             <div class="col-lg-12">
+                 &copy; Kevin Sookocheff · <a href="#">Top</a>
+             </div>
+         </div>
+     </div>
+ </div>
+</footer>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/highlight.min.js"></script>
+<script src="/js/vendor/retina.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+ 
+var disqus_shortname = 'kevinsookocheff'; 
+
+ 
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+</body>
+</html>
+

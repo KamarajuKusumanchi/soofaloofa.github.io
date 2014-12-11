@@ -372,7 +372,7 @@ MySQL-Python package on OS X Yosemite.&lt;/p&gt;
 this task, though Homebrew would work just fine. Second, update your PATH to
 include the mariadb executables. Third, install the Python MySQL connector.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo port install mariadb.
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo port install mariadb
 PATH=/opt/local/lib/mariadb/bin:$PATH
 pip install MySQL-Python
 &lt;/code&gt;&lt;/pre&gt;

@@ -94,7 +94,7 @@ jim
 ${variable%pattern}
 ```
 
-If `variable` ends with `pattern`, delete the longest match from the end of `variable` and return the rest.
+If `variable` ends with `pattern`, delete the shortest match from the end of `variable` and return the rest.
 
 ```bash
 > string="hello world, hello jim"

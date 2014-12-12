@@ -160,7 +160,7 @@ jim
 <pre><code class="language-bash">${variable%pattern}
 </code></pre>
 
-<p>If <code>variable</code> ends with <code>pattern</code>, delete the longest match from the end of <code>variable</code> and return the rest.</p>
+<p>If <code>variable</code> ends with <code>pattern</code>, delete the shortest match from the end of <code>variable</code> and return the rest.</p>
 
 <pre><code class="language-bash">&gt; string=&quot;hello world, hello jim&quot;
 &gt; echo ${string%hello*}

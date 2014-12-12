@@ -95,7 +95,7 @@ jim
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable%pattern}
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;If &lt;code&gt;variable&lt;/code&gt; ends with &lt;code&gt;pattern&lt;/code&gt;, delete the longest match from the end of &lt;code&gt;variable&lt;/code&gt; and return the rest.&lt;/p&gt;
+&lt;p&gt;If &lt;code&gt;variable&lt;/code&gt; ends with &lt;code&gt;pattern&lt;/code&gt;, delete the shortest match from the end of &lt;code&gt;variable&lt;/code&gt; and return the rest.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
 &amp;gt; echo ${string%hello*}

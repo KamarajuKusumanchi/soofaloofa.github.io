@@ -3,8 +3,13 @@
   
   <url>
     <loc>http://sookocheff.com/</loc>
-    <lastmod>2014-12-11T19:54:12+00:00</lastmod>
+    <lastmod>2014-12-22T07:07:35+00:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/</loc>
+    <lastmod>2014-12-22T07:07:35+00:00</lastmod>
   </url>
   
   <url>

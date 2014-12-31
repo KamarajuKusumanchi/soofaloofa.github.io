@@ -5,7 +5,66 @@
     <link>http://sookocheff.com/tags/python/index.xml/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Mon, 22 Dec 2014 07:07:35 UTC</lastBuildDate>
+    <lastBuildDate>Tue, 30 Dec 2014 20:35:48 UTC</lastBuildDate>
+    
+    <item>
+      <title>Managing App Engine Dependencies Using pip</title>
+      <link>http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip/</link>
+      <pubDate>Tue, 30 Dec 2014 20:35:48 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip/</guid>
+      <description>&lt;p&gt;One unfortunate difficulty when working with App Engine is managing your local
+dependencies. You don&amp;rsquo;t have access to your Python environment so all libraries
+you wish to use must be &lt;em&gt;vendored&lt;/em&gt; with your installation. That is, you need to
+copy all of your library code into a local folder to ship along with your app.&lt;/p&gt;
+
+&lt;p&gt;This usually doesn&amp;rsquo;t cause any problems but difficulties start to crop up when
+you manage multiple dependencies that rely on each other. For example, the
+official &lt;a href=&#34;https://github.com/elasticsearch/elasticsearch-py&#34;&gt;elasticsearch
+client&lt;/a&gt; requires
+&lt;a href=&#34;https://github.com/shazow/urllib3&#34;&gt;urllib3&lt;/a&gt; between version &lt;code&gt;1.8&lt;/code&gt; and &lt;code&gt;2.0&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Traditionally, &lt;a href=&#34;https://pip.pypa.io/en/latest/&#34;&gt;pip&lt;/a&gt; is used to install these
+dependencies on your behalf. The command &lt;code&gt;pip install elasticsearch&lt;/code&gt; will
+automatically fetch the urllib3 dependency for you and install it to your local
+Python environment. By adding the &lt;code&gt;-t&lt;/code&gt; flag you can provide a destination folder
+to install your libraries. As an example, we can install the elasticsearch
+and urllib3 libraries to the folder &lt;code&gt;src/lib&lt;/code&gt; with the following command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;pip install elasticsearch -t src/lib
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This works great for App Engine which requires the source of your libraries to
+be shipped with your application. Unfortunately, it starts to break down when
+you need to upgrade your dependencies. Installing with the &lt;code&gt;-t&lt;/code&gt; flag does not
+overwrite the contents of the existing folder so running the same command again
+results in an error.&lt;/p&gt;
+
+&lt;p&gt;A solution to this can be found with some basic shell scripting. The first portion of our script installs the requested package and it&amp;rsquo;s
+dependencies to a temporary directory and removes any extra files that we don&amp;rsquo;t
+need.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;pip install elasticsearch -t $TEMP_DIRECTORY
+rm -r $TEMP_DIRECTORY/*.egg-info &amp;gt;/dev/null 2&amp;gt;&amp;amp;1
+rm -r $TEMP_DIRECTORY/*.dist-info &amp;gt;/dev/null 2&amp;gt;&amp;amp;1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The next step is to remove the specific libraries being installed from our App
+Engine library directory and copy the contents of our temporary directory in their place.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;TARGET=src/lib
+for i in $(ls $TEMP_DIRECTORY); do
+  rm -r $TARGET/$i &amp;gt;/dev/null 2&amp;gt;&amp;amp;1  # remove existing module
+  cp -R $TEMP_DIRECTORY/$i $TARGET  # copy the replacement in
+done
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This code can be used as a starting point to write a more user friendly and
+robust script. Although this does not truly solve the problem of dependency
+management with App Engine it does provide a way to seamlessly vendor Python
+libraries and all of their dependencies with your application.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>App Engine MapReduce API - Part 7: Writing a Custom Output Writer</title>

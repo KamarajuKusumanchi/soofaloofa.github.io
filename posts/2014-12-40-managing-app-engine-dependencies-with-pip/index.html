@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 
-<title>Python : sookocheff.com</title>
+<title>Managing App Engine Dependencies Using pip : sookocheff.com</title>
 
 <meta charset="utf-8">
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/tags/python/">
+<link rel="canonical" href="http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -69,17 +69,16 @@
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <section class="page">
-        <h1>Python</h1>
-
-        
-          <article>
-            <h2><a href="http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip/">Managing App Engine Dependencies Using pip</a></h2>
+        <article class="post">
+          <h1>Managing App Engine Dependencies Using pip</h1>
+          <p>
             <small class="text-muted">
               Posted on Tuesday, December 30, 2014 · <a href="http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                <p>One unfortunate difficulty when working with App Engine is managing your local
+          </p>
+
+          <div class=".post-content">
+            <p>One unfortunate difficulty when working with App Engine is managing your local
 dependencies. You don&rsquo;t have access to your Python environment so all libraries
 you wish to use must be <em>vendored</em> with your installation. That is, you need to
 copy all of your library code into a local folder to ship along with your app.</p>
@@ -129,124 +128,94 @@ done
 robust script. Although this does not truly solve the problem of dependency
 management with App Engine it does provide a way to seamlessly vendor Python
 libraries and all of their dependencies with your application.</p>
+ 
+          </div>
 
-              </p>
-            
-            <hr>
-          </article>
-        
-          <article>
-            <h2><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">App Engine MapReduce API - Part 7: Writing a Custom Output Writer</a></h2>
-            <small class="text-muted">
-              Posted on Monday, December 22, 2014 · <a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer//#disqus_thread">0 Comments</a>
-            </small>
-            
-              <p>
-                The MapReduce library supports a number of default output writers. You can also write your own that implements the output writer interface. This article examines how to write a custom output writer that pushes data from the App Engine datastore to an elasticsearch cluster. A similar pattern can be followed to push the output from your MapReduce job to any number of places.
-              </p>
-              <p class="text-center">
-                <a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/"><button type="button" class="btn btn-primary">Read More</button></a>
-              </p>
-            
-            <hr>
-          </article>
-        
-          <article>
-            <h2><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">App Engine MapReduce API - Part 6: Writing a Custom Input Reader</a></h2>
-            <small class="text-muted">
-              Posted on Thursday, December 4, 2014 · <a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader//#disqus_thread">0 Comments</a>
-            </small>
-            
-              <p>
-                In this post we will explore how to write an InputReader the leases tasks from an AppEngine pull queue by implementing the InputReader interface.
-              </p>
-              <p class="text-center">
-                <a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/"><button type="button" class="btn btn-primary">Read More</button></a>
-              </p>
-            
-            <hr>
-          </article>
-        
-          <article>
-            <h2><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">App Engine MapReduce API - Part 5: Using Combiners to Reduce Data Throughput</a></h2>
-            <small class="text-muted">
-              Posted on Tuesday, May 20, 2014 · <a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput//#disqus_thread">0 Comments</a>
-            </small>
-            
-              <p>
-                In this post we will look at how to reduce the amount of data transfer during a MapReduce job using a combiner.
-              </p>
-              <p class="text-center">
-                <a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/"><button type="button" class="btn btn-primary">Read More</button></a>
-              </p>
-            
-            <hr>
-          </article>
-        
-          <article>
-            <h2><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">App Engine MapReduce API - Part 4: Combining Sequential MapReduce Jobs</a></h2>
-            <small class="text-muted">
-              Posted on Tuesday, May 13, 2014 · <a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs//#disqus_thread">0 Comments</a>
-            </small>
-            
-              <p>
-                In this post we will see how to chain multiple MapReduce Pipelines together to perform sequential tasks.
-              </p>
-              <p class="text-center">
-                <a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/"><button type="button" class="btn btn-primary">Read More</button></a>
-              </p>
-            
-            <hr>
-          </article>
-        
-          <article>
-            <h2><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines</a></h2>
-            <small class="text-muted">
-              Posted on Monday, April 28, 2014 · <a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines//#disqus_thread">0 Comments</a>
-            </small>
-            
-              <p>
-                In this article we will take our exploration of MapReduce a step further by looking at how to run a MapReduce job programmatically using the App Engine Pipeline API.
-              </p>
-              <p class="text-center">
-                <a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/"><button type="button" class="btn btn-primary">Read More</button></a>
-              </p>
-            
-            <hr>
-          </article>
-        
-          <article>
-            <h2><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml</a></h2>
-            <small class="text-muted">
-              Posted on Tuesday, April 22, 2014 · <a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml//#disqus_thread">0 Comments</a>
-            </small>
-            
-              <p>
-                In this article we&#39;ll be getting our hands dirty writing some code to handle the Map Stage. The Map Stage is composed of two separate components: an InputReader and a map function. We&#39;ll look at each of these in turn and show how to run some basic MapReduce jobs using the App Engine API.
-              </p>
-              <p class="text-center">
-                <a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/"><button type="button" class="btn btn-primary">Read More</button></a>
-              </p>
-            
-            <hr>
-          </article>
-        
-          <article>
-            <h2><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">App Engine MapReduce API - Part 1: The Basics</a></h2>
-            <small class="text-muted">
-              Posted on Tuesday, April 15, 2014 · <a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics//#disqus_thread">0 Comments</a>
-            </small>
-            
-              <p>
-                This article provides an overview of the App Engine MapReduce API. We will give a basic overview of what MapReduce is and how it is used to do parallel and distributed processing of large datasets.
-              </p>
-              <p class="text-center">
-                <a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/"><button type="button" class="btn btn-primary">Read More</button></a>
-              </p>
-            
-            <hr>
-          </article>
-        
+          <hr>
+            <ul class="list-inline">
+  <li>Share this post:</li>
+  <li>
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-12-40-managing-app-engine-dependencies-with-pip%2f&text=Managing%20App%20Engine%20Dependencies%20Using%20pip&via=soofaloofa">
+      <i class="fa fa-twitter fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2014-12-40-managing-app-engine-dependencies-with-pip%2f">
+      <i class="fa fa-facebook fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-12-40-managing-app-engine-dependencies-with-pip%2f">
+      <i class="fa fa-google-plus fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2014-12-40-managing-app-engine-dependencies-with-pip%2f">
+      <i class="fa fa-linkedin fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2014-12-40-managing-app-engine-dependencies-with-pip%2f">
+      <i class="fa fa-envelope fa-lg"></i>
+    </a>
+  </li>
+</ul>
+
+          <hr>
+
+          <div class="blurb">
+            <div class="row">
+              <div class="col-md-10 col-md-offset-1">
+                <h4 class="text-center">About Kevin Sookocheff</h4>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 col-md-offset-1">
+                <p>
+                  <img class="img-circle center-block" src="/img/profile.png">
+                </p>
+              </div>
+              <div class="col-md-6">
+                <p>
+                  I am a Software Developer. I work at <a
+  href="http://www.vendasta.com">VendAsta</a> with a bunch of great people. I
+run a business as <a href="http://redfinchsoftware.com">Red Finch Software</a>.
+You can find me online as <a
+href="https://twitter.com/soofaloofa">soofaloofa</a>. I love to teach, learn,
+speak and write about business and software.
+
+                  <ul class="list-inline">
+                    <li>On the web:</li>
+                    <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+                    <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+                    <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+                    <li><a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square fa-lg"></i></a></li>
+                    <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+                    <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+                  </ul>
+                </p>
+              </div>
+            </div>
+          </div>
+          <hr>
+
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+     
+    var disqus_shortname = 'kevinsookocheff'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        </article>
       </section>
     </div>
   </div>

@@ -5,7 +5,66 @@
     <link>http://sookocheff.com/tags/app-engine/index.xml/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Mon, 22 Dec 2014 07:07:35 UTC</lastBuildDate>
+    <lastBuildDate>Tue, 30 Dec 2014 20:35:48 UTC</lastBuildDate>
+    
+    <item>
+      <title>Managing App Engine Dependencies Using pip</title>
+      <link>http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip/</link>
+      <pubDate>Tue, 30 Dec 2014 20:35:48 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip/</guid>
+      <description>&lt;p&gt;One unfortunate difficulty when working with App Engine is managing your local
+dependencies. You don&amp;rsquo;t have access to your Python environment so all libraries
+you wish to use must be &lt;em&gt;vendored&lt;/em&gt; with your installation. That is, you need to
+copy all of your library code into a local folder to ship along with your app.&lt;/p&gt;
+
+&lt;p&gt;This usually doesn&amp;rsquo;t cause any problems but difficulties start to crop up when
+you manage multiple dependencies that rely on each other. For example, the
+official &lt;a href=&#34;https://github.com/elasticsearch/elasticsearch-py&#34;&gt;elasticsearch
+client&lt;/a&gt; requires
+&lt;a href=&#34;https://github.com/shazow/urllib3&#34;&gt;urllib3&lt;/a&gt; between version &lt;code&gt;1.8&lt;/code&gt; and &lt;code&gt;2.0&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Traditionally, &lt;a href=&#34;https://pip.pypa.io/en/latest/&#34;&gt;pip&lt;/a&gt; is used to install these
+dependencies on your behalf. The command &lt;code&gt;pip install elasticsearch&lt;/code&gt; will
+automatically fetch the urllib3 dependency for you and install it to your local
+Python environment. By adding the &lt;code&gt;-t&lt;/code&gt; flag you can provide a destination folder
+to install your libraries. As an example, we can install the elasticsearch
+and urllib3 libraries to the folder &lt;code&gt;src/lib&lt;/code&gt; with the following command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;pip install elasticsearch -t src/lib
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This works great for App Engine which requires the source of your libraries to
+be shipped with your application. Unfortunately, it starts to break down when
+you need to upgrade your dependencies. Installing with the &lt;code&gt;-t&lt;/code&gt; flag does not
+overwrite the contents of the existing folder so running the same command again
+results in an error.&lt;/p&gt;
+
+&lt;p&gt;A solution to this can be found with some basic shell scripting. The first portion of our script installs the requested package and it&amp;rsquo;s
+dependencies to a temporary directory and removes any extra files that we don&amp;rsquo;t
+need.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;pip install elasticsearch -t $TEMP_DIRECTORY
+rm -r $TEMP_DIRECTORY/*.egg-info &amp;gt;/dev/null 2&amp;gt;&amp;amp;1
+rm -r $TEMP_DIRECTORY/*.dist-info &amp;gt;/dev/null 2&amp;gt;&amp;amp;1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The next step is to remove the specific libraries being installed from our App
+Engine library directory and copy the contents of our temporary directory in their place.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;TARGET=src/lib
+for i in $(ls $TEMP_DIRECTORY); do
+  rm -r $TARGET/$i &amp;gt;/dev/null 2&amp;gt;&amp;amp;1  # remove existing module
+  cp -R $TEMP_DIRECTORY/$i $TARGET  # copy the replacement in
+done
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This code can be used as a starting point to write a more user friendly and
+robust script. Although this does not truly solve the problem of dependency
+management with App Engine it does provide a way to seamlessly vendor Python
+libraries and all of their dependencies with your application.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>App Engine MapReduce API - Part 7: Writing a Custom Output Writer</title>
@@ -1771,132 +1830,6 @@ class CountCharactersPipeline(pipeline.Pipeline):
             output_writer_spec=&amp;quot;mapreduce.output_writers.BlobstoreOutputWriter&amp;quot;,
             shards=16)
 &lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>App Engine MapReduce API - Part 4: Combining Sequential MapReduce Jobs</title>
-      <link>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/</link>
-      <pubDate>Tue, 13 May 2014 10:40:38 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/</guid>
-      <description>
-
-&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/&#34;&gt;Part 6: Writing a Custom Input Reader&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/&#34;&gt;Part 7: Writing a Custom Output Writer&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Last
-time&lt;/a&gt;
-we looked at how to run a full MapReduce Pipeline to count the number of
-occurrences of a character within each string. In this post we will see how to
-chain multiple MapReduce Pipelines together to perform sequential tasks.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_1&#34;&gt;Combining Sequential MapReduce Jobs&lt;/h2&gt;
-
-&lt;p&gt;As a contrived example (as all examples are) let&amp;rsquo;s imagine a scenario where we
-want to clean up some data by deleting a business entity from the datastore.
-Each business has employees stored that also need to be deleted. Our simplified
-models look like this.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from google.appengine.ext import ndb
-
-class Business(ndb.model):
-    &amp;quot;&amp;quot;&amp;quot;
-    Model representing a business which will have employees.
-    &amp;quot;&amp;quot;&amp;quot;
-    name = ndb.StringProperty(required=True)
-    address = ndb.StringProperty()
-    
-class Employee(ndb.model):
-    &amp;quot;&amp;quot;&amp;quot;
-    Model representing employees of a business.
-    &amp;quot;&amp;quot;&amp;quot;
-    name = ndb.StringProperty(required=True)
-    business = ndb.StringProperty(required=True)    
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Let&amp;rsquo;s create a pipeline that will iterate over every business with a matching
-&lt;code&gt;name&lt;/code&gt; and delete all the employees from that business. We can take advantage of
-the &lt;code&gt;filters&lt;/code&gt; parameter of the &lt;code&gt;DatastoreInputReader&lt;/code&gt; to find all employees
-working at a business with a matching name.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def delete_employee(entity):
-    &amp;quot;&amp;quot;&amp;quot; Delete an employee entity. &amp;quot;&amp;quot;&amp;quot;
-    yield op.db.Delete(entity)
-
-class DeleteBusinessPipeline(pipeline.Pipeline):
-    &amp;quot;&amp;quot;&amp;quot; Delete a business. &amp;quot;&amp;quot;&amp;quot;
-
-    def run(self, business_name, **kwargs):
-        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
-        employee_params = {
-            &amp;quot;entity_kind&amp;quot;: &amp;quot;app.pipelines.Employee&amp;quot;,
-            &amp;quot;filters&amp;quot;: [(&#39;business&#39;, &#39;=&#39;, business_name)],
-        }
-        yield mapreduce_pipeline.MapperPipeline(
-            &amp;quot;delete_employee&amp;quot;,
-            handler_spec=app.pipelines.delete_employee,
-            input_reader_spec=&amp;quot;mapreduce.input_readers.DatastoreInputReader&amp;quot;,
-            params=employee_params,
-            shards=2)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This simple pipeline will delete all of the employees. We can add a second
-pipeline to our execution that will delete the business by simply yielding the
-return value of the first pipeline to the Pipeline API.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def delete_employee(entity):
-    &amp;quot;&amp;quot;&amp;quot; Delete an employee entity. &amp;quot;&amp;quot;&amp;quot;
-    yield op.db.Delete(entity)
-
-def delete_business(entity):
-    &amp;quot;&amp;quot;&amp;quot; Delete a business entity. &amp;quot;&amp;quot;&amp;quot;
-    yield op.db.Delete(entity)
-
-class DeleteBusinessPipeline(pipeline.Pipeline):
-    &amp;quot;&amp;quot;&amp;quot; Delete a business. &amp;quot;&amp;quot;&amp;quot;
-
-    def run(self, business_name, **kwargs):
-        &amp;quot;&amp;quot;&amp;quot; run &amp;quot;&amp;quot;&amp;quot;
-        employee_params = {
-            &amp;quot;entity_kind&amp;quot;: &amp;quot;app.pipelines.Employee&amp;quot;,
-            &amp;quot;filters&amp;quot;: [(&#39;business&#39;, &#39;=&#39;, business_name)],
-        }
-        yield mapreduce_pipeline.MapperPipeline(
-            &amp;quot;delete_employee&amp;quot;,
-            handler_spec=app.pipelines.delete_employee,
-            input_reader_spec=&amp;quot;mapreduce.input_readers.DatastoreInputReader&amp;quot;,
-            params=employee_params,
-            shards=2)
-
-        business_params = {
-            &amp;quot;entity_kind&amp;quot;: &amp;quot;app.pipelines.Business&amp;quot;,
-            &amp;quot;filters&amp;quot;: [(&#39;name&#39;, &#39;=&#39;, business_name)],
-        }
-        yield mapreduce_pipeline.MapperPipeline(
-            &amp;quot;delete_business&amp;quot;,
-            handler_spec=app.pipelines.delete_business,
-            input_reader_spec=&amp;quot;mapreduce.input_readers.DatastoreInputReader&amp;quot;,
-            params=business_params,
-            shards=2)
-
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The return value of the MapperPipeline call is a &lt;code&gt;PipelineFuture&lt;/code&gt; object. This
-future will be executed once the previous future has completed. In this case our
-employee deletion pipeline will complete and the business deletion future will
-execute.&lt;/p&gt;
-
-&lt;p&gt;And that&amp;rsquo;s all it takes to run two sequential MapReduce jobs!&lt;/p&gt;
 </description>
     </item>
     

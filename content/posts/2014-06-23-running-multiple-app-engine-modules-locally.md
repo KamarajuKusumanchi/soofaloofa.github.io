@@ -9,6 +9,8 @@ tags:
 
 The recently released [App Engine Modules API](https://developers.google.com/appengine/docs/python/modules/) allows developers to compartmentalize their applications into logical units that can share state using the datastore or memcache.
 
+<!--more-->
+
 The documentation for this API is fairly complete but one part is lacking — running multiple modules locally using dev_appserver.py. Thankfully, the solution is not too complicated.  Just pass the list of `.yaml` files defining your modules to dev_appserver and it will run all of your modules locally. 
 
 ```bash

@@ -1,7 +1,6 @@
 ---
 title: "Using Basic Authentication with Google Cloud Endpoints"
 date: 2014-07-16T01:02:25Z
-description: "Cloud Endpoints provides strong integration with OAuth 2.0. If you can use this integration -- do it. However, some legacy systems require supporting alternative authentication mechanisms. This article will show you how to secure an API endpoint using Basic Authentication. You can use this as a starting point for whatever authentication method you choose."
 tags: 
   - "app engine"
   - "cloud endpoints"
@@ -15,6 +14,8 @@ integration -- do it. However, some legacy systems require supporting
 alternative authentication mechanisms. This article will show you how to secure
 an API endpoint using Basic Authentication. You can use this as a starting point
 for whatever authentication method you choose.
+
+<!--more-->
 
 ## A basic endpoint
 

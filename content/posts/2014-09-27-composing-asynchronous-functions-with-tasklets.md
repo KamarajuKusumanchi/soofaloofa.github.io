@@ -1,7 +1,6 @@
 ---
 title: "Composing Asynchronous Functions With Tasklets"
 date: 2014-09-27T15:25:29Z
-description: "Asynchronous functions can provide a boon to application performance by allowing time consuming functions to operate in parallel and without blocking the main execution thread. This article explains how to use the Tasklet API to compose and execute asynchronous functions in Google App Engine."
 tags: 
   - "ndb"
   - "app engine"
@@ -9,6 +8,8 @@ tags:
 ---
 
 Asynchronous functions can provide a boon to application performance by allowing time consuming functions to operate in parallel and without blocking the main execution thread. This article explains how to use the Tasklet API to compose and execute asynchronous functions in Google App Engine.
+
+<!--more-->
 
 ## ndb.Future
 

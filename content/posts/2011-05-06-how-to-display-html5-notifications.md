@@ -12,6 +12,8 @@ Chrome recently introduced support for HTML Notifications.
 
 Following the brief tutorial at [HTML5 Rocks][1] I was able to implement this in a matter of minutes and I couldn’t be happier with the results.
 
+<!--more-->
+
  [1]: http://www.html5rocks.com/tutorials/notifications/quick/
 
 The first step towards implementation is to check if the Notifications API is implemented by the browser. We do this by checking for the existence of the webkitNotifications object.

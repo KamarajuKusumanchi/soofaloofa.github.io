@@ -1,7 +1,6 @@
 ---
 title: "Three questions that define an ideal customer"
 date: 2014-01-04T10:07:45Z
-description: "One of the first steps in selling a new product or service is finding your target market and one of the best ways of finding your target market is by defining your ideal customer. Ask yourself -- out of all the people in the world who would be the most likely to buy this thing? If you can clearly answer this question you have your ideal customer and you can start a marketing campaign targetting exactly the demographic you are trying to sell to. Let's go through an exercise that can help to find that ideal customer by asking three simple questions."
 tags: 
   - "customer"
   - "marketing"
@@ -10,6 +9,8 @@ tags:
 One of the first steps in selling a new product or service is finding your target market and one of the best ways of finding your target market is by defining your ideal customer. Ask yourself -- out of all the people in the world who would be the most likely to buy this thing? If you can clearly answer this question you have your ideal customer and you can start a marketing campaign targetting exactly the demographic you are trying to sell to.
 
 Let's go through an exercise that can help to find that ideal customer by asking three simple questions.
+
+<!--more-->
 
 ## 1. What are you selling?
 

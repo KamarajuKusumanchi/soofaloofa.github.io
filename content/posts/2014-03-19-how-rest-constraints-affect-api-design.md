@@ -1,7 +1,6 @@
 ---
 title: "How REST Constraints Affect API Design"
 date: 2014-03-19T14:11:48Z
-description: "REST was developed and formalized by analyzing the existing Web and extracting the principles that made it work. This set of principles was written down in the Fielding dissertation which lays out the set of constraints that, when enforced, will make a generic network system into a resilient network like the Web. This post examines why REST is important for modern APIs."
 tags: 
   - "hypermedia"
   - "rest"
@@ -18,6 +17,8 @@ dissertation Fielding outlines REST's interface constraints.
 > REST is defined by four interface constraints: identification of resources;
 > manipulation of resources using representations; self-descriptive messages;
 > and, hypermedia as the engine of application state. 
+
+<!--more-->
 
 ### Why is this important for APIs?
 

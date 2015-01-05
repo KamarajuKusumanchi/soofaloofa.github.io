@@ -10,6 +10,8 @@ tags:
 I recently tried installing lxml for use within an App Engine project on OS X
 Mavericks only to be hit with an error message from `clang`.
 
+<!--more-->
+
 ```
 clang: error: unknown argument: '-mno-fused-madd' [-Wunused-command-line-argument-hard-error-in-future]
 

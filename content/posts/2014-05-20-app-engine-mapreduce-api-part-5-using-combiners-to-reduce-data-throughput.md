@@ -1,7 +1,6 @@
 ---
 title: "App Engine MapReduce API - Part 5: Using Combiners to Reduce Data Throughput"
 date: 2014-05-20T08:54:12Z
-description: "In this post we will look at how to reduce the amount of data transfer during a MapReduce job using a combiner."
 tags: 
   - "app engine"
   - "mapreduce"
@@ -23,6 +22,8 @@ series:
 So far we've looked at using MapReduce pipelines to perform calculations over
 large data sets and combined multiple pipelines in succession. In this article
 we will look at how to reduce the amount of data transfer by using a combiner.
+
+<!--more-->
 
 ##  What is a combiner?
 

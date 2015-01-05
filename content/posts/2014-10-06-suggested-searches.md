@@ -1,7 +1,6 @@
 ---
 title: "Suggested Searches with Google App Engine"
 date: 2014-10-06T05:52:29Z
-description: "At VendAsta we have a few APIs that are backed by search documents built using the App Engine Search API. These APIs are queried using a search string entered in a text box. One way to improve the user experience of this text box is to offer the user suggestions of popular searches to use as their query. This article describes how to achieve this."
 tags: 
   - "search"
   - "app engine"
@@ -13,6 +12,8 @@ API](https://cloud.google.com/appengine/docs/python/search/). These APIs are
 queried using a search string entered in a text box. One way to improve the user
 experience of this text box is to offer the user suggestions of popular searches
 to use as their query. This article describes how to achieve this.
+
+<!--more-->
 
 ## Finding the most likely search terms
 

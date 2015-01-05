@@ -5,7 +5,11 @@ tags:
   - "javascript"
 ---
 
-I was recently working with the HTML canvas element and wanted to attach an event to the canvas that would fire the click event of a file input element. I would then hide the input element so that the canvas element was the only way to browse for files. My first attempt was simple enough.
+I was recently working with the HTML canvas element and wanted to attach an event to the canvas that would fire the click event of a file input element. I would then hide the input element so that the canvas element was the only way to browse for files. 
+
+<!--more-->
+
+My first attempt was simple enough.
 
     document.getElementById('canvas').onclick = function(e) {
         document.getElementById('filepicker').click();

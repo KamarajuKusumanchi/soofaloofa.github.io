@@ -1,7 +1,6 @@
 ---
 title: "Generating a C# client for an App Engine Cloud Endpoints API"
 date: 2014-07-22T06:29:56Z
-description: "The Cloud Endpoints API comes packaged with endpointscfg.py to generate client libraries in JavaScript, Objective-C (for iOS) and Java (for Android). You can also generate a few additional client libraries using the Google APIs client generator. This article will show you how to use the generator to create a C# client library."
 tags: 
   - "app engine"
   - "cloud endpoints"
@@ -15,6 +14,8 @@ libraries in JavaScript, Objective-C (for iOS) and Java (for Android). You can
 also generate a few additional client libraries using the [Google APIs client
 generator](https://code.google.com/p/google-apis-client-generator/). This
 article will show you how to use the generator to create a C# client library.
+
+<!--more-->
 
 The client generator is a Python application you can install with `pip`.
 

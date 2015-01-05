@@ -1,7 +1,6 @@
 ---
 title: "Converting an ndb model to a BigQuery schema"
 date: 2014-08-14T17:58:03Z
-description: "I have been working on the problem of recording changes to an ndb model. One way to accomplish this is to record changes to an ndb model by streaming data to a BigQuery table corresponding to the model. This leaves the problem of generating a BigQuery table given an ndb model. This article will describe one approach to this problem."
 tags: 
   - "app engine"
   - "ndb"
@@ -9,6 +8,8 @@ tags:
 ---
 
 I have been working on the problem of recording changes to an ndb model. One way to accomplish this is to stream data changes to a BigQuery table corresponding to the ndb model. It would be great to do this in a generic way which gives us the problem of generating a BigQuery table given an ndb model. This article will describe one solution to this problem.
+
+<!--more-->
 
 ## Accessing the properties of an ndb class
 

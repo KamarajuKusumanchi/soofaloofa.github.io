@@ -1,11 +1,12 @@
 ---
 title: "How to forward root users mail to an external address" 
 date: 2010-06-01T14:12:32Z
-description: "I recently set up a RAID array wanted to keep notified of any errors that may occur. By default Ubuntu Server sends mail to the root user whenever an error occurs but logging in as root to check mail every so often didn’t seem very convenient. There had to be a better way. The best information that I found came from the Ubuntu community forums. Here I’ll expand on that discussion, hopefully helping other people who are trying to do the same thing. The traditional way to forward mail is to create a .forward file in your home directory, entering the addresses that you would like to forward mail to."
 tags: ["ubuntu", "linux"]
 ---
 
 I recently set up a RAID array wanted to keep notified of any errors that may occur. By default Ubuntu Server sends mail to the root user whenever an error occurs but logging in as root to check mail every so often didn’t seem very convenient. There had to be a better way. The best information that I found came from the Ubuntu community forums. Here I’ll expand on that discussion, hopefully helping other people who are trying to do the same thing. The traditional way to forward mail is to create a .forward file in your home directory, entering the addresses that you would like to forward mail to.
+
+<!--more-->
 
 For example,
 

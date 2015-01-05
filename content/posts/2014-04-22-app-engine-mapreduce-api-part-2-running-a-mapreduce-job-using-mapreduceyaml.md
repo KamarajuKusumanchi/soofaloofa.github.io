@@ -1,7 +1,6 @@
 ---
 title: "App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml"
 date: 2014-04-22T06:48:36Z
-description: "In this article we'll be getting our hands dirty writing some code to handle the Map Stage. The Map Stage is composed of two separate components: an InputReader and a map function. We'll look at each of these in turn and show how to run some basic MapReduce jobs using the App Engine API."
 tags: 
   - "app engine"
   - "mapreduce"
@@ -21,6 +20,8 @@ series:
 * [Part 7: Writing a Custom Output Writer](http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/)
 
 [Last time](http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/) we looked at an overview of how MapReduce works. In this article we'll be getting our hands dirty writing some code to handle the Map Stage. If you'll recall, the Map Stage is composed of two separate components: an InputReader and a `map` function. We'll look at each of these in turn.
+
+<!--more-->
 
 ## Getting Started: Installation
 

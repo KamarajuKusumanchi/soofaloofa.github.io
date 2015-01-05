@@ -1,7 +1,6 @@
 ---
 title: "Packaging a Compute Engine Virtual Machine Image"
 date: 2014-10-28T06:03:42Z
-description: "Google Compute Engine allows you to make custom images from a running virtual machine. The documentation provides a sufficient example but is a little bit scattered. This article collects and presents all the steps necessary to create your own Compute Engine images that you can use as a base for virtual machines."
 tags: 
   - "compute engine"
   - "images"
@@ -11,6 +10,8 @@ Google Compute Engine allows you to make custom images from a running virtual
 machine. The documentation provides a sufficient example but is a little bit
 scattered. This article collects and presents all the steps necessary to create
 your own Compute Engine images that you can use as a base for virtual machines.
+
+<!--more-->
 
 ## 1. Create a Packaged Image
 

@@ -7,6 +7,8 @@ tags:
 
 How are constants declared in JavaScript?
 
+<!--more-->
+
 You could use the const keyword like so.
 
     const pi = 3.14;

@@ -1,7 +1,6 @@
 ---
 title: "Automatically Resizing a Compute Engine Disk"
 date: 2014-11-11T19:21:45Z
-description: "A recurring issue when working with Compute Engine is that newly created Instances have only 10 GB of free space available. To take advantage of the full disk size you need to manually partition and resize it. This article shows one method of accomplishing this task."
 tags: 
   - "compute engine"
   - "disk"

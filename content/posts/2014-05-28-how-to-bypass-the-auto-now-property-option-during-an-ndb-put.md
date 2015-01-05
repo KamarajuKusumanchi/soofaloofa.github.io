@@ -13,6 +13,8 @@ the time when an entity was last updated. However, sometimes you may want to put
 an entity without updating an `auto_now` timestamp. This article will show you
 how.
 
+<!--more-->
+
 First, let's start with a very basic ndb model with an `updated` property having
 the `auto_now` option set to `True`.
 

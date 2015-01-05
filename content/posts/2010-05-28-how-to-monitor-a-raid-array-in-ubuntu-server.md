@@ -1,11 +1,12 @@
 ---
 title: "How to monitor a RAID array in Ubuntu server"
 date: 2010-05-28T02:15:45Z
-description: "I've been searching for a way to reliably monitor a RAID array.  I found a few resources and decided to compile them in one post.  If you are running Ubuntu Server skip to the bottom for some good news."
 tags: ["raid", "ubuntu", "linux"]
 ---
 
 I’ve been searching for a way to reliably monitor a RAID array.  I found a few resources and decided to compile them in one post.  If you are running Ubuntu Server skip to the bottom for some good news. 
+
+<!--more-->
 
 ## /proc/mdstat
 

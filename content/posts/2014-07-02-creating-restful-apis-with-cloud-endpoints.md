@@ -1,7 +1,6 @@
 ---
 title: "Creating RESTful APIs with App Engine Cloud Endpoints"
 date: 2014-07-02T06:14:23Z
-description: "App Engine Cloud Endpoints can is a great way to quickly and easily create JSON API endpoints. What's not clear is how to structure your Message code to support a RESTful create-read-update-delete (CRUD) API. This article will show the basic CRUD operations for one Resource. The results can easily be adapted to support a full REST API."
 tags: 
   - "app engine"
   - "rest"
@@ -18,6 +17,8 @@ how to structure your `Message` code to support a RESTful
 create-read-update-delete (CRUD) API. This article will show the basic CRUD
 operations for one Resource. The results can easily be adapted to support a full
 REST API.
+
+<!--more-->
 
 To support this discussion let's use a concrete resource for our API -- a `User`
 resource. We can give our `User` model a few simple attributes.

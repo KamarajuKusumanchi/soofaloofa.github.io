@@ -1,7 +1,6 @@
 ---
 title: "When to Use HTTP PUT and HTTP POST"
 date: 2014-03-27T07:23:34Z
-description: The HTTP protocol defines two methods for updating a resource -- PUT and POST. Both PUT and POST are used to modify a resource and this semantic similarity can confuse API developers. This confusion has led most developers to use POST for any action which may modify the state of a resource, ignoring PUT entirely. This article attempts to explain the semantics behind the PUT and POST methods and offers clear suggestions on when to use each method.
 tags: 
   - "hypermedia"
   - "rest"
@@ -18,6 +17,8 @@ use `POST` for any action which may modify the state of a resource, ignoring
 
 This article attempts to explain the semantics behind the `PUT` and `POST`
 methods and offers clear suggestions on when to use each method.
+
+<!--more-->
 
 ## PUT
 

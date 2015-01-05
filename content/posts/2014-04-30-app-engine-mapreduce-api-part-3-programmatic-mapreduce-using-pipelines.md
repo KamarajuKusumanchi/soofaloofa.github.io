@@ -1,7 +1,6 @@
 ---
 title: "App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines"
 date: 2014-04-28T21:51:22Z
-description: In this article we will take our exploration of MapReduce a step further by looking at how to run a MapReduce job programmatically using the App Engine Pipeline API.
 tags: 
   - "app engine"
   - "mapreduce"
@@ -21,6 +20,8 @@ series:
 * [Part 7: Writing a Custom Output Writer](http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/)
 
 [In the last article](http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/) we examined how to run one-off tasks that operate on a large dataset using a `mapreduce.yaml` configuration file. This article will take us a step further and look at how to run a MapReduce job programmatically using the App Engine Pipeline API.
+
+<!--more-->
 
 ## Running a Mapper Job Using the App Engine Pipeline API
 

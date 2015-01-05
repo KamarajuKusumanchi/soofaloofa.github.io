@@ -1,12 +1,13 @@
 ---
 title: "Readability by Arc90" 
 date: 2010-09-04T13:13:13Z
-description: "According to Wikipedia, readability is defined as reading ease, especially as it results from a writing style.  Only experience, practice, and hard work can improve a person’s writing style.  Let’s increase readability in a different manner: with typography."
 tags:
   - "readability"
 ---
 
 According to Wikipedia, readability is defined as reading ease, especially as it results from a writing style.  Only experience, practice, and hard work can improve a person’s writing style.  Let’s increase readability in a different manner: with typography.
+
+<!--more-->
 
 The web is awash with examples of terrible typography: poor font choice, minuscule text, horrible colours.  Everyone has came across a web page that was just about impossible to read.  There is a solution.  [Readability by Arc90][1].
 

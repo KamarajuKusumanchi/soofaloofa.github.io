@@ -1,7 +1,6 @@
 ---
 title: "App Engine MapReduce API - Part 6: Writing a Custom Input Reader"
 date: 2014-12-04T22:54:12Z
-description: "In this post we will explore how to write an InputReader the leases tasks from an AppEngine pull queue by implementing the InputReader interface."
 tags: 
   - "app engine"
   - "mapreduce"
@@ -24,6 +23,8 @@ One of the great things about the MapReduce library is the abilitiy to write a
 cutom InputReader to process data from any data source. In this post we will
 explore how to write an InputReader the leases tasks from an AppEngine pull
 queue by implementing the `InputReader` interface.
+
+<!--more-->
 
 The interface we need to implement is available at
 [`mapreduce.input_readers.InputReader`](https://github.com/GoogleCloudPlatform/appengine-mapreduce/blob/master/python/src/mapreduce/input_readers.py#L119).

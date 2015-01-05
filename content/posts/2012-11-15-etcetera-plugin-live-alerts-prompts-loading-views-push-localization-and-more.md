@@ -6,8 +6,12 @@ tags:
   - "prime31"
 ---
 
-I've been working with Prime31's Etcetera plugin for iOS development with Unity3d. There are a lot of great things in there but some of the documentation is lacking.  
-Anyways, if you want to show a local web page with the `showWebPage` command it is a two step process.
+I've been working with Prime31's Etcetera plugin for iOS development with
+Unity3d. There are a lot of great things in there but some of the documentation
+is lacking.  Anyways, if you want to show a local web page with the
+`showWebPage` command it is a two step process.
+
+<!--more-->
 
 Step 1:
 

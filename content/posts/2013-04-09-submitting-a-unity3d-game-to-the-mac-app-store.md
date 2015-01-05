@@ -9,6 +9,8 @@ tags:
 
 Submitting a Unity3d game to the Mac App Store is a somewhat painful process. This guide refers to Unity3d 3.5 but should apply to Unity 4.0 and up.
 
+<!--more-->
+
 ## Building
 
 First, build your application for Mac and make sure that you uncheck Mac App Store Validation in the PlayerSettings Inspector window.

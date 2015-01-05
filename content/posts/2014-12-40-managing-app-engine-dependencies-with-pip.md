@@ -12,6 +12,8 @@ dependencies. You don't have access to your Python environment so all libraries
 you wish to use must be *vendored* with your installation. That is, you need to
 copy all of your library code into a local folder to ship along with your app.
 
+<!--more-->
+
 This usually doesn't cause any problems but difficulties start to crop up when
 you manage multiple dependencies that rely on each other. For example, the
 official [elasticsearch

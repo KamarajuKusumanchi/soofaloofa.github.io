@@ -1,7 +1,6 @@
 ---
 title: "App Engine MapReduce API - Part 4: Combining Sequential MapReduce Jobs"
 date: 2014-05-13T10:40:38Z
-description: "In this post we will see how to chain multiple MapReduce Pipelines together to perform sequential tasks."
 tags: 
   - "app engine"
   - "mapreduce"
@@ -25,6 +24,8 @@ time](http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-pro
 we looked at how to run a full MapReduce Pipeline to count the number of
 occurrences of a character within each string. In this post we will see how to
 chain multiple MapReduce Pipelines together to perform sequential tasks.
+
+<!--more-->
 
 ## Combining Sequential MapReduce Jobs
 

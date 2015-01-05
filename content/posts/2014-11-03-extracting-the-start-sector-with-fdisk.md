@@ -10,6 +10,8 @@ script a series of fdisk commands for resizing a partition and needed to extract
 the start sector from the existing disk to do so. I ended up using this
 combination of `grep` and `awk` to do the job.
 
+<!--more-->
+
 ```bash
 start_sector=$(sudo fdisk -l | grep ^/dev/sda1 |  awk -F" "  '{ print $3 }')
 ```

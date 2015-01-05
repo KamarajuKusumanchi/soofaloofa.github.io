@@ -1,7 +1,6 @@
 ---
 title: "Using the Google Prediction API to Predict the Sentiment of a Tweet"
 date: 2014-10-20T06:23:04Z
-description: "The Google Prediction API claims to offer the power of Google's machine learning algorithms over a RESTful API interface. The machine learning algorithms themselves are a complete black box. As a user you upload the training data and, once it has been analyzed, start classifying new observations based on the analysis of the training data. I recently spent some time investigating how to use the API to determine the sentiment of a tweet. This article collects my thoughts on the experience and a few recommendations for future work."
 tags: 
   - "prediction"
   - "machine learning"
@@ -15,6 +14,8 @@ observations based on the analysis of the training data. I recently spent some
 time investigating how to use the API to determine the sentiment of a tweet.
 This article collects my thoughts on the experience and a few recommendations
 for future work.
+
+<!--more-->
 
 ## The Data
 

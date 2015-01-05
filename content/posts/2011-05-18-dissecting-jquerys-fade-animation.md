@@ -8,6 +8,8 @@ tags:
 
 Fade animations are a standard tool in any jQuery developer’s toolbox. But how do they really work? Let’s create a small function that encapsulates solely the fade functionality and find out.
 
+<!--more-->
+
 Let’s start with the jQuery `$` idiom.
 
     function $(id) {

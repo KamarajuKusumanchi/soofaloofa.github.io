@@ -1,7 +1,6 @@
 ---
 title: "App Engine MapReduce API - Part 1: The Basics"
 date: 2014-04-15T12:09:36Z
-description: "This article provides an overview of the App Engine MapReduce API. We will give a basic overview of what MapReduce is and how it is used to do parallel and distributed processing of large datasets."
 tags: 
   - "app engine"
   - "mapreduce"
@@ -24,6 +23,8 @@ The first arcticle in this series provides an overview of the [App Engine MapRed
 API](https://developers.google.com/appengine/docs/python/dataprocessing/). We
 will give a basic overview of what MapReduce is and how it is used to do
 parallel and distributed processing of large datasets.
+
+<!--more-->
 
 ## The Map and Reduce Functions
 

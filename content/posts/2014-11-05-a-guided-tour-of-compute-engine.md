@@ -1,9 +1,6 @@
 ---
 title: "A Guided Tour of Google Compute Engine"
 date: 2014-11-05T04:45:05Z
-description: "This article will provide a broad overview of the Compute Engine
-ecosystem. Compute Engine is defined by Resources and each of these Resources
-are explained throughout this article."
 tags: 
   - "compute engine"
 ---
@@ -16,6 +13,8 @@ overview of the technology. Please take a moment to watch it. As the video
 shows, Compute Engine is defined by Resources, and each of these Resources is
 available through the Compute Engine API. You can access this API through the
 Google API Explorer or by installing the [gcloud sdk](https://cloud.google.com/sdk/).
+
+<!--more-->
 
 ## Key Resources
 

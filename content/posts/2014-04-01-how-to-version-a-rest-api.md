@@ -1,7 +1,6 @@
 ---
 title: "How to Version a REST API"
 date: 2014-04-01T14:16:18Z
-description: "API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients."
 tags: 
   - "hypermedia"
   - "rest"
@@ -10,6 +9,8 @@ tags:
 ---
 
 API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients. 
+
+<!--more-->
 
 ## 1) Versioned URL
 

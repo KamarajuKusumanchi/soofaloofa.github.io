@@ -1,7 +1,6 @@
 ---
 title: "App Engine MapReduce API - Part 7: Writing a Custom Output Writer"
 date: 2014-12-22T07:07:35Z
-description: "The MapReduce library supports a number of default output writers. You can also write your own that implements the output writer interface. This article examines how to write a custom output writer that pushes data from the App Engine datastore to an elasticsearch cluster. A similar pattern can be followed to push the output from your MapReduce job to any number of places."
 tags: 
   - "app engine"
   - "mapreduce"
@@ -26,6 +25,8 @@ write your own that implements the output writer interface. This article
 examines how to write a custom output writer that pushes data from the App
 Engine datastore to an elasticsearch cluster. A similar pattern can be followed
 to push the output from your MapReduce job to any number of places. 
+
+<!--more-->
 
 An output writer must implement the abstract interface defined by the MapReduce
 library. You can find the interface

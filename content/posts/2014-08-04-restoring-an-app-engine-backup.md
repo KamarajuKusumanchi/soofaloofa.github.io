@@ -1,7 +1,6 @@
 ---
 title: "Restoring an App Engine backup into a Big Query table"
 date: 2014-08-04T21:18:13Z
-description: "An unfortunate DevOps task for any team running App Engine is restoring data from backups. One way to do this is by accessing the Google Cloud Storage URL for a given App Engine backup and importing that backup into BigQuery. This article will show you to get the Cloud Storage URL for an App Engine backup and manually perform that import."
 tags: 
   - "app engine"
   - "datastore"
@@ -14,6 +13,8 @@ from backups. One way to do this is by accessing the Google Cloud Storage URL
 for a given App Engine backup and importing that backup into BigQuery. This
 article will show you to get the Cloud Storage URL for an App Engine backup and
 manually perform that import.
+
+<!--more-->
 
 ## Getting the Cloud Storage URL
 

@@ -1,7 +1,6 @@
 ---
 title: "On choosing a hypermedia type for your API - HAL, JSON-LD, Collection+JSON, SIREN, Oh My!"
 date: 2014-03-11T15:15:15Z
-description: "In recent years REST has been at the forefront of modern API design. This has led to APIs with manageable URLs that respect the HTTP verbs (GET, POST, PUT and the rest), producing an intuitive model for client developers. Unfortunately, there are two problems that REST doesn't solve alone."
 tags: 
   - "hypermedia"
   - "rest"
@@ -15,6 +14,8 @@ design. This has led to APIs with manageable URLs that respect the HTTP verbs
  rest](http://www.w3.org/Protocols/rfc2616/rfc2616.html)), producing an
 intuitive model for client developers. Unfortunately, there are two problems
 that REST doesn't solve alone.
+
+<!--more-->
 
 The first problem is standardized responses. Most every enterprise has defined
 their own custom API format, usually a JSON response that maps neatly to their

@@ -1,7 +1,6 @@
 ---
 title: "How to get Pulse Audio to recognize your Delta 44 (and other ICE1712 cards)" 
 date: 2010-09-28T14:23:34Z
-description: "I bought a used Delta 44 soundcard with the intention of recording my guitar playing. Pairing this with Rockit 5 powered monitors, a Mackie 802-VLZ3 mixer and the classic Shure SM57 microphone made for a good quality, inexpensive home studio. Using the PCI-based Delta 44 meant that any old computer would work and my idea was to use vanilla Ubuntu and install the Ardour digital audio workstation to push costs even further down. So far so good. Now the only issue is getting everything up and running. Ubuntu is a fairly mature distribution; you can expect a certain level of quality with each release. Unfortunately, this has not been the case with PulseAudio. I won’t go into details; suffice it to say it had a tumultuous upbringing and many of the kinks have since been worked out. Anyways, I quickly discovered that PulseAudio does not recognize the Delta 44. Don’t worry, this is a known problem and a workaround exists. Finding the workaround, however, did take some time."
 tags:
   - "linux"
   - "pulse audio"
@@ -9,6 +8,8 @@ tags:
 ---
 
 I bought a used Delta 44 soundcard with the intention of recording my guitar playing. Pairing this with Rockit 5 powered monitors, a Mackie 802-VLZ3 mixer and the classic Shure SM57 microphone made for a good quality, inexpensive home studio. Using the PCI-based Delta 44 meant that any old computer would work and my idea was to use vanilla Ubuntu and install the Ardour digital audio workstation to push costs even further down. So far so good. Now the only issue is getting everything up and running. Ubuntu is a fairly mature distribution; you can expect a certain level of quality with each release. Unfortunately, this has not been the case with PulseAudio. I won’t go into details; suffice it to say it had a tumultuous upbringing and many of the kinks have since been worked out. Anyways, I quickly discovered that PulseAudio does not recognize the Delta 44. Don’t worry, this is a known problem and a workaround exists. Finding the workaround, however, did take some time.
+
+<!--more-->
 
 By writing this, I hope to spare some time of yours. I’m going to copy the solution almost verbatim from the Launchpad bug report on this issue and hope that it gets a little more visibility than being buried in a long bug report with cross-references to other forum discussions. Make sure you entirely remove any leftovers from previous attempts to fix the problem. First, create the file
 

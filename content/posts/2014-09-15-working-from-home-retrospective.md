@@ -1,12 +1,6 @@
 ---
 title: "Working From Home: A Retrospective"
 date: 2014-09-18T12:57:32Z
-description: "I've spent the past eight months working from home thanks to some
-great support from my employer, allowing me to support my wife and children and
-still contribute as a meaningful employee. Working from home with four small
-children and a loving and supportive wife has brought its fair share of both
-challenges and delights. This post will describe the working from home
-experience and the lessons I've learned along the way."
 tags: 
   - "work from home"
 ---
@@ -17,6 +11,8 @@ children and still contribute as a meaningful employee. Working from home with
 four small children and a loving and supportive wife has brought its fair share
 of both challenges and delights. This post will describe the working from home
 experience and the lessons I've learned along the way.
+
+<!--more-->
 
 ## Personal Productivity
 

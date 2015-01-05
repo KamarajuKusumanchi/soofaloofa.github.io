@@ -1,13 +1,14 @@
 ---
 title: "Share multiple mt-daap libraries" 
 date: 2010-08-03T18:12:34Z
-description: "I recently moved all of our household music to a shared network drive and was looking for a solution to stream these libraries as distinct entities; I wanted to keep my wife’s library separate mostly so I could keep all of my painstakingly catalouged music organized exactly how I like it. I was already using mt-daapd, now known as the Firefly Media Server, to stream my own library from my Linux server. Unfortunately, it doesn’t support streaming two libraries from one program instance. The solution to this is to run two copies of mt-daapd and configure them to play nice with each other. Don’t worry, it’s not quite as difficult as it sounds. The first thing you’ll need is to have a separate configuration file for the second daap instance. The easiest way to do this is to copy the files from an existing installation."
 tags:
   - "linux"
   - "mt-daap"
 ---
 
 I recently moved all of our household music to a shared network drive and was looking for a solution to stream these libraries as distinct entities; I wanted to keep my wife’s library separate mostly so I could keep all of my painstakingly catalouged music organized exactly how I like it. I was already using mt-daapd, now known as the Firefly Media Server, to stream my own library from my Linux server. Unfortunately, it doesn’t support streaming two libraries from one program instance. The solution to this is to run two copies of mt-daapd and configure them to play nice with each other. Don’t worry, it’s not quite as difficult as it sounds. The first thing you’ll need is to have a separate configuration file for the second daap instance. The easiest way to do this is to copy the files from an existing installation.
+
+<!--more-->
 
 Run the following commands to copy the configuration and playlist files.
 

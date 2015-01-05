@@ -1,7 +1,6 @@
 ---
 title: "Understanding JSON Patch"
 date: 2014-04-08T16:12:14Z
-description: "The typical update cycle for an API resource is to (1) GET the representation, (2) modify it and (3) PUT back the entire representation. This can waste bandwidth and processing time for large resources. An alternative is to use the HTTP PATCH extension method to only send the differences between two resources. HTTP PATCH applies a set of changes to the document referenced by the HTTP request. Let's examine the JSON Patch format for HTTP PATCH requests."
 tags: 
   - "json"
   - "patch"
@@ -10,6 +9,8 @@ tags:
 ---
 
 The typical update cycle for an API resource is to (1) GET the representation, (2) modify it and (3) PUT back the entire representation. This can waste bandwidth and processing time for large resources. An alternative is to use the [HTTP PATCH](https://tools.ietf.org/html/rfc5789) extension method to only send the differences between two resources. HTTP PATCH applies a set of changes to the document referenced by the HTTP request.
+
+<!--more-->
 
 ```bash
 PATCH /file.txt HTTP/1.1

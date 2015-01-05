@@ -8,6 +8,8 @@ tags:
 
 Developers learn by example. This is no secret. The first advice given to new developers is to read a lot of good source code and the best advice given to experienced developers is to read a lot of good source code. Canonical texts for many languages let the source code say far more than the text. I’m thinking of text’s like [Kernighan & Ritchie][1] and [Friedman & Felleisen][2].
 
+<!--more-->
+
  [1]: http://cm.bell-labs.com/cm/cs/cbook/
  [2]: http://mitpress.mit.edu/catalog/item/default.asp?ttype=2&tid=4825
 

@@ -1,7 +1,6 @@
 ---
 title: "Unit Testing Cloud Endpoints"
 date: 2014-07-10T14:32:15Z
-description: "Writing unit tests for App Engine Cloud Endpoints is a fairly straight forward process. Unfortunately it is not well documented and a few gotchas exist. This article provides a template you can use to unit test Cloud Endpoints including full source code for a working example."
 tags: 
   - "app engine"
   - "cloud endpoints"
@@ -15,6 +14,8 @@ Writing unit tests for App Engine Cloud Endpoints is a fairly straight forward
 process. Unfortunately it is not well documented and a few gotchas exist. This
 article provides a template you can use to unit test Cloud Endpoints including
 full source code for a working example.
+
+<!--more-->
 
 ## The Model
 

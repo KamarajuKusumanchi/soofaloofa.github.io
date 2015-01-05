@@ -1,13 +1,20 @@
 ---
 title: "Bypassing ndb hooks with the RawDatastoreInputReader"
 date: 2014-07-29T20:32:42Z
-description: "When doing a MapReduce operation there are times when you want to edit a set of entities without triggering the post or pre put hooks associated with those entities. On such ocassions using the raw datastore entity allows you to process the data without unwanted side effects. This article will show how to use the RawDatastoreInputReader to process datastore entities."
 tags: 
   - "app engine"
   - "mapreduce"
   - "datastore"
   - "ndb"
 ---
+
+When doing a MapReduce operation there are times when you want to edit a set of
+entities without triggering the post or pre put hooks associated with those
+entities. On such ocassions using the raw datastore entity allows you to process
+the data without unwanted side effects. This article will show how to use the
+RawDatastoreInputReader to process datastore entities.
+
+<!--more-->
 
 When doing a MapReduce operation there are times when you want to edit a set of entities without triggering the post or pre put hooks associated with those entities. On such ocassions using the raw datastore entity allows you to process the data without unwanted side effects.
 

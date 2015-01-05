@@ -1,13 +1,14 @@
 ---
 title: "Understanding Closures in JavaScript" 
 date: 2011-01-19T09:11:15Z
-description: "Closures are easy. There I said it. Invest a little bit of time, and you will say it too. Follow along with me as I attempt to explain what closures are and how they are used."
 tags:
   - "javascript"
   - "closure"
 ---
 
 Closures are easy. There I said it. Invest a little bit of time, and you will say it too. Follow along with me as I attempt to explain what closures are and how they are used.
+
+<!--more-->
 
 ## Scope
 

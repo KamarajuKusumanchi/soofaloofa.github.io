@@ -9,6 +9,8 @@ tags:
 
 I’ve been getting familiar with the [Leiningen][1] build tool for [Clojure][2] but had trouble connecting to the Clojar and Maven repositories behind a proxy.
 
+<!--more-->
+
  [1]: https://github.com/technomancy/leiningen
  [2]: http://clojure.org/
 

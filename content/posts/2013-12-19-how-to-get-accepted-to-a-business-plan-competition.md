@@ -1,12 +1,13 @@
 ---
 title: "How to get accepted to a business plan competition"
 date: 2013-12-19T09:09:09Z
-description: "I recently received the good news that my business idea was accepted for the University of Saskatchewan's 2014 Tech Venture Challenge. The Tech Venture Challenge is a business plan competition for students and alumni where participants are judged by their finished business plan and pitch after a four month workshop program. I'm going to blog about the experience as a way to absorb the material and hopefully help someone else who may be applying in the future. This post will provide some admittedly biased advice on submitting your application to the Tech Venture Challenge."
 tags: 
   - "business plan"
 ---
 
 I recently received the good news that my business idea was accepted for the [University of Saskatchewan's 2014 Tech Venture Challenge](http://www.usask.ca/research/ilo/business_plan.php). The Tech Venture Challenge is a business plan competition for students and alumni where participants are judged by their finished business plan and pitch after a four month workshop program. I'm going to blog about the experience as a way to absorb the material and hopefully help someone else who may be applying in the future. This post will provide some admittedly biased advice on submitting your application to the Tech Venture Challenge. 
+
+<!--more-->
 
 ## Be concise
 

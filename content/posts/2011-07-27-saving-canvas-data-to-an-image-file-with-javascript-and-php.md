@@ -1,14 +1,15 @@
 ---
 title: "Saving canvas data to an image file with JavaScript and PHP"
 date: 2011-07-27T10:08:42Z
-description: "Saving HTML canvas element data to an image in a user friendly manner is a tricky problem. Let's look at one way to solve it."
 tags:
   - "javascript"
   - "php"
   - "canvas"
 ---
 
-Saving HTML canvas element data to an image in a user friendly manner is a tricky problem.
+Saving HTML canvas element data to an image in a user friendly manner is a tricky problem. Let's look at one way to solve it.
+
+<!--more-->
 
 ## First Attempt
 

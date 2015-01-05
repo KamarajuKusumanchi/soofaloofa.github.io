@@ -1,7 +1,6 @@
 ---
 title: "Submitting a Unity3d Game to the Mac App Store"
 date: 2013-04-09T14:43:12Z
-description: "Submitting a Unity3d game to the Mac App Store is a somewhat painful process. This guide refers to Unity3d 3.5 but should apply to Unity 4.0 and up."
 tags:
   - "unity"
   - "mac app store"

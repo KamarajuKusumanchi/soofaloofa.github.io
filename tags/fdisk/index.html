@@ -77,35 +77,16 @@
             <small class="text-muted">
               Posted on Monday, November 3, 2014 · <a href="http://sookocheff.com/posts/2014-11-03-extracting-the-start-sector-with-fdisk//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                <p>fdisk is a wonderful little utility for managing partitions. I recently had to
+            <p>
+              <p>fdisk is a wonderful little utility for managing partitions. I recently had to
 script a series of fdisk commands for resizing a partition and needed to extract
 the start sector from the existing disk to do so. I ended up using this
 combination of <code>grep</code> and <code>awk</code> to do the job.</p>
 
-<pre><code class="language-bash">start_sector=$(sudo fdisk -l | grep ^/dev/sda1 |  awk -F&quot; &quot;  '{ print $3 }')
-</code></pre>
-
-<p>This line executes <code>fdisk</code> with the <code>-l</code> option to list the current disks. Then
-runs <code>grep</code> to find the current boot disk. Finally, <code>awk</code> retrieves the
-third token of the string where the token seperator is empty space.</p>
-
-<p>Having the start sector I was able to script the fdisk sequence by piping the
-necessary sequence of resize commands into fdisk.</p>
-
-<pre><code class="language-bash">  cat &lt;&lt;EOF | sudo fdisk -c -u /dev/sda
-d
-n
-p
-1
-$start_sector
-
-w
-</code></pre>
-
-              </p>
-            
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-11-03-extracting-the-start-sector-with-fdisk/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         

@@ -1040,6 +1040,12 @@ Engine backup into BigQuery and watch it being fully restored.&lt;/p&gt;
       <guid>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader/</guid>
       <description>
 
+&lt;p&gt;When doing a MapReduce operation there are times when you want to edit a set of
+entities without triggering the post or pre put hooks associated with those
+entities. On such ocassions using the raw datastore entity allows you to process
+the data without unwanted side effects. This article will show how to use the
+RawDatastoreInputReader to process datastore entities.&lt;/p&gt;
+
 &lt;p&gt;When doing a MapReduce operation there are times when you want to edit a set of entities without triggering the post or pre put hooks associated with those entities. On such ocassions using the raw datastore entity allows you to process the data without unwanted side effects.&lt;/p&gt;
 
 &lt;p&gt;For the sake of this discussion let&amp;rsquo;s assume we want to move a &lt;code&gt;phone_number&lt;/code&gt; field to a &lt;code&gt;work_number&lt;/code&gt; field for all entities of a certain Kind in the datastore.&lt;/p&gt;

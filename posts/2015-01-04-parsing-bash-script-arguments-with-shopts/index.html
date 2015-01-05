@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<title>Parsing bash script options with getopts : sookocheff.com</title>
+
+<meta charset="utf-8">
+<meta http-equiv="content-type", content="text/html; charset=utf-8">
+<meta name="viewport", content="width=device-width, initial-scale=1.0">
+
+<link rel="canonical" href="http://sookocheff.com/posts/2015-01-04-parsing-bash-script-arguments-with-shopts/">
+
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/styles/default.min.css">
+
+<link rel="stylesheet" href="/css/vendor/bootstrap.min.css">
+<link rel="stylesheet" href="/css/vendor/monokai_sublime.css">
+<link rel="stylesheet" href="/css/style.css">
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-20611089-6', 'sookocheff.com');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand">Kevin Sookocheff</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="">
+          <a href="/posts/">Blog</a>
+        </li>
+        <li class="dropdown">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+            Subscribe <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="http://eepurl.com/KJE01">email</a></li>
+            <li><a href="http://sookocheff.com/index.xml">RSS</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="container page-container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <section class="page">
+        <article class="post">
+          <h1>Parsing bash script options with getopts</h1>
+          <p>
+            <small class="text-muted">
+              Posted on Sunday, January 4, 2015 · <a href="http://sookocheff.com/posts/2015-01-04-parsing-bash-script-arguments-with-shopts//#disqus_thread">0 Comments</a>
+            </small>
+          </p>
+
+          <div class=".post-content">
+            
+
+<p>A common task in shell scripting is to parse command line arguments to your
+script. Bash provides the <code>getopts</code> built-in function to do just that. This
+tutorial explains how to use the <code>getopts</code> built-in function to parse arguments and options to a bash script.</p>
+
+<p>The <code>getopts</code> function takes three parameters. The first is a specification of
+which options are valid, listed as a sequence of letters. For example, the
+string <code>'ht'</code> signifies that the options <code>-a</code> and <code>-l</code> are valid.</p>
+
+<p>The second argument to <code>getopts</code> is a variable that will be populated with the
+option or argument to be processed next. In the following loop, <code>opt</code> will hold
+the value of the current option that has been parsed by <code>getopts</code>.</p>
+
+<pre><code class="language-bash">while getopts &quot;:ht&quot; opt; do
+  case ${opt} in
+    h ) # process option a
+      ;;
+    t ) # process option l
+      ;;
+    \? ) echo &quot;Usage: cmd [-h] [-t]
+      ;;
+  esac
+done
+</code></pre>
+
+<p>This example shows a few additional features of <code>getopts</code>. First, if an invalid
+option is provided, the option variable is assigned the value <code>?</code>. You can catch
+this case and provide an appropriate usage message to the user. Second, this
+behaviour is only true when you prepend the list of valid options with <code>:</code> to
+disable the default error handling of invalid options. It is recommended to
+always disable the default error handling in your scripts.</p>
+
+<p>The third argument to <code>getopts</code> is the list of arguments and options to be
+processed. When not provided, this defaults to the arguments and options
+provided to the application (<code>$@</code>). You can provide this third argument to use
+<code>getopts</code> to parse any list of arguments and options you provide.</p>
+
+<h2 id="toc_0">Shifting processed options</h2>
+
+<p>The variable <code>OPTIND</code> holds the number of options parsed by the last call to
+<code>getopts</code>. It is common practice to call the <code>shift</code> command at the end of your
+processing loop to remove options that have already been handled from <code>$@</code>.</p>
+
+<pre><code class="language-bash">shift $((OPTIND -1))
+</code></pre>
+
+<h2 id="toc_1">Parsing options with arguments</h2>
+
+<p>Options that themselves have arguments are signified with a <code>:</code>. The argument to
+an option is placed in the variable <code>OPTARG</code>. In the following example, the
+option <code>t</code> takes an argument. When the argument is provided, we copy its value
+to the variable <code>target</code>. If no argument is provided <code>getopts</code> will set <code>opt</code> to
+<code>:</code>. We can recognize this error condition by catching the <code>:</code> case and printing
+an appropriate error message.</p>
+
+<pre><code class="language-bash">while getopts &quot;:t:&quot; opt; do
+  case ${opt} in 
+    t )
+      target=$OPTARG
+      ;;
+    \? )
+      echo &quot;Invalid option: $OPTARG&quot; 1&gt;&amp;2
+      ;;
+    : )
+      echo &quot;Invalid option: $OPTARG requires an argument&quot; 1&gt;&amp;2
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+</code></pre>
+
+<h2 id="toc_2">An extended example &ndash; parsing nested arguments and options</h2>
+
+<p>Let&rsquo;s walk through an extended example of processing a command that takes
+options, has a sub-command, and whose sub-command takes an additional option
+that has an argument. This is a mouthful so let&rsquo;s break it down using an
+example. Let&rsquo;s say we are writing our own version of the <a href="https://pip.pypa.io/en/latest/"><code>pip</code>
+command</a>. In this version you can call <code>pip</code>
+with the <code>-h</code> option to display a help message.</p>
+
+<pre><code class="language-bash">&gt; pip -h
+Usage: 
+    pip -h                      Display this help message.
+    pip install                 Install a Python package.
+</code></pre>
+
+<p>We can use <code>getopts</code> to parse the <code>-h</code> option with the following <code>while</code> loop.
+In it we catch invalid options with <code>\?</code> and <code>shift</code> all arguments that have
+been processed with <code>shift $((OPTIND -1))</code>.</p>
+
+<pre><code class="language-bash">while getopts &quot;:h&quot; opt; do
+  case ${opt} in
+    h )
+      echo &quot;Usage:&quot;
+      echo &quot;    pip -h                      Display this help message.&quot;
+      echo &quot;    pip install                 Install a Python package.&quot;
+      exit 0
+      ;;
+    \? )
+      echo &quot;Invalid Option: -$OPTARG&quot; 1&gt;&amp;2
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+</code></pre>
+
+<p>Now let&rsquo;s add the sub-command <code>install</code> to our script.  <code>install</code> takes as an
+argument the Python package to install.</p>
+
+<pre><code class="language-bash">&gt; pip install urllib3
+</code></pre>
+
+<p><code>install</code> also takes an option, <code>-t</code>. <code>-t</code> takes as an argument the location to
+install the package to relative to the current directory.</p>
+
+<pre><code class="language-bash">&gt; pip install urllib3 -t ./src/lib
+</code></pre>
+
+<p>To process this line we must find the sub-command to execute. This value is the
+first argument to our script.</p>
+
+<pre><code>subcommand=$1
+shift # Remove `pip` from the argument list
+</code></pre>
+
+<p>Now we can process the sub-command <code>install</code>. In our example, the option <code>-t</code> is
+actually an option that follows the package argument so we begin by removing
+<code>install</code> from the argument list and processing the remainder of the line.</p>
+
+<pre><code class="language-bash">case &quot;$subcommand&quot; in
+  install)
+    package=$1
+    shift # Remove `install` from the argument list
+    ;;
+esac
+</code></pre>
+
+<p>After shifting the argument list we can process the remaining arguments as if
+they are of the form <code>package -t src/lib</code>. The <code>-t</code> option takes an argument
+itself. This argument will be stored in the variable <code>OPTARG</code> and we save it to
+the variable <code>target</code> for further work.</p>
+
+<pre><code class="language-bash">case &quot;$subcommand&quot; in
+  install)
+    package=$1
+    shift # Remove `install` from the argument list
+
+  while getopts &quot;:t:&quot; opt; do
+    case ${opt} in
+      t )
+        target=$OPTARG
+        ;;
+      \? )
+        echo &quot;Invalid Option: -$OPTARG&quot; 1&gt;&amp;2
+        exit 1
+        ;;
+      : )
+        echo &quot;Invalid Option: -$OPTARG requires an argument&quot; 1&gt;&amp;2
+        exit 1
+        ;;
+    esac
+  done
+  shift $((OPTIND -1))
+  ;;
+esac
+</code></pre>
+
+<p>Putting this all together, we end up with the following script that parses
+arguments to our version of <code>pip</code> and its sub-command <code>install</code>.</p>
+
+<pre><code class="language-bash">package=&quot;&quot;  # Default to empty package
+target=&quot;&quot;  # Default to empty target
+
+# Parse options to the `pip` command
+while getopts &quot;:h&quot; opt; do
+  case ${opt} in
+    h )
+      echo &quot;Usage:&quot;
+      echo &quot;    pip -h                      Display this help message.&quot;
+      echo &quot;    pip install &lt;package&gt;       Install &lt;package&gt;.&quot;
+      exit 0
+      ;;
+   \? )
+     echo &quot;Invalid Option: -$OPTARG&quot; 1&gt;&amp;2
+     exit 1
+     ;;
+  esac
+done
+shift $((OPTIND -1))
+
+subcommand=$1; shift  # Remove 'pip' from the argument list
+case &quot;$subcommand&quot; in
+  # Parse options to the install sub command
+  install)
+    package=$1; shift  # Remove 'install' from the argument list
+
+    # Process package options
+    while getopts &quot;:t:&quot; opt; do
+      case ${opt} in
+        t )
+          target=$OPTARG
+          ;;
+        \? )
+          echo &quot;Invalid Option: -$OPTARG&quot; 1&gt;&amp;2
+          exit 1
+          ;;
+        : )
+          echo &quot;Invalid Option: -$OPTARG requires an argument&quot; 1&gt;&amp;2
+          exit 1
+          ;;
+      esac
+    done
+    shift $((OPTIND -1))
+    ;;
+esac
+</code></pre>
+
+<p>After processing the above sequence of commands, the variable <code>package</code> will
+hold the package to install and the variable <code>target</code> will hold the target to
+install the package to. You can use this as a template for processing any set of
+arguments and options to your scripts.</p>
+ 
+          </div>
+
+          <hr>
+            <ul class="list-inline">
+  <li>Share this post:</li>
+  <li>
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2f2015-01-04-parsing-bash-script-arguments-with-shopts%2f&text=Parsing%20bash%20script%20options%20with%20getopts&via=soofaloofa">
+      <i class="fa fa-twitter fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2f2015-01-04-parsing-bash-script-arguments-with-shopts%2f">
+      <i class="fa fa-facebook fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2f2015-01-04-parsing-bash-script-arguments-with-shopts%2f">
+      <i class="fa fa-google-plus fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2f2015-01-04-parsing-bash-script-arguments-with-shopts%2f">
+      <i class="fa fa-linkedin fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2f2015-01-04-parsing-bash-script-arguments-with-shopts%2f">
+      <i class="fa fa-envelope fa-lg"></i>
+    </a>
+  </li>
+</ul>
+
+          <hr>
+
+          <div class="blurb">
+            <div class="row">
+              <div class="col-md-10 col-md-offset-1">
+                <h4 class="text-center">About Kevin Sookocheff</h4>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 col-md-offset-1">
+                <p>
+                  <img class="img-circle center-block" src="/img/profile.png">
+                </p>
+              </div>
+              <div class="col-md-6">
+                <p>
+                  I am a Software Developer. I work at <a
+  href="http://www.vendasta.com">VendAsta</a> with a bunch of great people. I
+run a business as <a href="http://redfinchsoftware.com">Red Finch Software</a>.
+You can find me online as <a
+href="https://twitter.com/soofaloofa">soofaloofa</a>. I love to teach, learn,
+speak and write about business and software.
+
+                  <ul class="list-inline">
+                    <li>On the web:</li>
+                    <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+                    <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+                    <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+                    <li><a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square fa-lg"></i></a></li>
+                    <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+                    <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+                  </ul>
+                </p>
+              </div>
+            </div>
+          </div>
+          <hr>
+
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+     
+    var disqus_shortname = 'kevinsookocheff'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        </article>
+      </section>
+    </div>
+  </div>
+</div>
+
+<footer>
+ <div class="footer-above text-center">
+   <div class="container">
+     <div class="row">
+       <div class="footer-col col-md-3">
+         <h3>App Engine</h3>
+         <ul class="list-unstyled">
+           <li><a href="/series/mapreduce-api/">MapReduce API</a></li>
+           <li><a href="/series/cloud-endpoints/">Cloud Endpoints</a></li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>APIs</h3>
+         <ul class="list-unstyled">
+           <li>
+             <a href="/posts/2014-03-11-on-choosing-a-hypermedia-format/">On Choosing a Hypermedia Format</a>
+           </li>
+           <li>
+             <a href="/posts/2014-03-27-when-to-use-http-put-and-http-post/">When to use HTTP PUT</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Random</h3>
+         <ul class="list-unstyled">
+           <li>
+           <a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/"> Unity3d on the Mac App Store</a>
+           </li>
+           <li>
+             <a href="http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/">Saving Canvas Data to an Image</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Social</h3>
+         <ul class="list-unstyled">
+           <li><a href="http://www.twitter.com/soofaloofa">Twitter</a></li>
+           <li><a href="http://www.facebook.com/kevin.sookocheff">Facebook</a></li>
+           <li><a href="http://www.linkedin.com/in/kevinsookocheff">LinkedIn</a></li>
+           <li><a href="https://plus.google.com/+KevinSookocheff">Google+</a></li>
+           <li><a href="https://github.com/soofaloofa">Github</a></li>
+         </ul>
+       </div>
+     </div>
+   </div>
+ </div>
+ <div class="footer-below text-center">
+     <div class="container">
+         <div class="row">
+             <div class="col-lg-12">
+                 &copy; Kevin Sookocheff · <a href="#">Top</a>
+             </div>
+         </div>
+     </div>
+ </div>
+</footer>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/highlight.min.js"></script>
+<script src="/js/vendor/retina.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+ 
+var disqus_shortname = 'kevinsookocheff'; 
+
+ 
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+</body>
+</html>
+

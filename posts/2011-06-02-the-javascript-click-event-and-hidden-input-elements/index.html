@@ -78,7 +78,9 @@
           </p>
 
           <div class=".post-content">
-            <p>I was recently working with the HTML canvas element and wanted to attach an event to the canvas that would fire the click event of a file input element. I would then hide the input element so that the canvas element was the only way to browse for files. My first attempt was simple enough.</p>
+            <p>I was recently working with the HTML canvas element and wanted to attach an event to the canvas that would fire the click event of a file input element. I would then hide the input element so that the canvas element was the only way to browse for files.</p>
+
+<p>My first attempt was simple enough.</p>
 
 <pre><code>document.getElementById('canvas').onclick = function(e) {
     document.getElementById('filepicker').click();

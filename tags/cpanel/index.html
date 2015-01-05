@@ -8,7 +8,7 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/tags/cpanel/">
+<link rel="canonical" href="http://localhost:1313/tags/cpanel/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -73,31 +73,16 @@
 
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2011-03-23-custom-posterous-subdomains-with-cpanel/">Custom Posterous Subdomains with CPanel</a></h2>
+            <h2><a href="http://localhost:1313/posts/2011-03-23-custom-posterous-subdomains-with-cpanel/">Custom Posterous Subdomains with CPanel</a></h2>
             <small class="text-muted">
-              Posted on Wednesday, March 23, 2011 · <a href="http://sookocheff.com/posts/2011-03-23-custom-posterous-subdomains-with-cpanel//#disqus_thread">0 Comments</a>
+              Posted on Wednesday, March 23, 2011 · <a href="http://localhost:1313/posts/2011-03-23-custom-posterous-subdomains-with-cpanel//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                <p>I recently started using Posterous and will be converting my WordPress blog to the service.  One thing I wanted was a custom subdomain (i.e., blog.kevinsookocheff.com); I couldn’t easily find clear instructions for  subdomains (just for domains) so I thought I’d share how I did it from a basic cPanel hosting environment.</p>
-
-<ol>
-<li>Login to your cPanel account.</li>
-<li>Under the Domains heading, select Simple DNS Zone Editor.</li>
-<li>Select your domain from the drop-down list.</li>
-<li>Under Add a CNAME Record fill in the following (using blog here as your subdomain).
-
-<ol>
-<li>Name: blog</li>
-<li>CNAME: posterous.com</li>
-</ol></li>
-<li>Click the button to Add CNAME Record.</li>
-</ol>
-
-<p>You will have to wait a few hours for the change to propagate.  Then navigate to yoursubdomain.domain.com.  You will end up at a posterous.com 404 page.  This is because Posterous does not know to link your subdomain to your Posterous yet. Head over to posterous.com and log in.  From here click on your site settings link and enter yoursubdomain.domain.com as the custom domain for you Posterous.</p>
-
-              </p>
-            
+            <p>
+              I recently started using Posterous and will be converting my WordPress blog to the service. One thing I wanted was a custom subdomain (i.e., blog.kevinsookocheff.com); I couldn’t easily find clear instructions for subdomains (just for domains) so I thought I’d share how I did it from a basic cPanel hosting environment. Login to your cPanel account. Under the Domains heading, select Simple DNS Zone Editor. Select your domain from the drop-down list.
+            </p>
+            <p class="text-center">
+              <a href="http://localhost:1313/posts/2011-03-23-custom-posterous-subdomains-with-cpanel/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -183,6 +168,9 @@ s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
 (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
 }());
 </script>
-</body>
+<script>document.write('<script src="http://'
+        + (location.host || 'localhost').split(':')[0]
+		+ ':1313/livereload.js?mindelay=10"></'
+        + 'script>')</script></body>
 </html>
 

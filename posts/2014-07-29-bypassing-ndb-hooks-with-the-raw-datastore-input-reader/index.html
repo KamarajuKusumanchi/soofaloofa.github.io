@@ -80,6 +80,12 @@
           <div class=".post-content">
             
 
+<p>When doing a MapReduce operation there are times when you want to edit a set of
+entities without triggering the post or pre put hooks associated with those
+entities. On such ocassions using the raw datastore entity allows you to process
+the data without unwanted side effects. This article will show how to use the
+RawDatastoreInputReader to process datastore entities.</p>
+
 <p>When doing a MapReduce operation there are times when you want to edit a set of entities without triggering the post or pre put hooks associated with those entities. On such ocassions using the raw datastore entity allows you to process the data without unwanted side effects.</p>
 
 <p>For the sake of this discussion let&rsquo;s assume we want to move a <code>phone_number</code> field to a <code>work_number</code> field for all entities of a certain Kind in the datastore.</p>

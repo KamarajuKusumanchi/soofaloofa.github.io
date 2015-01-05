@@ -77,27 +77,14 @@
             <small class="text-muted">
               Posted on Wednesday, May 7, 2014 · <a href="http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                <p>I recently tried installing lxml for use within an App Engine project on OS X
+            <p>
+              <p>I recently tried installing lxml for use within an App Engine project on OS X
 Mavericks only to be hit with an error message from <code>clang</code>.</p>
 
-<pre><code>clang: error: unknown argument: '-mno-fused-madd' [-Wunused-command-line-argument-hard-error-in-future]
-
-clang: note: this will be a hard error (cannot be downgraded to a warning) in the future
-
-error: command 'cc' failed with exit status 1
-</code></pre>
-
-<p>The <code>clang</code> compiler distributed with version 5.1 of Xcode tightened up some
-restrictions and turned compiler warnings into hard errors. To disable this you need to
-add a specific flag to ingore these warnings when installing affected packages.</p>
-
-<pre><code>ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future pip install lxml
-</code></pre>
-
-              </p>
-            
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         

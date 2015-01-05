@@ -77,61 +77,16 @@
             <small class="text-muted">
               Posted on Tuesday, December 30, 2014 · <a href="http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                <p>One unfortunate difficulty when working with App Engine is managing your local
+            <p>
+              <p>One unfortunate difficulty when working with App Engine is managing your local
 dependencies. You don&rsquo;t have access to your Python environment so all libraries
 you wish to use must be <em>vendored</em> with your installation. That is, you need to
 copy all of your library code into a local folder to ship along with your app.</p>
 
-<p>This usually doesn&rsquo;t cause any problems but difficulties start to crop up when
-you manage multiple dependencies that rely on each other. For example, the
-official <a href="https://github.com/elasticsearch/elasticsearch-py">elasticsearch
-client</a> requires
-<a href="https://github.com/shazow/urllib3">urllib3</a> between version <code>1.8</code> and <code>2.0</code>.</p>
-
-<p>Traditionally, <a href="https://pip.pypa.io/en/latest/">pip</a> is used to install these
-dependencies on your behalf. The command <code>pip install elasticsearch</code> will
-automatically fetch the urllib3 dependency for you and install it to your local
-Python environment. By adding the <code>-t</code> flag you can provide a destination folder
-to install your libraries. As an example, we can install the elasticsearch
-and urllib3 libraries to the folder <code>src/lib</code> with the following command.</p>
-
-<pre><code class="language-python">pip install elasticsearch -t src/lib
-</code></pre>
-
-<p>This works great for App Engine which requires the source of your libraries to
-be shipped with your application. Unfortunately, it starts to break down when
-you need to upgrade your dependencies. Installing with the <code>-t</code> flag does not
-overwrite the contents of the existing folder so running the same command again
-results in an error.</p>
-
-<p>A solution to this can be found with some basic shell scripting. The first portion of our script installs the requested package and it&rsquo;s
-dependencies to a temporary directory and removes any extra files that we don&rsquo;t
-need.</p>
-
-<pre><code class="language-python">pip install elasticsearch -t $TEMP_DIRECTORY
-rm -r $TEMP_DIRECTORY/*.egg-info &gt;/dev/null 2&gt;&amp;1
-rm -r $TEMP_DIRECTORY/*.dist-info &gt;/dev/null 2&gt;&amp;1
-</code></pre>
-
-<p>The next step is to remove the specific libraries being installed from our App
-Engine library directory and copy the contents of our temporary directory in their place.</p>
-
-<pre><code class="language-python">TARGET=src/lib
-for i in $(ls $TEMP_DIRECTORY); do
-  rm -r $TARGET/$i &gt;/dev/null 2&gt;&amp;1  # remove existing module
-  cp -R $TEMP_DIRECTORY/$i $TARGET  # copy the replacement in
-done
-</code></pre>
-
-<p>This code can be used as a starting point to write a more user friendly and
-robust script. Although this does not truly solve the problem of dependency
-management with App Engine it does provide a way to seamlessly vendor Python
-libraries and all of their dependencies with your application.</p>
-
-              </p>
-            
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -140,14 +95,29 @@ libraries and all of their dependencies with your application.</p>
             <small class="text-muted">
               Posted on Monday, December 22, 2014 · <a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                The MapReduce library supports a number of default output writers. You can also write your own that implements the output writer interface. This article examines how to write a custom output writer that pushes data from the App Engine datastore to an elasticsearch cluster. A similar pattern can be followed to push the output from your MapReduce job to any number of places.
-              </p>
-              <p class="text-center">
-                <a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/"><button type="button" class="btn btn-primary">Read More</button></a>
-              </p>
-            
+            <p>
+              <h2>MapReduce API Series</h2>
+
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">Part 6: Writing a Custom Input Reader</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">Part 7: Writing a Custom Output Writer</a></li>
+</ul>
+
+<p>The MapReduce library supports a number of default output writers. You can also
+write your own that implements the output writer interface. This article
+examines how to write a custom output writer that pushes data from the App
+Engine datastore to an elasticsearch cluster. A similar pattern can be followed
+to push the output from your MapReduce job to any number of places.</p>
+
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -156,14 +126,28 @@ libraries and all of their dependencies with your application.</p>
             <small class="text-muted">
               Posted on Thursday, December 4, 2014 · <a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                In this post we will explore how to write an InputReader the leases tasks from an AppEngine pull queue by implementing the InputReader interface.
-              </p>
-              <p class="text-center">
-                <a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/"><button type="button" class="btn btn-primary">Read More</button></a>
-              </p>
-            
+            <p>
+              <h2>MapReduce API Series</h2>
+
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">Part 6: Writing a Custom Input Reader</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">Part 7: Writing a Custom Output Writer</a></li>
+</ul>
+
+<p>One of the great things about the MapReduce library is the abilitiy to write a
+cutom InputReader to process data from any data source. In this post we will
+explore how to write an InputReader the leases tasks from an AppEngine pull
+queue by implementing the <code>InputReader</code> interface.</p>
+
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -172,14 +156,27 @@ libraries and all of their dependencies with your application.</p>
             <small class="text-muted">
               Posted on Tuesday, May 20, 2014 · <a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                In this post we will look at how to reduce the amount of data transfer during a MapReduce job using a combiner.
-              </p>
-              <p class="text-center">
-                <a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/"><button type="button" class="btn btn-primary">Read More</button></a>
-              </p>
-            
+            <p>
+              <h2>MapReduce API Series</h2>
+
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">Part 6: Writing a Custom Input Reader</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">Part 7: Writing a Custom Output Writer</a></li>
+</ul>
+
+<p>So far we&rsquo;ve looked at using MapReduce pipelines to perform calculations over
+large data sets and combined multiple pipelines in succession. In this article
+we will look at how to reduce the amount of data transfer by using a combiner.</p>
+
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -188,14 +185,29 @@ libraries and all of their dependencies with your application.</p>
             <small class="text-muted">
               Posted on Tuesday, May 13, 2014 · <a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                In this post we will see how to chain multiple MapReduce Pipelines together to perform sequential tasks.
-              </p>
-              <p class="text-center">
-                <a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/"><button type="button" class="btn btn-primary">Read More</button></a>
-              </p>
-            
+            <p>
+              <h2>MapReduce API Series</h2>
+
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">Part 6: Writing a Custom Input Reader</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">Part 7: Writing a Custom Output Writer</a></li>
+</ul>
+
+<p><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Last
+time</a>
+we looked at how to run a full MapReduce Pipeline to count the number of
+occurrences of a character within each string. In this post we will see how to
+chain multiple MapReduce Pipelines together to perform sequential tasks.</p>
+
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -204,14 +216,25 @@ libraries and all of their dependencies with your application.</p>
             <small class="text-muted">
               Posted on Monday, April 28, 2014 · <a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                In this article we will take our exploration of MapReduce a step further by looking at how to run a MapReduce job programmatically using the App Engine Pipeline API.
-              </p>
-              <p class="text-center">
-                <a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/"><button type="button" class="btn btn-primary">Read More</button></a>
-              </p>
-            
+            <p>
+              <h2>MapReduce API Series</h2>
+
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">Part 6: Writing a Custom Input Reader</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">Part 7: Writing a Custom Output Writer</a></li>
+</ul>
+
+<p><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">In the last article</a> we examined how to run one-off tasks that operate on a large dataset using a <code>mapreduce.yaml</code> configuration file. This article will take us a step further and look at how to run a MapReduce job programmatically using the App Engine Pipeline API.</p>
+
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -220,14 +243,25 @@ libraries and all of their dependencies with your application.</p>
             <small class="text-muted">
               Posted on Tuesday, April 22, 2014 · <a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                In this article we&#39;ll be getting our hands dirty writing some code to handle the Map Stage. The Map Stage is composed of two separate components: an InputReader and a map function. We&#39;ll look at each of these in turn and show how to run some basic MapReduce jobs using the App Engine API.
-              </p>
-              <p class="text-center">
-                <a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/"><button type="button" class="btn btn-primary">Read More</button></a>
-              </p>
-            
+            <p>
+              <h2>MapReduce API Series</h2>
+
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">Part 6: Writing a Custom Input Reader</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">Part 7: Writing a Custom Output Writer</a></li>
+</ul>
+
+<p><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Last time</a> we looked at an overview of how MapReduce works. In this article we&rsquo;ll be getting our hands dirty writing some code to handle the Map Stage. If you&rsquo;ll recall, the Map Stage is composed of two separate components: an InputReader and a <code>map</code> function. We&rsquo;ll look at each of these in turn.</p>
+
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -236,14 +270,28 @@ libraries and all of their dependencies with your application.</p>
             <small class="text-muted">
               Posted on Tuesday, April 15, 2014 · <a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                This article provides an overview of the App Engine MapReduce API. We will give a basic overview of what MapReduce is and how it is used to do parallel and distributed processing of large datasets.
-              </p>
-              <p class="text-center">
-                <a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/"><button type="button" class="btn btn-primary">Read More</button></a>
-              </p>
-            
+            <p>
+              <h2>MapReduce API Series</h2>
+
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">Part 6: Writing a Custom Input Reader</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">Part 7: Writing a Custom Output Writer</a></li>
+</ul>
+
+<p>The first arcticle in this series provides an overview of the <a href="https://developers.google.com/appengine/docs/python/dataprocessing/">App Engine MapReduce
+API</a>. We
+will give a basic overview of what MapReduce is and how it is used to do
+parallel and distributed processing of large datasets.</p>
+
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         

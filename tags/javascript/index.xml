@@ -15,7 +15,7 @@
       <guid>http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/</guid>
       <description>
 
-&lt;p&gt;Saving HTML canvas element data to an image in a user friendly manner is a tricky problem.&lt;/p&gt;
+&lt;p&gt;Saving HTML canvas element data to an image in a user friendly manner is a tricky problem. Let&amp;rsquo;s look at one way to solve it.&lt;/p&gt;
 
 &lt;h2 id=&#34;toc_0&#34;&gt;First Attempt&lt;/h2&gt;
 
@@ -116,7 +116,9 @@ else {
       <pubDate>Thu, 02 Jun 2011 16:42:48 UTC</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2011-06-02-the-javascript-click-event-and-hidden-input-elements/</guid>
-      <description>&lt;p&gt;I was recently working with the HTML canvas element and wanted to attach an event to the canvas that would fire the click event of a file input element. I would then hide the input element so that the canvas element was the only way to browse for files. My first attempt was simple enough.&lt;/p&gt;
+      <description>&lt;p&gt;I was recently working with the HTML canvas element and wanted to attach an event to the canvas that would fire the click event of a file input element. I would then hide the input element so that the canvas element was the only way to browse for files.&lt;/p&gt;
+
+&lt;p&gt;My first attempt was simple enough.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;document.getElementById(&#39;canvas&#39;).onclick = function(e) {
     document.getElementById(&#39;filepicker&#39;).click();

@@ -77,77 +77,13 @@
             <small class="text-muted">
               Posted on Wednesday, May 18, 2011 · <a href="http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                <p>Fade animations are a standard tool in any jQuery developer’s toolbox. But how do they really work? Let’s create a small function that encapsulates solely the fade functionality and find out.</p>
+            <p>
+              <p>Fade animations are a standard tool in any jQuery developer’s toolbox. But how do they really work? Let’s create a small function that encapsulates solely the fade functionality and find out.</p>
 
-<p>Let’s start with the jQuery <code>$</code> idiom.</p>
-
-<pre><code>function $(id) {
-    var $ = document.getElementById(id);
-    return $;
-}
-</code></pre>
-
-<p>This function takes an HTML id as a parameter and returns the element associated with this id. We can call this function with a string to return the particular element we need.</p>
-
-<pre><code>$('img');
-</code></pre>
-
-<p>Let’s add a function to our element.</p>
-
-<pre><code>function $(id) {
-    var $ = document.getElementById(id);
-
-    $.fade = function () {
-        // perform fade here
-    };
-
-    return $;
-}
-</code></pre>
-
-<p>We can call the function by appending <code>.fade</code> to our element.</p>
-
-<pre><code>$('img').fade();
-</code></pre>
-
-<p>Now let’s set up the rest of the function by adding a parameter for the length of the delay and storing a reference to <code>this</code>. In our context <code>this</code> refers to the element we are calling fade from. (For a detailed explanation of how <code>this</code> is set see the <a href="http://javascriptweblog.wordpress.com">JavaScript, JavaScript</a> article <a href="http://javascriptweblog.wordpress.com/.../understanding-javascripts-this/">here</a>). Finally, we set the display style of our element to <code>block</code> to ensure our animation is visible.</p>
-
-<pre><code>$.fade = function (delay) {
-    var _this = this;
-
-    _this.style.display = 'block';
-
-    // perform fade here
-};
-</code></pre>
-
-<p>We perform the fade by setting the opacity of our element. For this purpose let’s define a new function for setting the opacity of an element <code>elm</code> to <code>v</code>. We divide by 100 to define our fade in terms of a percentage.</p>
-
-<pre><code>var opacityTo = function (elm, v) {
-    elm.style.opacity = v/100;
-};
-</code></pre>
-
-<p>We can add a call to this function to our fade method.</p>
-
-<pre><code>$.fade = function (delay) {
-    var _this = this;
-
-    _this.style.display = 'block';
-
-    // set the opacity to 50%
-    opacityTo(_this, 50);
-};
-</code></pre>
-
-<p>Now the trick is to call this function to fade the element over a period of time. We do this by using the <code>setTimeout(callbk, delay)</code> function to set the opacity to different values at particular moments in time. The method signature defines a callbk parameter as a function to call when delay time has passed. If we call this function 100 times throughout our animation we will have a smooth and fluid result.</p>
-
-<p>First we set up the <code>for</code> loop to iterate from 1 to 100 and then call an anonymous function sending the index of our loop as a parameter to the function. Our anonymous function then calls <code>setTimeout</code> periodically (100 times in total).</p>
-
-              </p>
-            
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         

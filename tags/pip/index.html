@@ -77,61 +77,16 @@
             <small class="text-muted">
               Posted on Tuesday, December 30, 2014 · <a href="http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                <p>One unfortunate difficulty when working with App Engine is managing your local
+            <p>
+              <p>One unfortunate difficulty when working with App Engine is managing your local
 dependencies. You don&rsquo;t have access to your Python environment so all libraries
 you wish to use must be <em>vendored</em> with your installation. That is, you need to
 copy all of your library code into a local folder to ship along with your app.</p>
 
-<p>This usually doesn&rsquo;t cause any problems but difficulties start to crop up when
-you manage multiple dependencies that rely on each other. For example, the
-official <a href="https://github.com/elasticsearch/elasticsearch-py">elasticsearch
-client</a> requires
-<a href="https://github.com/shazow/urllib3">urllib3</a> between version <code>1.8</code> and <code>2.0</code>.</p>
-
-<p>Traditionally, <a href="https://pip.pypa.io/en/latest/">pip</a> is used to install these
-dependencies on your behalf. The command <code>pip install elasticsearch</code> will
-automatically fetch the urllib3 dependency for you and install it to your local
-Python environment. By adding the <code>-t</code> flag you can provide a destination folder
-to install your libraries. As an example, we can install the elasticsearch
-and urllib3 libraries to the folder <code>src/lib</code> with the following command.</p>
-
-<pre><code class="language-python">pip install elasticsearch -t src/lib
-</code></pre>
-
-<p>This works great for App Engine which requires the source of your libraries to
-be shipped with your application. Unfortunately, it starts to break down when
-you need to upgrade your dependencies. Installing with the <code>-t</code> flag does not
-overwrite the contents of the existing folder so running the same command again
-results in an error.</p>
-
-<p>A solution to this can be found with some basic shell scripting. The first portion of our script installs the requested package and it&rsquo;s
-dependencies to a temporary directory and removes any extra files that we don&rsquo;t
-need.</p>
-
-<pre><code class="language-python">pip install elasticsearch -t $TEMP_DIRECTORY
-rm -r $TEMP_DIRECTORY/*.egg-info &gt;/dev/null 2&gt;&amp;1
-rm -r $TEMP_DIRECTORY/*.dist-info &gt;/dev/null 2&gt;&amp;1
-</code></pre>
-
-<p>The next step is to remove the specific libraries being installed from our App
-Engine library directory and copy the contents of our temporary directory in their place.</p>
-
-<pre><code class="language-python">TARGET=src/lib
-for i in $(ls $TEMP_DIRECTORY); do
-  rm -r $TARGET/$i &gt;/dev/null 2&gt;&amp;1  # remove existing module
-  cp -R $TEMP_DIRECTORY/$i $TARGET  # copy the replacement in
-done
-</code></pre>
-
-<p>This code can be used as a starting point to write a more user friendly and
-robust script. Although this does not truly solve the problem of dependency
-management with App Engine it does provide a way to seamlessly vendor Python
-libraries and all of their dependencies with your application.</p>
-
-              </p>
-            
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -140,27 +95,14 @@ libraries and all of their dependencies with your application.</p>
             <small class="text-muted">
               Posted on Wednesday, May 7, 2014 · <a href="http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                <p>I recently tried installing lxml for use within an App Engine project on OS X
+            <p>
+              <p>I recently tried installing lxml for use within an App Engine project on OS X
 Mavericks only to be hit with an error message from <code>clang</code>.</p>
 
-<pre><code>clang: error: unknown argument: '-mno-fused-madd' [-Wunused-command-line-argument-hard-error-in-future]
-
-clang: note: this will be a hard error (cannot be downgraded to a warning) in the future
-
-error: command 'cc' failed with exit status 1
-</code></pre>
-
-<p>The <code>clang</code> compiler distributed with version 5.1 of Xcode tightened up some
-restrictions and turned compiler warnings into hard errors. To disable this you need to
-add a specific flag to ingore these warnings when installing affected packages.</p>
-
-<pre><code>ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future pip install lxml
-</code></pre>
-
-              </p>
-            
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         

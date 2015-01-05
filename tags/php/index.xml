@@ -15,7 +15,7 @@
       <guid>http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/</guid>
       <description>
 
-&lt;p&gt;Saving HTML canvas element data to an image in a user friendly manner is a tricky problem.&lt;/p&gt;
+&lt;p&gt;Saving HTML canvas element data to an image in a user friendly manner is a tricky problem. Let&amp;rsquo;s look at one way to solve it.&lt;/p&gt;
 
 &lt;h2 id=&#34;toc_0&#34;&gt;First Attempt&lt;/h2&gt;
 

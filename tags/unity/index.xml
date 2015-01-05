@@ -171,8 +171,10 @@ icon_512x512@2x.png
       <pubDate>Thu, 15 Nov 2012 13:14:15 UTC</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/2012-11-15-etcetera-plugin-live-alerts-prompts-loading-views-push-localization-and-more/</guid>
-      <description>&lt;p&gt;I&amp;rsquo;ve been working with Prime31&amp;rsquo;s Etcetera plugin for iOS development with Unity3d. There are a lot of great things in there but some of the documentation is lacking.&lt;br /&gt;
-Anyways, if you want to show a local web page with the &lt;code&gt;showWebPage&lt;/code&gt; command it is a two step process.&lt;/p&gt;
+      <description>&lt;p&gt;I&amp;rsquo;ve been working with Prime31&amp;rsquo;s Etcetera plugin for iOS development with
+Unity3d. There are a lot of great things in there but some of the documentation
+is lacking.  Anyways, if you want to show a local web page with the
+&lt;code&gt;showWebPage&lt;/code&gt; command it is a two step process.&lt;/p&gt;
 
 &lt;p&gt;Step 1:&lt;/p&gt;
 

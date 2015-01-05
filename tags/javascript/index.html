@@ -77,14 +77,13 @@
             <small class="text-muted">
               Posted on Wednesday, July 27, 2011 · <a href="http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                Saving HTML canvas element data to an image in a user friendly manner is a tricky problem. Let&#39;s look at one way to solve it.
-              </p>
-              <p class="text-center">
-                <a href="http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/"><button type="button" class="btn btn-primary">Read More</button></a>
-              </p>
-            
+            <p>
+              <p>Saving HTML canvas element data to an image in a user friendly manner is a tricky problem. Let&rsquo;s look at one way to solve it.</p>
+
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -93,14 +92,13 @@
             <small class="text-muted">
               Posted on Thursday, June 9, 2011 · <a href="http://sookocheff.com/posts/2011-06-09-date-now-in-ie6//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                <p>I was fiddling with a JavaScript timer application and noticed a bug in IE6. I’m sure this is documented elsewhere but I couldn’t find anything with some quick searches; hence this post.</p>
+            <p>
+              <p>I was fiddling with a JavaScript timer application and noticed a bug in IE6. I’m sure this is documented elsewhere but I couldn’t find anything with some quick searches; hence this post.</p>
 
-<p><code>Date.now()</code> is not supported by IE6. Use <code>new Date().getTime()</code> instead.</p>
-
-              </p>
-            
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2011-06-09-date-now-in-ie6/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -109,30 +107,13 @@
             <small class="text-muted">
               Posted on Thursday, June 2, 2011 · <a href="http://sookocheff.com/posts/2011-06-02-the-javascript-click-event-and-hidden-input-elements//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                <p>I was recently working with the HTML canvas element and wanted to attach an event to the canvas that would fire the click event of a file input element. I would then hide the input element so that the canvas element was the only way to browse for files. My first attempt was simple enough.</p>
+            <p>
+              <p>I was recently working with the HTML canvas element and wanted to attach an event to the canvas that would fire the click event of a file input element. I would then hide the input element so that the canvas element was the only way to browse for files.</p>
 
-<pre><code>document.getElementById('canvas').onclick = function(e) {
-    document.getElementById('filepicker').click();
-};
-</code></pre>
-
-<p>Now it’s time to hide the filepicker input element. Setting the elements style to display: none worked fine with Firefox but Chrome does not allow click events to be fired from hidden HTML elements. The solution is to use a bit of CSS to effectively hide the element. I came across this method over at <a href="http://www.quirksmode.org/dom/inputfile.html">quirksmode</a> where they use it to style input boxes with CSS. I adapted it to my needs and came up with this solution.</p>
-
-<p>With CSS we set the opacity to <code>0</code> rendering the element invisible. The different declarations are for cross-browser compatibility.</p>
-
-<pre><code>.fakehidden {
-    -moz-opacity: 0;
-    filter:alpha(opacity: 0);
-    opacity: 0;
-}
-</code></pre>
-
-<p>Setting the input elements class <code>tofakehidden</code> effectively hides the element from the user yet click events can be fired as usual.</p>
-
-              </p>
-            
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2011-06-02-the-javascript-click-event-and-hidden-input-elements/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -141,77 +122,13 @@
             <small class="text-muted">
               Posted on Wednesday, May 18, 2011 · <a href="http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                <p>Fade animations are a standard tool in any jQuery developer’s toolbox. But how do they really work? Let’s create a small function that encapsulates solely the fade functionality and find out.</p>
+            <p>
+              <p>Fade animations are a standard tool in any jQuery developer’s toolbox. But how do they really work? Let’s create a small function that encapsulates solely the fade functionality and find out.</p>
 
-<p>Let’s start with the jQuery <code>$</code> idiom.</p>
-
-<pre><code>function $(id) {
-    var $ = document.getElementById(id);
-    return $;
-}
-</code></pre>
-
-<p>This function takes an HTML id as a parameter and returns the element associated with this id. We can call this function with a string to return the particular element we need.</p>
-
-<pre><code>$('img');
-</code></pre>
-
-<p>Let’s add a function to our element.</p>
-
-<pre><code>function $(id) {
-    var $ = document.getElementById(id);
-
-    $.fade = function () {
-        // perform fade here
-    };
-
-    return $;
-}
-</code></pre>
-
-<p>We can call the function by appending <code>.fade</code> to our element.</p>
-
-<pre><code>$('img').fade();
-</code></pre>
-
-<p>Now let’s set up the rest of the function by adding a parameter for the length of the delay and storing a reference to <code>this</code>. In our context <code>this</code> refers to the element we are calling fade from. (For a detailed explanation of how <code>this</code> is set see the <a href="http://javascriptweblog.wordpress.com">JavaScript, JavaScript</a> article <a href="http://javascriptweblog.wordpress.com/.../understanding-javascripts-this/">here</a>). Finally, we set the display style of our element to <code>block</code> to ensure our animation is visible.</p>
-
-<pre><code>$.fade = function (delay) {
-    var _this = this;
-
-    _this.style.display = 'block';
-
-    // perform fade here
-};
-</code></pre>
-
-<p>We perform the fade by setting the opacity of our element. For this purpose let’s define a new function for setting the opacity of an element <code>elm</code> to <code>v</code>. We divide by 100 to define our fade in terms of a percentage.</p>
-
-<pre><code>var opacityTo = function (elm, v) {
-    elm.style.opacity = v/100;
-};
-</code></pre>
-
-<p>We can add a call to this function to our fade method.</p>
-
-<pre><code>$.fade = function (delay) {
-    var _this = this;
-
-    _this.style.display = 'block';
-
-    // set the opacity to 50%
-    opacityTo(_this, 50);
-};
-</code></pre>
-
-<p>Now the trick is to call this function to fade the element over a period of time. We do this by using the <code>setTimeout(callbk, delay)</code> function to set the opacity to different values at particular moments in time. The method signature defines a callbk parameter as a function to call when delay time has passed. If we call this function 100 times throughout our animation we will have a smooth and fluid result.</p>
-
-<p>First we set up the <code>for</code> loop to iterate from 1 to 100 and then call an anonymous function sending the index of our loop as a parameter to the function. Our anonymous function then calls <code>setTimeout</code> periodically (100 times in total).</p>
-
-              </p>
-            
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -220,18 +137,13 @@
             <small class="text-muted">
               Posted on Tuesday, May 10, 2011 · <a href="http://sookocheff.com/posts/2011-05-10-an-argument-against-javascript-minification//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                <p>Developers learn by example. This is no secret. The first advice given to new developers is to read a lot of good source code and the best advice given to experienced developers is to read a lot of good source code. Canonical texts for many languages let the source code say far more than the text. I’m thinking of text’s like <a href="http://cm.bell-labs.com/cm/cs/cbook/">Kernighan &amp; Ritchie</a> and <a href="http://mitpress.mit.edu/catalog/item/default.asp?ttype=2&amp;tid=4825">Friedman &amp; Felleisen</a>.</p>
+            <p>
+              <p>Developers learn by example. This is no secret. The first advice given to new developers is to read a lot of good source code and the best advice given to experienced developers is to read a lot of good source code. Canonical texts for many languages let the source code say far more than the text. I’m thinking of text’s like [Kernighan &amp; Ritchie][1] and [Friedman &amp; Felleisen][2].</p>
 
-<p>When the world wide web was in its infancy view source was the best tool for wannabe webmasters learning their craft. Sure, bad designs and bad decisions propagated quickly. But good designs and good decisions propagated too. Those who really wanted to learn found best of breed web sites and quickly copied, edited and pasted their way to a beautiful site, learning much about web design in the process.</p>
-
-<p>I would argue that JavaScript is still in its infancy. Developers are building complex web applications and in the process distilling years of hacking experience in to solid design. And we are hiding all this knowledge from the public for performance gains. The irony is that the JavaScript developers writing the best code are the JavaScript developers that minify. In effect we are hiding the best public source of information on JavaScript web development behind nebulous performance gains.</p>
-
-<p>Is it worth it? Google serves billions of pages a day. Do you?</p>
-
-              </p>
-            
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2011-05-10-an-argument-against-javascript-minification/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -240,45 +152,15 @@
             <small class="text-muted">
               Posted on Friday, May 6, 2011 · <a href="http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                <p>Chrome recently introduced support for HTML Notifications.</p>
+            <p>
+              <p>Chrome recently introduced support for HTML Notifications.</p>
 
-<p>Following the brief tutorial at <a href="http://www.html5rocks.com/tutorials/notifications/quick/">HTML5 Rocks</a> I was able to implement this in a matter of minutes and I couldn’t be happier with the results.</p>
+<p>Following the brief tutorial at [HTML5 Rocks][1] I was able to implement this in a matter of minutes and I couldn’t be happier with the results.</p>
 
-<p>The first step towards implementation is to check if the Notifications API is implemented by the browser. We do this by checking for the existence of the webkitNotifications object.</p>
-
-<pre><code>// check for notifications support
-if (!window.webkitNotifications) {
-    alert('Your browser does not support the Notifications API');
-}
-</code></pre>
-
-<p>As a means of preventing unwanted notifications we request permission from the user before displaying anything. The method <code>webkitNotifications.checkPermission()</code> will return zero if permission has previously been granted. If it returns non-zero we can request permission with the method <code>webkitNotifications.requestPermission()</code>.</p>
-
-<pre><code>// request permission to use notifications
-  if (window.webkitNotifications) {
-    if (window.webkitNotifications.checkPermission() &gt; 0) {
-            window.webkitNotifications.requestPermission();
-    }
-}
-</code></pre>
-
-<p>Now that we have requested permission we can display our notification. We use the function <code>webkitNotifications.createNotification()</code> to create a Notification object. This function takes three parameters: an icon to display, a title and text. We then call the <code>show()</code> method on our Notification object to display our notification.</p>
-
-<pre><code>// display a notification
-if (window.webkitNotifications &amp;&amp; window.webkitNotifications.checkPermission() == 0) {
-    window.webkitNotifications.createNotification(
-        'apple-touch-icon.png',
-        'Awesome!',
-        &quot;You've completed a Pomodoro!&quot;).show();
-}
-</code></pre>
-
-<p>The Notifications specification is currently in Draft format and has been submitted to the HTML working group for standardization. You can see the current spec through the <a href="http://www.chromium.org/developers/design-documents/desktop-notifications/api-specification">Chromium documentation</a>.</p>
-
-              </p>
-            
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -287,53 +169,13 @@ if (window.webkitNotifications &amp;&amp; window.webkitNotifications.checkPermis
             <small class="text-muted">
               Posted on Wednesday, April 20, 2011 · <a href="http://sookocheff.com/posts/2011-04-20-constants-in-javascript//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                <p>How are constants declared in JavaScript?</p>
+            <p>
+              <p>How are constants declared in JavaScript?</p>
 
-<p>You could use the const keyword like so.</p>
-
-<pre><code>const pi = 3.14;
-document.writeln(&quot;pi is roughly&quot;   pi   &quot;.&quot;);
-</code></pre>
-
-<p>But watch out!  The MDN’s <a href="https://developer.mozilla.org/en/JavaScript/Reference/Statements/const">JavaScript Reference</a> says that</p>
-
-<blockquote>
-<p><code>const</code> is a <strong>Mozilla-specific extension</strong>.</p>
-</blockquote>
-
-<p>Constants are actually not part of the JavaScript specification and we’ll have to roll our own solution.  We could use the <a href="http://www.yuiblog.com/blog/2007/06/12/module-pattern/">module  pattern</a> and create accessor functions to our constant data like this.</p>
-
-<pre><code>var CONSTANTS = (function() {
-  var private = {
-    'PI' : '3.14',
-  };
-
-  return {
-    get: function(name) { return private[name]; }
-  };
-})();
-
-alert('PI: '   CONSTANTS.get('PI'));
-</code></pre>
-
-<p>This prevents write access to our data and allows read access through a bit of extra syntax.  Another method is to simply use a convention such as ALL CAPS to define constants. Most programmers know this convention and will respect it.</p>
-
-<pre><code>var PI = 3.14;
-</code></pre>
-
-<p>The solution I use is to place all constants in an object literal.</p>
-
-<pre><code>var CONSTANTS = {
-  pi : 3.14
-};
-</code></pre>
-
-<p>This strikes me as a good compromise between the ALL CAPS convention and the over engineered module pattern solution.  What do you think?</p>
-
-              </p>
-            
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2011-04-20-constants-in-javascript/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -342,14 +184,13 @@ alert('PI: '   CONSTANTS.get('PI'));
             <small class="text-muted">
               Posted on Wednesday, January 19, 2011 · <a href="http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                Closures are easy. There I said it. Invest a little bit of time, and you will say it too. Follow along with me as I attempt to explain what closures are and how they are used.
-              </p>
-              <p class="text-center">
-                <a href="http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript/"><button type="button" class="btn btn-primary">Read More</button></a>
-              </p>
-            
+            <p>
+              <p>Closures are easy. There I said it. Invest a little bit of time, and you will say it too. Follow along with me as I attempt to explain what closures are and how they are used.</p>
+
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         
@@ -358,12 +199,13 @@ alert('PI: '   CONSTANTS.get('PI'));
             <small class="text-muted">
               Posted on Saturday, January 15, 2011 · <a href="http://sookocheff.com/posts/2011-01-15-the-future-of-mobile-development//#disqus_thread">0 Comments</a>
             </small>
-            
-              <p>
-                <p>The future of mobile development is cross-platform HTML5, JavaScript, and CSS3.  Let me explain. I’ve been working on a couple Windows Phone 7 applications to accompany my first release, <a href="http://www.appsfuze.com/applications/windowsphone.photo/faceart,3617">FaceArt</a>, in the Marketplace. As I do more research and development with the mobile platform I keep looking for ways to increase the reach of my apps. The most obvious is to release Android and iOS versions but I have a few hurdles to clear first, the biggest being lack of time. I do all development as a moonlighting gig while I work full-time and I’m already struggling to find extra hours during the week to finish my first three applications for one platform. How am I going to write and maintain three separate codebases for each app for the major mobile platforms while still keeping my employer happy during the work week?  The solution is cross-platform libraries targeting mobile and web apps. <a href="http://www.phonegap.com">PhoneGap</a>, <a href="http://www.airplaysdk.com">AirPlay</a>, and <a href="http://www.dragonfiresdk.com">DragonFire SDK</a> are a few notable products designed for just this problem.  The most notable, and most intriguing for me, is PhoneGap. I first noticed PhoneGap through an article on <a href="http://arstechnica.com/apple/news/2010/11/introducing-the-ars-technica-reader-for-ipad.ars">ArsTechnica</a>. This open-source solution wraps apps designed with HTML5, JavaScript, and CSS in a container suitable for the respective app stores. Why is this exciting? You can design an application for the web and get the mobile app for free (or minimal) time investment.  This is as close to the write once, run anywhere ideal that we will get for mobile phones and as the tools improve the experience is only going to get better for developers.  I personally can’t wait to see what the future holds for this product. What do you think?</p>
+            <p>
+              <p>The future of mobile development is cross-platform HTML5, JavaScript, and CSS3.  Let me explain. I’ve been working on a couple Windows Phone 7 applications to accompany my first release, [FaceArt][1], in the Marketplace. As I do more research and development with the mobile platform I keep looking for ways to increase the reach of my apps. The most obvious is to release Android and iOS versions but I have a few hurdles to clear first, the biggest being lack of time. I do all development as a moonlighting gig while I work full-time and I’m already struggling to find extra hours during the week to finish my first three applications for one platform. How am I going to write and maintain three separate codebases for each app for the major mobile platforms while still keeping my employer happy during the work week?  The solution is cross-platform libraries targeting mobile and web apps. [PhoneGap][2], [AirPlay][3], and [DragonFire SDK][4] are a few notable products designed for just this problem.  The most notable, and most intriguing for me, is PhoneGap. I first noticed PhoneGap through an article on [ArsTechnica][5]. This open-source solution wraps apps designed with HTML5, JavaScript, and CSS in a container suitable for the respective app stores. Why is this exciting? You can design an application for the web and get the mobile app for free (or minimal) time investment.  This is as close to the write once, run anywhere ideal that we will get for mobile phones and as the tools improve the experience is only going to get better for developers.  I personally can’t wait to see what the future holds for this product. What do you think?</p>
 
-              </p>
-            
+            </p>
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2011-01-15-the-future-of-mobile-development/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
             <hr>
           </article>
         

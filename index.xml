@@ -5,7 +5,103 @@
     <link>http://sookocheff.com/index.xml/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Sun, 04 Jan 2015 12:31:51 UTC</lastBuildDate>
+    <lastBuildDate>Fri, 23 Jan 2015 06:15:07 UTC</lastBuildDate>
+    
+    <item>
+      <title>Querying App Engine Logs with Elasticsearch</title>
+      <link>http://sookocheff.com/posts/2015-01-23-querying-app-engine-logs-with-elasticsearch/</link>
+      <pubDate>Fri, 23 Jan 2015 06:15:07 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2015-01-23-querying-app-engine-logs-with-elasticsearch/</guid>
+      <description>
+
+&lt;p&gt;From a DevOps perspective having a historical record of application logs can aid
+immensely in tracking down bugs, responding to customer questions, or finding
+out when and why that critical piece of data was updated to the wrong value. One
+of the biggest grievances with the built-in log handling of Google App Engine is
+that historical logs are only available for the previous three days. We wanted
+to do a little bit better and have logs available for a 30 day time period. This
+article outlines a method we&amp;rsquo;ve developed for pushing App Engine logs to an
+elasticsearch cluster.&lt;/p&gt;
+
+&lt;p&gt;A side benefit of this approach is that if you have multiple App Engine
+projects, all of their logs can be searched at the same time. This provides an
+immediate benefit when tracking down systems integration problems or parsing API
+traffic between applications.&lt;/p&gt;
+
+&lt;p&gt;The solution we chose for this problem revolves around the MapReduce API. If you
+need a refresher on this API please check out my &lt;a href=&#34;http://sookocheff.com/series/mapreduce-api/&#34;&gt;MapReduce tutorial
+series&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;Overview&lt;/h2&gt;
+
+&lt;p&gt;The gist of this solution is to run a MapReduce job that reads data from the
+&lt;a href=&#34;https://cloud.google.com/appengine/docs/python/logs/&#34;&gt;App Engine Logs API&lt;/a&gt; using the &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-mapreduce/blob/master/python/src/mapreduce/input_readers.py#L1952&#34;&gt;LogInputReader&lt;/a&gt;,
+converts the data to a JSON format for ingestion into elasticsearch, and finally
+write the parsed data to the elasticsearch cluster using a &lt;a href=&#34;http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/&#34;&gt;custom MapReduce
+OutputWriter&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;We execute this MapReduce job on a timer using cron to push logs to
+elasticsearch on a specific schedule. In our case, we run this job every 15
+minutes to provide a relatively recent view of current operational data.&lt;/p&gt;
+
+&lt;p&gt;The following diagram presents the architecture of our solution.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-01-23-querying-app-engine-logs-with-elasticsearch/elasticsearch-sequence-diagram.png&#34;&gt;
+  &lt;img src=&#34;/img/2015-01-23-querying-app-engine-logs-with-elasticsearch/elasticsearch-sequence-diagram.png&#34; alt=&#34;Architecture for Logging to elasticsearch&#34;&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Example&lt;/h2&gt;
+
+&lt;p&gt;The majority of the solution is contained in a MapperPipeline. The following
+code illustrates how to setup the MapperPipeline. What&amp;rsquo;s remaining is to write a
+&lt;a href=&#34;http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/&#34;&gt;custom MapReduce OutputWriter&lt;/a&gt; that pushes data to
+elasticsearch and a function that converts a RequestLog object to JSON suitable
+for elasticsearch.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class CronHandler(webapp2.RequestHandler):
+
+    def get(self):
+        run()
+
+
+def run():
+    start_time, end_time = get_time_range()
+    logging.debug(&#39;Dumping logs for date range (%s, %s).&#39;, start_time, end_time)
+
+    start_time = float(start_time.strftime(&#39;%s.%f&#39;))
+    end_time = float(end_time.strftime(&#39;%s.%f&#39;))
+
+    p = Log2ElasticSearch(start_time, end_time)
+    p.start()
+
+
+class Log2Elasticsearch(pipeline.Pipeline):
+
+    def run(self, start_time, end_time, module_name, module_versions):
+        &amp;quot;&amp;quot;&amp;quot;
+        Args:
+            module_versions: A list of tuples of the form (module, version), that
+                indicate that the logs for the given module/version combination should be
+                fetched.  Duplicate tuples will be ignored.
+        &amp;quot;&amp;quot;&amp;quot;
+        yield mapreduce_pipeline.MapperPipeline(
+            &amp;quot;vlogs-elasticsearch-injestion&amp;quot;,
+            handler_spec=&amp;quot;log2json&amp;quot;,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.LogInputReader&amp;quot;,
+            output_writer_spec=&amp;quot;mapreduce.output_writers.ElasticSearchOutputWriter&amp;quot;,
+            params={
+                &amp;quot;input_reader&amp;quot;: {
+                    &amp;quot;start_time&amp;quot;: start_time,
+                    &amp;quot;end_time&amp;quot;: end_time,
+                    &amp;quot;include_app_logs&amp;quot;: True,
+                },
+            },
+            shards=16
+        )
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>Parsing bash script options with getopts</title>
@@ -1848,158 +1944,6 @@ independently choose tasks without unnecessary communication barriers.&lt;/p&gt;
 
 &lt;p&gt;I really enjoyed my time as a remote worker, but equally enjoy being back in the
 office. Things are not better or worse in either case. Just different.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Converting an ndb model to a BigQuery schema</title>
-      <link>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/</link>
-      <pubDate>Thu, 14 Aug 2014 17:58:03 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/</guid>
-      <description>
-
-&lt;p&gt;I have been working on the problem of recording changes to an ndb model. One way to accomplish this is to stream data changes to a BigQuery table corresponding to the ndb model. It would be great to do this in a generic way which gives us the problem of generating a BigQuery table given an ndb model. This article will describe one solution to this problem.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_0&#34;&gt;Accessing the properties of an ndb class&lt;/h2&gt;
-
-&lt;p&gt;The first step in the process is to find all the properties of the class via the
-ndb &lt;code&gt;_properties&lt;/code&gt; accessor. By iterating over this field we can find all of the
-properties on the class and their ndb types.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def tablify(ndb_model):
-    &amp;quot;&amp;quot;&amp;quot;
-    Convert ndb_model into a BigQuery table schema.
-    &amp;quot;&amp;quot;&amp;quot;
-    for name, ndb_type in ndb_model.__class__._properties.iteritmes():
-       print name, ndb_type
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;toc_1&#34;&gt;Converting properties to BigQuery schema types&lt;/h2&gt;
-
-&lt;p&gt;Now that we have the set of properties on the class we can map from the type of
-each property to a BigQuery type. Here is a helper function that provides a
-simple mapping.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def ndb_type_to_bigquery_type(_type):
-    &amp;quot;&amp;quot;&amp;quot;
-    Convert a python type to a bigquery type.
-    &amp;quot;&amp;quot;&amp;quot;
-    if isinstance(_type, ndb.IntegerProperty):
-        return &amp;quot;INTEGER&amp;quot;
-    elif isinstance(_type, ndb.FloatProperty):
-        return &amp;quot;FLOAT&amp;quot;
-    elif isinstance(_type, ndb.BooleanProperty):
-        return &amp;quot;BOOLEAN&amp;quot;
-    elif type(_type) in [ndb.StringProperty, ndb.TextProperty, ndb.ComputedProperty]:
-        return &amp;quot;STRING&amp;quot;
-    elif type(_type) in [ndb.DateTimeProperty, ndb.DateProperty, ndb.TimeProperty]:
-        return &amp;quot;TIMESTAMP&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The last task is to format everything as a &lt;a href=&#34;https://developers.google.com/bigquery/docs/reference/v2/tables&#34;&gt;BigQuery table
-resource&lt;/a&gt;. This
-involves adding some boiler-plate around each field in our BigQuery schema and
-fleshing out the structure of the JSON.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;
-from google.appengine.ext import ndb
-
-SUPPORTED_TYPES = [ndb.IntegerProperty,
-                   ndb.FloatProperty,
-                   ndb.BooleanProperty,
-                   ndb.StringProperty,
-                   ndb.TextProperty,
-                   ndb.DateTimeProperty,
-                   ndb.DateProperty,
-                   ndb.TimeProperty,
-                   ndb.ComputedProperty]
-
-
-def ndb_type_to_bigquery_type(_type):
-    &amp;quot;&amp;quot;&amp;quot;
-    Convert a python type to a bigquery type.
-    &amp;quot;&amp;quot;&amp;quot;
-    if isinstance(_type, ndb.IntegerProperty):
-        return &amp;quot;INTEGER&amp;quot;
-    elif isinstance(_type, ndb.FloatProperty):
-        return &amp;quot;FLOAT&amp;quot;
-    elif isinstance(_type, ndb.BooleanProperty):
-        return &amp;quot;BOOLEAN&amp;quot;
-    elif type(_type) in [ndb.StringProperty, ndb.TextProperty, ndb.ComputedProperty]:
-        return &amp;quot;STRING&amp;quot;
-    elif type(_type) in [ndb.DateTimeProperty, ndb.DateProperty, ndb.TimeProperty]:
-        return &amp;quot;TIMESTAMP&amp;quot;
-
-
-def ndb_property_to_bigquery_field(name, ndb_type):
-    &amp;quot;&amp;quot;&amp;quot;
-    Convert from ndb property to a BigQuery schema table field.
-    &amp;quot;&amp;quot;&amp;quot;
-    if type(ndb_type) not in SUPPORTED_TYPES:
-        raise ValueError(&#39;Unsupported object property&#39;)
-
-    field = {
-        &amp;quot;description&amp;quot;: name,
-        &amp;quot;name&amp;quot;: name,
-        &amp;quot;type&amp;quot;: ndb_type_to_bigquery_type(ndb_type)
-    }
-
-    if ndb_type._repeated:
-        field[&#39;mode&#39;] = &#39;REPEATED&#39;
-
-    return field
-
-
-def tablify_schema(obj):
-    &amp;quot;&amp;quot;&amp;quot;
-    Convert ndb_model into a BigQuery table schema.
-    &amp;quot;&amp;quot;&amp;quot;
-    table_schema = {&#39;fields&#39;: []}
-    
-    for name, ndb_type in obj.__class__._properties.iteritems():
-        table_schema[&#39;fields&#39;].append(ndb_property_to_bigquery_field(name, ndb_type))
-
-    return table_schema
-
-
-def tablify(obj, project_id, dataset_id, table_id):
-    &amp;quot;&amp;quot;&amp;quot;
-    Return a BigQuery table resource representing an ndb object.
-    &amp;quot;&amp;quot;&amp;quot;
-    return {
-        &amp;quot;kind&amp;quot;: &amp;quot;bigquery#table&amp;quot;,
-        &amp;quot;id&amp;quot;: table_id,
-        &amp;quot;tableReference&amp;quot;: {
-            &amp;quot;projectId&amp;quot;: project_id,
-            &amp;quot;datasetId&amp;quot;: dataset_id,
-            &amp;quot;tableId&amp;quot;: table_id
-        },
-        &amp;quot;description&amp;quot;: &amp;quot;Table Resource&amp;quot;,
-        &amp;quot;schema&amp;quot;: tablify_schema(obj)
-    }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;toc_2&#34;&gt;Creating the new table on BigQuery.&lt;/h2&gt;
-
-&lt;p&gt;Now that we have a BigQuery schema we can create the table in BigQuery using the BigQuery api client.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from oauth2client.appengine import AppAssertionCredentials
-from apiclient.discovery import build
-
-credentials = AppAssertionCredentials(scope=&#39;https://www.googleapis.com/auth/bigquery&#39;)
-http = credentials.authorize(httplib2.Http())
-big_query_service = build(&#39;bigquery&#39;, &#39;v2&#39;, http=http)
-        
-table_resource = tablify(ndb_model, project_id, dataset_id, table_id)
-                response = big_query_service.tables().insert(projectId=project_id,
-                                                             datasetId=dataset_id,
-                                                             body=table_resource).execute()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And that&amp;rsquo;s it. This article outlined a quick method of generating a BigQuery
-table scheme from an ndb model. If you found this useful let me know in the
-comments.&lt;/p&gt;
 </description>
     </item>
     

@@ -5,7 +5,41 @@
     <link>http://sookocheff.com/posts/index.xml/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Fri, 23 Jan 2015 06:15:07 UTC</lastBuildDate>
+    <lastBuildDate>Tue, 27 Jan 2015 06:07:12 CST</lastBuildDate>
+    
+    <item>
+      <title>Downloading files from Google Cloud Storage with webapp2</title>
+      <link>http://sookocheff.com/posts/2015-01-27-webapp2-download-handler/</link>
+      <pubDate>Tue, 27 Jan 2015 06:07:12 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2015-01-27-webapp2-download-handler/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve been working on a simple App Engine application that offers upload and
+download functionality to and from Google Cloud Storage. When it came time to
+actually download the content I needed to write a webapp2 &lt;code&gt;RequestHandler&lt;/code&gt; that
+will retrieve the file from Cloud Storage and return it to the client.&lt;/p&gt;
+
+&lt;p&gt;The trick to this is to set the proper content type in your response header. In
+the example below I used the &lt;a href=&#34;(https://cloud.google.com/appengine/docs/python/googlecloudstorageclient/)&#34;&gt;Cloud Storage Client Library&lt;/a&gt; to open and
+read the file, then set the response appropriately.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import webapp2
+import cloudstorage
+
+class FileDownloadHandler(webapp2.RequestHandler):
+
+  def get(self, filename):
+    self.response.headers[&#39;Content-Type&#39;] = &#39;application/x-gzip&#39;
+    self.response.headers[&#39;Content-Disposition&#39;] = &#39;attachment; filename=%s&#39; % filename
+
+    filename = &#39;/bucket/&#39; + filename
+    gcs_file = cloudstorage.open(filename)
+    data = gcs_file.read()
+    gcs_file.close()
+
+    self.response.write(data)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>Querying App Engine Logs with Elasticsearch</title>
@@ -1765,185 +1799,6 @@ def parallel_query():
 &lt;h2 id=&#34;toc_5&#34;&gt;Summary&lt;/h2&gt;
 
 &lt;p&gt;In all of these cases we show how to combine and compose asynchronous functions using the tasklet framework. This allows you to define your own asynchronous functions that are can be used just like the ndb asynchronous functions.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Working From Home: A Retrospective</title>
-      <link>http://sookocheff.com/posts/2014-09-15-working-from-home-retrospective/</link>
-      <pubDate>Thu, 18 Sep 2014 12:57:32 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2014-09-15-working-from-home-retrospective/</guid>
-      <description>
-
-&lt;p&gt;I&amp;rsquo;ve spent the past eight months working from home thanks to some great support
-from my &lt;a href=&#34;http://www.vendasta.com&#34;&gt;employer&lt;/a&gt;, allowing me to support my wife and
-children and still contribute as a meaningful employee. Working from home with
-four small children and a loving and supportive wife has brought its fair share
-of both challenges and delights. This post will describe the working from home
-experience and the lessons I&amp;rsquo;ve learned along the way.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_0&#34;&gt;Personal Productivity&lt;/h2&gt;
-
-&lt;p&gt;Without a doubt my personal productivity went up. Working from home meant fewer
-distractions, noise and interruptions. VendAsta follows an open office plan
-which can be great for ad-hoc communication but terrible for worker satisfaction
-and personal productivity. In fact, a recent New Yorker article summarizing the
-issue (&lt;a href=&#34;http://www.newyorker.com/business/currency/the-open-office-trap&#34;&gt;The Open-Office
-        Trap&lt;/a&gt;)
-details numerous studies showing that open office plans are detrimental to
-productivity and satisfaction at work. In one study, researchers from the
-University of Calgary found that moving to an open office design is &amp;ldquo;negatively
-related to workers’ satisfaction with their physical environment and perceived
-productivity&amp;rdquo;. In another, Researchers at the University of Sidney found that
-&lt;a href=&#34;http://theconversation.com/open-plan-offices-attract-highest-levels-of-worker-dissatisfaction-study-18246&#34;&gt;open office plans have the lowest level of worker
-satisfaction&lt;/a&gt;
-stating that &amp;ldquo;the disadvantages brought by noise disruption were bigger than the
-predicted benefits of increased interaction&amp;rdquo;.&lt;/p&gt;
-
-&lt;p&gt;My experience working from home confirmed these findings and I found that the
-decreasing number of interruptions meant I could perform more and better work in
-less time.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_1&#34;&gt;Team Communication&lt;/h2&gt;
-
-&lt;p&gt;Team communication suffered. At VendAsta, we practice &lt;a href=&#34;http://scrummethodology.com/&#34;&gt;agile development using
-scrum&lt;/a&gt; with all of the encompassing roles and
-responsibilities. As a team member my role is to estimate stories in the
-backlog, commit to a set number of stories per sprint, and to execute on those
-stories during the sprint. When the stories were written with careful business
-analysis and clear expectations of the acceptance criteria I felt no discernable
-difference between working from home and working remotely. When the stories were
-written with vague acceptance criteria or without careful thought of the
-business implications it was significantly harder to contribute to team
-productivity. Our usual approach in this case is to get together as a team in an
-ad-hoc meeting to hash out the details of the particular story so that work on
-it can resume. Unfortunately, even with modern video chat, screen sharing and
-other remote working tools, communicating to a group of people is very difficult
-as a remote employee. There is just no substitute to sitting together in the
-same room working out a problem on a shared white board.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_2&#34;&gt;Work-Life Balance&lt;/h2&gt;
-
-&lt;p&gt;The difference in work-life balance is difficult to analyze. I&amp;rsquo;ll start with the
-biggest and most glaring postive &amp;ndash; I was home and helpful to our family during
-breakfast, lunch, and dinner for almost a year. You really can&amp;rsquo;t over value how
-important that is to a young family. Living in a small city I don&amp;rsquo;t have a very
-long commute but the difference between a 20 minute commute and no commute at
-all is striking. Being around for lunch or to help put a child to sleep. Just
-being in the house so my wife could grab some groceries while everyone was
-napping. All of these minor benefits add up to really make the experience of
-raising our children that much easier.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_3&#34;&gt;Guilt&lt;/h2&gt;
-
-&lt;p&gt;Working from home with my wife and children in the same house meant I was always
-aware of the sheer pile of &lt;em&gt;work&lt;/em&gt; my wife was doing each day to help our family
-&amp;ndash; while I had the much easier task of sitting at a computer typing on a
-keyboard. The dichotomy between the pace and stress level of her day and mine
-meant that I was, more often than not, feeling guilty about not helping her
-more.  At the same time, if I did stay an extra 15 minutes after lunch to help
-her get a particularly fussy child to nap I felt guilty to my employer and team
-for not being back at my desk and working. The reality is that, as a remote
-worker, I assume the rest of my team thinks I&amp;rsquo;m relaxing in a hammock with a
-cocktail if I&amp;rsquo;m unavailable for a few minutes. I&amp;rsquo;m not sure how to assuage that
-guilt.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_4&#34;&gt;Helpful Tools&lt;/h2&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.google.ca/chrome/business/solutions/for-meetings.html&#34;&gt;ChromeBox&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Our company was sent a set of ChromeBox units for free as part of a trial
-program. They are, without a doubt, excellent for holding meetings with remote
-employees.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.hipchat.com/&#34;&gt;HipChat&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;We started using HipChat internally and the area where it excels is group to
-group communication. HipChat makes it effortless to jump into a different teams
-chat and ask a quick question.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;toc_5&#34;&gt;Not So Helpful Tools&lt;/h2&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Google Hangouts.&lt;/p&gt;
-
-&lt;p&gt;This is a tough item to put on the list because it is so great at what it is
-meant to do &amp;ndash; one to one video chat. Unfortunately, when you get more than one
-person in the same Hangout and that Hangout is being shared on a projector it
-quickly degrades into a useability problem. I dare not count the number of
-minutes and hours wasted getting Hangouts to properly  share the presenters
-screen or to get the proper microphone unmuted for a presentation.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Pen and Paper. Whiteboards.&lt;/p&gt;
-
-&lt;p&gt;By far my most used and most useful communication tool is
-rendered useless by remote work. I&amp;rsquo;m the type of person that needs time writing,
-reading and thinking to come up with solutions to a problem. By
-stripping those tools away during remote meetings I found it very
-difficult to contribute to joint discussions in a meaningful way.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;toc_6&#34;&gt;Qualities of a Remote Worker&lt;/h2&gt;
-
-&lt;p&gt;Remote working is not for everyone. Although I can&amp;rsquo;t claim to have any authority
-on the subject I did compile a list of qualities that make a successful remote
-worker.&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Action Oriented&lt;/p&gt;
-
-&lt;p&gt;A great remote worker needs to gravitate towards taking action rather than
-waiting for instruction. Being remote implies that you may not always be up to
-date on the discussions and decisions being made in the office. At times it is
-up to you to pick up a task and start working on it.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Able to Prioritize Independently&lt;/p&gt;
-
-&lt;p&gt;Closely linked to being action oriented is the ability to prioritize. Not being
-privy or available for every in office conversation means you need to be able to
-judge independently what tasks are high priority. It&amp;rsquo;s important to note that
-you &lt;em&gt;may be wrong&lt;/em&gt; in your choice of tasks. As long as you have some level of
-trust with your manager or employer and you aren&amp;rsquo;t too far off the mark this
-shouldn&amp;rsquo;t be an issue.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Strong Written Communicator&lt;/p&gt;
-
-&lt;p&gt;As a remote worker one of your primary communication channels is e-mail. Being a
-strong writer complements so many other professional attributes that you really
-cannot value this enough. It&amp;rsquo;s my opinion that every knowledge worker should be
-comfortable writing and presenting their ideas.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;toc_7&#34;&gt;Qualities of a Remote Manager&lt;/h2&gt;
-
-&lt;p&gt;Remote work is not for every job. The remote employee&amp;rsquo;s job should be well
-defined with clear goals. There also must be some level of trust between the
-employee and the employer. In the end, you are a professional and it is up to
-you to act as a professional no matter where you are working. That said, there
-are a few qualities that the employer needs to bring to the table as well.&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Trust&lt;/p&gt;
-
-&lt;p&gt;The employer has to trust their employee to get the job down to the best of
-their ability. You hired the person to begin with so some level of trust must be
-present. The trust level cannot be different for remote and in office workers.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Planning&lt;/p&gt;
-
-&lt;p&gt;The product manager is generally responsible for determining the project goals
-and how they are prioritized. Remote workers need a manager with a strong
-ability to distill and communicate the project goals so that the worker can
-independently choose tasks without unnecessary communication barriers.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;toc_8&#34;&gt;Summary&lt;/h2&gt;
-
-&lt;p&gt;I really enjoyed my time as a remote worker, but equally enjoy being back in the
-office. Things are not better or worse in either case. Just different.&lt;/p&gt;
 </description>
     </item>
     

@@ -98,7 +98,7 @@ class Article(ndb.model):
 <em>completely bypassing the <code>auto_now</code> option</em>.</p>
 
 <pre><code class="language-python">article = Article(title='Python versus Ruby')
-article._properties['updated']._auto_now = False
+article._properties['updated'].auto_now = False
 article.put()
 </code></pre>
 
@@ -109,7 +109,7 @@ property still set to <code>False</code>. This can have unwanted side-effects be
 subsequent updates to the entity will not trigger the <code>auto_now</code> functionality.</p>
 
 <pre><code class="language-python">article = Article(title='Python versus Ruby')
-article._properties['updated']._auto_now = False
+article._properties['updated'].auto_now = False
 key = article.put() # Put the entity with the auto_now option set to False
 
 article = key.get() # Get the entity from instance cache
@@ -120,10 +120,10 @@ article.put() # Put the entity with the auto_now option *still* set to False
 <p>You can set the <code>auto_now</code> option to <code>True</code> again to re-enable the functionality.</p>
 
 <pre><code class="language-python">article = Article(title='Python versus Ruby')
-article._properties['updated']._auto_now = False
+article._properties['updated'].auto_now = False
 key = article.put()
 
-article._properties['updated']._auto_now = True
+article._properties['updated'].auto_now = True
 article = key.get() # Get the entity from instance cache
 article.title = 'Python versus Go'
 article.put() # Puts the entity with the auto_now option set to True

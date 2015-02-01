@@ -360,7 +360,7 @@ class Article(ndb.model):
 &lt;em&gt;completely bypassing the &lt;code&gt;auto_now&lt;/code&gt; option&lt;/em&gt;.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
-article._properties[&#39;updated&#39;]._auto_now = False
+article._properties[&#39;updated&#39;].auto_now = False
 article.put()
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -371,7 +371,7 @@ property still set to &lt;code&gt;False&lt;/code&gt;. This can have unwanted sid
 subsequent updates to the entity will not trigger the &lt;code&gt;auto_now&lt;/code&gt; functionality.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
-article._properties[&#39;updated&#39;]._auto_now = False
+article._properties[&#39;updated&#39;].auto_now = False
 key = article.put() # Put the entity with the auto_now option set to False
 
 article = key.get() # Get the entity from instance cache
@@ -382,10 +382,10 @@ article.put() # Put the entity with the auto_now option *still* set to False
 &lt;p&gt;You can set the &lt;code&gt;auto_now&lt;/code&gt; option to &lt;code&gt;True&lt;/code&gt; again to re-enable the functionality.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;article = Article(title=&#39;Python versus Ruby&#39;)
-article._properties[&#39;updated&#39;]._auto_now = False
+article._properties[&#39;updated&#39;].auto_now = False
 key = article.put()
 
-article._properties[&#39;updated&#39;]._auto_now = True
+article._properties[&#39;updated&#39;].auto_now = True
 article = key.get() # Get the entity from instance cache
 article.title = &#39;Python versus Go&#39;
 article.put() # Puts the entity with the auto_now option set to True

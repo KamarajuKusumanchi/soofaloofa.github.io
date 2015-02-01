@@ -5,7 +5,122 @@
     <link>http://sookocheff.com/posts/index.xml/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Tue, 27 Jan 2015 06:07:12 CST</lastBuildDate>
+    <lastBuildDate>Sun, 01 Feb 2015 14:53:37 CST</lastBuildDate>
+    
+    <item>
+      <title>A pypiserver Deployment Script</title>
+      <link>http://sookocheff.com/posts/2015-02-01-a-pypiserver-deployment-script/</link>
+      <pubDate>Sun, 01 Feb 2015 14:53:37 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2015-02-01-a-pypiserver-deployment-script/</guid>
+      <description>&lt;p&gt;At Vendasta we&amp;rsquo;ve been slowly adopting pypi and pip for our internal code
+libraries and the time has come to deploy our own private pypi server. After
+evaluating a few options I settled on the simplistic
+&lt;a href=&#34;https://pypi.python.org/pypi/pypiserver&#34;&gt;pypiserver&lt;/a&gt; &amp;ndash; a barebones
+implementation of the &lt;a href=&#34;https://pypi.python.org/simple/&#34;&gt;simple HTTP API&lt;/a&gt; to
+pypi.&lt;/p&gt;
+
+&lt;p&gt;The deployment uses nginx as a front-end to pypiserver. pypiserver itself is ran
+and monitored using supervisord. I created a bash script that creates a user and
+group to run pypiserver and installs and runs nginx, supervisord and pypiserver.
+I&amp;rsquo;ve been running this bash script through Vagrant to deploy a custom pypiserver
+for private use. I wanted to save this code for posterity and hopefully help
+someone else working on the same task.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#!/usr/bin/env bash
+
+STARTUP_VERSION=1
+STARTUP_MARK=/var/startup.script.$STARTUP_VERSION
+
+# Exit if this script has already ran
+if [[ -f $STARTUP_MARK ]]; then
+  exit 0  
+fi
+
+set -o nounset
+set -o pipefail
+set -o errexit
+
+# Install prerequesites
+sudo apt-get update
+sudo apt-get install -y vim
+sudo apt-get install -y apache2-utils
+sudo apt-get install -y nginx
+sudo apt-get install -y supervisor
+
+# Install pip
+wget &amp;quot;https://bootstrap.pypa.io/get-pip.py&amp;quot;
+sudo python get-pip.py
+
+# Install pypiserver with passlib for upload support
+sudo pip install passlib
+sudo pip install pypiserver
+
+# Set the port configuration
+proxy_port=8080
+pypi_port=7201
+
+# Create a user and group to run pypiserver
+user=pypiusername
+password=pypipasswrd
+group=$user
+
+sudo groupadd &amp;quot;$group&amp;quot;
+sudo useradd $user -m -g $group -G $group
+sudo -u $user -H -s eval &#39;htpasswd -scb $HOME/.htaccess&#39; &amp;quot;$user $password&amp;quot;
+sudo -u $user -H -s eval &#39;mkdir -p $HOME/packages&#39;
+
+##############
+# nginx config
+##############
+echo &amp;quot;$user:$(openssl passwd -crypt $password)&amp;quot; &amp;gt; /etc/nginx/user.pwd
+
+# nginx can&#39;t run as a daemon to work with supervisord
+echo &amp;quot;daemon off;&amp;quot; &amp;gt;&amp;gt; /etc/nginx/nginx.conf
+
+cat &amp;lt;&amp;lt;EOF &amp;gt; /etc/nginx/sites-enabled/pypi-server.conf
+server {
+  listen $proxy_port;
+  location / {
+    proxy_pass http://localhost:$pypi_port;
+    auth_basic &amp;quot;PyPi Authentication&amp;quot;;
+    auth_basic_user_file /etc/nginx/user.pwd;
+  }
+}
+EOF
+
+rm /etc/nginx/sites-enabled/default
+
+###################
+# supervisor config
+###################
+cat &amp;lt;&amp;lt;EOF &amp;gt; /etc/supervisor/conf.d/pypi-server.conf
+[program:pypi-server]
+command=pypi-server -p $pypi_port -P /home/$user/.htaccess /home/$user/packages
+directory=/home/$user
+user=$user
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/pypi-server.err.log
+stdout_logfile=/var/log/pypi-server.out.log
+EOF
+
+cat &amp;lt;&amp;lt;EOF &amp;gt; /etc/supervisor/conf.d/nginx.conf
+[program:nginx]
+command=/usr/sbin/nginx
+autostart=true
+autorestart=true
+stdout_events_enabled=true
+stderr_events_enabled=true
+EOF
+
+sudo supervisorctl reread
+sudo supervisorctl update
+
+touch $STARTUP_MARK
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>Downloading files from Google Cloud Storage with webapp2</title>
@@ -1676,129 +1791,6 @@ class SearchSuggestionModel(ndb.Model):
 
         ndb.put_multi(entities)
 &lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Composing Asynchronous Functions With Tasklets</title>
-      <link>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/</link>
-      <pubDate>Sat, 27 Sep 2014 15:25:29 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/</guid>
-      <description>
-
-&lt;p&gt;Asynchronous functions can provide a boon to application performance by allowing time consuming functions to operate in parallel and without blocking the main execution thread. This article explains how to use the Tasklet API to compose and execute asynchronous functions in Google App Engine.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_0&#34;&gt;ndb.Future&lt;/h2&gt;
-
-&lt;p&gt;A &lt;a href=&#34;https://developers.google.com/appengine/docs/python/ndb/futureclass&#34;&gt;Future&lt;/a&gt; is a class representing an asynchronous I/O operation. &lt;code&gt;ndb&lt;/code&gt; provides asynchronous versions of datastore operations that will return a future instead of immediately returning data.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;future = User.get_by_id_async(uid)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;When a Future is first created it has no data while the I/O operation is running. By calling &lt;code&gt;get_result()&lt;/code&gt; on the Future the application will stop execution of the current thread until the data is available from the I/O operation.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;future = User.get_by_id_async(uid)
-user = future.get_result()  # Return the data, blocking execution until the data is ready.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The above code is equivalent to calling the non-asynchronous &lt;code&gt;ndb.get&lt;/code&gt; function.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;user = User.get_by_id(uid)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Using futures in this way allows you to run multiple I/O operations in parallel.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# Run two asynchronous operations in parallel
-user_future = User.get_by_id_async(uid)
-accounts_future = Account.query(Account.user_id==uid).fetch_async()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;toc_1&#34;&gt;ndb.tasklet&lt;/h2&gt;
-
-&lt;p&gt;Tasklets allow you to create your own asynchronous functions that return a Future. The application can call &lt;code&gt;get_result()&lt;/code&gt; on that Future to return the data.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;tasklet_future = my_tasklet()  # A tasklet
-result = tasklet_future.get_result()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;You can use Tasklets to create fine grained asynchronous functions, in some cases simplifying how a method is programmed.&lt;/p&gt;
-
-&lt;p&gt;When AppEngine encounters a tasklet function the Tasklet framework inserts the tasklet into an event loop. The event loop will cycle through all tasklets and execute them until a &lt;code&gt;yield&lt;/code&gt; statement is reached within the tasklet. The &lt;code&gt;yield&lt;/code&gt; statement is where you put the asynchronous work so that the framework can execute your &lt;code&gt;yield&lt;/code&gt; statement (asynchronously) and then move on to another tasklet to resume execution until its &lt;code&gt;yield&lt;/code&gt; statement is reached. In this way all of the &lt;code&gt;yield&lt;/code&gt; statements are done asynchronously. For even more performance, NDB implements a batch job framework that will bundle up multiple requests in a single batch RPC to the server.&lt;/p&gt;
-
-&lt;p&gt;As a simple example, we can use a tasklet to define an asynchronous query and return the result.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@ndb.tasklet
-def query_tasklet():
-    result = yield Model.query().fetch_async()
-    raise ndb.Return(result)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The line &lt;code&gt;result = yield Model.query().fetch_async()&lt;/code&gt; will alert the tasklet framework that this is an asynchronous line of code and that the framework can wait here and execute other code while the asynchronous line completes. To force the asynchronous code to complete you call &lt;code&gt;get_result()&lt;/code&gt; on the return value of the tasklet function.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;future = query_tasklet()
-future.get_result()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;So how do we use this in our code? There are three distinct cases.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_2&#34;&gt;Case 1: Processing an asynchronous result&lt;/h2&gt;
-
-&lt;p&gt;Suppose that you have an asynchronous function that returns a Future and you want to do some processing on the result before returning from your function. In that case you may have code like this.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def process_a_query():
-	future = Model.query().fetch_async()
-	return process_result(future.get_result())
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;To turn this into an asynchronous tasklet function you can add the tasklet decorator and yield your asynchronous fetch.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@ndb.tasklet
-def process_a_query():
-	result = yield Model.query().fetch_async()
-	raise ndb.Return(process_result(result))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now your function &lt;code&gt;process_a_query&lt;/code&gt; can be called asynchronously.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;future = process_a_query()
-# ...
-future.get_result()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;toc_3&#34;&gt;Case 2: Composing two asynchronous functions&lt;/h2&gt;
-
-&lt;p&gt;In this case, suppose you have two asynchronous functions that depend on each other and you want to combine them with the tasklet framework.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def multiple_query():
-	future_a = ModelA.query().fetch_async()
-	a = future_a.get_result()
-	future_b = ModelB.query(ModelB.id==a).fetch_async()
-	return future_b
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The above code becomes simpler with tasklets.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@ndb.tasklet
-def multiple_query():
-    a = yield ModelA.query().fetch_async()
-    b = yield ModelB.query(ModelB.id==a).fetch_async()
-    raise ndb.Return(b)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;toc_4&#34;&gt;Case 3: Parallel Computation&lt;/h2&gt;
-
-&lt;p&gt;The last case to discuss is parallel computation. In this scenario you have two independent asynchronous functions that you want to run in parallel.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@ndb.tasklet
-def parallel_query():
-	  a, b = yield ModelA.query().fetch_async(), yield ModelB.query().fetch_async()
-	  raise ndb.Return((a,b))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;toc_5&#34;&gt;Summary&lt;/h2&gt;
-
-&lt;p&gt;In all of these cases we show how to combine and compose asynchronous functions using the tasklet framework. This allows you to define your own asynchronous functions that are can be used just like the ndb asynchronous functions.&lt;/p&gt;
 </description>
     </item>
     

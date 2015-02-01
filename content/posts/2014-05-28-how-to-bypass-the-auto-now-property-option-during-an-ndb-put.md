@@ -31,7 +31,7 @@ Now, let's put the entity to the datastore *without updating the timestamp* and
 
 ```python
 article = Article(title='Python versus Ruby')
-article._properties['updated']._auto_now = False
+article._properties['updated'].auto_now = False
 article.put()
 ```
 
@@ -43,7 +43,7 @@ subsequent updates to the entity will not trigger the `auto_now` functionality.
 
 ```python
 article = Article(title='Python versus Ruby')
-article._properties['updated']._auto_now = False
+article._properties['updated'].auto_now = False
 key = article.put() # Put the entity with the auto_now option set to False
 
 article = key.get() # Get the entity from instance cache
@@ -55,10 +55,10 @@ You can set the `auto_now` option to `True` again to re-enable the functionality
 
 ```python
 article = Article(title='Python versus Ruby')
-article._properties['updated']._auto_now = False
+article._properties['updated'].auto_now = False
 key = article.put()
 
-article._properties['updated']._auto_now = True
+article._properties['updated'].auto_now = True
 article = key.get() # Get the entity from instance cache
 article.title = 'Python versus Go'
 article.put() # Puts the entity with the auto_now option set to True

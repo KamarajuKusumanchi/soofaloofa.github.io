@@ -14,7 +14,7 @@ tutorial explains how to use the `getopts` built-in function to parse arguments 
 
 The `getopts` function takes three parameters. The first is a specification of
 which options are valid, listed as a sequence of letters. For example, the
-string `'ht'` signifies that the options `-a` and `-l` are valid.
+string `'ht'` signifies that the options `-h` and `-t` are valid.
 
 The second argument to `getopts` is a variable that will be populated with the
 option or argument to be processed next. In the following loop, `opt` will hold

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Datastore on Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/datastore/index.xml/</link>
+    <title>Search-Api on Kevin Sookocheff</title>
+    <link>http://sookocheff.com/tags/search-api/index.xml/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Mon, 23 Feb 2015 08:20:37 CST</lastBuildDate>
@@ -255,135 +255,6 @@ documents in sync with Datastore entities that is robust to failure and race
 conditions. This same technique can be used for syncing the state of any number
 of datasets that are dependent on the Datastore being the single point of truth
 in your system.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Restoring an App Engine backup into a Big Query table</title>
-      <link>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup/</link>
-      <pubDate>Mon, 04 Aug 2014 21:18:13 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup/</guid>
-      <description>
-
-&lt;p&gt;An unfortunate DevOps task for any team running App Engine is restoring data
-from backups. One way to do this is by accessing the Google Cloud Storage URL
-for a given App Engine backup and importing that backup into BigQuery. This
-article will show you to get the Cloud Storage URL for an App Engine backup and
-manually perform that import.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_0&#34;&gt;Getting the Cloud Storage URL&lt;/h2&gt;
-
-&lt;p&gt;The first thing you need to do is access the cloud storage URL for a given App
-Engine backup. First, log in to the Google Developer Console and navigate to
-your backup. The filename of the backup will be a long sequence of characters
-followed by the name of your model. The file extension will be &lt;code&gt;.backup_info&lt;/code&gt;.
-As an example, this is the filename of backup for an Account model used in one
-of our projects.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Right click on your backup and copy the URL to your clipboard. The URL will be
-of the form below. The name of your cloud storage bucket and the identifier for
-you app have been highlighted below. Replace these with appropriate values for
-your project.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;https://console.developers.google.com/m/cloudstorage/b/**bucket**/o/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;To get the cloud storage URL in the format expected by a BigQuery import remove
-everything up to the bucket name.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;**bucket**/o/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now remove the &lt;code&gt;o&lt;/code&gt; between the bucket name and your app identifier.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;**bucket**/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Finally, append &lt;code&gt;gs://&lt;/code&gt; to the file to arrive at your final Google Cloud Storage
-URL.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gs://**bucket**/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The next step is to import the backup into BigQuery. To do this, navigate to
-your project and create a new table in your desired dataset.&lt;/p&gt;
-
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34; alt=&#34;Create new table.&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;In the &lt;code&gt;Choose destination&lt;/code&gt; tab pick a name for your new table. In my case I&amp;rsquo;ll
-name the table with the date of my backup for reference.&lt;/p&gt;
-
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34; alt=&#34;Choose destination&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Next, choose App Engine Datastore Backup as the source format and paste the
-Cloud Storage URL you arrived at above in the appropriate field.&lt;/p&gt;
-
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34; alt=&#34;Select Data Source&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;You can choose the defaults for the next tabs and, finally, import your App
-Engine backup into BigQuery and watch it being fully restored.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Bypassing ndb hooks with the RawDatastoreInputReader</title>
-      <link>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader/</link>
-      <pubDate>Tue, 29 Jul 2014 20:32:42 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader/</guid>
-      <description>
-
-&lt;p&gt;When doing a MapReduce operation there are times when you want to edit a set of
-entities without triggering the post or pre put hooks associated with those
-entities. On such ocassions using the raw datastore entity allows you to process
-the data without unwanted side effects. This article will show how to use the
-RawDatastoreInputReader to process datastore entities.&lt;/p&gt;
-
-&lt;p&gt;When doing a MapReduce operation there are times when you want to edit a set of entities without triggering the post or pre put hooks associated with those entities. On such ocassions using the raw datastore entity allows you to process the data without unwanted side effects.&lt;/p&gt;
-
-&lt;p&gt;For the sake of this discussion let&amp;rsquo;s assume we want to move a &lt;code&gt;phone_number&lt;/code&gt; field to a &lt;code&gt;work_number&lt;/code&gt; field for all entities of a certain Kind in the datastore.&lt;/p&gt;
-
-&lt;h2 id=&#34;toc_0&#34;&gt;Getting the raw datastore entity&lt;/h2&gt;
-
-&lt;p&gt;The MapReduce library provides a &lt;code&gt;RawDatastoreInputReader&lt;/code&gt; that will feed raw datastore entities to your mapping function. We can set our MapReduce operation to use the &lt;code&gt;RawDatastoreInputReader&lt;/code&gt; using a &lt;code&gt;mapreduce.yaml&lt;/code&gt; declaration.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;- name: move_phone_numbers
-  mapper:
-    input_reader: mapreduce.input_readers.RawDatastoreInputReader
-    handler: app.pipelines.move_phone_numbers_map
-    params:
-    - name: entity_kind
-      default: MyModel
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;toc_1&#34;&gt;Manipulating a raw datastore entity&lt;/h2&gt;
-
-&lt;p&gt;Our &lt;code&gt;raw_datastore_map&lt;/code&gt; function to use the datastore entity in its raw form. The raw form of the datastore entity provides a dictionary like interface that we can use to manipulate the entity. With this interface we can move the phone number to the correct field.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;def move_phone_numbers_map(entity):
-    phone_number = entity.get(&#39;phone_number&#39;)
-    if phone_number:
-        entity[&#39;work_number&#39;] = phone_number
-    del entity[&#39;phone_number&#39;]
-    
-    yield op.db.Put(entity)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Using &lt;code&gt;op.db.Put&lt;/code&gt; will put the entity to the datastore using the raw datastore
-API, thereby bypassing any ndb hooks that are in place.  For more information on
-the raw datastore API the best resource is the source code itself, available
-from the &lt;a href=&#34;https://code.google.com/p/googleappengine/source/browse/trunk/python/google/appengine/api/datastore.py&#34;&gt;App Engine SDK
-repository&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     

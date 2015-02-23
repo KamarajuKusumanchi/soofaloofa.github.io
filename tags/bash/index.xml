@@ -136,7 +136,7 @@ tutorial explains how to use the &lt;code&gt;getopts&lt;/code&gt; built-in funct
 
 &lt;p&gt;The &lt;code&gt;getopts&lt;/code&gt; function takes three parameters. The first is a specification of
 which options are valid, listed as a sequence of letters. For example, the
-string &lt;code&gt;&#39;ht&#39;&lt;/code&gt; signifies that the options &lt;code&gt;-a&lt;/code&gt; and &lt;code&gt;-l&lt;/code&gt; are valid.&lt;/p&gt;
+string &lt;code&gt;&#39;ht&#39;&lt;/code&gt; signifies that the options &lt;code&gt;-h&lt;/code&gt; and &lt;code&gt;-t&lt;/code&gt; are valid.&lt;/p&gt;
 
 &lt;p&gt;The second argument to &lt;code&gt;getopts&lt;/code&gt; is a variable that will be populated with the
 option or argument to be processed next. In the following loop, &lt;code&gt;opt&lt;/code&gt; will hold

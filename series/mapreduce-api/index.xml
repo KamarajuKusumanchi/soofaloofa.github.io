@@ -1241,7 +1241,7 @@ def touch(entity):
     Update the entities timestamp.
     &amp;quot;&amp;quot;&amp;quot;
     yield op.db.Put(entity)
-    yield op.db.Increment(&#39;touched&#39;)
+    yield op.counters.Increment(&#39;touched&#39;)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;All the counters that were incremented during operation of the job are listed with the job details summary.&lt;/p&gt;

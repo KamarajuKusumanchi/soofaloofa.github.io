@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/versioning/index.xml/</link>
+    <link>http://sookocheff.com/tags/versioning/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Tue, 01 Apr 2014 14:16:18 UTC</lastBuildDate>
@@ -17,7 +17,7 @@
 
 &lt;p&gt;API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;1) Versioned URL&lt;/h2&gt;
+&lt;h2 id=&#34;1-versioned-url:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;1) Versioned URL&lt;/h2&gt;
 
 &lt;p&gt;URL versioning inserts a version number directly in the URL of the resource. As an example,  version one of the API could be accessed through the &lt;code&gt;v1&lt;/code&gt; URL.&lt;/p&gt;
 
@@ -38,7 +38,7 @@
 
 &lt;p&gt;Once this mapping is in place you can safely deprecate old URLs by redirecting to the non-versioned URL &amp;ndash; notifying the client to use the latest version. At all times the non-versioned URL represents the latest version of that resource.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_1&#34;&gt;Pros:&lt;/h3&gt;
+&lt;h3 id=&#34;pros:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;Pros:&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Easy to implement.&lt;/li&gt;
@@ -46,13 +46,13 @@
 &lt;li&gt;Direct path to deprecation.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;toc_2&#34;&gt;Cons:&lt;/h3&gt;
+&lt;h3 id=&#34;cons:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;Cons:&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Violates REST principle of unique URLs for a resource.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;toc_3&#34;&gt;2) Versioned Media Type&lt;/h2&gt;
+&lt;h2 id=&#34;2-versioned-media-type:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;2) Versioned Media Type&lt;/h2&gt;
 
 &lt;p&gt;When making an HTTP request the client can request a specific MIME type (or list of MIME types) that it is willing to accept using an &lt;code&gt;Accept&lt;/code&gt; header. For example, an HTML client may use the following &lt;code&gt;Accept&lt;/code&gt; header to request an HTML representation of the resource.&lt;/p&gt;
 
@@ -79,13 +79,13 @@ Accept: application/vnd.sookocheff.user+json?version=2
 
 &lt;p&gt;Versioning the media type does adhere to strict REST principles but causes problems in other ways. First, you need a custom media type for every resource returned by your API. This is not only reinventing the wheel &amp;ndash; &lt;a href=&#34;http://schema.org/&#34;&gt;perfectly good&lt;/a&gt; &lt;a href=&#34;http://www.iana.org/assignments/media-types/media-types.xhtml&#34;&gt;media types&lt;/a&gt; &lt;a href=&#34;http://www.freeformatter.com/mime-types-list.html&#34;&gt;already exist&lt;/a&gt; &amp;ndash; it also creates a media type so specific to your API that it cannot be reused elsewhere. Lastly, it is unclear whether the version parameter applies to the version of the media type or to the version of your API.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_4&#34;&gt;Pros:&lt;/h3&gt;
+&lt;h3 id=&#34;pros-1:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;Pros:&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Adheres to REST principles.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;toc_5&#34;&gt;Cons:&lt;/h3&gt;
+&lt;h3 id=&#34;cons-1:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;Cons:&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Custom media type for every resource.&lt;/li&gt;
@@ -94,7 +94,7 @@ Accept: application/vnd.sookocheff.user+json?version=2
 &lt;li&gt;Requires sophisticated API client.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;toc_6&#34;&gt;3) Versioned HTTP Header&lt;/h2&gt;
+&lt;h2 id=&#34;3-versioned-http-header:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;3) Versioned HTTP Header&lt;/h2&gt;
 
 &lt;p&gt;The &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616-sec7.html#sec7.1&#34;&gt;HTTP specification&lt;/a&gt; states that unknown HTTP headers MUST be forwarded on to the recipient. This means that custom HTTP headers can be set by our client and received by our API.&lt;/p&gt;
 
@@ -108,38 +108,38 @@ Users-Version: 2
 
 &lt;p&gt;This method requires that your API client is able to modify the HTTP headers of its requests. If the client is unable to provide a version number with the HTTP header you can assume that a request is made for the latest API version.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_7&#34;&gt;Pros:&lt;/h3&gt;
+&lt;h3 id=&#34;pros-2:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;Pros:&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Adheres to REST principles.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;toc_8&#34;&gt;Cons:&lt;/h3&gt;
+&lt;h3 id=&#34;cons-2:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;Cons:&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Requires sophisticated API client.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;toc_9&#34;&gt;4) Versioned Resources&lt;/h2&gt;
+&lt;h2 id=&#34;4-versioned-resources:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;4) Versioned Resources&lt;/h2&gt;
 
 &lt;p&gt;The last versioning method is to set the version number in the response itself. This places the burden of versioning with the client rather than the server. A client receiving a response from a known version number can parse it and act appropriately. It would be up to the client how to handle an unknown version number.&lt;/p&gt;
 
 &lt;p&gt;This method is only appropriate if you as the developer have direct control over both the server and the client being deployed.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_10&#34;&gt;Pros:&lt;/h3&gt;
+&lt;h3 id=&#34;pros-3:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;Pros:&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Simplified server.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;toc_11&#34;&gt;Cons:&lt;/h3&gt;
+&lt;h3 id=&#34;cons-3:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;Cons:&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Complex client.&lt;/li&gt;
 &lt;li&gt;Tightly couples server to client.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;toc_12&#34;&gt;What to do?&lt;/h2&gt;
+&lt;h2 id=&#34;what-to-do:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;What to do?&lt;/h2&gt;
 
 &lt;p&gt;By following &lt;a href=&#34;http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/&#34;&gt;REST principles&lt;/a&gt; we can guide our API versioning practices while being pragmatic about our choices so that our API can work in the real world.&lt;/p&gt;
 
@@ -157,7 +157,7 @@ Users-Version: 2
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;toc_13&#34;&gt;References&lt;/h2&gt;
+&lt;h2 id=&#34;references:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;References&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api&#34;&gt;Vinay Sahni&lt;/a&gt; has collected a long list of best practices for pragmatic API design, including versioning.&lt;/p&gt;
 

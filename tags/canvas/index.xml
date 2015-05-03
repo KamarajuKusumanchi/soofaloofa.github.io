@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/canvas/index.xml/</link>
+    <link>http://sookocheff.com/tags/canvas/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Wed, 27 Jul 2011 10:08:42 UTC</lastBuildDate>
@@ -17,7 +17,7 @@
 
 &lt;p&gt;Saving HTML canvas element data to an image in a user friendly manner is a tricky problem. Let&amp;rsquo;s look at one way to solve it.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;First Attempt&lt;/h2&gt;
+&lt;h2 id=&#34;first-attempt:034a30c0bea8ad3377260c7a90d4653c&#34;&gt;First Attempt&lt;/h2&gt;
 
 &lt;p&gt;We could always open our canvas in a new browser tab (or window) with the &lt;code&gt;toDataURL&lt;/code&gt; JavaScript method.&lt;/p&gt;
 
@@ -26,17 +26,17 @@
 
 &lt;p&gt;Unfortunately this requires the user to use the file menu or the right-click button to save the image from the newly opened browser tab. I wouldn’t call this user friendly.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;Second Attempt&lt;/h2&gt;
+&lt;h2 id=&#34;second-attempt:034a30c0bea8ad3377260c7a90d4653c&#34;&gt;Second Attempt&lt;/h2&gt;
 
 &lt;p&gt;After some investigation I came across Nihilogic’s &lt;a href=&#34;http://www.nihilogic.dk/labs/canvas2image/&#34;&gt;&lt;code&gt;Canvas2Image&lt;/code&gt;&lt;/a&gt; JavaScript package. This package presents a Dialog Box to the user allowing them to save the image. This would solve my problem except the downloaded filename has the format 8iqALWM5.part . If my mom encountered a filename like that she wouldn’t know what to do with it. Still not user friendly.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;Final Attempt&lt;/h2&gt;
+&lt;h2 id=&#34;final-attempt:034a30c0bea8ad3377260c7a90d4653c&#34;&gt;Final Attempt&lt;/h2&gt;
 
 &lt;p&gt;What to do? Enter PHP.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://www.permadi.com/blog/2010/10/html5-saving-canvas-image-data-using-php-and-ajax/&#34;&gt;Permadi&lt;/a&gt; presents a technique using PHP and AJAX that is exactly what I need. After some tweaking here’s what I came up with.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_3&#34;&gt;save.php&lt;/h2&gt;
+&lt;h2 id=&#34;save-php:034a30c0bea8ad3377260c7a90d4653c&#34;&gt;save.php&lt;/h2&gt;
 
 &lt;p&gt;The first PHP file saves the passed in canvas data to the server at a random location determined by the md5(uniqid())  method.&lt;/p&gt;
 
@@ -58,7 +58,7 @@ echo json_encode($file);
 &lt;pre&gt;&lt;code&gt;$.post(&amp;quot;save.php&amp;quot;, {data: canvas.toDataURL(&amp;quot;image/png&amp;quot;)})
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_4&#34;&gt;download.php&lt;/h2&gt;
+&lt;h2 id=&#34;download-php:034a30c0bea8ad3377260c7a90d4653c&#34;&gt;download.php&lt;/h2&gt;
 
 &lt;p&gt;Now we can use PHP to force the download of the saved image data. You can read more about this in the &lt;a href=&#34;http://php.net/manual/en/function.readfile.php&#34;&gt;PHP Manual&lt;/a&gt;.&lt;/p&gt;
 

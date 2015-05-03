@@ -80,7 +80,7 @@
           <div class=".post-content">
             
 
-<h2 id="toc_0">Overview</h2>
+<h2 id="overview:d7a4cf20ba6fc9a7008ea6a4fe87eb88">Overview</h2>
 
 <p>The Google <a href="https://www.youtube.com/watch?v=43gvHZyPRVk">Compute Engine core
 concepts video</a> provides a great
@@ -89,7 +89,7 @@ shows, Compute Engine is defined by Resources, and each of these Resources is
 available through the Compute Engine API. You can access this API through the
 Google API Explorer or by installing the <a href="https://cloud.google.com/sdk/">gcloud sdk</a>.</p>
 
-<h2 id="toc_1">Key Resources</h2>
+<h2 id="key-resources:d7a4cf20ba6fc9a7008ea6a4fe87eb88">Key Resources</h2>
 
 <p>There are few basic resources required to get up and running with any virtual
 machine running on Compute Engine. These are Images, Instances and
@@ -97,27 +97,28 @@ Disks.</p>
 
 <p><a class="thumbnail" href="/img/2014-11-05-a-guided-tour-of-compute-engine/ImagesInstancesDisks.png">
   <img src="/img/2014-11-05-a-guided-tour-of-compute-engine/ImagesInstancesDisks.png" alt="Images, Instances and Disks">
-</a></p>
+</a>
+</p>
 
-<h3 id="toc_2">Images</h3>
+<h3 id="images:d7a4cf20ba6fc9a7008ea6a4fe87eb88">Images</h3>
 
 <p>An Image contains a boot loader, an operating system and a root file system that
 are necessary for starting up an instance.  For all intents and purposes, you
 can think of the Image as the OS that you are running.</p>
 
-<h3 id="toc_3">Disks</h3>
+<h3 id="disks:d7a4cf20ba6fc9a7008ea6a4fe87eb88">Disks</h3>
 
 <p>The Disk acts as a filesystem. They operate as physical disks attached to your
 virtual machine but are more analogous to a network attached file system. As an
 example, we can separate a disk from a virtual machine and reattach it to
 another virtual machine.</p>
 
-<h3 id="toc_4">Instances</h3>
+<h3 id="instances:d7a4cf20ba6fc9a7008ea6a4fe87eb88">Instances</h3>
 
 <p>An Instance encapsulates the concept of a virtual machine. The virtual machine
 runs the OS and root filesystem defined by the image you choose at create time.</p>
 
-<h2 id="toc_5">Instance Groups</h2>
+<h2 id="instance-groups:d7a4cf20ba6fc9a7008ea6a4fe87eb88">Instance Groups</h2>
 
 <p>The Key Resources show how a single virtual machine as viewed through the lens of
 the Compute Engine ecosystem.</p>
@@ -134,9 +135,10 @@ same backend web service.</p>
 
 <p><a class="thumbnail" href="/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroup.png">
   <img src="/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroup.png" alt="Instance Groups">
-</a></p>
+</a>
+</p>
 
-<h2 id="toc_6">Instance Group Manager</h2>
+<h2 id="instance-group-manager:d7a4cf20ba6fc9a7008ea6a4fe87eb88">Instance Group Manager</h2>
 
 <p>Instance Groups operate over a set of virtual machines. To add a virtual machine
 to an Instance Group you first spin up your virtual machine and then call the
@@ -149,7 +151,7 @@ Group must be homogenous.  That means they must all be created using the same
 base image, disk and machine type. To facilitate this homogeneity the Instance
 Group Manager operates over an Instance abstraction called an Instance Template.</p>
 
-<h3 id="toc_7">Instance Templates</h3>
+<h3 id="instance-templates:d7a4cf20ba6fc9a7008ea6a4fe87eb88">Instance Templates</h3>
 
 <p>Instance templates are configuration files that define the settings of an
 Instance (and by extension of an Image and Disk). Instance templates can define
@@ -167,9 +169,10 @@ back to life for you.</p>
 
 <p><a class="thumbnail" href="/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroupManager.png">
   <img src="/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroupManager.png" alt="Instance Group Manager.">
-</a></p>
+</a>
+</p>
 
-<h2 id="toc_8">Regions &amp; Zones</h2>
+<h2 id="regions-zones:d7a4cf20ba6fc9a7008ea6a4fe87eb88">Regions &amp; Zones</h2>
 
 <p>Compute Engine allows you to specify the region and zone where your virtual
 machine exists. This gives you control over where your data is stored and used.</p>
@@ -186,9 +189,10 @@ separate Managed Instance Groups in two different zones.</p>
 
 <p><a class="thumbnail" href="/img/2014-11-05-a-guided-tour-of-compute-engine/RegionsAndZones.png">
   <img src="/img/2014-11-05-a-guided-tour-of-compute-engine/RegionsAndZones.png" alt="Instance Group Manager">
-</a></p>
+</a>
+</p>
 
-<h2 id="toc_9">Load Balancing</h2>
+<h2 id="load-balancing:d7a4cf20ba6fc9a7008ea6a4fe87eb88">Load Balancing</h2>
 
 <p>Now we have a group of virtual machines running the same hardware that can be
 easily resized with the Instance Group Manager. The question now is how do we
@@ -197,7 +201,7 @@ are a lot of moving parts in the load balancer. Thankfully they all perform very
 particular tasks and once you set it up you don&rsquo;t have to worry about it
 anymore.</p>
 
-<h3 id="toc_10">The Backend Service</h3>
+<h3 id="the-backend-service:d7a4cf20ba6fc9a7008ea6a4fe87eb88">The Backend Service</h3>
 
 <p>To use HTTP load balancing we need to declare our instance groups as backend
 services. This is a simple label attached to the group. In effect we are telling
@@ -205,9 +209,10 @@ Compute Engine which groups are related to one another.</p>
 
 <p><a class="thumbnail" href="/img/2014-11-05-a-guided-tour-of-compute-engine/BackendServices.png">
   <img src="/img/2014-11-05-a-guided-tour-of-compute-engine/BackendServices.png" alt="Backend Services">
-</a></p>
+</a>
+</p>
 
-<h3 id="toc_11">URL Maps</h3>
+<h3 id="url-maps:d7a4cf20ba6fc9a7008ea6a4fe87eb88">URL Maps</h3>
 
 <p>URL maps define what URL requests to send to what backend service. For example ,
 we can route requests to the url <code>/static</code> to a different backend service
@@ -217,18 +222,20 @@ Service. Any other requests are routed to the <code>web</code> service.</p>
 
 <p><a class="thumbnail" href="/img/2014-11-05-a-guided-tour-of-compute-engine/UrlMap.png">
   <img src="/img/2014-11-05-a-guided-tour-of-compute-engine/UrlMap.png" alt="Url Map">
-</a></p>
+</a>
+</p>
 
-<h3 id="toc_12">Target HTTP Proxy</h3>
+<h3 id="target-http-proxy:d7a4cf20ba6fc9a7008ea6a4fe87eb88">Target HTTP Proxy</h3>
 
 <p>The Target HTTP Proxy is a simple proxy that receives requests and routes them
 to the URL Maps.</p>
 
 <p><a class="thumbnail" href="/img/2014-11-05-a-guided-tour-of-compute-engine/TargetHttpProxy.png">
   <img src="/img/2014-11-05-a-guided-tour-of-compute-engine/TargetHttpProxy.png" alt="Target HTTP Proxy">
-</a></p>
+</a>
+</p>
 
-<h3 id="toc_13">Global Forwarding Rule</h3>
+<h3 id="global-forwarding-rule:d7a4cf20ba6fc9a7008ea6a4fe87eb88">Global Forwarding Rule</h3>
 
 <p>The global forwarding rule provides an external IP address that we can use to
 address our instances. This IP address routes to the target HTTP proxy which
@@ -236,9 +243,10 @@ ultimately directs our traffic to the proper Backend Service through the URL Map
 
 <p><a class="thumbnail" href="/img/2014-11-05-a-guided-tour-of-compute-engine/GlobalForwardingRule.png">
   <img src="/img/2014-11-05-a-guided-tour-of-compute-engine/GlobalForwardingRule.png" alt="Global Forwarding Rule">
-</a></p>
+</a>
+</p>
 
-<h2 id="toc_14">Conclusion</h2>
+<h2 id="conclusion:d7a4cf20ba6fc9a7008ea6a4fe87eb88">Conclusion</h2>
 
 <p>That completes our guided tour of Compute Engine. Given this foundation you
 should have a solid base with which to navigate the documentation and explore

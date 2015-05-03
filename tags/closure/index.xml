@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/closure/index.xml/</link>
+    <link>http://sookocheff.com/tags/closure/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Wed, 19 Jan 2011 09:11:15 UTC</lastBuildDate>
@@ -17,18 +17,18 @@
 
 &lt;p&gt;Closures are easy. There I said it. Invest a little bit of time, and you will say it too. Follow along with me as I attempt to explain what closures are and how they are used.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Scope&lt;/h2&gt;
+&lt;h2 id=&#34;scope:acc53ffd153ac46f6b6f72fe8b5814e1&#34;&gt;Scope&lt;/h2&gt;
 
 &lt;p&gt;The first pre-requisite in fully understanding closures is JavaScript’s implementation of scope. JavaScript’s C-style syntax may lead you to believe that anything between the “curly braces” defines a block where variables defined within that block are private to that region of code. This is false. JavaScript does not define block scope. Any variables defined within a block are available outside that block. With one exception: functions. JavaScript has function scope where variables defined within a function are private to that function. This is very important.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_1&#34;&gt;Summary&lt;/h3&gt;
+&lt;h3 id=&#34;summary:acc53ffd153ac46f6b6f72fe8b5814e1&#34;&gt;Summary&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;JavaScript has function scope.&lt;/li&gt;
 &lt;li&gt;All variables defined within a function are private to that function.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;Inner Functions&lt;/h2&gt;
+&lt;h2 id=&#34;inner-functions:acc53ffd153ac46f6b6f72fe8b5814e1&#34;&gt;Inner Functions&lt;/h2&gt;
 
 &lt;p&gt;Inner functions are functions defined within another function. It’s easier to demonstrate than to explain, so here goes.&lt;/p&gt;
 
@@ -47,14 +47,14 @@ alert(output);
 
 &lt;p&gt;You will get a pop-up window showing that the variable secrets now holds a reference to the function inner.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_3&#34;&gt;Summary&lt;/h3&gt;
+&lt;h3 id=&#34;summary-1:acc53ffd153ac46f6b6f72fe8b5814e1&#34;&gt;Summary&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Inner functions are defined within other functions (and this can nest arbitrarily).&lt;/li&gt;
 &lt;li&gt;Inner functions can be returned “fully formed” from outer functions.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;toc_4&#34;&gt;Closures&lt;/h2&gt;
+&lt;h2 id=&#34;closures:acc53ffd153ac46f6b6f72fe8b5814e1&#34;&gt;Closures&lt;/h2&gt;
 
 &lt;p&gt;In one sentence, closure means that an inner function has access to the context of its outer function, even when the outer function no longer exists. OK. Let’s do that example one time more.&lt;/p&gt;
 
@@ -75,7 +75,7 @@ alert(output());
 
 &lt;p&gt;You’ve just created a closure!&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_5&#34;&gt;Summary&lt;/h3&gt;
+&lt;h3 id=&#34;summary-2:acc53ffd153ac46f6b6f72fe8b5814e1&#34;&gt;Summary&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Closures are easy.&lt;/li&gt;

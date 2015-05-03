@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/packaging/index.xml/</link>
+    <link>http://sookocheff.com/tags/packaging/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Tue, 17 Jun 2014 06:14:23 UTC</lastBuildDate>
@@ -25,7 +25,7 @@ project.&lt;/p&gt;
 &lt;p&gt;We&amp;rsquo;ll use the &lt;a href=&#34;https://github.com/jacquev6/PyGithub&#34;&gt;PyGithub&lt;/a&gt; Python library to
 interact with the Github API.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Logging in to Github&lt;/h2&gt;
+&lt;h2 id=&#34;logging-in-to-github:0bad5a6042bd584cf90c6370fc32d2e9&#34;&gt;Logging in to Github&lt;/h2&gt;
 
 &lt;p&gt;The first step is to log in to Github using our credentials. To do this we
 instantiate a new Github object given our username and password and access the
@@ -46,7 +46,7 @@ storing the result in a local representation.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -u soofaloofa https://api.github.com/user
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;Accessing a repository&lt;/h2&gt;
+&lt;h2 id=&#34;accessing-a-repository:0bad5a6042bd584cf90c6370fc32d2e9&#34;&gt;Accessing a repository&lt;/h2&gt;
 
 &lt;p&gt;Now that we have a user we can get a repository for that user by name. To get
 the repository for this website we make a request to &lt;a href=&#34;https://developer.github.com/v3/repos/#get&#34;&gt;get a repo by
@@ -55,7 +55,7 @@ owner&lt;/a&gt;.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;repository = user.get_repo(&#39;soofaloofa.github.io&#39;)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;Downloading a single file&lt;/h2&gt;
+&lt;h2 id=&#34;downloading-a-single-file:0bad5a6042bd584cf90c6370fc32d2e9&#34;&gt;Downloading a single file&lt;/h2&gt;
 
 &lt;p&gt;To download a single file from a repository we make a call to &lt;a href=&#34;https://developer.github.com/v3/repos/contents/#get-contents&#34;&gt;get the contents
 of a file&lt;/a&gt;.&lt;/p&gt;
@@ -63,7 +63,7 @@ of a file&lt;/a&gt;.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;file_content = repository.get_contents(&#39;README.md&#39;)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_3&#34;&gt;Referencing commits&lt;/h2&gt;
+&lt;h2 id=&#34;referencing-commits:0bad5a6042bd584cf90c6370fc32d2e9&#34;&gt;Referencing commits&lt;/h2&gt;
 
 &lt;p&gt;We have all the building blocks to download a resource from Github. The next
 step is to download a resource referenced by a specific commit. The Github API
@@ -94,7 +94,7 @@ specific commit.&lt;/p&gt;
 file_content = repository.get_contents(&#39;README.md&#39;, ref=sha)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_4&#34;&gt;Putting it all together&lt;/h2&gt;
+&lt;h2 id=&#34;putting-it-all-together:0bad5a6042bd584cf90c6370fc32d2e9&#34;&gt;Putting it all together&lt;/h2&gt;
 
 &lt;p&gt;By putting a bit more polish on this we can easily download entire directories
 of code that reference a single tag or branch and copy them to our local

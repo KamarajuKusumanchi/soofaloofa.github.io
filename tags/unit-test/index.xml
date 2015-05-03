@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/unit-test/index.xml/</link>
+    <link>http://sookocheff.com/tags/unit-test/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Thu, 10 Jul 2014 14:32:15 UTC</lastBuildDate>
@@ -20,7 +20,7 @@ process. Unfortunately it is not well documented and a few gotchas exist. This
 article provides a template you can use to unit test Cloud Endpoints including
 full source code for a working example.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;The Model&lt;/h2&gt;
+&lt;h2 id=&#34;the-model:dec1a5006ed54c46077ff2a4372aca9b&#34;&gt;The Model&lt;/h2&gt;
 
 &lt;p&gt;Let&amp;rsquo;s use a simple User model as the resource being exposed by our API. This
 model has two properties &amp;ndash; a username and an email address. The class also
@@ -52,7 +52,7 @@ class UserMessage(messages.Message):
     email = messages.StringField(3)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;The API&lt;/h2&gt;
+&lt;h2 id=&#34;the-api:dec1a5006ed54c46077ff2a4372aca9b&#34;&gt;The API&lt;/h2&gt;
 
 &lt;p&gt;To keep things simple the API for this resource provides a single &lt;code&gt;GET&lt;/code&gt; endpoint
 that returns a &lt;code&gt;UserMessage&lt;/code&gt; based on a &lt;code&gt;User&lt;/code&gt; in the datastore. We parameterize
@@ -85,7 +85,7 @@ class UsersApi(remote.Service):
         return entity.to_message()
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;The Tests&lt;/h2&gt;
+&lt;h2 id=&#34;the-tests:dec1a5006ed54c46077ff2a4372aca9b&#34;&gt;The Tests&lt;/h2&gt;
 
 &lt;p&gt;The setup for our tests is similar to many App Engine test cases. We set our
 environment and initialize any test stubs we may need.&lt;/p&gt;

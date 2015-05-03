@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/r-studio/index.xml/</link>
+    <link>http://sookocheff.com/tags/r-studio/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Mon, 23 Mar 2015 15:32:37 CST</lastBuildDate>
@@ -31,7 +31,7 @@ instance, install R Studio on it and access R Studio from the remote interface.&
 with billing enabled and have installed the &lt;a href=&#34;https://cloud.google.com/sdk/&#34;&gt;Google Cloud
 SDK&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Deploying a Compute Engine Instance&lt;/h2&gt;
+&lt;h2 id=&#34;deploying-a-compute-engine-instance:fe69c3491bab8cb03451503db88c7996&#34;&gt;Deploying a Compute Engine Instance&lt;/h2&gt;
 
 &lt;p&gt;The first step is to deploy your Compute Engine instance. The &lt;code&gt;gcloud compute&lt;/code&gt;
 command allows you to create instances. The only required parameter to create an
@@ -50,7 +50,7 @@ parameter. For example.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute instances create r-studio --zone us-central1-a
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;Installing R Studio&lt;/h2&gt;
+&lt;h2 id=&#34;installing-r-studio:fe69c3491bab8cb03451503db88c7996&#34;&gt;Installing R Studio&lt;/h2&gt;
 
 &lt;p&gt;Once we have our Compute Engine instance set up, we log in to the machine using ssh.&lt;/p&gt;
 

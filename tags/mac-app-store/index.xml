@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/mac-app-store/index.xml/</link>
+    <link>http://sookocheff.com/tags/mac-app-store/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Tue, 09 Apr 2013 14:43:12 UTC</lastBuildDate>
@@ -17,20 +17,20 @@
 
 &lt;p&gt;Submitting a Unity3d game to the Mac App Store is a somewhat painful process. This guide refers to Unity3d 3.5 but should apply to Unity 4.0 and up.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Building&lt;/h2&gt;
+&lt;h2 id=&#34;building:34a167cd6f2deccf950f20dfe9903ab8&#34;&gt;Building&lt;/h2&gt;
 
 &lt;p&gt;First, build your application for Mac and make sure that you uncheck Mac App Store Validation in the PlayerSettings Inspector window.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/player-settings.png&#34; alt=&#34;PlayerSettings&#34; title=&#34;PlayerSettings&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://sookocheff.com/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/player-settings.png&#34; alt=&#34;PlayerSettings&#34; title=&#34;PlayerSettings&#34; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;Building your App from Unity will create a .App file. Navigate to this file in Finder and right-click. Choose Show Package Contents from the context menu to open your app as a folder.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;Info.plist&lt;/h2&gt;
+&lt;h2 id=&#34;info-plist:34a167cd6f2deccf950f20dfe9903ab8&#34;&gt;Info.plist&lt;/h2&gt;
 
 &lt;p&gt;Navigate to the Contents directory and open the file Info.plist in your favorite text editor. You will need to make a few changes to this file.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/info-plist.png&#34; alt=&#34;Info.plist&#34; title=&#34;Info.plist&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://sookocheff.com/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/info-plist.png&#34; alt=&#34;Info.plist&#34; title=&#34;Info.plist&#34; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;Specifically, you will need to edit the following entries to correspond to your specific application.&lt;/p&gt;
@@ -88,7 +88,7 @@ LSApplicationCategoryType: The category of your application.
 
 &lt;p&gt;You can get more information about these keys from the Apple developer documentation. The most notable key in need of changing is the LSApplicationCategoryType which must correspond to an actual category on the Mac App Store. You can find the LS keys documentation &lt;a href=&#34;http://developer.apple.com/library/ios/#documentation/general/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;Icons&lt;/h2&gt;
+&lt;h2 id=&#34;icons:34a167cd6f2deccf950f20dfe9903ab8&#34;&gt;Icons&lt;/h2&gt;
 
 &lt;p&gt;You will need to generate an iconset matching Apple’s &lt;a href=&#34;https://developer.apple.com/library/mac/#documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/Optimizing/Optimizing.html#//apple_ref/doc/uid/TP40012302-CH7-SW2&#34;&gt;Human Interface Guidelines&lt;/a&gt;. The first step is to create all of the required icons. You will need variations of your icon supporting the following resolutions.&lt;/p&gt;
 
@@ -111,7 +111,7 @@ icon_512x512@2x.png
 
 &lt;p&gt;will generate a file called icons.icns. You will need to replace the file &lt;code&gt;UnityPlayer.icns&lt;/code&gt; with this icon file using Finder. The &lt;code&gt;UnityPlayer.icns&lt;/code&gt; file is located in &lt;code&gt;Contents -&amp;gt; Resources&lt;/code&gt; within your .App.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_3&#34;&gt;Entitlements&lt;/h2&gt;
+&lt;h2 id=&#34;entitlements:34a167cd6f2deccf950f20dfe9903ab8&#34;&gt;Entitlements&lt;/h2&gt;
 
 &lt;p&gt;All Apps on the Mac App Store must be sandboxed. To sandbox your Unity app you have to provide an entitlements file to use during the code signing process. A fairly minimal entitlements file should look something like this.&lt;/p&gt;
 
@@ -127,7 +127,7 @@ icon_512x512@2x.png
 
 &lt;p&gt;You can read more about entitlements at the &lt;a href=&#34;http://developer.apple.com/library/mac/#documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/AboutEntitlements.html&#34;&gt;Entitlement Key Reference&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_4&#34;&gt;Code Signing&lt;/h2&gt;
+&lt;h2 id=&#34;code-signing:34a167cd6f2deccf950f20dfe9903ab8&#34;&gt;Code Signing&lt;/h2&gt;
 
 &lt;p&gt;Now that we have our iconset and entitlements ready we can codesign our App for delivery to the Mac App Store. We have to drop back to the Terminal to run the codesign application.&lt;/p&gt;
 
@@ -136,7 +136,7 @@ icon_512x512@2x.png
 
 &lt;p&gt;You can find &amp;rdquo;XXXX&amp;rdquo; in the Keychain Access program. Look for a code signing certificate beginning with the text &amp;ldquo;3rd Party Mac Developer Application&amp;rdquo; you will need to copy this entire text to the codesign command above. You can find more details from the &lt;a href=&#34;http://developer.apple.com/library/mac/#releasenotes/General/SubmittingToMacAppStore/index.html&#34;&gt;App Store Submission documentation&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/keychain.png&#34; alt=&#34;KeyChain Access&#34; title=&#34;KeyChain Access&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://sookocheff.com/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/keychain.png&#34; alt=&#34;KeyChain Access&#34; title=&#34;KeyChain Access&#34; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;In addition to signing your app you must sign &lt;code&gt;libmono.dylib&lt;/code&gt;.&lt;/p&gt;
@@ -146,7 +146,7 @@ icon_512x512@2x.png
 
 &lt;p&gt;If you don’t have the required Keychain Access certificates you will need to create these using the Apple Member Center.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_5&#34;&gt;Product Building&lt;/h2&gt;
+&lt;h2 id=&#34;product-building:34a167cd6f2deccf950f20dfe9903ab8&#34;&gt;Product Building&lt;/h2&gt;
 
 &lt;p&gt;To build your final product run productbuild from the command line.&lt;/p&gt;
 
@@ -155,7 +155,7 @@ icon_512x512@2x.png
 
 &lt;p&gt;Where &amp;rdquo;XXXX&amp;rdquo; is again from Keychain Access. This time, use the certificate beginning with  &amp;rdquo;3rd Party Mac Developer Installer&amp;rdquo;.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_6&#34;&gt;Application Loader&lt;/h2&gt;
+&lt;h2 id=&#34;application-loader:34a167cd6f2deccf950f20dfe9903ab8&#34;&gt;Application Loader&lt;/h2&gt;
 
 &lt;p&gt;You are finally ready to submit your App! Before submission you must create your App on iTunes Connect and fill out detailed app information. After your app is created launch Application Loader and click on Deliver Your App. Choose the application you created in iTunes Connect from the drop down menu and follow the prompts to choose your .pkg file that was created with the productbuild  command.&lt;/p&gt;
 

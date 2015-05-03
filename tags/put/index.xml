@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/put/index.xml/</link>
+    <link>http://sookocheff.com/tags/put/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Thu, 27 Mar 2014 07:23:34 UTC</lastBuildDate>
@@ -24,7 +24,7 @@ use &lt;code&gt;POST&lt;/code&gt; for any action which may modify the state of a
 &lt;p&gt;This article attempts to explain the semantics behind the &lt;code&gt;PUT&lt;/code&gt; and &lt;code&gt;POST&lt;/code&gt;
 methods and offers clear suggestions on when to use each method.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;PUT&lt;/h2&gt;
+&lt;h2 id=&#34;put:bb3ea64adf2a9a1db1d2d60bf0784424&#34;&gt;PUT&lt;/h2&gt;
 
 &lt;p&gt;Let&amp;rsquo;s go &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616.html&#34;&gt;straight to the HTTP/1.1 RFC&lt;/a&gt; for the &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6&#34;&gt;definition of PUT&lt;/a&gt;.&lt;/p&gt;
 
@@ -73,7 +73,7 @@ Host: http://sookocheff.com
 resource contained within the request. PUT is used to both create and update the
 state of a resource on the server.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;POST&lt;/h2&gt;
+&lt;h2 id=&#34;post:bb3ea64adf2a9a1db1d2d60bf0784424&#34;&gt;POST&lt;/h2&gt;
 
 &lt;p&gt;Let&amp;rsquo;s go &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616.html&#34;&gt;back to the HTTP/1.1 RFC&lt;/a&gt; for the &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.5&#34;&gt;definition of POST&lt;/a&gt;.&lt;/p&gt;
 
@@ -114,7 +114,7 @@ specific URL for the user - &lt;code&gt;/user/636363&lt;/code&gt;.&lt;/p&gt;
 classify this behaviour &lt;em&gt;POST-to-append&lt;/em&gt; and is the generally recommended way to
 handle a POST request within the context of a specific resource.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;Putting it Together&lt;/h2&gt;
+&lt;h2 id=&#34;putting-it-together:bb3ea64adf2a9a1db1d2d60bf0784424&#34;&gt;Putting it Together&lt;/h2&gt;
 
 &lt;p&gt;The &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616.html&#34;&gt;HTTP/1.1 RFC&lt;/a&gt; offers some guidance on &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6&#34;&gt;distinguishing between POST and
 PUT&lt;/a&gt;.&lt;/p&gt;

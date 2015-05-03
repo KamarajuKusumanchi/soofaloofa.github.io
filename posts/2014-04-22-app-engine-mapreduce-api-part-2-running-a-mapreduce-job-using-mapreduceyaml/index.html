@@ -80,7 +80,7 @@
           <div class=".post-content">
             
 
-<h2 id="toc_0">MapReduce API Series</h2>
+<h2 id="mapreduce-api-series:62102699eed8b8c281da9eed3873c1d3">MapReduce API Series</h2>
 
 <ul>
 <li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
@@ -94,7 +94,7 @@
 
 <p><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Last time</a> we looked at an overview of how MapReduce works. In this article we&rsquo;ll be getting our hands dirty writing some code to handle the Map Stage. If you&rsquo;ll recall, the Map Stage is composed of two separate components: an InputReader and a <code>map</code> function. We&rsquo;ll look at each of these in turn.</p>
 
-<h2 id="toc_1">Getting Started: Installation</h2>
+<h2 id="getting-started-installation:62102699eed8b8c281da9eed3873c1d3">Getting Started: Installation</h2>
 
 <p>First, let&rsquo;s install the MapReduce API for Python. The API is constantly changing so the best way to install the latest version is to checkout the code directly from the <a href="https://code.google.com/p/appengine-mapreduce/">SVN repository</a>.</p>
 
@@ -133,7 +133,7 @@ handlers:
     direction: desc
 </code></pre>
 
-<h2 id="toc_2">Running Your First MapReduce Job</h2>
+<h2 id="running-your-first-mapreduce-job:62102699eed8b8c281da9eed3873c1d3">Running Your First MapReduce Job</h2>
 
 <p>The easiest way to get started with MapReduce is to use the <code>mapreduce.yaml</code> file. This file allows you define a <code>mapper</code> function that will be executed for each entity passed to it. Let&rsquo;s go straight to an example and  create a <code>mapreduce.yaml</code> file (in your applications root directory) that will iterate over all entities of a certain Kind and put them to the datastore (updating their timestamp).</p>
 
@@ -182,7 +182,7 @@ handlers:
 
 <p>We&rsquo;ve ran our first MapReduce job!</p>
 
-<h2 id="toc_3">The MutationPool</h2>
+<h2 id="the-mutationpool:62102699eed8b8c281da9eed3873c1d3">The MutationPool</h2>
 
 <p>In our <code>touch</code> function we put our entity to the datastore once for each entity. This is wasteful when the datastore allows putting multiple items at a time. To take advantage of this feature the MapReduce library offers a MutationPool that collects datastore operations to be performed in batches.</p>
 
@@ -201,7 +201,7 @@ def touch(entity):
 
 <p>The source code for MapReduce operations can be found in the <code>mapreduce.operation</code> module.  The <code>mapreduce.operation.db</code> module currently supports two operations via the MutationPool <code>Put</code> and <code>Delete</code>.</p>
 
-<h2 id="toc_4">Counters</h2>
+<h2 id="counters:62102699eed8b8c281da9eed3873c1d3">Counters</h2>
 
 <p>The MapReduce library also provides counters that can be incremented when a condition is met. In our example we can count the number of entities that were touched by incrementing a counter.</p>
 
@@ -221,7 +221,7 @@ def touch(entity):
 <img src="/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png" alt="Incrementing a custom counter">
 </a></p>
 
-<h2 id="toc_5">Passing Parameters to the Map Function</h2>
+<h2 id="passing-parameters-to-the-map-function:62102699eed8b8c281da9eed3873c1d3">Passing Parameters to the Map Function</h2>
 
 <p>We can pass additional parameters to our map function by specifying them in <code>mapreduce.yaml</code>. Parameters are passed to both our InputReader and to our map handler function. In our example, we listed <code>entity_kind</code> and this parameter was expected by our InputReader and used to specify the datastore Kind processed by our InputReader. On the MapReduce status page (<code>/mapreduce</code>) we can type in a new value for this parameter to specify a different Kind before running the job.</p>
 
@@ -262,7 +262,7 @@ def touch(entity):
 
 <p>Now our map function will operate on entities that have been updated previous to our <code>if_older_than</code> parameter.</p>
 
-<h2 id="toc_6">Parameter Validation</h2>
+<h2 id="parameter-validation:62102699eed8b8c281da9eed3873c1d3">Parameter Validation</h2>
 
 <p>The MapReduce library also provides a method to do parameter validation. In our previous example we passed a date to our map function as a string. We can use a validator to validate that parameter and modify it as necessary. To use a validator function, specify it in <code>mapreduce.yaml</code> as <code>params_validator</code>.</p>
 
@@ -296,7 +296,7 @@ def touch(entity):
 
 <p>If parameter validation fails the MapReduce job is not started and no entities are passed from our InputReader to the map function.</p>
 
-<h2 id="toc_7">Callbacks</h2>
+<h2 id="callbacks:62102699eed8b8c281da9eed3873c1d3">Callbacks</h2>
 
 <p>The MapReduce library allows you to specify a callback function that is called after the MapReduce completes. This can be used for logging purposes or to trigger a specific event in code. The callback is specified in your <code>mapreduce.yaml</code> file as <code>done_callback</code> and points to a user specified function. This is a parameter of the MapReduce itself and not the map function &ndash; note the independent entry in <code>mapreduce.yaml</code>.</p>
 
@@ -336,7 +336,7 @@ class DoneTouch(webapp2.RequestHandler):
         logging.info(spec)
 </code></pre>
 
-<h2 id="toc_8">Additional Input Readers</h2>
+<h2 id="additional-input-readers:62102699eed8b8c281da9eed3873c1d3">Additional Input Readers</h2>
 
 <p>In addition to the DatastoreInputReader the library includes readers for the
 Blobstore, Files and Google Cloud Storage Buckets. The documentation for these
@@ -349,7 +349,7 @@ source</a>.
 This should give you enough information to get started with the InputReader of
 your choice.</p>
 
-<h3 id="toc_9">Input Reader Reference</h3>
+<h3 id="input-reader-reference:62102699eed8b8c281da9eed3873c1d3">Input Reader Reference</h3>
 
 <p>As a reference here is a list of InputReaders and their parameters. All
 InputReaders support the <code>namespace</code> parameter for specifying the namespaces to
@@ -360,7 +360,7 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>The list of namespaces that will be searched.</dd>
 </dl>
 
-<h4 id="toc_10">BlobstoreLineInputReader</h4>
+<h4 id="blobstorelineinputreader:62102699eed8b8c281da9eed3873c1d3">BlobstoreLineInputReader</h4>
 
 <p>Input reader for a newline delimited blob in Blobstore.</p>
 
@@ -374,7 +374,7 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>The last line number position to read.</dd>
 </dl>
 
-<h4 id="toc_11">BlobstoreZipInputReader</h4>
+<h4 id="blobstorezipinputreader:62102699eed8b8c281da9eed3873c1d3">BlobstoreZipInputReader</h4>
 
 <p>Input reader for files from a zip archive stored in the Blobstore. Iterates over all compressed files in a zipfile in Blobstore.</p>
 
@@ -388,7 +388,7 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>The index of the last file that will not be read.</dd>
 </dl>
 
-<h4 id="toc_12">BlobstoreZipLineInputReader</h4>
+<h4 id="blobstoreziplineinputreader:62102699eed8b8c281da9eed3873c1d3">BlobstoreZipLineInputReader</h4>
 
 <p>Input reader for files from a zip archive stored in the Blobstore. Iterates over all compressed files in a zipfile in Blobstore. Each compressed file is expected to be a newline delimited file.</p>
 
@@ -404,7 +404,7 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>The by offset with `BLOB_KEY.zip[start_file_index]` to start reading.</dd>
 </dl>
 
-<h4 id="toc_13">DatastoreInputReader</h4>
+<h4 id="datastoreinputreader:62102699eed8b8c281da9eed3873c1d3">DatastoreInputReader</h4>
 
 <p>Iterates over a Model and yields model instances. Supports both db.model and ndb.model.</p>
 
@@ -421,7 +421,7 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>Any filters to apply to the datastore query.</dd>
 </dl>
 
-<h4 id="toc_14">DatastoreKeyInputReader</h4>
+<h4 id="datastorekeyinputreader:62102699eed8b8c281da9eed3873c1d3">DatastoreKeyInputReader</h4>
 
 <p>Iterate over an entity kind and yields datastore.Key.</p>
 
@@ -438,7 +438,7 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>Any filters to apply to the datastore query.</dd>
 </dl>
 
-<h4 id="toc_15">FileInputReader</h4>
+<h4 id="fileinputreader:62102699eed8b8c281da9eed3873c1d3">FileInputReader</h4>
 
 <p>Iterate over Google Cloud Storage files using the <a href="https://developers.google.com/appengine/docs/python/googlestorage/">Files API</a>.</p>
 
@@ -452,7 +452,7 @@ iterate over. If no namespace is given then all namespaces are used</p>
   the zip.</dd>
 </dl>
 
-<h4 id="toc_16">LogInputReader</h4>
+<h4 id="loginputreader:62102699eed8b8c281da9eed3873c1d3">LogInputReader</h4>
 
 <p>Input reader for a time range of logs via the <a href="https://developers.google.com/appengine/docs/python/logs/">Logs API</a>.</p>
 
@@ -473,7 +473,7 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>A list of tuples containing a module and version id whose logs should be read. This can not be used with version_ids.</dd>
 </dl>
 
-<h4 id="toc_17">NamespaceInputReader</h4>
+<h4 id="namespaceinputreader:62102699eed8b8c281da9eed3873c1d3">NamespaceInputReader</h4>
 
 <p>An input reader to iterate over namespaces. This reader yields namespace names as string.</p>
 
@@ -484,7 +484,7 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>The number of namespaces to read with each batch.</dd>
 </dl>
 
-<h4 id="toc_18">RandomStringInputReader</h4>
+<h4 id="randomstringinputreader:62102699eed8b8c281da9eed3873c1d3">RandomStringInputReader</h4>
 
 <p>Yields random strings as output. Useful to populate output with testing entries.</p>
 
@@ -495,7 +495,7 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>The length of the generated strings.</dd>
 </dl>
 
-<h4 id="toc_19">RawDatastoreInputReader</h4>
+<h4 id="rawdatastoreinputreader:62102699eed8b8c281da9eed3873c1d3">RawDatastoreInputReader</h4>
 
 <p>Exactly the same as DatastoreInputReader but yields a datastore.Entity.</p>
 
@@ -512,7 +512,7 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>Any filters to apply to the datastore query.</dd>
 </dl>
 
-<h4 id="toc_20">RecordsReader</h4>
+<h4 id="recordsreader:62102699eed8b8c281da9eed3873c1d3">RecordsReader</h4>
 
 <p>Reads a list of Files API files in records format.</p>
 
@@ -521,7 +521,7 @@ iterate over. If no namespace is given then all namespaces are used</p>
   <dd>A comma separated string of files to read from.</dd>
 </dl>
 
-<h2 id="toc_21">Conclusions</h2>
+<h2 id="conclusions:62102699eed8b8c281da9eed3873c1d3">Conclusions</h2>
 
 <p>Defining a MapReduce job via <code>mapreduce.yaml</code> provides a convenient way to
 iterate over large datasets and run a function on each unit of work.

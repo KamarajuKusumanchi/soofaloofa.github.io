@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/series/cloud-endpoints/index.xml/</link>
+    <link>http://sookocheff.com/series/cloud-endpoints/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Tue, 22 Jul 2014 06:29:56 UTC</lastBuildDate>
@@ -82,7 +82,7 @@ alternative authentication mechanisms. This article will show you how to secure
 an API endpoint using Basic Authentication. You can use this as a starting point
 for whatever authentication method you choose.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;A basic endpoint&lt;/h2&gt;
+&lt;h2 id=&#34;a-basic-endpoint:58b506e9a5ea3303ef0bbba294ff978e&#34;&gt;A basic endpoint&lt;/h2&gt;
 
 &lt;p&gt;As a starting point let&amp;rsquo;s define a basic endpoint that will return a
 hypothetical UserMessage defining a User resource.&lt;/p&gt;
@@ -177,7 +177,7 @@ process. Unfortunately it is not well documented and a few gotchas exist. This
 article provides a template you can use to unit test Cloud Endpoints including
 full source code for a working example.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;The Model&lt;/h2&gt;
+&lt;h2 id=&#34;the-model:dec1a5006ed54c46077ff2a4372aca9b&#34;&gt;The Model&lt;/h2&gt;
 
 &lt;p&gt;Let&amp;rsquo;s use a simple User model as the resource being exposed by our API. This
 model has two properties &amp;ndash; a username and an email address. The class also
@@ -209,7 +209,7 @@ class UserMessage(messages.Message):
     email = messages.StringField(3)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;The API&lt;/h2&gt;
+&lt;h2 id=&#34;the-api:dec1a5006ed54c46077ff2a4372aca9b&#34;&gt;The API&lt;/h2&gt;
 
 &lt;p&gt;To keep things simple the API for this resource provides a single &lt;code&gt;GET&lt;/code&gt; endpoint
 that returns a &lt;code&gt;UserMessage&lt;/code&gt; based on a &lt;code&gt;User&lt;/code&gt; in the datastore. We parameterize
@@ -242,7 +242,7 @@ class UsersApi(remote.Service):
         return entity.to_message()
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;The Tests&lt;/h2&gt;
+&lt;h2 id=&#34;the-tests:dec1a5006ed54c46077ff2a4372aca9b&#34;&gt;The Tests&lt;/h2&gt;
 
 &lt;p&gt;The setup for our tests is similar to many App Engine test cases. We set our
 environment and initialize any test stubs we may need.&lt;/p&gt;
@@ -402,9 +402,10 @@ REST API.&lt;/p&gt;
 &lt;p&gt;To support this discussion let&amp;rsquo;s use a concrete resource for our API &amp;ndash; a &lt;code&gt;User&lt;/code&gt;
 resource. We can give our &lt;code&gt;User&lt;/code&gt; model a few simple attributes.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34; alt=&#34;User Model&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34; alt=&#34;User Model&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;A CRUD API for this resource would support a URL structure and HTTP verbs
 for each operation.&lt;/p&gt;

@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/backup/index.xml/</link>
+    <link>http://sookocheff.com/tags/backup/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Mon, 04 Aug 2014 21:18:13 UTC</lastBuildDate>
@@ -21,7 +21,7 @@ for a given App Engine backup and importing that backup into BigQuery. This
 article will show you to get the Cloud Storage URL for an App Engine backup and
 manually perform that import.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Getting the Cloud Storage URL&lt;/h2&gt;
+&lt;h2 id=&#34;getting-the-cloud-storage-url:fa0cf78d240508d5fee9738fef21ecf6&#34;&gt;Getting the Cloud Storage URL&lt;/h2&gt;
 
 &lt;p&gt;The first thing you need to do is access the cloud storage URL for a given App
 Engine backup. First, log in to the Google Developer Console and navigate to
@@ -61,23 +61,26 @@ URL.&lt;/p&gt;
 &lt;p&gt;The next step is to import the backup into BigQuery. To do this, navigate to
 your project and create a new table in your desired dataset.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34; alt=&#34;Create new table.&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34; alt=&#34;Create new table.&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;In the &lt;code&gt;Choose destination&lt;/code&gt; tab pick a name for your new table. In my case I&amp;rsquo;ll
 name the table with the date of my backup for reference.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34; alt=&#34;Choose destination&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34; alt=&#34;Choose destination&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Next, choose App Engine Datastore Backup as the source format and paste the
 Cloud Storage URL you arrived at above in the appropriate field.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34; alt=&#34;Select Data Source&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34; alt=&#34;Select Data Source&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;You can choose the defaults for the next tabs and, finally, import your App
 Engine backup into BigQuery and watch it being fully restored.&lt;/p&gt;

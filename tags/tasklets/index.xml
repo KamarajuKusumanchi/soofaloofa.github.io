@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/tasklets/index.xml/</link>
+    <link>http://sookocheff.com/tags/tasklets/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Sat, 27 Sep 2014 15:25:29 UTC</lastBuildDate>
@@ -17,7 +17,7 @@
 
 &lt;p&gt;Asynchronous functions can provide a boon to application performance by allowing time consuming functions to operate in parallel and without blocking the main execution thread. This article explains how to use the Tasklet API to compose and execute asynchronous functions in Google App Engine.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;ndb.Future&lt;/h2&gt;
+&lt;h2 id=&#34;ndb-future:6fb5794bdb1524859157ecc223808a6d&#34;&gt;ndb.Future&lt;/h2&gt;
 
 &lt;p&gt;A &lt;a href=&#34;https://developers.google.com/appengine/docs/python/ndb/futureclass&#34;&gt;Future&lt;/a&gt; is a class representing an asynchronous I/O operation. &lt;code&gt;ndb&lt;/code&gt; provides asynchronous versions of datastore operations that will return a future instead of immediately returning data.&lt;/p&gt;
 
@@ -42,7 +42,7 @@ user_future = User.get_by_id_async(uid)
 accounts_future = Account.query(Account.user_id==uid).fetch_async()
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;ndb.tasklet&lt;/h2&gt;
+&lt;h2 id=&#34;ndb-tasklet:6fb5794bdb1524859157ecc223808a6d&#34;&gt;ndb.tasklet&lt;/h2&gt;
 
 &lt;p&gt;Tasklets allow you to create your own asynchronous functions that return a Future. The application can call &lt;code&gt;get_result()&lt;/code&gt; on that Future to return the data.&lt;/p&gt;
 
@@ -70,7 +70,7 @@ future.get_result()
 
 &lt;p&gt;So how do we use this in our code? There are three distinct cases.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;Case 1: Processing an asynchronous result&lt;/h2&gt;
+&lt;h2 id=&#34;case-1-processing-an-asynchronous-result:6fb5794bdb1524859157ecc223808a6d&#34;&gt;Case 1: Processing an asynchronous result&lt;/h2&gt;
 
 &lt;p&gt;Suppose that you have an asynchronous function that returns a Future and you want to do some processing on the result before returning from your function. In that case you may have code like this.&lt;/p&gt;
 
@@ -94,7 +94,7 @@ def process_a_query():
 future.get_result()
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_3&#34;&gt;Case 2: Composing two asynchronous functions&lt;/h2&gt;
+&lt;h2 id=&#34;case-2-composing-two-asynchronous-functions:6fb5794bdb1524859157ecc223808a6d&#34;&gt;Case 2: Composing two asynchronous functions&lt;/h2&gt;
 
 &lt;p&gt;In this case, suppose you have two asynchronous functions that depend on each other and you want to combine them with the tasklet framework.&lt;/p&gt;
 
@@ -114,7 +114,7 @@ def multiple_query():
     raise ndb.Return(b)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_4&#34;&gt;Case 3: Parallel Computation&lt;/h2&gt;
+&lt;h2 id=&#34;case-3-parallel-computation:6fb5794bdb1524859157ecc223808a6d&#34;&gt;Case 3: Parallel Computation&lt;/h2&gt;
 
 &lt;p&gt;The last case to discuss is parallel computation. In this scenario you have two independent asynchronous functions that you want to run in parallel.&lt;/p&gt;
 
@@ -124,7 +124,7 @@ def parallel_query():
 	  raise ndb.Return((a,b))
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_5&#34;&gt;Summary&lt;/h2&gt;
+&lt;h2 id=&#34;summary:6fb5794bdb1524859157ecc223808a6d&#34;&gt;Summary&lt;/h2&gt;
 
 &lt;p&gt;In all of these cases we show how to combine and compose asynchronous functions using the tasklet framework. This allows you to define your own asynchronous functions that are can be used just like the ndb asynchronous functions.&lt;/p&gt;
 </description>

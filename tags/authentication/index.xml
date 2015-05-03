@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/authentication/index.xml/</link>
+    <link>http://sookocheff.com/tags/authentication/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Tue, 22 Jul 2014 06:29:56 UTC</lastBuildDate>
@@ -82,7 +82,7 @@ alternative authentication mechanisms. This article will show you how to secure
 an API endpoint using Basic Authentication. You can use this as a starting point
 for whatever authentication method you choose.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;A basic endpoint&lt;/h2&gt;
+&lt;h2 id=&#34;a-basic-endpoint:58b506e9a5ea3303ef0bbba294ff978e&#34;&gt;A basic endpoint&lt;/h2&gt;
 
 &lt;p&gt;As a starting point let&amp;rsquo;s define a basic endpoint that will return a
 hypothetical UserMessage defining a User resource.&lt;/p&gt;

@@ -82,7 +82,7 @@
 
 <p>Saving HTML canvas element data to an image in a user friendly manner is a tricky problem. Let&rsquo;s look at one way to solve it.</p>
 
-<h2 id="toc_0">First Attempt</h2>
+<h2 id="first-attempt:034a30c0bea8ad3377260c7a90d4653c">First Attempt</h2>
 
 <p>We could always open our canvas in a new browser tab (or window) with the <code>toDataURL</code> JavaScript method.</p>
 
@@ -91,17 +91,17 @@
 
 <p>Unfortunately this requires the user to use the file menu or the right-click button to save the image from the newly opened browser tab. I wouldn’t call this user friendly.</p>
 
-<h2 id="toc_1">Second Attempt</h2>
+<h2 id="second-attempt:034a30c0bea8ad3377260c7a90d4653c">Second Attempt</h2>
 
 <p>After some investigation I came across Nihilogic’s <a href="http://www.nihilogic.dk/labs/canvas2image/"><code>Canvas2Image</code></a> JavaScript package. This package presents a Dialog Box to the user allowing them to save the image. This would solve my problem except the downloaded filename has the format 8iqALWM5.part . If my mom encountered a filename like that she wouldn’t know what to do with it. Still not user friendly.</p>
 
-<h2 id="toc_2">Final Attempt</h2>
+<h2 id="final-attempt:034a30c0bea8ad3377260c7a90d4653c">Final Attempt</h2>
 
 <p>What to do? Enter PHP.</p>
 
 <p><a href="http://www.permadi.com/blog/2010/10/html5-saving-canvas-image-data-using-php-and-ajax/">Permadi</a> presents a technique using PHP and AJAX that is exactly what I need. After some tweaking here’s what I came up with.</p>
 
-<h2 id="toc_3">save.php</h2>
+<h2 id="save-php:034a30c0bea8ad3377260c7a90d4653c">save.php</h2>
 
 <p>The first PHP file saves the passed in canvas data to the server at a random location determined by the md5(uniqid())  method.</p>
 
@@ -123,7 +123,7 @@ echo json_encode($file);
 <pre><code>$.post(&quot;save.php&quot;, {data: canvas.toDataURL(&quot;image/png&quot;)})
 </code></pre>
 
-<h2 id="toc_4">download.php</h2>
+<h2 id="download-php:034a30c0bea8ad3377260c7a90d4653c">download.php</h2>
 
 <p>Now we can use PHP to force the download of the saved image data. You can read more about this in the <a href="http://php.net/manual/en/function.readfile.php">PHP Manual</a>.</p>
 

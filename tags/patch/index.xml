@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/patch/index.xml/</link>
+    <link>http://sookocheff.com/tags/patch/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Tue, 08 Apr 2014 16:12:14 UTC</lastBuildDate>
@@ -41,11 +41,11 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;The remaining elements of a JSON Patch operation depend on the particular operation being performed.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_0&#34;&gt;add&lt;/h3&gt;
+&lt;h3 id=&#34;add:00522aa35030d6898496a2030ce76b59&#34;&gt;add&lt;/h3&gt;
 
 &lt;p&gt;The &lt;code&gt;add&lt;/code&gt; operation is used in different ways depending on the target of the &lt;code&gt;path&lt;/code&gt; being referenced. Generally speaking we can use &lt;code&gt;add&lt;/code&gt; to append to a list, add a member to an object or update the value of an existing field. The &lt;code&gt;add&lt;/code&gt; operation accepts a &lt;code&gt;value&lt;/code&gt; member which is the value to update the referenced &lt;code&gt;path&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_1&#34;&gt;Append to a List&lt;/h4&gt;
+&lt;h4 id=&#34;append-to-a-list:00522aa35030d6898496a2030ce76b59&#34;&gt;Append to a List&lt;/h4&gt;
 
 &lt;p&gt;To append a value to a list you use an existing list as the &lt;code&gt;path&lt;/code&gt; of the operation. So, given the JSON document.&lt;/p&gt;
 
@@ -66,7 +66,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;toc_2&#34;&gt;Add a Member to an Object&lt;/h4&gt;
+&lt;h4 id=&#34;add-a-member-to-an-object:00522aa35030d6898496a2030ce76b59&#34;&gt;Add a Member to an Object&lt;/h4&gt;
 
 &lt;p&gt;If the &lt;code&gt;path&lt;/code&gt; references a member of an object that does not exist, a new member is added to the object. We start with our JSON document listing our orders.&lt;/p&gt;
 
@@ -92,7 +92,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;toc_3&#34;&gt;Update an Existing Member of an Object&lt;/h4&gt;
+&lt;h4 id=&#34;update-an-existing-member-of-an-object:00522aa35030d6898496a2030ce76b59&#34;&gt;Update an Existing Member of an Object&lt;/h4&gt;
 
 &lt;p&gt;If the &lt;code&gt;path&lt;/code&gt; refers to an existing object member, that member is updated with the newly supplied value.&lt;/p&gt;
 
@@ -119,7 +119,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_4&#34;&gt;remove&lt;/h3&gt;
+&lt;h3 id=&#34;remove:00522aa35030d6898496a2030ce76b59&#34;&gt;remove&lt;/h3&gt;
 
 &lt;p&gt;Remove is a simple operation. The target location of the &lt;code&gt;path&lt;/code&gt; is removed from the object.&lt;/p&gt;
 
@@ -154,7 +154,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_5&#34;&gt;replace&lt;/h3&gt;
+&lt;h3 id=&#34;replace:00522aa35030d6898496a2030ce76b59&#34;&gt;replace&lt;/h3&gt;
 
 &lt;p&gt;Replace is used to set a new value to a member of the object. It is logically equivalent to a &lt;code&gt;remove&lt;/code&gt; operation followed by an &lt;code&gt;add&lt;/code&gt; operation to the same &lt;code&gt;path&lt;/code&gt; or to an &lt;code&gt;add&lt;/code&gt; operation to an existing member.&lt;/p&gt;
 
@@ -179,7 +179,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_6&#34;&gt;move&lt;/h3&gt;
+&lt;h3 id=&#34;move:00522aa35030d6898496a2030ce76b59&#34;&gt;move&lt;/h3&gt;
 
 &lt;p&gt;The &lt;code&gt;move&lt;/code&gt; operation removes the value at a specified location and adds it to the target location. The removal location is given by a &lt;code&gt;from&lt;/code&gt; member and the target location is given by the &lt;code&gt;path&lt;/code&gt; member.&lt;/p&gt;
 
@@ -206,21 +206,21 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_7&#34;&gt;copy&lt;/h3&gt;
+&lt;h3 id=&#34;copy:00522aa35030d6898496a2030ce76b59&#34;&gt;copy&lt;/h3&gt;
 
 &lt;p&gt;&lt;code&gt;copy&lt;/code&gt; is like &lt;code&gt;move&lt;/code&gt;. It copies the value at the &lt;code&gt;from&lt;/code&gt; location to the  &lt;code&gt;path&lt;/code&gt; location, leaving duplicates of the data at each location.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;copy&amp;quot;, &amp;quot;from&amp;quot;: &amp;quot;/orders/0&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/rootOrder&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_8&#34;&gt;test&lt;/h3&gt;
+&lt;h3 id=&#34;test:00522aa35030d6898496a2030ce76b59&#34;&gt;test&lt;/h3&gt;
 
 &lt;p&gt;The HTTP PATCH method is atomic and the patch should only be applied if all operations can be safely applied. The &lt;code&gt;test&lt;/code&gt; operation can offer additional validation to ensure that patch preconditions or postconditions are met. If the test fails the whole patch is discarded. &lt;code&gt;test&lt;/code&gt; is strictly an equality check.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;test&amp;quot;, &amp;quot;value&amp;quot;: 30.00, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_9&#34;&gt;Conclusion&lt;/h3&gt;
+&lt;h3 id=&#34;conclusion:00522aa35030d6898496a2030ce76b59&#34;&gt;Conclusion&lt;/h3&gt;
 
 &lt;p&gt;JSON Patch is an effective way to provide diffs of your API resources. Most languages already have an implementation available. There is no reason not to adopt the HTTP PATCH today.&lt;/p&gt;
 </description>

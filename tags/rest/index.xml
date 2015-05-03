@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/rest/index.xml/</link>
+    <link>http://sookocheff.com/tags/rest/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Wed, 02 Jul 2014 06:14:23 UTC</lastBuildDate>
@@ -24,9 +24,10 @@ REST API.&lt;/p&gt;
 &lt;p&gt;To support this discussion let&amp;rsquo;s use a concrete resource for our API &amp;ndash; a &lt;code&gt;User&lt;/code&gt;
 resource. We can give our &lt;code&gt;User&lt;/code&gt; model a few simple attributes.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34; alt=&#34;User Model&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34; alt=&#34;User Model&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;A CRUD API for this resource would support a URL structure and HTTP verbs
 for each operation.&lt;/p&gt;
@@ -188,11 +189,11 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;The remaining elements of a JSON Patch operation depend on the particular operation being performed.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_0&#34;&gt;add&lt;/h3&gt;
+&lt;h3 id=&#34;add:00522aa35030d6898496a2030ce76b59&#34;&gt;add&lt;/h3&gt;
 
 &lt;p&gt;The &lt;code&gt;add&lt;/code&gt; operation is used in different ways depending on the target of the &lt;code&gt;path&lt;/code&gt; being referenced. Generally speaking we can use &lt;code&gt;add&lt;/code&gt; to append to a list, add a member to an object or update the value of an existing field. The &lt;code&gt;add&lt;/code&gt; operation accepts a &lt;code&gt;value&lt;/code&gt; member which is the value to update the referenced &lt;code&gt;path&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_1&#34;&gt;Append to a List&lt;/h4&gt;
+&lt;h4 id=&#34;append-to-a-list:00522aa35030d6898496a2030ce76b59&#34;&gt;Append to a List&lt;/h4&gt;
 
 &lt;p&gt;To append a value to a list you use an existing list as the &lt;code&gt;path&lt;/code&gt; of the operation. So, given the JSON document.&lt;/p&gt;
 
@@ -213,7 +214,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;toc_2&#34;&gt;Add a Member to an Object&lt;/h4&gt;
+&lt;h4 id=&#34;add-a-member-to-an-object:00522aa35030d6898496a2030ce76b59&#34;&gt;Add a Member to an Object&lt;/h4&gt;
 
 &lt;p&gt;If the &lt;code&gt;path&lt;/code&gt; references a member of an object that does not exist, a new member is added to the object. We start with our JSON document listing our orders.&lt;/p&gt;
 
@@ -239,7 +240,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;toc_3&#34;&gt;Update an Existing Member of an Object&lt;/h4&gt;
+&lt;h4 id=&#34;update-an-existing-member-of-an-object:00522aa35030d6898496a2030ce76b59&#34;&gt;Update an Existing Member of an Object&lt;/h4&gt;
 
 &lt;p&gt;If the &lt;code&gt;path&lt;/code&gt; refers to an existing object member, that member is updated with the newly supplied value.&lt;/p&gt;
 
@@ -266,7 +267,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_4&#34;&gt;remove&lt;/h3&gt;
+&lt;h3 id=&#34;remove:00522aa35030d6898496a2030ce76b59&#34;&gt;remove&lt;/h3&gt;
 
 &lt;p&gt;Remove is a simple operation. The target location of the &lt;code&gt;path&lt;/code&gt; is removed from the object.&lt;/p&gt;
 
@@ -301,7 +302,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_5&#34;&gt;replace&lt;/h3&gt;
+&lt;h3 id=&#34;replace:00522aa35030d6898496a2030ce76b59&#34;&gt;replace&lt;/h3&gt;
 
 &lt;p&gt;Replace is used to set a new value to a member of the object. It is logically equivalent to a &lt;code&gt;remove&lt;/code&gt; operation followed by an &lt;code&gt;add&lt;/code&gt; operation to the same &lt;code&gt;path&lt;/code&gt; or to an &lt;code&gt;add&lt;/code&gt; operation to an existing member.&lt;/p&gt;
 
@@ -326,7 +327,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_6&#34;&gt;move&lt;/h3&gt;
+&lt;h3 id=&#34;move:00522aa35030d6898496a2030ce76b59&#34;&gt;move&lt;/h3&gt;
 
 &lt;p&gt;The &lt;code&gt;move&lt;/code&gt; operation removes the value at a specified location and adds it to the target location. The removal location is given by a &lt;code&gt;from&lt;/code&gt; member and the target location is given by the &lt;code&gt;path&lt;/code&gt; member.&lt;/p&gt;
 
@@ -353,21 +354,21 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_7&#34;&gt;copy&lt;/h3&gt;
+&lt;h3 id=&#34;copy:00522aa35030d6898496a2030ce76b59&#34;&gt;copy&lt;/h3&gt;
 
 &lt;p&gt;&lt;code&gt;copy&lt;/code&gt; is like &lt;code&gt;move&lt;/code&gt;. It copies the value at the &lt;code&gt;from&lt;/code&gt; location to the  &lt;code&gt;path&lt;/code&gt; location, leaving duplicates of the data at each location.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;copy&amp;quot;, &amp;quot;from&amp;quot;: &amp;quot;/orders/0&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/rootOrder&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_8&#34;&gt;test&lt;/h3&gt;
+&lt;h3 id=&#34;test:00522aa35030d6898496a2030ce76b59&#34;&gt;test&lt;/h3&gt;
 
 &lt;p&gt;The HTTP PATCH method is atomic and the patch should only be applied if all operations can be safely applied. The &lt;code&gt;test&lt;/code&gt; operation can offer additional validation to ensure that patch preconditions or postconditions are met. If the test fails the whole patch is discarded. &lt;code&gt;test&lt;/code&gt; is strictly an equality check.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;op&amp;quot;: &amp;quot;test&amp;quot;, &amp;quot;value&amp;quot;: 30.00, &amp;quot;path&amp;quot;: &amp;quot;/total&amp;quot; }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_9&#34;&gt;Conclusion&lt;/h3&gt;
+&lt;h3 id=&#34;conclusion:00522aa35030d6898496a2030ce76b59&#34;&gt;Conclusion&lt;/h3&gt;
 
 &lt;p&gt;JSON Patch is an effective way to provide diffs of your API resources. Most languages already have an implementation available. There is no reason not to adopt the HTTP PATCH today.&lt;/p&gt;
 </description>
@@ -383,7 +384,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;1) Versioned URL&lt;/h2&gt;
+&lt;h2 id=&#34;1-versioned-url:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;1) Versioned URL&lt;/h2&gt;
 
 &lt;p&gt;URL versioning inserts a version number directly in the URL of the resource. As an example,  version one of the API could be accessed through the &lt;code&gt;v1&lt;/code&gt; URL.&lt;/p&gt;
 
@@ -404,7 +405,7 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 
 &lt;p&gt;Once this mapping is in place you can safely deprecate old URLs by redirecting to the non-versioned URL &amp;ndash; notifying the client to use the latest version. At all times the non-versioned URL represents the latest version of that resource.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_1&#34;&gt;Pros:&lt;/h3&gt;
+&lt;h3 id=&#34;pros:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;Pros:&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Easy to implement.&lt;/li&gt;
@@ -412,13 +413,13 @@ The &lt;code&gt;path&lt;/code&gt; member is a &lt;a href=&#34;https://tools.ietf
 &lt;li&gt;Direct path to deprecation.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;toc_2&#34;&gt;Cons:&lt;/h3&gt;
+&lt;h3 id=&#34;cons:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;Cons:&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Violates REST principle of unique URLs for a resource.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;toc_3&#34;&gt;2) Versioned Media Type&lt;/h2&gt;
+&lt;h2 id=&#34;2-versioned-media-type:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;2) Versioned Media Type&lt;/h2&gt;
 
 &lt;p&gt;When making an HTTP request the client can request a specific MIME type (or list of MIME types) that it is willing to accept using an &lt;code&gt;Accept&lt;/code&gt; header. For example, an HTML client may use the following &lt;code&gt;Accept&lt;/code&gt; header to request an HTML representation of the resource.&lt;/p&gt;
 
@@ -445,13 +446,13 @@ Accept: application/vnd.sookocheff.user+json?version=2
 
 &lt;p&gt;Versioning the media type does adhere to strict REST principles but causes problems in other ways. First, you need a custom media type for every resource returned by your API. This is not only reinventing the wheel &amp;ndash; &lt;a href=&#34;http://schema.org/&#34;&gt;perfectly good&lt;/a&gt; &lt;a href=&#34;http://www.iana.org/assignments/media-types/media-types.xhtml&#34;&gt;media types&lt;/a&gt; &lt;a href=&#34;http://www.freeformatter.com/mime-types-list.html&#34;&gt;already exist&lt;/a&gt; &amp;ndash; it also creates a media type so specific to your API that it cannot be reused elsewhere. Lastly, it is unclear whether the version parameter applies to the version of the media type or to the version of your API.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_4&#34;&gt;Pros:&lt;/h3&gt;
+&lt;h3 id=&#34;pros-1:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;Pros:&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Adheres to REST principles.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;toc_5&#34;&gt;Cons:&lt;/h3&gt;
+&lt;h3 id=&#34;cons-1:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;Cons:&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Custom media type for every resource.&lt;/li&gt;
@@ -460,7 +461,7 @@ Accept: application/vnd.sookocheff.user+json?version=2
 &lt;li&gt;Requires sophisticated API client.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;toc_6&#34;&gt;3) Versioned HTTP Header&lt;/h2&gt;
+&lt;h2 id=&#34;3-versioned-http-header:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;3) Versioned HTTP Header&lt;/h2&gt;
 
 &lt;p&gt;The &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616-sec7.html#sec7.1&#34;&gt;HTTP specification&lt;/a&gt; states that unknown HTTP headers MUST be forwarded on to the recipient. This means that custom HTTP headers can be set by our client and received by our API.&lt;/p&gt;
 
@@ -474,38 +475,38 @@ Users-Version: 2
 
 &lt;p&gt;This method requires that your API client is able to modify the HTTP headers of its requests. If the client is unable to provide a version number with the HTTP header you can assume that a request is made for the latest API version.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_7&#34;&gt;Pros:&lt;/h3&gt;
+&lt;h3 id=&#34;pros-2:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;Pros:&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Adheres to REST principles.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;toc_8&#34;&gt;Cons:&lt;/h3&gt;
+&lt;h3 id=&#34;cons-2:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;Cons:&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Requires sophisticated API client.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;toc_9&#34;&gt;4) Versioned Resources&lt;/h2&gt;
+&lt;h2 id=&#34;4-versioned-resources:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;4) Versioned Resources&lt;/h2&gt;
 
 &lt;p&gt;The last versioning method is to set the version number in the response itself. This places the burden of versioning with the client rather than the server. A client receiving a response from a known version number can parse it and act appropriately. It would be up to the client how to handle an unknown version number.&lt;/p&gt;
 
 &lt;p&gt;This method is only appropriate if you as the developer have direct control over both the server and the client being deployed.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_10&#34;&gt;Pros:&lt;/h3&gt;
+&lt;h3 id=&#34;pros-3:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;Pros:&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Simplified server.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;toc_11&#34;&gt;Cons:&lt;/h3&gt;
+&lt;h3 id=&#34;cons-3:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;Cons:&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Complex client.&lt;/li&gt;
 &lt;li&gt;Tightly couples server to client.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;toc_12&#34;&gt;What to do?&lt;/h2&gt;
+&lt;h2 id=&#34;what-to-do:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;What to do?&lt;/h2&gt;
 
 &lt;p&gt;By following &lt;a href=&#34;http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/&#34;&gt;REST principles&lt;/a&gt; we can guide our API versioning practices while being pragmatic about our choices so that our API can work in the real world.&lt;/p&gt;
 
@@ -523,7 +524,7 @@ Users-Version: 2
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;toc_13&#34;&gt;References&lt;/h2&gt;
+&lt;h2 id=&#34;references:52a2dcbd5f0a183c23053f0dc63f0467&#34;&gt;References&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api&#34;&gt;Vinay Sahni&lt;/a&gt; has collected a long list of best practices for pragmatic API design, including versioning.&lt;/p&gt;
 
@@ -548,7 +549,7 @@ use &lt;code&gt;POST&lt;/code&gt; for any action which may modify the state of a
 &lt;p&gt;This article attempts to explain the semantics behind the &lt;code&gt;PUT&lt;/code&gt; and &lt;code&gt;POST&lt;/code&gt;
 methods and offers clear suggestions on when to use each method.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;PUT&lt;/h2&gt;
+&lt;h2 id=&#34;put:bb3ea64adf2a9a1db1d2d60bf0784424&#34;&gt;PUT&lt;/h2&gt;
 
 &lt;p&gt;Let&amp;rsquo;s go &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616.html&#34;&gt;straight to the HTTP/1.1 RFC&lt;/a&gt; for the &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6&#34;&gt;definition of PUT&lt;/a&gt;.&lt;/p&gt;
 
@@ -597,7 +598,7 @@ Host: http://sookocheff.com
 resource contained within the request. PUT is used to both create and update the
 state of a resource on the server.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;POST&lt;/h2&gt;
+&lt;h2 id=&#34;post:bb3ea64adf2a9a1db1d2d60bf0784424&#34;&gt;POST&lt;/h2&gt;
 
 &lt;p&gt;Let&amp;rsquo;s go &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616.html&#34;&gt;back to the HTTP/1.1 RFC&lt;/a&gt; for the &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.5&#34;&gt;definition of POST&lt;/a&gt;.&lt;/p&gt;
 
@@ -638,7 +639,7 @@ specific URL for the user - &lt;code&gt;/user/636363&lt;/code&gt;.&lt;/p&gt;
 classify this behaviour &lt;em&gt;POST-to-append&lt;/em&gt; and is the generally recommended way to
 handle a POST request within the context of a specific resource.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;Putting it Together&lt;/h2&gt;
+&lt;h2 id=&#34;putting-it-together:bb3ea64adf2a9a1db1d2d60bf0784424&#34;&gt;Putting it Together&lt;/h2&gt;
 
 &lt;p&gt;The &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616.html&#34;&gt;HTTP/1.1 RFC&lt;/a&gt; offers some guidance on &lt;a href=&#34;http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6&#34;&gt;distinguishing between POST and
 PUT&lt;/a&gt;.&lt;/p&gt;
@@ -680,7 +681,7 @@ manipulation of resources using representations; self-descriptive messages;
 and, hypermedia as the engine of application state.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;toc_0&#34;&gt;Why is this important for APIs?&lt;/h3&gt;
+&lt;h3 id=&#34;why-is-this-important-for-apis:022ddc657fc55b3737ad84e402ab4670&#34;&gt;Why is this important for APIs?&lt;/h3&gt;
 
 &lt;p&gt;API design is in an infancy. Each API is designed for a single use case and
 standard. This proliferation of different design ideas results in APIs that each
@@ -694,7 +695,7 @@ provide APIs that form a scalable and resilient network of their own.&lt;/p&gt;
 &lt;p&gt;We will take a look at each of the four interface constraints in turn and see
 how they can be used to design an API that developers love to use.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;1. Identification of Resources&lt;/h2&gt;
+&lt;h2 id=&#34;1-identification-of-resources:022ddc657fc55b3737ad84e402ab4670&#34;&gt;1. Identification of Resources&lt;/h2&gt;
 
 &lt;p&gt;A resource is the key abstraction of REST. Anything that can be named is a
 resource &amp;ndash; a video, a document, an image. We identify resources using a
@@ -719,7 +720,7 @@ would have a path including the order number.&lt;/p&gt;
 &lt;p&gt;This simple example shows how we can create a URL to uniquely represent each
 resource represented by our API.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;2. Manipulation of Resources Using Representations&lt;/h2&gt;
+&lt;h2 id=&#34;2-manipulation-of-resources-using-representations:022ddc657fc55b3737ad84e402ab4670&#34;&gt;2. Manipulation of Resources Using Representations&lt;/h2&gt;
 
 &lt;p&gt;When making a request for a resource the server responds with a representation
 of the resource. This representation captures the current state of the resource
@@ -753,7 +754,7 @@ Accept: application/json
 representations without changing the resources URL or breaking existing clients.
 This keeps your client and server flexibly decoupled.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_3&#34;&gt;3. Self-Descriptive Messages&lt;/h2&gt;
+&lt;h2 id=&#34;3-self-descriptive-messages:022ddc657fc55b3737ad84e402ab4670&#34;&gt;3. Self-Descriptive Messages&lt;/h2&gt;
 
 &lt;p&gt;The representations served by a RESTful system contain all of the data required
 by the client to understand and act on the resource. If any additional
@@ -777,7 +778,7 @@ block on the Web.&lt;/p&gt;
 &lt;p&gt;By linking together the resources offered by your API you can build
 self-descriptive APIs.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_4&#34;&gt;4. Hypermedia As The Engine Of Application State&lt;/h2&gt;
+&lt;h2 id=&#34;4-hypermedia-as-the-engine-of-application-state:022ddc657fc55b3737ad84e402ab4670&#34;&gt;4. Hypermedia As The Engine Of Application State&lt;/h2&gt;
 
 &lt;p&gt;Together, the first three REST constraints imply the fourth and most important &amp;ndash;
 hypermedia as the engine of application state. By uniquely identifying
@@ -840,7 +841,7 @@ another API and communicate with minimal duplicated effort.&lt;/p&gt;
 offering a side-by-side comparison of their strengths and weaknesses. If you
 are impatient for the final result you can &lt;a href=&#34;https://gist.github.com/soofaloofa/9350847&#34;&gt;jump straight to the code&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;The Model&lt;/h2&gt;
+&lt;h2 id=&#34;the-model:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;The Model&lt;/h2&gt;
 
 &lt;p&gt;To drive this discussion let&amp;rsquo;s use a hypothetical API for managing a &lt;code&gt;Player&lt;/code&gt;
 resource derived from the &lt;a href=&#34;https://developer.apple.com/library/ios/documentation/GameKit/Reference/GKPlayer_Ref/Reference/Reference.html#//apple_ref/occ/cl/GKPlayer&#34;&gt;&lt;code&gt;GKPlayer&lt;/code&gt;
@@ -848,7 +849,7 @@ class&lt;/a&gt;
 used by Apple&amp;rsquo;s GameCenter API. The &lt;code&gt;Player&lt;/code&gt; resource can be expressed with this
 simple diagram.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2014-02-06-on-choosing-a-hypermedia-format/player-model.png&#34; alt=&#34;PlayerResource&#34; title=&#34;Player Resource&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://sookocheff.com/img/2014-02-06-on-choosing-a-hypermedia-format/player-model.png&#34; alt=&#34;PlayerResource&#34; title=&#34;Player Resource&#34; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;Representing this as a typical JSON response would yield something like the
@@ -888,7 +889,7 @@ following.&lt;/p&gt;
 
 &lt;p&gt;Let&amp;rsquo;s take a look at how this API can be represented using hypermedia types.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;JSON-LD&lt;/h2&gt;
+&lt;h2 id=&#34;json-ld:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;JSON-LD&lt;/h2&gt;
 
 &lt;p&gt;We&amp;rsquo;ll start by looking at JSON for Linked Documents (JSON-LD). JSON-LD is a well
 supported media type endorsed by the &lt;a href=&#34;https://www.w3.org&#34;&gt;World Wide Web
@@ -1128,7 +1129,7 @@ paged collections. For more details on HYDRA&amp;rsquo;s reserved properties you
 the full
 &lt;a href=&#34;http://www.markus-lanthaler.com/hydra/spec/latest/core/#properties&#34;&gt;documentation&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;HAL&lt;/h2&gt;
+&lt;h2 id=&#34;hal:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;HAL&lt;/h2&gt;
 
 &lt;p&gt;HAL is a lightweight media type that uses the idea of &lt;em&gt;Resources&lt;/em&gt; and &lt;em&gt;Links&lt;/em&gt; to
 model your JSON responses. &lt;em&gt;Resources&lt;/em&gt; can contain &lt;em&gt;State&lt;/em&gt; defined by key-value
@@ -1139,7 +1140,7 @@ convenience.&lt;/p&gt;
 &lt;p&gt;HAL is simple to use and easy to understand. These virtues have lead HAL to
 become one of the leading hypermedia types in modern APIs.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_3&#34;&gt;State&lt;/h3&gt;
+&lt;h3 id=&#34;state:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;State&lt;/h3&gt;
 
 &lt;p&gt;State is the traditional JSON key-value pairs defining the current state of the
 resource.&lt;/p&gt;
@@ -1155,7 +1156,7 @@ resource.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_4&#34;&gt;Links&lt;/h3&gt;
+&lt;h3 id=&#34;links:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;Links&lt;/h3&gt;
 
 &lt;p&gt;Links in HAL are identified as a JSON object named &lt;code&gt;_links&lt;/code&gt;. Keys within
 &lt;code&gt;_links&lt;/code&gt; are the name of the link and should describe the relationship between
@@ -1195,7 +1196,7 @@ the full list.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_5&#34;&gt;Embedded Resources&lt;/h3&gt;
+&lt;h3 id=&#34;embedded-resources:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;Embedded Resources&lt;/h3&gt;
 
 &lt;p&gt;Making a GET request to the &lt;code&gt;Friends&lt;/code&gt; link would return a full list of
 &lt;code&gt;Player&lt;/code&gt; resources. Each &lt;code&gt;Player&lt;/code&gt; returned is embedded in the representation
@@ -1244,7 +1245,7 @@ list of items.&lt;/p&gt;
 provide a reference to get the next set of friends in the list. The embedded
 resources are a list contained within the &lt;code&gt;player&lt;/code&gt; property.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_6&#34;&gt;Curies&lt;/h3&gt;
+&lt;h3 id=&#34;curies:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;Curies&lt;/h3&gt;
 
 &lt;p&gt;An important point about HAL is that each link relation points to a URL with
 documentation about that relation. This makes the API discoverable by always
@@ -1293,7 +1294,7 @@ and users. For more information on HAL you can refer to the draft standard that
 has been submitted to the &lt;a href=&#34;https://tools.ietf.org/html/draft-kelly-json-hal-06&#34;&gt;Network Working
 Group&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_7&#34;&gt;Collection+JSON&lt;/h2&gt;
+&lt;h2 id=&#34;collection-json:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;Collection+JSON&lt;/h2&gt;
 
 &lt;p&gt;The Collection+JSON standard is a media type that standardizes the reading,
 writing and querying of items in a collection. Although geared to handling
@@ -1314,7 +1315,7 @@ a &lt;code&gt;version&lt;/code&gt; and a URI pointing to itself.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_8&#34;&gt;Returning Data&lt;/h3&gt;
+&lt;h3 id=&#34;returning-data:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;Returning Data&lt;/h3&gt;
 
 &lt;p&gt;Typically, the response would include a list of items in the collection. For a
 single resource, this collection would be a list of a single element. The
@@ -1342,7 +1343,7 @@ properties of each element are given by explicit name/value pairs within a
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_9&#34;&gt;Links&lt;/h3&gt;
+&lt;h3 id=&#34;links-1:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;Links&lt;/h3&gt;
 
 &lt;p&gt;Links can be a property of the collection or of individual items in the
 collection. Links may may also include a &lt;code&gt;name&lt;/code&gt; and a &lt;code&gt;prompt&lt;/code&gt; which can be
@@ -1375,7 +1376,7 @@ useful when creating HTML forms to reference the collection or item.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_10&#34;&gt;Templates&lt;/h3&gt;
+&lt;h3 id=&#34;templates:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;Templates&lt;/h3&gt;
 
 &lt;p&gt;As the name would imply, Collection+JSON is uniquely suited to handling
 collections. Templates are one aspect of this. A template is an object that
@@ -1439,7 +1440,7 @@ item.&lt;/p&gt;
 template to the &lt;code&gt;href&lt;/code&gt; link defined by the collection
 (&lt;code&gt;https://api.example.com/player/1234567890/friends&lt;/code&gt;).&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_11&#34;&gt;Queries&lt;/h3&gt;
+&lt;h3 id=&#34;queries:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;Queries&lt;/h3&gt;
 
 &lt;p&gt;The final piece of Collecion+JSON is the &lt;code&gt;queries&lt;/code&gt; property. Queries, as the
 name implies, define the queries that are supported by this collection. Here the
@@ -1509,14 +1510,14 @@ APIs using the Collection+JSON media type. Collection+JSON was designed by &lt;a
 Amundsen&lt;/a&gt;. You can find detailed examples, the full spec
 and sample code &lt;a href=&#34;https://amundsen.com/media-types/collection/&#34;&gt;on his website&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_12&#34;&gt;SIREN&lt;/h2&gt;
+&lt;h2 id=&#34;siren:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;SIREN&lt;/h2&gt;
 
 &lt;p&gt;The last media type we&amp;rsquo;ll look at is
 &lt;a href=&#34;https://github.com/kevinswiber/siren&#34;&gt;SIREN&lt;/a&gt;. SIREN aims to represent generic
 entities along with actions for modifying those entities and links for client
 navigation.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_13&#34;&gt;Entities&lt;/h3&gt;
+&lt;h3 id=&#34;entities:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;Entities&lt;/h3&gt;
 
 &lt;p&gt;Each SIREN entity may have an optional class that describes the nature of the
 entity. This class defines the type of resource being returned by the API.
@@ -1532,7 +1533,7 @@ data being returned.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_14&#34;&gt;Properties&lt;/h3&gt;
+&lt;h3 id=&#34;properties:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;Properties&lt;/h3&gt;
 
 &lt;p&gt;The state of the entity is reflected as key-value pairs in a &lt;code&gt;properties&lt;/code&gt; object.&lt;/p&gt;
 
@@ -1547,7 +1548,7 @@ data being returned.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_15&#34;&gt;Links&lt;/h3&gt;
+&lt;h3 id=&#34;links-2:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;Links&lt;/h3&gt;
 
 &lt;p&gt;Links are used in the same sense we&amp;rsquo;ve already seen in other media types &amp;ndash;
 navigating to related resources. With SIREN links have a relation and a URL.&lt;/p&gt;
@@ -1570,7 +1571,7 @@ navigating to related resources. With SIREN links have a relation and a URL.&lt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_16&#34;&gt;Actions&lt;/h3&gt;
+&lt;h3 id=&#34;actions:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;Actions&lt;/h3&gt;
 
 &lt;p&gt;One of the biggest pieces missing from common Hypermedia types is the ability to
 dictate what requests can be made to alter the application state. SIREN
@@ -1633,21 +1634,21 @@ friend to the list, or search for a friend.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;toc_17&#34;&gt;Entities&lt;/h3&gt;
+&lt;h3 id=&#34;entities-1:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;Entities&lt;/h3&gt;
 
 &lt;p&gt;The previous example also introduces &lt;code&gt;entities&lt;/code&gt; to the response.  Any related
 entities that you wish to embed in the current representation are entered as a
 list of &lt;code&gt;entities&lt;/code&gt;. Entities are nested. Each entity in this list can have a
 class, properties and additional entities.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_18&#34;&gt;Conclusions&lt;/h2&gt;
+&lt;h2 id=&#34;conclusions:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;Conclusions&lt;/h2&gt;
 
 &lt;p&gt;I&amp;rsquo;ve create a &lt;a href=&#34;https://gist.github.com/soofaloofa/9350847&#34;&gt;Gist&lt;/a&gt; comparing each
 of the media types discussed in this post.&lt;/p&gt;
 
 &lt;p&gt;After going through this exercise I&amp;rsquo;ve come to a few conclusions.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_19&#34;&gt;JSON-LD&lt;/h3&gt;
+&lt;h3 id=&#34;json-ld-1:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;JSON-LD&lt;/h3&gt;
 
 &lt;p&gt;JSON-LD is great for augmenting existing APIs without introducing
 breaking changes. This augmentation mostly serves as a way to self document your
@@ -1656,7 +1657,7 @@ HYDRA adds a vocabulary for communicating using the JSON-LD specification. This
 is an interesting choice as it decouples the API serialization format from the
 communication format.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_20&#34;&gt;HAL&lt;/h3&gt;
+&lt;h3 id=&#34;hal-1:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;HAL&lt;/h3&gt;
 
 &lt;p&gt;The light weight syntax and semantics of HAL is appealing in a lot of contexts.
 HAL is a minimal representation that offers most of the benefits of using a
@@ -1664,7 +1665,7 @@ hypermedia type without adding too much complexity to the implementation. One
 area where HAL falters is, like JSON-LD, the lack of support for specifying
 actions.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_21&#34;&gt;Collection+JSON&lt;/h3&gt;
+&lt;h3 id=&#34;collection-json-1:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;Collection+JSON&lt;/h3&gt;
 
 &lt;p&gt;Don&amp;rsquo;t be fooled by the name. Collection+JSON can be used to represent single
 items as well and it does this quite well. Of course it shines when representing
@@ -1672,14 +1673,14 @@ data collections. Particularly appealing is the ability to list queries that
 your collection supports and templates that clients can use to alter your
 collection. For publishing user editable data Collection+JSON shines.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_22&#34;&gt;SIREN&lt;/h3&gt;
+&lt;h3 id=&#34;siren-1:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;SIREN&lt;/h3&gt;
 
 &lt;p&gt;SIREN attempts to represent generic classes of items and overcome the main
 drawback of HAL &amp;ndash; support for actions. It does this admirably well and also
 introduces the concept of classes to your model bringing a sense of type
 information to your API responses.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_23&#34;&gt;And the winner is?&lt;/h3&gt;
+&lt;h3 id=&#34;and-the-winner-is:9ea1f4cb979d746b2853a2845c0d4dcb&#34;&gt;And the winner is?&lt;/h3&gt;
 
 &lt;p&gt;Unfortunately, there is no clear winner. It depends on the contraints in place
 on your API. However, I will offer some suggestions.&lt;/p&gt;

@@ -82,7 +82,7 @@
 
 <p>I’ve been searching for a way to reliably monitor a RAID array.  I found a few resources and decided to compile them in one post.  If you are running Ubuntu Server skip to the bottom for some good news.</p>
 
-<h2 id="toc_0">/proc/mdstat</h2>
+<h2 id="proc-mdstat:5018c82c1075980f621cdf11bc91c9a4">/proc/mdstat</h2>
 
 <p>The first resource I found is from the <a href="https://raid.wiki.kernel.org/index.php/Detecting,_querying_and_testing#Monitoring_RAID_arrays:/etc/cron.d">Linux RAID wiki</a>.</p>
 
@@ -105,7 +105,7 @@ md0 : active raid1 sdb5[1] sda5[0]<br />
 
 <p>Given this information you could write a script that polls /proc/mdstat searching for character sequence [UU] and then schedule this via cron. That seemed like a good solution, but I had also heard about mdadm and wanted to investigate it too.</p>
 
-<h2 id="toc_1">mdadm</h2>
+<h2 id="mdadm:5018c82c1075980f621cdf11bc91c9a4">mdadm</h2>
 
 <p>Also from the <a href="https://raid.wiki.kernel.org/index.php/Detecting,_querying_and_testing#Monitoring_RAID_arrays:/etc/cron.d">Linux RAID wiki</a>.</p>
 
@@ -125,7 +125,7 @@ md0 : active raid1 sdb5[1] sda5[0]<br />
 <p>Finally, the –program or –alert parameters specify the program to be run whenever an event is detected.</p>
 </blockquote>
 
-<h2 id="toc_2">ubuntu server</h2>
+<h2 id="ubuntu-server:5018c82c1075980f621cdf11bc91c9a4">ubuntu server</h2>
 
 <p>This was all great but now my dilemma was in deciding how to put this information to use.  I searched some more and came across the following from <a href="http://serverfault.com/questions/49939/daemon-to-verify-linux-md-raid">ServerFault</a>.</p>
 

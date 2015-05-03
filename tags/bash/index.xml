@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/bash/index.xml/</link>
+    <link>http://sookocheff.com/tags/bash/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Sun, 01 Feb 2015 14:53:37 CST</lastBuildDate>
@@ -166,7 +166,7 @@ processed. When not provided, this defaults to the arguments and options
 provided to the application (&lt;code&gt;$@&lt;/code&gt;). You can provide this third argument to use
 &lt;code&gt;getopts&lt;/code&gt; to parse any list of arguments and options you provide.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Shifting processed options&lt;/h2&gt;
+&lt;h2 id=&#34;shifting-processed-options:12703913772a307ca27d6fbba691325e&#34;&gt;Shifting processed options&lt;/h2&gt;
 
 &lt;p&gt;The variable &lt;code&gt;OPTIND&lt;/code&gt; holds the number of options parsed by the last call to
 &lt;code&gt;getopts&lt;/code&gt;. It is common practice to call the &lt;code&gt;shift&lt;/code&gt; command at the end of your
@@ -175,7 +175,7 @@ processing loop to remove options that have already been handled from &lt;code&g
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;shift $((OPTIND -1))
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;Parsing options with arguments&lt;/h2&gt;
+&lt;h2 id=&#34;parsing-options-with-arguments:12703913772a307ca27d6fbba691325e&#34;&gt;Parsing options with arguments&lt;/h2&gt;
 
 &lt;p&gt;Options that themselves have arguments are signified with a &lt;code&gt;:&lt;/code&gt;. The argument to
 an option is placed in the variable &lt;code&gt;OPTARG&lt;/code&gt;. In the following example, the
@@ -200,7 +200,7 @@ done
 shift $((OPTIND -1))
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;An extended example &amp;ndash; parsing nested arguments and options&lt;/h2&gt;
+&lt;h2 id=&#34;an-extended-example-parsing-nested-arguments-and-options:12703913772a307ca27d6fbba691325e&#34;&gt;An extended example &amp;ndash; parsing nested arguments and options&lt;/h2&gt;
 
 &lt;p&gt;Let&amp;rsquo;s walk through an extended example of processing a command that takes
 options, has a sub-command, and whose sub-command takes an additional option
@@ -371,11 +371,11 @@ blog post to serve as a permanent reminder of the operators.&lt;/p&gt;
 grouped in to a few classes. Each heading in this article describes a class of
 operation.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Substring Extraction&lt;/h2&gt;
+&lt;h2 id=&#34;substring-extraction:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Substring Extraction&lt;/h2&gt;
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;toc_1&#34;&gt;Extract from a position&lt;/h3&gt;
+&lt;h3 id=&#34;extract-from-a-position:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Extract from a position&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${string:position}
 &lt;/code&gt;&lt;/pre&gt;
@@ -391,7 +391,7 @@ world
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;toc_2&#34;&gt;Extract from a position with a length&lt;/h3&gt;
+&lt;h3 id=&#34;extract-from-a-position-with-a-length:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Extract from a position with a length&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${string:position:length}
 &lt;/code&gt;&lt;/pre&gt;
@@ -405,11 +405,11 @@ el
 wor
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_3&#34;&gt;Substring Removal&lt;/h2&gt;
+&lt;h2 id=&#34;substring-removal:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Substring Removal&lt;/h2&gt;
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;toc_4&#34;&gt;Remove shortest starting match&lt;/h3&gt;
+&lt;h3 id=&#34;remove-shortest-starting-match:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Remove shortest starting match&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable#pattern}
 &lt;/code&gt;&lt;/pre&gt;
@@ -423,7 +423,7 @@ world, hello jim
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;toc_5&#34;&gt;Remove longest starting match&lt;/h3&gt;
+&lt;h3 id=&#34;remove-longest-starting-match:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Remove longest starting match&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable##pattern}
 &lt;/code&gt;&lt;/pre&gt;
@@ -437,7 +437,7 @@ jim
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;toc_6&#34;&gt;Remove shortest ending match&lt;/h3&gt;
+&lt;h3 id=&#34;remove-shortest-ending-match:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Remove shortest ending match&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable%pattern}
 &lt;/code&gt;&lt;/pre&gt;
@@ -451,7 +451,7 @@ hello world,
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;toc_7&#34;&gt;Remove longest ending match&lt;/h3&gt;
+&lt;h3 id=&#34;remove-longest-ending-match:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Remove longest ending match&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable%%pattern}
 &lt;/code&gt;&lt;/pre&gt;
@@ -463,11 +463,11 @@ hello world,
 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_8&#34;&gt;Substring Replacement&lt;/h2&gt;
+&lt;h2 id=&#34;substring-replacement:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Substring Replacement&lt;/h2&gt;
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;toc_9&#34;&gt;Replace first occurrence of word&lt;/h3&gt;
+&lt;h3 id=&#34;replace-first-occurrence-of-word:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Replace first occurrence of word&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable/pattern/string}
 &lt;/code&gt;&lt;/pre&gt;
@@ -481,7 +481,7 @@ goodbye world, hello jim
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;toc_10&#34;&gt;Replace all occurrences of word&lt;/h3&gt;
+&lt;h3 id=&#34;replace-all-occurrences-of-word:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Replace all occurrences of word&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable//pattern/string}
 &lt;/code&gt;&lt;/pre&gt;

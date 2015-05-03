@@ -82,7 +82,7 @@
 
 <p>I have been working on the problem of recording changes to an ndb model. One way to accomplish this is to stream data changes to a BigQuery table corresponding to the ndb model. It would be great to do this in a generic way which gives us the problem of generating a BigQuery table given an ndb model. This article will describe one solution to this problem.</p>
 
-<h2 id="toc_0">Accessing the properties of an ndb class</h2>
+<h2 id="accessing-the-properties-of-an-ndb-class:8ea270a790f9e4ece9bbdae40a8382a6">Accessing the properties of an ndb class</h2>
 
 <p>The first step in the process is to find all the properties of the class via the
 ndb <code>_properties</code> accessor. By iterating over this field we can find all of the
@@ -96,7 +96,7 @@ properties on the class and their ndb types.</p>
        print name, ndb_type
 </code></pre>
 
-<h2 id="toc_1">Converting properties to BigQuery schema types</h2>
+<h2 id="converting-properties-to-bigquery-schema-types:8ea270a790f9e4ece9bbdae40a8382a6">Converting properties to BigQuery schema types</h2>
 
 <p>Now that we have the set of properties on the class we can map from the type of
 each property to a BigQuery type. Here is a helper function that provides a
@@ -201,7 +201,7 @@ def tablify(obj, project_id, dataset_id, table_id):
     }
 </code></pre>
 
-<h2 id="toc_2">Creating the new table on BigQuery.</h2>
+<h2 id="creating-the-new-table-on-bigquery:8ea270a790f9e4ece9bbdae40a8382a6">Creating the new table on BigQuery.</h2>
 
 <p>Now that we have a BigQuery schema we can create the table in BigQuery using the BigQuery api client.</p>
 

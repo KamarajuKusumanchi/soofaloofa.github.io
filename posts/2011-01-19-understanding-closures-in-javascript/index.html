@@ -82,18 +82,18 @@
 
 <p>Closures are easy. There I said it. Invest a little bit of time, and you will say it too. Follow along with me as I attempt to explain what closures are and how they are used.</p>
 
-<h2 id="toc_0">Scope</h2>
+<h2 id="scope:acc53ffd153ac46f6b6f72fe8b5814e1">Scope</h2>
 
 <p>The first pre-requisite in fully understanding closures is JavaScript’s implementation of scope. JavaScript’s C-style syntax may lead you to believe that anything between the “curly braces” defines a block where variables defined within that block are private to that region of code. This is false. JavaScript does not define block scope. Any variables defined within a block are available outside that block. With one exception: functions. JavaScript has function scope where variables defined within a function are private to that function. This is very important.</p>
 
-<h3 id="toc_1">Summary</h3>
+<h3 id="summary:acc53ffd153ac46f6b6f72fe8b5814e1">Summary</h3>
 
 <ul>
 <li>JavaScript has function scope.</li>
 <li>All variables defined within a function are private to that function.</li>
 </ul>
 
-<h2 id="toc_2">Inner Functions</h2>
+<h2 id="inner-functions:acc53ffd153ac46f6b6f72fe8b5814e1">Inner Functions</h2>
 
 <p>Inner functions are functions defined within another function. It’s easier to demonstrate than to explain, so here goes.</p>
 
@@ -112,14 +112,14 @@ alert(output);
 
 <p>You will get a pop-up window showing that the variable secrets now holds a reference to the function inner.</p>
 
-<h3 id="toc_3">Summary</h3>
+<h3 id="summary-1:acc53ffd153ac46f6b6f72fe8b5814e1">Summary</h3>
 
 <ul>
 <li>Inner functions are defined within other functions (and this can nest arbitrarily).</li>
 <li>Inner functions can be returned “fully formed” from outer functions.</li>
 </ul>
 
-<h2 id="toc_4">Closures</h2>
+<h2 id="closures:acc53ffd153ac46f6b6f72fe8b5814e1">Closures</h2>
 
 <p>In one sentence, closure means that an inner function has access to the context of its outer function, even when the outer function no longer exists. OK. Let’s do that example one time more.</p>
 
@@ -140,7 +140,7 @@ alert(output());
 
 <p>You’ve just created a closure!</p>
 
-<h3 id="toc_5">Summary</h3>
+<h3 id="summary-2:acc53ffd153ac46f6b6f72fe8b5814e1">Summary</h3>
 
 <ul>
 <li>Closures are easy.</li>

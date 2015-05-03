@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/machine-learning/index.xml/</link>
+    <link>http://sookocheff.com/tags/machine-learning/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Mon, 20 Oct 2014 06:23:04 UTC</lastBuildDate>
@@ -24,7 +24,7 @@ time investigating how to use the API to determine the sentiment of a tweet.
 This article collects my thoughts on the experience and a few recommendations
 for future work.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;The Data&lt;/h2&gt;
+&lt;h2 id=&#34;the-data:d0e4b7d5708ff82ab169a246986762c7&#34;&gt;The Data&lt;/h2&gt;
 
 &lt;p&gt;For our experiment we took the text and rating of one million online reviews and
 normalized them within a scale of zero to 1000 &amp;ndash; ratings on a scale of one to
@@ -45,7 +45,7 @@ positive, &amp;quot;the bisque is the best in town&amp;quot;
 &lt;p&gt;Our data was roughly 1 GB. We uploaded this file to Google Cloud Storage
 and used the Prediction API to train our model given this dataset.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;Examples&lt;/h2&gt;
+&lt;h2 id=&#34;examples:d0e4b7d5708ff82ab169a246986762c7&#34;&gt;Examples&lt;/h2&gt;
 
 &lt;p&gt;Once we had a trained model it was time to make predictions. For our application
 we took tweets from Twitter mentioning a business and asked the Prediction API
@@ -55,19 +55,21 @@ decidedly mixed as the following examples show. In the first example we attempt
 to classify the text &amp;ldquo;this restaurant has the best soup in town&amp;rdquo; and correctly
 receive a &amp;ldquo;very positive&amp;rdquo; result.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-20-prediction-api/bestsoup.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-10-20-prediction-api/bestsoup.png&#34; alt=&#34;The Best Soup in Town&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-10-20-prediction-api/bestsoup.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-10-20-prediction-api/bestsoup.png&#34; alt=&#34;The Best Soup in Town&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;As a counter example, the text &amp;ldquo;this restaurant has the worst soup in town&amp;rdquo; also
 recieves a &amp;ldquo;very positive&amp;rdquo; result, although with less confidence and with &amp;ldquo;very
 negative&amp;rdquo; being the most likely second choice.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-20-prediction-api/worstsoup.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-10-20-prediction-api/worstsoup.png&#34; alt=&#34;The Worst Soup in Town&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-10-20-prediction-api/worstsoup.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-10-20-prediction-api/worstsoup.png&#34; alt=&#34;The Worst Soup in Town&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;Conclusions&lt;/h2&gt;
+&lt;h2 id=&#34;conclusions:d0e4b7d5708ff82ab169a246986762c7&#34;&gt;Conclusions&lt;/h2&gt;
 
 &lt;p&gt;Most of the tweets were categorized as very positive, regardless of content. In
 addition, most of the tweets had almost equal likelihood of being in the very

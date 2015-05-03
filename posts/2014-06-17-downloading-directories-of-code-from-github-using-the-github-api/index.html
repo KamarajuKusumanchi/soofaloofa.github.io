@@ -90,7 +90,7 @@ project.</p>
 <p>We&rsquo;ll use the <a href="https://github.com/jacquev6/PyGithub">PyGithub</a> Python library to
 interact with the Github API.</p>
 
-<h2 id="toc_0">Logging in to Github</h2>
+<h2 id="logging-in-to-github:0bad5a6042bd584cf90c6370fc32d2e9">Logging in to Github</h2>
 
 <p>The first step is to log in to Github using our credentials. To do this we
 instantiate a new Github object given our username and password and access the
@@ -111,7 +111,7 @@ storing the result in a local representation.</p>
 <pre><code class="language-bash">curl -u soofaloofa https://api.github.com/user
 </code></pre>
 
-<h2 id="toc_1">Accessing a repository</h2>
+<h2 id="accessing-a-repository:0bad5a6042bd584cf90c6370fc32d2e9">Accessing a repository</h2>
 
 <p>Now that we have a user we can get a repository for that user by name. To get
 the repository for this website we make a request to <a href="https://developer.github.com/v3/repos/#get">get a repo by
@@ -120,7 +120,7 @@ owner</a>.</p>
 <pre><code class="language-python">repository = user.get_repo('soofaloofa.github.io')
 </code></pre>
 
-<h2 id="toc_2">Downloading a single file</h2>
+<h2 id="downloading-a-single-file:0bad5a6042bd584cf90c6370fc32d2e9">Downloading a single file</h2>
 
 <p>To download a single file from a repository we make a call to <a href="https://developer.github.com/v3/repos/contents/#get-contents">get the contents
 of a file</a>.</p>
@@ -128,7 +128,7 @@ of a file</a>.</p>
 <pre><code class="language-python">file_content = repository.get_contents('README.md')
 </code></pre>
 
-<h2 id="toc_3">Referencing commits</h2>
+<h2 id="referencing-commits:0bad5a6042bd584cf90c6370fc32d2e9">Referencing commits</h2>
 
 <p>We have all the building blocks to download a resource from Github. The next
 step is to download a resource referenced by a specific commit. The Github API
@@ -159,7 +159,7 @@ specific commit.</p>
 file_content = repository.get_contents('README.md', ref=sha)
 </code></pre>
 
-<h2 id="toc_4">Putting it all together</h2>
+<h2 id="putting-it-all-together:0bad5a6042bd584cf90c6370fc32d2e9">Putting it all together</h2>
 
 <p>By putting a bit more polish on this we can easily download entire directories
 of code that reference a single tag or branch and copy them to our local

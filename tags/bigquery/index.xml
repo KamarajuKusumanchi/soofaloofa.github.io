@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/bigquery/index.xml/</link>
+    <link>http://sookocheff.com/tags/bigquery/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Mon, 23 Mar 2015 15:32:37 CST</lastBuildDate>
@@ -128,7 +128,7 @@ client.tables().insert(ref.getProjectId(), ref.getDatasetId(), content).execute(
 
 &lt;p&gt;I have been working on the problem of recording changes to an ndb model. One way to accomplish this is to stream data changes to a BigQuery table corresponding to the ndb model. It would be great to do this in a generic way which gives us the problem of generating a BigQuery table given an ndb model. This article will describe one solution to this problem.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Accessing the properties of an ndb class&lt;/h2&gt;
+&lt;h2 id=&#34;accessing-the-properties-of-an-ndb-class:8ea270a790f9e4ece9bbdae40a8382a6&#34;&gt;Accessing the properties of an ndb class&lt;/h2&gt;
 
 &lt;p&gt;The first step in the process is to find all the properties of the class via the
 ndb &lt;code&gt;_properties&lt;/code&gt; accessor. By iterating over this field we can find all of the
@@ -142,7 +142,7 @@ properties on the class and their ndb types.&lt;/p&gt;
        print name, ndb_type
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;Converting properties to BigQuery schema types&lt;/h2&gt;
+&lt;h2 id=&#34;converting-properties-to-bigquery-schema-types:8ea270a790f9e4ece9bbdae40a8382a6&#34;&gt;Converting properties to BigQuery schema types&lt;/h2&gt;
 
 &lt;p&gt;Now that we have the set of properties on the class we can map from the type of
 each property to a BigQuery type. Here is a helper function that provides a
@@ -247,7 +247,7 @@ def tablify(obj, project_id, dataset_id, table_id):
     }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;Creating the new table on BigQuery.&lt;/h2&gt;
+&lt;h2 id=&#34;creating-the-new-table-on-bigquery:8ea270a790f9e4ece9bbdae40a8382a6&#34;&gt;Creating the new table on BigQuery.&lt;/h2&gt;
 
 &lt;p&gt;Now that we have a BigQuery schema we can create the table in BigQuery using the BigQuery api client.&lt;/p&gt;
 
@@ -284,7 +284,7 @@ for a given App Engine backup and importing that backup into BigQuery. This
 article will show you to get the Cloud Storage URL for an App Engine backup and
 manually perform that import.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Getting the Cloud Storage URL&lt;/h2&gt;
+&lt;h2 id=&#34;getting-the-cloud-storage-url:fa0cf78d240508d5fee9738fef21ecf6&#34;&gt;Getting the Cloud Storage URL&lt;/h2&gt;
 
 &lt;p&gt;The first thing you need to do is access the cloud storage URL for a given App
 Engine backup. First, log in to the Google Developer Console and navigate to
@@ -324,23 +324,26 @@ URL.&lt;/p&gt;
 &lt;p&gt;The next step is to import the backup into BigQuery. To do this, navigate to
 your project and create a new table in your desired dataset.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34; alt=&#34;Create new table.&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34; alt=&#34;Create new table.&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;In the &lt;code&gt;Choose destination&lt;/code&gt; tab pick a name for your new table. In my case I&amp;rsquo;ll
 name the table with the date of my backup for reference.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34; alt=&#34;Choose destination&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34; alt=&#34;Choose destination&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Next, choose App Engine Datastore Backup as the source format and paste the
 Cloud Storage URL you arrived at above in the appropriate field.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34; alt=&#34;Select Data Source&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34; alt=&#34;Select Data Source&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;You can choose the defaults for the next tabs and, finally, import your App
 Engine backup into BigQuery and watch it being fully restored.&lt;/p&gt;

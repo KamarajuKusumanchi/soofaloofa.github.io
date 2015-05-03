@@ -91,7 +91,7 @@ to an entity in the Datastore is reflected as a change to a Search Document.
 This article details an architecture for keeping Datastore entities and Search
 Documents in sync throughout failure and race conditions.</p>
 
-<h2 id="toc_0">Updating the Search Document Using a _post_put_hook</h2>
+<h2 id="updating-the-search-document-using-a-post-put-hook:1beee7f8beb62848f15162ab6a0273af">Updating the Search Document Using a _post_put_hook</h2>
 
 <p>To ensure that every put of an entity to the Datastore results in an update to
 the associated search document, we update the search document in the
@@ -127,7 +127,7 @@ entity. However, this design does not account for the potential error conditions
 where putting the search document or the Datastore entity fails. We will need
 some additional functionality to handle these cases.</p>
 
-<h2 id="toc_1">Handling Search Document Put Failures</h2>
+<h2 id="handling-search-document-put-failures:1beee7f8beb62848f15162ab6a0273af">Handling Search Document Put Failures</h2>
 
 <p>The first obstacle to overcome is handling failures when putting the search
 document. One method for handling failures is retrying. We can add retrying to
@@ -167,7 +167,7 @@ class UserModel(ndb.model):
         deferred.defer(UserModel.put_search_document, self.username)
 </code></pre>
 
-<h2 id="toc_2">Handling Datastore Put Failures</h2>
+<h2 id="handling-datastore-put-failures:1beee7f8beb62848f15162ab6a0273af">Handling Datastore Put Failures</h2>
 
 <p>The second obstacle to overcome is safely handling Datastore put failures. In
 this architecture, each change to a Datastore entity is required to run within a
@@ -214,7 +214,7 @@ Datastore put has failed. If the search document put has failed we retry, if the
 Datastore put has failed we do not put the search document. We still have one
 remaining problem: Dirty Reads.</p>
 
-<h2 id="toc_3">Handling Dirty Reads</h2>
+<h2 id="handling-dirty-reads:1beee7f8beb62848f15162ab6a0273af">Handling Dirty Reads</h2>
 
 <p>The last obstacle to overcome is dealing with race conditions that could lead to
 reading stale data and writing that data to the search document. Consider the
@@ -227,7 +227,8 @@ Datastore.</p>
 
 <p><a class="thumbnail" href="/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png">
   <img src="/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png" alt="Syncing Search Documents">
-</a></p>
+</a>
+</p>
 
 <p>We can overcome this problem by versioning our tasks to coincide with the
 version of our Datastore entity. We add a version number to the entity and
@@ -313,7 +314,7 @@ is run within a transaction</em>. The version number will not be incremented in 
 case because the value set during the _pre_put_hook will not be persisted during
 a failed transaction.</p>
 
-<h2 id="toc_4">Conclusion</h2>
+<h2 id="conclusion:1beee7f8beb62848f15162ab6a0273af">Conclusion</h2>
 
 <p>Putting this all together, we&rsquo;ve developed a solution for keeping search
 documents in sync with Datastore entities that is robust to failure and race

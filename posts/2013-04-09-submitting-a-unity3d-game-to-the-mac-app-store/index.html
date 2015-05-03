@@ -82,7 +82,7 @@
 
 <p>Submitting a Unity3d game to the Mac App Store is a somewhat painful process. This guide refers to Unity3d 3.5 but should apply to Unity 4.0 and up.</p>
 
-<h2 id="toc_0">Building</h2>
+<h2 id="building:34a167cd6f2deccf950f20dfe9903ab8">Building</h2>
 
 <p>First, build your application for Mac and make sure that you uncheck Mac App Store Validation in the PlayerSettings Inspector window.</p>
 
@@ -91,7 +91,7 @@
 
 <p>Building your App from Unity will create a .App file. Navigate to this file in Finder and right-click. Choose Show Package Contents from the context menu to open your app as a folder.</p>
 
-<h2 id="toc_1">Info.plist</h2>
+<h2 id="info-plist:34a167cd6f2deccf950f20dfe9903ab8">Info.plist</h2>
 
 <p>Navigate to the Contents directory and open the file Info.plist in your favorite text editor. You will need to make a few changes to this file.</p>
 
@@ -153,7 +153,7 @@ LSApplicationCategoryType: The category of your application.
 
 <p>You can get more information about these keys from the Apple developer documentation. The most notable key in need of changing is the LSApplicationCategoryType which must correspond to an actual category on the Mac App Store. You can find the LS keys documentation <a href="http://developer.apple.com/library/ios/#documentation/general/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html">here</a>.</p>
 
-<h2 id="toc_2">Icons</h2>
+<h2 id="icons:34a167cd6f2deccf950f20dfe9903ab8">Icons</h2>
 
 <p>You will need to generate an iconset matching Apple’s <a href="https://developer.apple.com/library/mac/#documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/Optimizing/Optimizing.html#//apple_ref/doc/uid/TP40012302-CH7-SW2">Human Interface Guidelines</a>. The first step is to create all of the required icons. You will need variations of your icon supporting the following resolutions.</p>
 
@@ -176,7 +176,7 @@ icon_512x512@2x.png
 
 <p>will generate a file called icons.icns. You will need to replace the file <code>UnityPlayer.icns</code> with this icon file using Finder. The <code>UnityPlayer.icns</code> file is located in <code>Contents -&gt; Resources</code> within your .App.</p>
 
-<h2 id="toc_3">Entitlements</h2>
+<h2 id="entitlements:34a167cd6f2deccf950f20dfe9903ab8">Entitlements</h2>
 
 <p>All Apps on the Mac App Store must be sandboxed. To sandbox your Unity app you have to provide an entitlements file to use during the code signing process. A fairly minimal entitlements file should look something like this.</p>
 
@@ -192,7 +192,7 @@ icon_512x512@2x.png
 
 <p>You can read more about entitlements at the <a href="http://developer.apple.com/library/mac/#documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/AboutEntitlements.html">Entitlement Key Reference</a>.</p>
 
-<h2 id="toc_4">Code Signing</h2>
+<h2 id="code-signing:34a167cd6f2deccf950f20dfe9903ab8">Code Signing</h2>
 
 <p>Now that we have our iconset and entitlements ready we can codesign our App for delivery to the Mac App Store. We have to drop back to the Terminal to run the codesign application.</p>
 
@@ -211,7 +211,7 @@ icon_512x512@2x.png
 
 <p>If you don’t have the required Keychain Access certificates you will need to create these using the Apple Member Center.</p>
 
-<h2 id="toc_5">Product Building</h2>
+<h2 id="product-building:34a167cd6f2deccf950f20dfe9903ab8">Product Building</h2>
 
 <p>To build your final product run productbuild from the command line.</p>
 
@@ -220,7 +220,7 @@ icon_512x512@2x.png
 
 <p>Where &rdquo;XXXX&rdquo; is again from Keychain Access. This time, use the certificate beginning with  &rdquo;3rd Party Mac Developer Installer&rdquo;.</p>
 
-<h2 id="toc_6">Application Loader</h2>
+<h2 id="application-loader:34a167cd6f2deccf950f20dfe9903ab8">Application Loader</h2>
 
 <p>You are finally ready to submit your App! Before submission you must create your App on iTunes Connect and fill out detailed app information. After your app is created launch Application Loader and click on Deliver Your App. Choose the application you created in iTunes Connect from the drop down menu and follow the prompts to choose your .pkg file that was created with the productbuild  command.</p>
 

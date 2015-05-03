@@ -2,10 +2,254 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/posts/index.xml/</link>
+    <link>http://sookocheff.com/posts/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Thu, 23 Apr 2015 08:32:37 CST</lastBuildDate>
+    <lastBuildDate>Wed, 29 Apr 2015 06:19:23 CST</lastBuildDate>
+    
+    <item>
+      <title>Durabledict for App Engine</title>
+      <link>http://sookocheff.com/posts/2015-04-28-durabledict-for-app-engine/</link>
+      <pubDate>Wed, 29 Apr 2015 06:19:23 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2015-04-28-durabledict-for-app-engine/</guid>
+      <description>
+
+&lt;h2 id=&#34;tldr:46a321b74ae6cefada7eb3c5a5d8c50f&#34;&gt;tldr;&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/vendasta/datastoredict&#34;&gt;DatastoreDict&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;what-s-a-durabledict:46a321b74ae6cefada7eb3c5a5d8c50f&#34;&gt;What&amp;rsquo;s a durabledict?&lt;/h2&gt;
+
+&lt;p&gt;Good question. &lt;a href=&#34;https://github.com/disqus/durabledict&#34;&gt;Durabledict&lt;/a&gt; is a Python
+implementation of a persistent dictionary. The dictionary values are cached
+locally and sync with the datastore whenever a value in the datastore changes.&lt;/p&gt;
+
+&lt;p&gt;Disqus provides concrete implementations for Redis, Django, ZooKeeper and in
+memory. This blog post details an implementation using the App Engine datastore
+and memcache.&lt;/p&gt;
+
+&lt;h2 id=&#34;creating-your-own-durabledict:46a321b74ae6cefada7eb3c5a5d8c50f&#34;&gt;Creating your own durabledict&lt;/h2&gt;
+
+&lt;p&gt;By following the &lt;a href=&#34;https://github.com/disqus/durabledict&#34;&gt;guide the durabledict
+README&lt;/a&gt; we can create our own
+implementation. We need to subclass &lt;code&gt;durabledict.base.DurableDict&lt;/code&gt; and implement
+the following interface methods. Strictly speaking, &lt;code&gt;_pop&lt;/code&gt; and &lt;code&gt;_setdefault&lt;/code&gt; do
+not have to be implemented but doing so makes your durabledict behave like a
+base dict in all cases.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;persist(key, value)&lt;/code&gt; - Persist value at key to your data store.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;depersist(key)&lt;/code&gt; - Delete the value at key from your data store.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;durables()&lt;/code&gt; - Return a key=val dict of all keys in your data store.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;last_updated()&lt;/code&gt; - A comparable value of when the data in your data store was last updated.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;_pop(key, default=None)&lt;/code&gt; - If key is in the dictionary, remove it and return its value, else return default. If default is not given and key is not in the dictionary, a KeyError is raised.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;_setdefault(key, default=None)&lt;/code&gt; - If key is in the dictionary, return its value. If not, insert key with a value of default and return default. default defaults to None.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s implement these one-by-one.&lt;/p&gt;
+
+&lt;h3 id=&#34;persist-key-value:46a321b74ae6cefada7eb3c5a5d8c50f&#34;&gt;persist(key, value)&lt;/h3&gt;
+
+&lt;p&gt;Persisting a value to the datastore is a relatively simple operation. If the key
+already exists we update it&amp;rsquo;s value. If the key does not already exist we create
+it. To aid with this operation we create a &lt;code&gt;get_or_create&lt;/code&gt; method that will
+return an existing entity if one exists or create a new entity if one does not
+exist.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def persist(self, key, val):
+    instance, created = get_or_create(self.model, key, val)
+
+    if not created and instance.value != val:
+        instance.value = val
+        instance.put()
+
+    self.touch_last_updated()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The last line of this function updates the last time this durabledict was
+changed. This is used for caching. We create the &lt;code&gt;last_updated&lt;/code&gt; and
+&lt;code&gt;touch_last_updated&lt;/code&gt; functions now.&lt;/p&gt;
+
+&lt;h3 id=&#34;last-updated-key-value:46a321b74ae6cefada7eb3c5a5d8c50f&#34;&gt;last_updated(key, value)&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def last_updated(self):
+    return self.cache.get(self.cache_key)
+
+def touch_last_updated(self):
+    self.cache.incr(self.cache_key, initial_value=self.last_synced + 1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;init:46a321b74ae6cefada7eb3c5a5d8c50f&#34;&gt;&lt;strong&gt;init&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;We now have the building blocks to create our initial durabledict. Within the
+&lt;code&gt;__init__&lt;/code&gt; method we set a manager and cache instance. The manager is
+responsible for ndb datastore operations to decouple the ndb interface from the
+durabledict implementation. We decouple our caching method in a similar fashion.
+We also set the initial value of the cache whenever we create a new instance of
+the durabledict.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from google.appengine.api import memcache
+
+from durabledict.base import DurableDict
+from durabledict.encoding import NoOpEncoding
+
+
+class DatastoreDict(DurableDict):
+
+    def __init__(self,
+                 model,
+                 value_col=&#39;value&#39;,
+                 cache=memcache,
+                 cache_key=&#39;__DatastoreDict:LastUpdated__&#39;):
+
+        self.model = model
+        self.value_col = value_col
+        self.cache = cache
+        self.cache_key = cache_key
+
+        self.cache.add(self.cache_key, 1)
+
+        super(DatastoreDict, self).__init__(encoding=NoOpEncoding)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;depersist-key:46a321b74ae6cefada7eb3c5a5d8c50f&#34;&gt;depersist(key)&lt;/h3&gt;
+
+&lt;p&gt;Depersist implies deleting a key from the dictionary (and datastore). Here we
+assume a helper method &lt;code&gt;delete&lt;/code&gt; that, given an ndb model and a string
+representing it&amp;rsquo;s key deletes the model. Since the data has changed we also
+update the last touched value to force a cache invalidation and data refresh.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def depersist(self, key):
+    delete(self.model, key)
+    self.touch_last_updated()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;durables:46a321b74ae6cefada7eb3c5a5d8c50f&#34;&gt;durables()&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;durables()&lt;/code&gt; returns the entire dictionary. Since we are all matching entities
+from the datastore it is important to keep your dictionary relatively small &amp;ndash;
+as the dictionary grows in size, resyncing it&amp;rsquo;s state with the datastore will
+get more and more expensive. This function assumes a &lt;code&gt;get_all&lt;/code&gt; method that will
+return all instances of a model.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def durables(self):
+    encoded_models = get_all(self.model)
+    return dict((model.key.id(), getattr(model, self.value_col)) for model in encoded_models)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;setdefault-key-default-none:46a321b74ae6cefada7eb3c5a5d8c50f&#34;&gt;setdefault(key, default=None)&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;_setdefault()&lt;/code&gt; overrides the dictionary built-in &lt;code&gt;setdefault&lt;/code&gt; which allows you
+to insert a key into the dictionary, creating the key with the default value if
+it does not exist and returning the existing value if it does exist.&lt;/p&gt;
+
+&lt;p&gt;For example, the following sequence of code creates a key for &lt;code&gt;y&lt;/code&gt;, which does not
+exist, and returns the existing value for &lt;code&gt;x&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; d = {&#39;x&#39;: 1}
+&amp;gt;&amp;gt;&amp;gt; d.setdefault(&#39;y&#39;, 2)
+2
+&amp;gt;&amp;gt;&amp;gt; d
+{&#39;y&#39;: 2, &#39;x&#39;: 1}
+&amp;gt;&amp;gt;&amp;gt; d.setdefault(&#39;x&#39;, 3)
+1
+&amp;gt;&amp;gt;&amp;gt; d
+{&#39;y&#39;: 2, &#39;x&#39;: 1}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can implement &lt;code&gt;_setdefault&lt;/code&gt; using the &lt;code&gt;get_or_create&lt;/code&gt; helper method, updating
+the cache if we have changed the dictionary.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def _setdefault(self, key, default=None):
+    instance, created = get_or_create(self.model, key, default)
+
+    if created:
+        self.touch_last_updated()
+
+    return getattr(instance, self.value_col)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;pop-key-default-none:46a321b74ae6cefada7eb3c5a5d8c50f&#34;&gt;pop(key, default=None)&lt;/h3&gt;
+
+&lt;p&gt;pop returns the value for a key and deletes the key. This is fairly straight
+forward given a &lt;code&gt;get&lt;/code&gt; and &lt;code&gt;delete&lt;/code&gt; helper method.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def _pop(self, key, default=None):
+    instance = get(self.model, key)
+    if instance:
+        value = getattr(instance, self.value_col)
+        delete(self.model, key)
+        self.touch_last_updated()
+        return value
+    else:
+        if default is not None:
+            return default
+        else:
+            raise KeyError
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;the-help:46a321b74ae6cefada7eb3c5a5d8c50f&#34;&gt;The Help&lt;/h3&gt;
+
+&lt;p&gt;The previous discussion uses a few helper methods that we haven&amp;rsquo;t defined yet.
+Each of these methods takes an arbitrary ndb model and performs an operation on
+it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def build_key(cls, key):
+    return ndb.Key(DatastoreDictAncestorModel,
+                   DatastoreDictAncestorModel.generate_key(cls).string_id(),
+                   cls, key.lower(),
+                   namespace=&#39;&#39;)
+
+
+@ndb.transactional
+def get_all(cls):
+    return cls.query(
+        ancestor=DatastoreDictAncestorModel.generate_key(cls)).fetch()
+
+
+@ndb.transactional
+def get(cls, key):
+    return build_key(cls, key).get()
+
+
+@ndb.transactional
+def get_or_create(cls, key, value=None):
+    key = build_key(cls, key)
+
+    instance = key.get()
+    if instance:
+        return instance, False
+
+    instance = cls(key=key, value=value)
+    instance.put()
+
+    return instance, True
+
+
+@ndb.transactional
+def delete(cls, key):
+    key = build_key(cls, key)
+    return key.delete()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The last item of note is the use of a parent for each DatastoreDict. This common
+ancestor forces strong read consistency for the &lt;code&gt;get_all&lt;/code&gt; method, allowing us to
+update a dictionary and have a consistent view of the data on subsequent reads.
+We use an additional model to provide the strong read consistency.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class DatastoreDictAncestorModel(ndb.Model):
+
+    @classmethod
+    def generate_key(cls, child_cls):
+        key_name = &#39;__%s-%s__&#39; % (&#39;ancestor&#39;, child_cls.__name__)
+        return ndb.Key(cls, key_name, namespace=&#39;&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>Continuous Delivery Distilled</title>
@@ -25,7 +269,7 @@
 
 &lt;p&gt;You can, with continuous delivery.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Terminology&lt;/h2&gt;
+&lt;h2 id=&#34;terminology:682641b8f6aff1fdce173832bfccddae&#34;&gt;Terminology&lt;/h2&gt;
 
 &lt;p&gt;First, some terminology. What distinguishes continuous integration, continuous
 deployment and continuous delivery? Continuous integration revolves around the
@@ -35,7 +279,7 @@ change to the code. Continuous delivery implies that you can deploy any change
 to production but for any number of reasons you may choose not to. The focus of
 this article is on continuous delivery.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;What is continuous delivery?&lt;/h2&gt;
+&lt;h2 id=&#34;what-is-continuous-delivery:682641b8f6aff1fdce173832bfccddae&#34;&gt;What is continuous delivery?&lt;/h2&gt;
 
 &lt;p&gt;Continuous delivery is a set of development practices that allow you to release
 software to production at any time (&lt;a href=&#34;http://martinfowler.com/bliki/ContinuousDelivery.html&#34; title=&#34;Continuous Delivery&#34;&gt;Fowler, 2014&lt;/a&gt;). By following
@@ -66,9 +310,10 @@ released to customers at &lt;em&gt;any&lt;/em&gt; point in time.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://commons.wikimedia.org/wiki/File:Continuous_Delivery_process_diagram.png#/media/File:Continuous_Delivery_process_diagram.png&#34;&gt;
   &lt;img src=&#34;http://upload.wikimedia.org/wikipedia/commons/7/74/Continuous_Delivery_process_diagram.png&#34; alt=&#34;Continuous Delivery process diagram - Jez Humble&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;Why Continuous Delivery?&lt;/h2&gt;
+&lt;h2 id=&#34;why-continuous-delivery:682641b8f6aff1fdce173832bfccddae&#34;&gt;Why Continuous Delivery?&lt;/h2&gt;
 
 &lt;p&gt;Google, Facebook, LinkedIn, Netflix, Etsy, Ebay, Github and Hewlett-Packard,
 among many others, have adopted continuous delivery in their products. On
@@ -79,27 +324,27 @@ a day (&lt;a href=&#34;http://www.infoq.com/presentations/Facebook-Release-Proce
 (&lt;a href=&#34;http://www.infoq.com/news/2014/03/etsy-deploy-50-times-a-day&#34; title=&#34;How Etsy Deploys More Than 50 Times a Day&#34;&gt;Miranda, 2014&lt;/a&gt;). Why would companies do this? What is the
 benefit?&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_3&#34;&gt;Reduced Risk&lt;/h3&gt;
+&lt;h3 id=&#34;reduced-risk:682641b8f6aff1fdce173832bfccddae&#34;&gt;Reduced Risk&lt;/h3&gt;
 
 &lt;p&gt;The first benefit is reduced risk. Each deployment is a smaller change that can
 easily be understood in isolation. If an error occurs it is trivially easy to
 roll-back a single change or push a new release on top of the change.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_4&#34;&gt;Believable Progress&lt;/h3&gt;
+&lt;h3 id=&#34;believable-progress:682641b8f6aff1fdce173832bfccddae&#34;&gt;Believable Progress&lt;/h3&gt;
 
 &lt;p&gt;Developers are generally quite bad at estimating software delivery projects
 ([Milstein, 2013][Milstein2103]). If the definition of &amp;ldquo;done&amp;rdquo; means &amp;ldquo;developers
 declare it to be done&amp;rdquo; that is much less believable than if it&amp;rsquo;s safely deployed
 into a production environment.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_5&#34;&gt;Faster Iteration Towards Product Fit&lt;/h3&gt;
+&lt;h3 id=&#34;faster-iteration-towards-product-fit:682641b8f6aff1fdce173832bfccddae&#34;&gt;Faster Iteration Towards Product Fit&lt;/h3&gt;
 
 &lt;p&gt;Generally speaking, the biggest risk in software development is building
 something that the user doesn&amp;rsquo;t want. Continuous delivery is a great enabler of
 A/B testing and allows you to frequently get working software in front of real
 users to assess user behaviour and performance impact of software changes.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_6&#34;&gt;Expose Inefficiencies&lt;/h3&gt;
+&lt;h3 id=&#34;expose-inefficiencies:682641b8f6aff1fdce173832bfccddae&#34;&gt;Expose Inefficiencies&lt;/h3&gt;
 
 &lt;p&gt;Continuous delivery enforces discipline on the software development team to
 always keep the product in deployable condition. This discipline naturally
@@ -107,7 +352,7 @@ exposes inefficiencies in the development process &amp;ndash; anything that gets
 way of the goal of releasing working software quickly is an impediment to
 development that will quickly be brought to light with continuous delivery.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_7&#34;&gt;Encourage Responsibility&lt;/h3&gt;
+&lt;h3 id=&#34;encourage-responsibility:682641b8f6aff1fdce173832bfccddae&#34;&gt;Encourage Responsibility&lt;/h3&gt;
 
 &lt;p&gt;With continuous delivery, the developer making a change and the developer
 deploying the code is the same person. This avoids any problems with handing
@@ -115,7 +360,7 @@ your deployment &amp;lsquo;over the wall&amp;rsquo; and allowing another person 
 deploy and verify the code. It keeps the onus on working software with the
 people most knowledge about how the software works.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_8&#34;&gt;Does Continuous Delivery Actually Work?&lt;/h2&gt;
+&lt;h2 id=&#34;does-continuous-delivery-actually-work:682641b8f6aff1fdce173832bfccddae&#34;&gt;Does Continuous Delivery Actually Work?&lt;/h2&gt;
 
 &lt;p&gt;Rather than reflect on a few abstract benefits, let&amp;rsquo;s look at some of the
 available data on continuous delivery.&lt;/p&gt;
@@ -135,20 +380,20 @@ of features under active development increased by 140% and development costs
 per feature reduced by 78%. This amounted to a total development cost
 reduction of 40%.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_9&#34;&gt;How to do Continuous Delivery?&lt;/h2&gt;
+&lt;h2 id=&#34;how-to-do-continuous-delivery:682641b8f6aff1fdce173832bfccddae&#34;&gt;How to do Continuous Delivery?&lt;/h2&gt;
 
 &lt;p&gt;At this point, you may be sold on the benefits of continuous delivery and are
 asking how to get started. Continuous delivery requires a few components to be
 effective.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_10&#34;&gt;1. Continuous Integration&lt;/h4&gt;
+&lt;h4 id=&#34;1-continuous-integration:682641b8f6aff1fdce173832bfccddae&#34;&gt;1. Continuous Integration&lt;/h4&gt;
 
 &lt;p&gt;A build server performing continuous intergration of every commit is a
 necessity. Once a code change is committed, the build server triggers the
 testing and deployment pipeline ultimately leading to successfully deploying a
 production release.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_11&#34;&gt;2. Automated Testing&lt;/h4&gt;
+&lt;h4 id=&#34;2-automated-testing:682641b8f6aff1fdce173832bfccddae&#34;&gt;2. Automated Testing&lt;/h4&gt;
 
 &lt;p&gt;Automated unit testing, and, where applicable, automated performance testing,
 makes it easy to spot issues in code about to be deployed. If any of
@@ -156,24 +401,24 @@ these tests fail the current release is rejected. This is not a silver
 bullet. Manual QA is still needed to verify a build and test before
 releasing.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_12&#34;&gt;3. Feature Flags&lt;/h4&gt;
+&lt;h4 id=&#34;3-feature-flags:682641b8f6aff1fdce173832bfccddae&#34;&gt;3. Feature Flags&lt;/h4&gt;
 
 &lt;p&gt;Some features are too big to commit as one chunk. In these cases a &lt;a href=&#34;http://martinfowler.com/bliki/FeatureToggle.html&#34;&gt;feature
 flag&lt;/a&gt; is used to hide
 functionality that is not ready for general release, while still allowing code
 to be released to production.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_13&#34;&gt;4. Monitoring&lt;/h4&gt;
+&lt;h4 id=&#34;4-monitoring:682641b8f6aff1fdce173832bfccddae&#34;&gt;4. Monitoring&lt;/h4&gt;
 
 &lt;p&gt;Monitoring systems allow the development and test teams to easily see the effect
 a given change has on user behaviour, system performance or system stability.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_14&#34;&gt;5. &amp;ldquo;One-Click&amp;rdquo; Deployment and Roll-Back.&lt;/h4&gt;
+&lt;h4 id=&#34;5-one-click-deployment-and-roll-back:682641b8f6aff1fdce173832bfccddae&#34;&gt;5. &amp;ldquo;One-Click&amp;rdquo; Deployment and Roll-Back.&lt;/h4&gt;
 
 &lt;p&gt;Deployments and roll-backs must be easy enough for anyone to do at a moments
 notice.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_15&#34;&gt;Continuous Delivery in Practice&lt;/h2&gt;
+&lt;h2 id=&#34;continuous-delivery-in-practice:682641b8f6aff1fdce173832bfccddae&#34;&gt;Continuous Delivery in Practice&lt;/h2&gt;
 
 &lt;p&gt;Let&amp;rsquo;s run through three examples of how continuous delivery would look like in
 practice, contrasting continuous delivery with a more traditional release
@@ -186,11 +431,12 @@ take place to push the development code up to the test branch (and staging
 environment) and the test code up to the master branch (and production
 environment).&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png&#34; alt=&#34;Traditional Release Structure&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png&#34; alt=&#34;Traditional Release Structure&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_16&#34;&gt;Scenario 1: Bug Fix&lt;/h3&gt;
+&lt;h3 id=&#34;scenario-1-bug-fix:682641b8f6aff1fdce173832bfccddae&#34;&gt;Scenario 1: Bug Fix&lt;/h3&gt;
 
 &lt;p&gt;Imagine a scenario where a customer reports a bug in the system. The bug is
 simple enough for a single developer to work on and the fix is small enough to
@@ -202,35 +448,39 @@ branch, and begins work on the bug. Once he is confident that the bug has been
 fixed he goes over the changes with QA and merges the bug into the develop
 branch where it waits for the weekly deployment to test.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png&#34; alt=&#34;Merging to Develop&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png&#34; alt=&#34;Merging to Develop&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Brad is now free to pick up another issue and commit the code for that issue to
 develop, where it waits once again for the weekly deployment to test. Test now
 has two issues that have been committed to development that will be released to
 the test environment in one week.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png&#34; alt=&#34;Second Merge to Develop&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png&#34; alt=&#34;Second Merge to Develop&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Meanwhile, other developers are working on issues and committing the code to
 develop. By the time the weekly deployment to the testing environment comes
 around we end up with 13 disparate issues being pushed to the test environment.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png&#34; alt=&#34;Group of Merges to Develop&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png&#34; alt=&#34;Group of Merges to Develop&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Now, the QA team can perform regression testing of all of these 13 issues for
 the week that this release is held in the test environment for staging. After
 one week has passed, the test branch is merged with the master branch and a
 deployment to production is done.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png&#34; alt=&#34;Group of Merges to Develop&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png&#34; alt=&#34;Group of Merges to Develop&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;It&amp;rsquo;s also important to note that &lt;em&gt;we still do not know that the bug fix will
 address the customer&amp;rsquo;s issues on production&lt;/em&gt;. We can&amp;rsquo;t know for sure that the
@@ -245,22 +495,22 @@ and to test this bug fix on the production environment. For
 arguments sake, let&amp;rsquo;s say this testing time took 1 hour on each
 environment.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_17&#34;&gt;Total Customer Time Waiting For This Bug Fix:&lt;/h4&gt;
+&lt;h4 id=&#34;total-customer-time-waiting-for-this-bug-fix:682641b8f6aff1fdce173832bfccddae&#34;&gt;Total Customer Time Waiting For This Bug Fix:&lt;/h4&gt;
 
 &lt;p&gt;2 weeks&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_18&#34;&gt;Total Testing Time:&lt;/h4&gt;
+&lt;h4 id=&#34;total-testing-time:682641b8f6aff1fdce173832bfccddae&#34;&gt;Total Testing Time:&lt;/h4&gt;
 
 &lt;p&gt;3 hours&lt;/p&gt;
 
 &lt;p&gt;Now imagine we have 13 issues that have been delivered with this release, we can
 compound the total waiting time and total testing time.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_19&#34;&gt;Total Customer Time Waiting For This Release:&lt;/h4&gt;
+&lt;h4 id=&#34;total-customer-time-waiting-for-this-release:682641b8f6aff1fdce173832bfccddae&#34;&gt;Total Customer Time Waiting For This Release:&lt;/h4&gt;
 
 &lt;p&gt;26 weeks&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_20&#34;&gt;Total Testing Time For This Release:&lt;/h4&gt;
+&lt;h4 id=&#34;total-testing-time-for-this-release:682641b8f6aff1fdce173832bfccddae&#34;&gt;Total Testing Time For This Release:&lt;/h4&gt;
 
 &lt;p&gt;39 hours&lt;/p&gt;
 
@@ -271,25 +521,25 @@ she merges the bug in to the master branch and deploys the fix to
 production. Let&amp;rsquo;s assume that she took two hours to fix the bug and that
 the bug required one hour of testing.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_21&#34;&gt;Total Customer Time Waiting For This Release:&lt;/h4&gt;
+&lt;h4 id=&#34;total-customer-time-waiting-for-this-release-1:682641b8f6aff1fdce173832bfccddae&#34;&gt;Total Customer Time Waiting For This Release:&lt;/h4&gt;
 
 &lt;p&gt;2 hours&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_22&#34;&gt;Total Testing Time For This Release:&lt;/h4&gt;
+&lt;h4 id=&#34;total-testing-time-for-this-release-1:682641b8f6aff1fdce173832bfccddae&#34;&gt;Total Testing Time For This Release:&lt;/h4&gt;
 
 &lt;p&gt;1 hour&lt;/p&gt;
 
 &lt;p&gt;We can compound this by assuming we have 13 issues that are being worked on for the week.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_23&#34;&gt;Total Customer Time Waiting For This Week:&lt;/h4&gt;
+&lt;h4 id=&#34;total-customer-time-waiting-for-this-week:682641b8f6aff1fdce173832bfccddae&#34;&gt;Total Customer Time Waiting For This Week:&lt;/h4&gt;
 
 &lt;p&gt;26 hours&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_24&#34;&gt;Total Testing Time For This Week:&lt;/h4&gt;
+&lt;h4 id=&#34;total-testing-time-for-this-week:682641b8f6aff1fdce173832bfccddae&#34;&gt;Total Testing Time For This Week:&lt;/h4&gt;
 
 &lt;p&gt;13 hours&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_25&#34;&gt;Scenario 2: Regressions and Rollback&lt;/h3&gt;
+&lt;h3 id=&#34;scenario-2-regressions-and-rollback:682641b8f6aff1fdce173832bfccddae&#34;&gt;Scenario 2: Regressions and Rollback&lt;/h3&gt;
 
 &lt;p&gt;Now imagine that the bug fix in the scenario above actually causes a regression
 on production that needs to be fixed immediately or rolled back.&lt;/p&gt;
@@ -308,9 +558,10 @@ fully understanding the intricacies and risks involved with the chage.
 Ultimately, the team decides they can&amp;rsquo;t go forward and all 13 change sets are
 rolled back until they can properly fix the problem.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/weekly-regression.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/weekly-regression.png&#34; alt=&#34;Regression in Weekly Release&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/weekly-regression.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/weekly-regression.png&#34; alt=&#34;Regression in Weekly Release&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Contrast this with a continuous delivery approach. Alice works with QA to verify
 her change. Alice and QA deploy the change to production and immediately verify
@@ -323,14 +574,15 @@ integrity of her changes and for verifying that her work was done correctly. She
 is able to work in concert with QA to test the issue and does not simply push
 her issue &amp;lsquo;over the wall&amp;rsquo; for someone else to test and deploy.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/continuous-regression.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/continuous-regression.png&#34; alt=&#34;Regression With Continuous Delivery&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/continuous-regression.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/continuous-regression.png&#34; alt=&#34;Regression With Continuous Delivery&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;With continuous delivery, each deployment is a smaller change that can be easily
 understood, fixed or, when necessary, rolled-back.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_26&#34;&gt;Scenario 3: New Features&lt;/h3&gt;
+&lt;h3 id=&#34;scenario-3-new-features:682641b8f6aff1fdce173832bfccddae&#34;&gt;Scenario 3: New Features&lt;/h3&gt;
 
 &lt;p&gt;We&amp;rsquo;ve seen how continuous delivery can aid in deploying bug fixes, but what
 about delivery new features? Remember that with continuous delivery any commit
@@ -361,16 +613,18 @@ in, we route the request to both the old and new code and can measure &amp;ndash
 production &amp;ndash; the performance of the new code. We can easily see if our proposed
 refactoring has measurable performance improvements in a real-world setting.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/parallel-code.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/parallel-code.png&#34; alt=&#34;Parallel Code&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/parallel-code.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/parallel-code.png&#34; alt=&#34;Parallel Code&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;For example, by extracting performance measurements over each iteration of the
 code we visually compare the effect of a code change.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/performance-comparison.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/performance-comparison.png&#34; alt=&#34;Performance Comparison&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/performance-comparison.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/performance-comparison.png&#34; alt=&#34;Performance Comparison&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;We can also use the same pattern to ensure we have confidence in the results of
 our new code. For example, on each request, we can run both the old and the new
@@ -380,14 +634,15 @@ acceptable error range the new code is ready to go live. We also have the
 ability to use production data to inform our unit tests and guard against future
 regressions.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/accuracy-comparison.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/accuracy-comparison.png&#34; alt=&#34;Accuracy Comparison&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/accuracy-comparison.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/accuracy-comparison.png&#34; alt=&#34;Accuracy Comparison&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Caution must be exercised whenever using feature flags. Every feature flag that
 is in use within the product is technical debt that should be short lived.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_27&#34;&gt;Towards Continuous Delivery&lt;/h2&gt;
+&lt;h2 id=&#34;towards-continuous-delivery:682641b8f6aff1fdce173832bfccddae&#34;&gt;Towards Continuous Delivery&lt;/h2&gt;
 
 &lt;p&gt;Continuous delivery is not a panacea &amp;ndash; it requires diligence and responsibility
 on behalf of the development team. However, if the team is able to cross these
@@ -531,7 +786,7 @@ instance, install R Studio on it and access R Studio from the remote interface.&
 with billing enabled and have installed the &lt;a href=&#34;https://cloud.google.com/sdk/&#34;&gt;Google Cloud
 SDK&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Deploying a Compute Engine Instance&lt;/h2&gt;
+&lt;h2 id=&#34;deploying-a-compute-engine-instance:fe69c3491bab8cb03451503db88c7996&#34;&gt;Deploying a Compute Engine Instance&lt;/h2&gt;
 
 &lt;p&gt;The first step is to deploy your Compute Engine instance. The &lt;code&gt;gcloud compute&lt;/code&gt;
 command allows you to create instances. The only required parameter to create an
@@ -550,7 +805,7 @@ parameter. For example.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute instances create r-studio --zone us-central1-a
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;Installing R Studio&lt;/h2&gt;
+&lt;h2 id=&#34;installing-r-studio:fe69c3491bab8cb03451503db88c7996&#34;&gt;Installing R Studio&lt;/h2&gt;
 
 &lt;p&gt;Once we have our Compute Engine instance set up, we log in to the machine using ssh.&lt;/p&gt;
 
@@ -616,7 +871,7 @@ to an entity in the Datastore is reflected as a change to a Search Document.
 This article details an architecture for keeping Datastore entities and Search
 Documents in sync throughout failure and race conditions.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Updating the Search Document Using a _post_put_hook&lt;/h2&gt;
+&lt;h2 id=&#34;updating-the-search-document-using-a-post-put-hook:1beee7f8beb62848f15162ab6a0273af&#34;&gt;Updating the Search Document Using a _post_put_hook&lt;/h2&gt;
 
 &lt;p&gt;To ensure that every put of an entity to the Datastore results in an update to
 the associated search document, we update the search document in the
@@ -652,7 +907,7 @@ entity. However, this design does not account for the potential error conditions
 where putting the search document or the Datastore entity fails. We will need
 some additional functionality to handle these cases.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;Handling Search Document Put Failures&lt;/h2&gt;
+&lt;h2 id=&#34;handling-search-document-put-failures:1beee7f8beb62848f15162ab6a0273af&#34;&gt;Handling Search Document Put Failures&lt;/h2&gt;
 
 &lt;p&gt;The first obstacle to overcome is handling failures when putting the search
 document. One method for handling failures is retrying. We can add retrying to
@@ -692,7 +947,7 @@ class UserModel(ndb.model):
         deferred.defer(UserModel.put_search_document, self.username)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;Handling Datastore Put Failures&lt;/h2&gt;
+&lt;h2 id=&#34;handling-datastore-put-failures:1beee7f8beb62848f15162ab6a0273af&#34;&gt;Handling Datastore Put Failures&lt;/h2&gt;
 
 &lt;p&gt;The second obstacle to overcome is safely handling Datastore put failures. In
 this architecture, each change to a Datastore entity is required to run within a
@@ -739,7 +994,7 @@ Datastore put has failed. If the search document put has failed we retry, if the
 Datastore put has failed we do not put the search document. We still have one
 remaining problem: Dirty Reads.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_3&#34;&gt;Handling Dirty Reads&lt;/h2&gt;
+&lt;h2 id=&#34;handling-dirty-reads:1beee7f8beb62848f15162ab6a0273af&#34;&gt;Handling Dirty Reads&lt;/h2&gt;
 
 &lt;p&gt;The last obstacle to overcome is dealing with race conditions that could lead to
 reading stale data and writing that data to the search document. Consider the
@@ -750,9 +1005,10 @@ read problem arises when the second task to update the search document reads old
 data from the Datastore that may not have been fully replicated throughout the
 Datastore.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34; alt=&#34;Syncing Search Documents&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34; alt=&#34;Syncing Search Documents&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;We can overcome this problem by versioning our tasks to coincide with the
 version of our Datastore entity. We add a version number to the entity and
@@ -838,7 +1094,7 @@ is run within a transaction&lt;/em&gt;. The version number will not be increment
 case because the value set during the _pre_put_hook will not be persisted during
 a failed transaction.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_4&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;conclusion:1beee7f8beb62848f15162ab6a0273af&#34;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;Putting this all together, we&amp;rsquo;ve developed a solution for keeping search
 documents in sync with Datastore entities that is robust to failure and race
@@ -1120,7 +1376,7 @@ traffic between applications.&lt;/p&gt;
 need a refresher on this API please check out my &lt;a href=&#34;http://sookocheff.com/series/mapreduce-api/&#34;&gt;MapReduce tutorial
 series&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Overview&lt;/h2&gt;
+&lt;h2 id=&#34;overview:910e0d5fe0b44f1ddf1d486376d42c6d&#34;&gt;Overview&lt;/h2&gt;
 
 &lt;p&gt;The gist of this solution is to run a MapReduce job that reads data from the
 &lt;a href=&#34;https://cloud.google.com/appengine/docs/python/logs/&#34;&gt;App Engine Logs API&lt;/a&gt; using the &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-mapreduce/blob/master/python/src/mapreduce/input_readers.py#L1952&#34;&gt;LogInputReader&lt;/a&gt;,
@@ -1134,11 +1390,12 @@ minutes to provide a relatively recent view of current operational data.&lt;/p&g
 
 &lt;p&gt;The following diagram presents the architecture of our solution.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-01-23-querying-app-engine-logs-with-elasticsearch/elasticsearch-sequence-diagram.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-01-23-querying-app-engine-logs-with-elasticsearch/elasticsearch-sequence-diagram.png&#34; alt=&#34;Architecture for Logging to elasticsearch&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-01-23-querying-app-engine-logs-with-elasticsearch/elasticsearch-sequence-diagram.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-01-23-querying-app-engine-logs-with-elasticsearch/elasticsearch-sequence-diagram.png&#34; alt=&#34;Architecture for Logging to elasticsearch&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;Example&lt;/h2&gt;
+&lt;h2 id=&#34;example:910e0d5fe0b44f1ddf1d486376d42c6d&#34;&gt;Example&lt;/h2&gt;
 
 &lt;p&gt;The majority of the solution is contained in a MapperPipeline. The following
 code illustrates how to setup the MapperPipeline. What&amp;rsquo;s remaining is to write a
@@ -1234,7 +1491,7 @@ processed. When not provided, this defaults to the arguments and options
 provided to the application (&lt;code&gt;$@&lt;/code&gt;). You can provide this third argument to use
 &lt;code&gt;getopts&lt;/code&gt; to parse any list of arguments and options you provide.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Shifting processed options&lt;/h2&gt;
+&lt;h2 id=&#34;shifting-processed-options:12703913772a307ca27d6fbba691325e&#34;&gt;Shifting processed options&lt;/h2&gt;
 
 &lt;p&gt;The variable &lt;code&gt;OPTIND&lt;/code&gt; holds the number of options parsed by the last call to
 &lt;code&gt;getopts&lt;/code&gt;. It is common practice to call the &lt;code&gt;shift&lt;/code&gt; command at the end of your
@@ -1243,7 +1500,7 @@ processing loop to remove options that have already been handled from &lt;code&g
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;shift $((OPTIND -1))
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;Parsing options with arguments&lt;/h2&gt;
+&lt;h2 id=&#34;parsing-options-with-arguments:12703913772a307ca27d6fbba691325e&#34;&gt;Parsing options with arguments&lt;/h2&gt;
 
 &lt;p&gt;Options that themselves have arguments are signified with a &lt;code&gt;:&lt;/code&gt;. The argument to
 an option is placed in the variable &lt;code&gt;OPTARG&lt;/code&gt;. In the following example, the
@@ -1268,7 +1525,7 @@ done
 shift $((OPTIND -1))
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;An extended example &amp;ndash; parsing nested arguments and options&lt;/h2&gt;
+&lt;h2 id=&#34;an-extended-example-parsing-nested-arguments-and-options:12703913772a307ca27d6fbba691325e&#34;&gt;An extended example &amp;ndash; parsing nested arguments and options&lt;/h2&gt;
 
 &lt;p&gt;Let&amp;rsquo;s walk through an extended example of processing a command that takes
 options, has a sub-command, and whose sub-command takes an additional option
@@ -1489,7 +1746,7 @@ libraries and all of their dependencies with your application.&lt;/p&gt;
       <guid>http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/</guid>
       <description>
 
-&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
+&lt;h2 id=&#34;mapreduce-api-series:5ca834111719e09d1ef6cc6ef5cbc0cd&#34;&gt;MapReduce API Series&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
@@ -1643,11 +1900,11 @@ blog post to serve as a permanent reminder of the operators.&lt;/p&gt;
 grouped in to a few classes. Each heading in this article describes a class of
 operation.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Substring Extraction&lt;/h2&gt;
+&lt;h2 id=&#34;substring-extraction:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Substring Extraction&lt;/h2&gt;
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;toc_1&#34;&gt;Extract from a position&lt;/h3&gt;
+&lt;h3 id=&#34;extract-from-a-position:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Extract from a position&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${string:position}
 &lt;/code&gt;&lt;/pre&gt;
@@ -1663,7 +1920,7 @@ world
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;toc_2&#34;&gt;Extract from a position with a length&lt;/h3&gt;
+&lt;h3 id=&#34;extract-from-a-position-with-a-length:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Extract from a position with a length&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${string:position:length}
 &lt;/code&gt;&lt;/pre&gt;
@@ -1677,11 +1934,11 @@ el
 wor
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_3&#34;&gt;Substring Removal&lt;/h2&gt;
+&lt;h2 id=&#34;substring-removal:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Substring Removal&lt;/h2&gt;
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;toc_4&#34;&gt;Remove shortest starting match&lt;/h3&gt;
+&lt;h3 id=&#34;remove-shortest-starting-match:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Remove shortest starting match&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable#pattern}
 &lt;/code&gt;&lt;/pre&gt;
@@ -1695,7 +1952,7 @@ world, hello jim
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;toc_5&#34;&gt;Remove longest starting match&lt;/h3&gt;
+&lt;h3 id=&#34;remove-longest-starting-match:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Remove longest starting match&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable##pattern}
 &lt;/code&gt;&lt;/pre&gt;
@@ -1709,7 +1966,7 @@ jim
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;toc_6&#34;&gt;Remove shortest ending match&lt;/h3&gt;
+&lt;h3 id=&#34;remove-shortest-ending-match:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Remove shortest ending match&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable%pattern}
 &lt;/code&gt;&lt;/pre&gt;
@@ -1723,7 +1980,7 @@ hello world,
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;toc_7&#34;&gt;Remove longest ending match&lt;/h3&gt;
+&lt;h3 id=&#34;remove-longest-ending-match:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Remove longest ending match&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable%%pattern}
 &lt;/code&gt;&lt;/pre&gt;
@@ -1735,11 +1992,11 @@ hello world,
 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_8&#34;&gt;Substring Replacement&lt;/h2&gt;
+&lt;h2 id=&#34;substring-replacement:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Substring Replacement&lt;/h2&gt;
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;toc_9&#34;&gt;Replace first occurrence of word&lt;/h3&gt;
+&lt;h3 id=&#34;replace-first-occurrence-of-word:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Replace first occurrence of word&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable/pattern/string}
 &lt;/code&gt;&lt;/pre&gt;
@@ -1753,7 +2010,7 @@ goodbye world, hello jim
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;toc_10&#34;&gt;Replace all occurrences of word&lt;/h3&gt;
+&lt;h3 id=&#34;replace-all-occurrences-of-word:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Replace all occurrences of word&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable//pattern/string}
 &lt;/code&gt;&lt;/pre&gt;
@@ -1775,7 +2032,7 @@ goodbye world, goodbye jim
       <guid>http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/</guid>
       <description>
 
-&lt;h2 id=&#34;toc_0&#34;&gt;MapReduce API Series&lt;/h2&gt;
+&lt;h2 id=&#34;mapreduce-api-series:8a4ce915aba4ff843eb6b0f21aab7dc8&#34;&gt;MapReduce API Series&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
@@ -2116,30 +2373,6 @@ class TaskInputReader(InputReader):
         except Exception as e:
             raise BadReaderParamsError(&#39;%s is invalid&#39; % cls.QUEUE_NAME, e.message)
 &lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Installing MySQL-Python on OS X Yosemite</title>
-      <link>http://sookocheff.com/posts/2014-11-18-installing-mysql-python-on-yosemite/</link>
-      <pubDate>Tue, 18 Nov 2014 11:15:23 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2014-11-18-installing-mysql-python-on-yosemite/</guid>
-      <description>&lt;p&gt;Installing the MySQL-Python package requires a few steps. In an effort to aid
-future Internet travellers, this post will document how to install the
-MySQL-Python package on OS X Yosemite.&lt;/p&gt;
-
-&lt;p&gt;First, install MariaDB, the drop-in replacement for MySQL. I chose MacPorts for
-this task, though Homebrew would work just fine. Second, update your PATH to
-include the mariadb executables. Third, install the Python MySQL connector.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo port install mariadb
-PATH=/opt/local/lib/mariadb/bin:$PATH
-pip install MySQL-Python
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;That&amp;rsquo;s it! You should be able to &lt;code&gt;import MySQLdb&lt;/code&gt; in your Python code and
-interact with your MariaDB database.&lt;/p&gt;
 </description>
     </item>
     

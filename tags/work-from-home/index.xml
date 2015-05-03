@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/work-from-home/index.xml/</link>
+    <link>http://sookocheff.com/tags/work-from-home/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Thu, 18 Sep 2014 12:57:32 UTC</lastBuildDate>
@@ -22,7 +22,7 @@ four small children and a loving and supportive wife has brought its fair share
 of both challenges and delights. This post will describe the working from home
 experience and the lessons I&amp;rsquo;ve learned along the way.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Personal Productivity&lt;/h2&gt;
+&lt;h2 id=&#34;personal-productivity:3750f7a10148d86568813d644319d6a5&#34;&gt;Personal Productivity&lt;/h2&gt;
 
 &lt;p&gt;Without a doubt my personal productivity went up. Working from home meant fewer
 distractions, noise and interruptions. VendAsta follows an open office plan
@@ -44,7 +44,7 @@ predicted benefits of increased interaction&amp;rdquo;.&lt;/p&gt;
 decreasing number of interruptions meant I could perform more and better work in
 less time.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;Team Communication&lt;/h2&gt;
+&lt;h2 id=&#34;team-communication:3750f7a10148d86568813d644319d6a5&#34;&gt;Team Communication&lt;/h2&gt;
 
 &lt;p&gt;Team communication suffered. At VendAsta, we practice &lt;a href=&#34;http://scrummethodology.com/&#34;&gt;agile development using
 scrum&lt;/a&gt; with all of the encompassing roles and
@@ -62,7 +62,7 @@ other remote working tools, communicating to a group of people is very difficult
 as a remote employee. There is just no substitute to sitting together in the
 same room working out a problem on a shared white board.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;Work-Life Balance&lt;/h2&gt;
+&lt;h2 id=&#34;work-life-balance:3750f7a10148d86568813d644319d6a5&#34;&gt;Work-Life Balance&lt;/h2&gt;
 
 &lt;p&gt;The difference in work-life balance is difficult to analyze. I&amp;rsquo;ll start with the
 biggest and most glaring postive &amp;ndash; I was home and helpful to our family during
@@ -74,7 +74,7 @@ being in the house so my wife could grab some groceries while everyone was
 napping. All of these minor benefits add up to really make the experience of
 raising our children that much easier.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_3&#34;&gt;Guilt&lt;/h2&gt;
+&lt;h2 id=&#34;guilt:3750f7a10148d86568813d644319d6a5&#34;&gt;Guilt&lt;/h2&gt;
 
 &lt;p&gt;Working from home with my wife and children in the same house meant I was always
 aware of the sheer pile of &lt;em&gt;work&lt;/em&gt; my wife was doing each day to help our family
@@ -88,7 +88,7 @@ worker, I assume the rest of my team thinks I&amp;rsquo;m relaxing in a hammock 
 cocktail if I&amp;rsquo;m unavailable for a few minutes. I&amp;rsquo;m not sure how to assuage that
 guilt.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_4&#34;&gt;Helpful Tools&lt;/h2&gt;
+&lt;h2 id=&#34;helpful-tools:3750f7a10148d86568813d644319d6a5&#34;&gt;Helpful Tools&lt;/h2&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.google.ca/chrome/business/solutions/for-meetings.html&#34;&gt;ChromeBox&lt;/a&gt;.&lt;/p&gt;
@@ -104,7 +104,7 @@ group communication. HipChat makes it effortless to jump into a different teams
 chat and ask a quick question.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;toc_5&#34;&gt;Not So Helpful Tools&lt;/h2&gt;
+&lt;h2 id=&#34;not-so-helpful-tools:3750f7a10148d86568813d644319d6a5&#34;&gt;Not So Helpful Tools&lt;/h2&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;p&gt;Google Hangouts.&lt;/p&gt;
@@ -125,7 +125,7 @@ stripping those tools away during remote meetings I found it very
 difficult to contribute to joint discussions in a meaningful way.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;toc_6&#34;&gt;Qualities of a Remote Worker&lt;/h2&gt;
+&lt;h2 id=&#34;qualities-of-a-remote-worker:3750f7a10148d86568813d644319d6a5&#34;&gt;Qualities of a Remote Worker&lt;/h2&gt;
 
 &lt;p&gt;Remote working is not for everyone. Although I can&amp;rsquo;t claim to have any authority
 on the subject I did compile a list of qualities that make a successful remote
@@ -156,7 +156,7 @@ cannot value this enough. It&amp;rsquo;s my opinion that every knowledge worker 
 comfortable writing and presenting their ideas.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;toc_7&#34;&gt;Qualities of a Remote Manager&lt;/h2&gt;
+&lt;h2 id=&#34;qualities-of-a-remote-manager:3750f7a10148d86568813d644319d6a5&#34;&gt;Qualities of a Remote Manager&lt;/h2&gt;
 
 &lt;p&gt;Remote work is not for every job. The remote employee&amp;rsquo;s job should be well
 defined with clear goals. There also must be some level of trust between the
@@ -179,7 +179,7 @@ ability to distill and communicate the project goals so that the worker can
 independently choose tasks without unnecessary communication barriers.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;toc_8&#34;&gt;Summary&lt;/h2&gt;
+&lt;h2 id=&#34;summary:3750f7a10148d86568813d644319d6a5&#34;&gt;Summary&lt;/h2&gt;
 
 &lt;p&gt;I really enjoyed my time as a remote worker, but equally enjoy being back in the
 office. Things are not better or worse in either case. Just different.&lt;/p&gt;

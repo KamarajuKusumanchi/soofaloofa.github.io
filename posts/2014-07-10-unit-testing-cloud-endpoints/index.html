@@ -85,7 +85,7 @@ process. Unfortunately it is not well documented and a few gotchas exist. This
 article provides a template you can use to unit test Cloud Endpoints including
 full source code for a working example.</p>
 
-<h2 id="toc_0">The Model</h2>
+<h2 id="the-model:dec1a5006ed54c46077ff2a4372aca9b">The Model</h2>
 
 <p>Let&rsquo;s use a simple User model as the resource being exposed by our API. This
 model has two properties &ndash; a username and an email address. The class also
@@ -117,7 +117,7 @@ class UserMessage(messages.Message):
     email = messages.StringField(3)
 </code></pre>
 
-<h2 id="toc_1">The API</h2>
+<h2 id="the-api:dec1a5006ed54c46077ff2a4372aca9b">The API</h2>
 
 <p>To keep things simple the API for this resource provides a single <code>GET</code> endpoint
 that returns a <code>UserMessage</code> based on a <code>User</code> in the datastore. We parameterize
@@ -150,7 +150,7 @@ class UsersApi(remote.Service):
         return entity.to_message()
 </code></pre>
 
-<h2 id="toc_2">The Tests</h2>
+<h2 id="the-tests:dec1a5006ed54c46077ff2a4372aca9b">The Tests</h2>
 
 <p>The setup for our tests is similar to many App Engine test cases. We set our
 environment and initialize any test stubs we may need.</p>

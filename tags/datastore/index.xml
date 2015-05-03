@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/datastore/index.xml/</link>
+    <link>http://sookocheff.com/tags/datastore/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Mon, 23 Feb 2015 08:20:37 CST</lastBuildDate>
@@ -26,7 +26,7 @@ to an entity in the Datastore is reflected as a change to a Search Document.
 This article details an architecture for keeping Datastore entities and Search
 Documents in sync throughout failure and race conditions.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Updating the Search Document Using a _post_put_hook&lt;/h2&gt;
+&lt;h2 id=&#34;updating-the-search-document-using-a-post-put-hook:1beee7f8beb62848f15162ab6a0273af&#34;&gt;Updating the Search Document Using a _post_put_hook&lt;/h2&gt;
 
 &lt;p&gt;To ensure that every put of an entity to the Datastore results in an update to
 the associated search document, we update the search document in the
@@ -62,7 +62,7 @@ entity. However, this design does not account for the potential error conditions
 where putting the search document or the Datastore entity fails. We will need
 some additional functionality to handle these cases.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;Handling Search Document Put Failures&lt;/h2&gt;
+&lt;h2 id=&#34;handling-search-document-put-failures:1beee7f8beb62848f15162ab6a0273af&#34;&gt;Handling Search Document Put Failures&lt;/h2&gt;
 
 &lt;p&gt;The first obstacle to overcome is handling failures when putting the search
 document. One method for handling failures is retrying. We can add retrying to
@@ -102,7 +102,7 @@ class UserModel(ndb.model):
         deferred.defer(UserModel.put_search_document, self.username)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;Handling Datastore Put Failures&lt;/h2&gt;
+&lt;h2 id=&#34;handling-datastore-put-failures:1beee7f8beb62848f15162ab6a0273af&#34;&gt;Handling Datastore Put Failures&lt;/h2&gt;
 
 &lt;p&gt;The second obstacle to overcome is safely handling Datastore put failures. In
 this architecture, each change to a Datastore entity is required to run within a
@@ -149,7 +149,7 @@ Datastore put has failed. If the search document put has failed we retry, if the
 Datastore put has failed we do not put the search document. We still have one
 remaining problem: Dirty Reads.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_3&#34;&gt;Handling Dirty Reads&lt;/h2&gt;
+&lt;h2 id=&#34;handling-dirty-reads:1beee7f8beb62848f15162ab6a0273af&#34;&gt;Handling Dirty Reads&lt;/h2&gt;
 
 &lt;p&gt;The last obstacle to overcome is dealing with race conditions that could lead to
 reading stale data and writing that data to the search document. Consider the
@@ -160,9 +160,10 @@ read problem arises when the second task to update the search document reads old
 data from the Datastore that may not have been fully replicated throughout the
 Datastore.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34; alt=&#34;Syncing Search Documents&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34; alt=&#34;Syncing Search Documents&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;We can overcome this problem by versioning our tasks to coincide with the
 version of our Datastore entity. We add a version number to the entity and
@@ -248,7 +249,7 @@ is run within a transaction&lt;/em&gt;. The version number will not be increment
 case because the value set during the _pre_put_hook will not be persisted during
 a failed transaction.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_4&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;conclusion:1beee7f8beb62848f15162ab6a0273af&#34;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;Putting this all together, we&amp;rsquo;ve developed a solution for keeping search
 documents in sync with Datastore entities that is robust to failure and race
@@ -272,7 +273,7 @@ for a given App Engine backup and importing that backup into BigQuery. This
 article will show you to get the Cloud Storage URL for an App Engine backup and
 manually perform that import.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Getting the Cloud Storage URL&lt;/h2&gt;
+&lt;h2 id=&#34;getting-the-cloud-storage-url:fa0cf78d240508d5fee9738fef21ecf6&#34;&gt;Getting the Cloud Storage URL&lt;/h2&gt;
 
 &lt;p&gt;The first thing you need to do is access the cloud storage URL for a given App
 Engine backup. First, log in to the Google Developer Console and navigate to
@@ -312,23 +313,26 @@ URL.&lt;/p&gt;
 &lt;p&gt;The next step is to import the backup into BigQuery. To do this, navigate to
 your project and create a new table in your desired dataset.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34; alt=&#34;Create new table.&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34; alt=&#34;Create new table.&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;In the &lt;code&gt;Choose destination&lt;/code&gt; tab pick a name for your new table. In my case I&amp;rsquo;ll
 name the table with the date of my backup for reference.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34; alt=&#34;Choose destination&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34; alt=&#34;Choose destination&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Next, choose App Engine Datastore Backup as the source format and paste the
 Cloud Storage URL you arrived at above in the appropriate field.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34; alt=&#34;Select Data Source&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34; alt=&#34;Select Data Source&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;You can choose the defaults for the next tabs and, finally, import your App
 Engine backup into BigQuery and watch it being fully restored.&lt;/p&gt;
@@ -353,7 +357,7 @@ RawDatastoreInputReader to process datastore entities.&lt;/p&gt;
 
 &lt;p&gt;For the sake of this discussion let&amp;rsquo;s assume we want to move a &lt;code&gt;phone_number&lt;/code&gt; field to a &lt;code&gt;work_number&lt;/code&gt; field for all entities of a certain Kind in the datastore.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Getting the raw datastore entity&lt;/h2&gt;
+&lt;h2 id=&#34;getting-the-raw-datastore-entity:f509f31b4c10397cd1059cd7982b595f&#34;&gt;Getting the raw datastore entity&lt;/h2&gt;
 
 &lt;p&gt;The MapReduce library provides a &lt;code&gt;RawDatastoreInputReader&lt;/code&gt; that will feed raw datastore entities to your mapping function. We can set our MapReduce operation to use the &lt;code&gt;RawDatastoreInputReader&lt;/code&gt; using a &lt;code&gt;mapreduce.yaml&lt;/code&gt; declaration.&lt;/p&gt;
 
@@ -366,7 +370,7 @@ RawDatastoreInputReader to process datastore entities.&lt;/p&gt;
       default: MyModel
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;Manipulating a raw datastore entity&lt;/h2&gt;
+&lt;h2 id=&#34;manipulating-a-raw-datastore-entity:f509f31b4c10397cd1059cd7982b595f&#34;&gt;Manipulating a raw datastore entity&lt;/h2&gt;
 
 &lt;p&gt;Our &lt;code&gt;raw_datastore_map&lt;/code&gt; function to use the datastore entity in its raw form. The raw form of the datastore entity provides a dictionary like interface that we can use to manipulate the entity. With this interface we can move the phone number to the correct field.&lt;/p&gt;
 

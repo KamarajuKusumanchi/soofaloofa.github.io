@@ -116,7 +116,7 @@ processed. When not provided, this defaults to the arguments and options
 provided to the application (<code>$@</code>). You can provide this third argument to use
 <code>getopts</code> to parse any list of arguments and options you provide.</p>
 
-<h2 id="toc_0">Shifting processed options</h2>
+<h2 id="shifting-processed-options:12703913772a307ca27d6fbba691325e">Shifting processed options</h2>
 
 <p>The variable <code>OPTIND</code> holds the number of options parsed by the last call to
 <code>getopts</code>. It is common practice to call the <code>shift</code> command at the end of your
@@ -125,7 +125,7 @@ processing loop to remove options that have already been handled from <code>$@</
 <pre><code class="language-bash">shift $((OPTIND -1))
 </code></pre>
 
-<h2 id="toc_1">Parsing options with arguments</h2>
+<h2 id="parsing-options-with-arguments:12703913772a307ca27d6fbba691325e">Parsing options with arguments</h2>
 
 <p>Options that themselves have arguments are signified with a <code>:</code>. The argument to
 an option is placed in the variable <code>OPTARG</code>. In the following example, the
@@ -150,7 +150,7 @@ done
 shift $((OPTIND -1))
 </code></pre>
 
-<h2 id="toc_2">An extended example &ndash; parsing nested arguments and options</h2>
+<h2 id="an-extended-example-parsing-nested-arguments-and-options:12703913772a307ca27d6fbba691325e">An extended example &ndash; parsing nested arguments and options</h2>
 
 <p>Let&rsquo;s walk through an extended example of processing a command that takes
 options, has a sub-command, and whose sub-command takes an additional option

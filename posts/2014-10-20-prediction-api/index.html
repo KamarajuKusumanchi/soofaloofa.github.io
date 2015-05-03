@@ -89,7 +89,7 @@ time investigating how to use the API to determine the sentiment of a tweet.
 This article collects my thoughts on the experience and a few recommendations
 for future work.</p>
 
-<h2 id="toc_0">The Data</h2>
+<h2 id="the-data:d0e4b7d5708ff82ab169a246986762c7">The Data</h2>
 
 <p>For our experiment we took the text and rating of one million online reviews and
 normalized them within a scale of zero to 1000 &ndash; ratings on a scale of one to
@@ -110,7 +110,7 @@ positive, &quot;the bisque is the best in town&quot;
 <p>Our data was roughly 1 GB. We uploaded this file to Google Cloud Storage
 and used the Prediction API to train our model given this dataset.</p>
 
-<h2 id="toc_1">Examples</h2>
+<h2 id="examples:d0e4b7d5708ff82ab169a246986762c7">Examples</h2>
 
 <p>Once we had a trained model it was time to make predictions. For our application
 we took tweets from Twitter mentioning a business and asked the Prediction API
@@ -122,7 +122,8 @@ receive a &ldquo;very positive&rdquo; result.</p>
 
 <p><a class="thumbnail" href="/img/2014-10-20-prediction-api/bestsoup.png">
   <img src="/img/2014-10-20-prediction-api/bestsoup.png" alt="The Best Soup in Town">
-</a></p>
+</a>
+</p>
 
 <p>As a counter example, the text &ldquo;this restaurant has the worst soup in town&rdquo; also
 recieves a &ldquo;very positive&rdquo; result, although with less confidence and with &ldquo;very
@@ -130,9 +131,10 @@ negative&rdquo; being the most likely second choice.</p>
 
 <p><a class="thumbnail" href="/img/2014-10-20-prediction-api/worstsoup.png">
   <img src="/img/2014-10-20-prediction-api/worstsoup.png" alt="The Worst Soup in Town">
-</a></p>
+</a>
+</p>
 
-<h2 id="toc_2">Conclusions</h2>
+<h2 id="conclusions:d0e4b7d5708ff82ab169a246986762c7">Conclusions</h2>
 
 <p>Most of the tweets were categorized as very positive, regardless of content. In
 addition, most of the tweets had almost equal likelihood of being in the very

@@ -90,7 +90,7 @@ RawDatastoreInputReader to process datastore entities.</p>
 
 <p>For the sake of this discussion let&rsquo;s assume we want to move a <code>phone_number</code> field to a <code>work_number</code> field for all entities of a certain Kind in the datastore.</p>
 
-<h2 id="toc_0">Getting the raw datastore entity</h2>
+<h2 id="getting-the-raw-datastore-entity:f509f31b4c10397cd1059cd7982b595f">Getting the raw datastore entity</h2>
 
 <p>The MapReduce library provides a <code>RawDatastoreInputReader</code> that will feed raw datastore entities to your mapping function. We can set our MapReduce operation to use the <code>RawDatastoreInputReader</code> using a <code>mapreduce.yaml</code> declaration.</p>
 
@@ -103,7 +103,7 @@ RawDatastoreInputReader to process datastore entities.</p>
       default: MyModel
 </code></pre>
 
-<h2 id="toc_1">Manipulating a raw datastore entity</h2>
+<h2 id="manipulating-a-raw-datastore-entity:f509f31b4c10397cd1059cd7982b595f">Manipulating a raw datastore entity</h2>
 
 <p>Our <code>raw_datastore_map</code> function to use the datastore entity in its raw form. The raw form of the datastore entity provides a dictionary like interface that we can use to manipulate the entity. With this interface we can move the phone number to the correct field.</p>
 

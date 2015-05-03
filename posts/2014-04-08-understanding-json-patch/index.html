@@ -106,11 +106,11 @@ The <code>path</code> member is a <a href="https://tools.ietf.org/html/rfc6901">
 
 <p>The remaining elements of a JSON Patch operation depend on the particular operation being performed.</p>
 
-<h3 id="toc_0">add</h3>
+<h3 id="add:00522aa35030d6898496a2030ce76b59">add</h3>
 
 <p>The <code>add</code> operation is used in different ways depending on the target of the <code>path</code> being referenced. Generally speaking we can use <code>add</code> to append to a list, add a member to an object or update the value of an existing field. The <code>add</code> operation accepts a <code>value</code> member which is the value to update the referenced <code>path</code>.</p>
 
-<h4 id="toc_1">Append to a List</h4>
+<h4 id="append-to-a-list:00522aa35030d6898496a2030ce76b59">Append to a List</h4>
 
 <p>To append a value to a list you use an existing list as the <code>path</code> of the operation. So, given the JSON document.</p>
 
@@ -131,7 +131,7 @@ The <code>path</code> member is a <a href="https://tools.ietf.org/html/rfc6901">
 }
 </code></pre>
 
-<h4 id="toc_2">Add a Member to an Object</h4>
+<h4 id="add-a-member-to-an-object:00522aa35030d6898496a2030ce76b59">Add a Member to an Object</h4>
 
 <p>If the <code>path</code> references a member of an object that does not exist, a new member is added to the object. We start with our JSON document listing our orders.</p>
 
@@ -157,7 +157,7 @@ The <code>path</code> member is a <a href="https://tools.ietf.org/html/rfc6901">
 }
 </code></pre>
 
-<h4 id="toc_3">Update an Existing Member of an Object</h4>
+<h4 id="update-an-existing-member-of-an-object:00522aa35030d6898496a2030ce76b59">Update an Existing Member of an Object</h4>
 
 <p>If the <code>path</code> refers to an existing object member, that member is updated with the newly supplied value.</p>
 
@@ -184,7 +184,7 @@ The <code>path</code> member is a <a href="https://tools.ietf.org/html/rfc6901">
 }
 </code></pre>
 
-<h3 id="toc_4">remove</h3>
+<h3 id="remove:00522aa35030d6898496a2030ce76b59">remove</h3>
 
 <p>Remove is a simple operation. The target location of the <code>path</code> is removed from the object.</p>
 
@@ -219,7 +219,7 @@ The <code>path</code> member is a <a href="https://tools.ietf.org/html/rfc6901">
 }
 </code></pre>
 
-<h3 id="toc_5">replace</h3>
+<h3 id="replace:00522aa35030d6898496a2030ce76b59">replace</h3>
 
 <p>Replace is used to set a new value to a member of the object. It is logically equivalent to a <code>remove</code> operation followed by an <code>add</code> operation to the same <code>path</code> or to an <code>add</code> operation to an existing member.</p>
 
@@ -244,7 +244,7 @@ The <code>path</code> member is a <a href="https://tools.ietf.org/html/rfc6901">
 }
 </code></pre>
 
-<h3 id="toc_6">move</h3>
+<h3 id="move:00522aa35030d6898496a2030ce76b59">move</h3>
 
 <p>The <code>move</code> operation removes the value at a specified location and adds it to the target location. The removal location is given by a <code>from</code> member and the target location is given by the <code>path</code> member.</p>
 
@@ -271,21 +271,21 @@ The <code>path</code> member is a <a href="https://tools.ietf.org/html/rfc6901">
 }
 </code></pre>
 
-<h3 id="toc_7">copy</h3>
+<h3 id="copy:00522aa35030d6898496a2030ce76b59">copy</h3>
 
 <p><code>copy</code> is like <code>move</code>. It copies the value at the <code>from</code> location to the  <code>path</code> location, leaving duplicates of the data at each location.</p>
 
 <pre><code class="language-json">{ &quot;op&quot;: &quot;copy&quot;, &quot;from&quot;: &quot;/orders/0&quot;, &quot;path&quot;: &quot;/rootOrder&quot; }
 </code></pre>
 
-<h3 id="toc_8">test</h3>
+<h3 id="test:00522aa35030d6898496a2030ce76b59">test</h3>
 
 <p>The HTTP PATCH method is atomic and the patch should only be applied if all operations can be safely applied. The <code>test</code> operation can offer additional validation to ensure that patch preconditions or postconditions are met. If the test fails the whole patch is discarded. <code>test</code> is strictly an equality check.</p>
 
 <pre><code class="language-json">{ &quot;op&quot;: &quot;test&quot;, &quot;value&quot;: 30.00, &quot;path&quot;: &quot;/total&quot; }
 </code></pre>
 
-<h3 id="toc_9">Conclusion</h3>
+<h3 id="conclusion:00522aa35030d6898496a2030ce76b59">Conclusion</h3>
 
 <p>JSON Patch is an effective way to provide diffs of your API resources. Most languages already have an implementation available. There is no reason not to adopt the HTTP PATCH today.</p>
  

@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/search/index.xml/</link>
+    <link>http://sookocheff.com/tags/search/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Mon, 06 Oct 2014 05:52:29 UTC</lastBuildDate>
@@ -22,7 +22,7 @@ queried using a search string entered in a text box. One way to improve the user
 experience of this text box is to offer the user suggestions of popular searches
 to use as their query. This article describes how to achieve this.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Finding the most likely search terms&lt;/h2&gt;
+&lt;h2 id=&#34;finding-the-most-likely-search-terms:84b838de94401388364834ff7ecf77e5&#34;&gt;Finding the most likely search terms&lt;/h2&gt;
 
 &lt;p&gt;Before presenting suggestions to the user we need to collect the data
 determining which searches are popular. This data contains the most likely
@@ -30,44 +30,49 @@ choice of search term given a prefix (i.e., an incomplete search term). For
 example, given the incomplete search term &lt;code&gt;ne&lt;/code&gt; we need to return the most
 frequent searches that have been made using that prefix.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search1.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search1.png&#34; alt=&#34;Incomplete Search.&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-10-06-search-suggestions/search1.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-10-06-search-suggestions/search1.png&#34; alt=&#34;Incomplete Search.&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Suppose the user searches for the term &lt;code&gt;Netflix&lt;/code&gt;. Given the search term we
 increment the frequency of a &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple for each prefix of
 the search term &lt;code&gt;Netflix&lt;/code&gt;. The end result is a datastore model with entries for
 each &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search2.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search2.png&#34; alt=&#34;Netflix Search.&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-10-06-search-suggestions/search2.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-10-06-search-suggestions/search2.png&#34; alt=&#34;Netflix Search.&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;If that term &lt;code&gt;Netflix&lt;/code&gt; is searched for a second time we increment the frequency
 count of each &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search3.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search3.png&#34; alt=&#34;Tuples of Netflix.&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-10-06-search-suggestions/search3.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-10-06-search-suggestions/search3.png&#34; alt=&#34;Tuples of Netflix.&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Now suppose one person searched for the term &lt;code&gt;news&lt;/code&gt;. We build up our frequency
 table with each &lt;code&gt;(prefix, search term)&lt;/code&gt; tuple again, using &lt;code&gt;news&lt;/code&gt; as the search
 term.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search4.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search4.png&#34; alt=&#34;Tuples of news.&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-10-06-search-suggestions/search4.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-10-06-search-suggestions/search4.png&#34; alt=&#34;Tuples of news.&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Once we&amp;rsquo;ve assembled the data we can go back to our original problem of finding
 the most likely searches for a given incomplete search. Given our dataset this
 is lookup for each record matching our prefix in the dataset ordered by
 frequency.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2014-10-06-search-suggestions/search5.png&#34;&gt;
-  &lt;img src=&#34;/img/2014-10-06-search-suggestions/search5.png&#34; alt=&#34;Ordered table.&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-10-06-search-suggestions/search5.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-10-06-search-suggestions/search5.png&#34; alt=&#34;Ordered table.&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;A sample implementation&lt;/h2&gt;
+&lt;h2 id=&#34;a-sample-implementation:84b838de94401388364834ff7ecf77e5&#34;&gt;A sample implementation&lt;/h2&gt;
 
 &lt;p&gt;The following is a sample implementation encapsulating the ideas presented
 above.&lt;/p&gt;

@@ -87,7 +87,7 @@ queried using a search string entered in a text box. One way to improve the user
 experience of this text box is to offer the user suggestions of popular searches
 to use as their query. This article describes how to achieve this.</p>
 
-<h2 id="toc_0">Finding the most likely search terms</h2>
+<h2 id="finding-the-most-likely-search-terms:84b838de94401388364834ff7ecf77e5">Finding the most likely search terms</h2>
 
 <p>Before presenting suggestions to the user we need to collect the data
 determining which searches are popular. This data contains the most likely
@@ -97,7 +97,8 @@ frequent searches that have been made using that prefix.</p>
 
 <p><a class="thumbnail" href="/img/2014-10-06-search-suggestions/search1.png">
   <img src="/img/2014-10-06-search-suggestions/search1.png" alt="Incomplete Search.">
-</a></p>
+</a>
+</p>
 
 <p>Suppose the user searches for the term <code>Netflix</code>. Given the search term we
 increment the frequency of a <code>(prefix, search term)</code> tuple for each prefix of
@@ -106,14 +107,16 @@ each <code>(prefix, search term)</code> tuple.</p>
 
 <p><a class="thumbnail" href="/img/2014-10-06-search-suggestions/search2.png">
   <img src="/img/2014-10-06-search-suggestions/search2.png" alt="Netflix Search.">
-</a></p>
+</a>
+</p>
 
 <p>If that term <code>Netflix</code> is searched for a second time we increment the frequency
 count of each <code>(prefix, search term)</code> tuple.</p>
 
 <p><a class="thumbnail" href="/img/2014-10-06-search-suggestions/search3.png">
   <img src="/img/2014-10-06-search-suggestions/search3.png" alt="Tuples of Netflix.">
-</a></p>
+</a>
+</p>
 
 <p>Now suppose one person searched for the term <code>news</code>. We build up our frequency
 table with each <code>(prefix, search term)</code> tuple again, using <code>news</code> as the search
@@ -121,7 +124,8 @@ term.</p>
 
 <p><a class="thumbnail" href="/img/2014-10-06-search-suggestions/search4.png">
   <img src="/img/2014-10-06-search-suggestions/search4.png" alt="Tuples of news.">
-</a></p>
+</a>
+</p>
 
 <p>Once we&rsquo;ve assembled the data we can go back to our original problem of finding
 the most likely searches for a given incomplete search. Given our dataset this
@@ -130,9 +134,10 @@ frequency.</p>
 
 <p><a class="thumbnail" href="/img/2014-10-06-search-suggestions/search5.png">
   <img src="/img/2014-10-06-search-suggestions/search5.png" alt="Ordered table.">
-</a></p>
+</a>
+</p>
 
-<h2 id="toc_1">A sample implementation</h2>
+<h2 id="a-sample-implementation:84b838de94401388364834ff7ecf77e5">A sample implementation</h2>
 
 <p>The following is a sample implementation encapsulating the ideas presented
 above.</p>

@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/search-api/index.xml/</link>
+    <link>http://sookocheff.com/tags/search-api/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Mon, 23 Feb 2015 08:20:37 CST</lastBuildDate>
@@ -26,7 +26,7 @@ to an entity in the Datastore is reflected as a change to a Search Document.
 This article details an architecture for keeping Datastore entities and Search
 Documents in sync throughout failure and race conditions.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Updating the Search Document Using a _post_put_hook&lt;/h2&gt;
+&lt;h2 id=&#34;updating-the-search-document-using-a-post-put-hook:1beee7f8beb62848f15162ab6a0273af&#34;&gt;Updating the Search Document Using a _post_put_hook&lt;/h2&gt;
 
 &lt;p&gt;To ensure that every put of an entity to the Datastore results in an update to
 the associated search document, we update the search document in the
@@ -62,7 +62,7 @@ entity. However, this design does not account for the potential error conditions
 where putting the search document or the Datastore entity fails. We will need
 some additional functionality to handle these cases.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;Handling Search Document Put Failures&lt;/h2&gt;
+&lt;h2 id=&#34;handling-search-document-put-failures:1beee7f8beb62848f15162ab6a0273af&#34;&gt;Handling Search Document Put Failures&lt;/h2&gt;
 
 &lt;p&gt;The first obstacle to overcome is handling failures when putting the search
 document. One method for handling failures is retrying. We can add retrying to
@@ -102,7 +102,7 @@ class UserModel(ndb.model):
         deferred.defer(UserModel.put_search_document, self.username)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;Handling Datastore Put Failures&lt;/h2&gt;
+&lt;h2 id=&#34;handling-datastore-put-failures:1beee7f8beb62848f15162ab6a0273af&#34;&gt;Handling Datastore Put Failures&lt;/h2&gt;
 
 &lt;p&gt;The second obstacle to overcome is safely handling Datastore put failures. In
 this architecture, each change to a Datastore entity is required to run within a
@@ -149,7 +149,7 @@ Datastore put has failed. If the search document put has failed we retry, if the
 Datastore put has failed we do not put the search document. We still have one
 remaining problem: Dirty Reads.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_3&#34;&gt;Handling Dirty Reads&lt;/h2&gt;
+&lt;h2 id=&#34;handling-dirty-reads:1beee7f8beb62848f15162ab6a0273af&#34;&gt;Handling Dirty Reads&lt;/h2&gt;
 
 &lt;p&gt;The last obstacle to overcome is dealing with race conditions that could lead to
 reading stale data and writing that data to the search document. Consider the
@@ -160,9 +160,10 @@ read problem arises when the second task to update the search document reads old
 data from the Datastore that may not have been fully replicated throughout the
 Datastore.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34; alt=&#34;Syncing Search Documents&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34; alt=&#34;Syncing Search Documents&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;We can overcome this problem by versioning our tasks to coincide with the
 version of our Datastore entity. We add a version number to the entity and
@@ -248,7 +249,7 @@ is run within a transaction&lt;/em&gt;. The version number will not be increment
 case because the value set during the _pre_put_hook will not be persisted during
 a failed transaction.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_4&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;conclusion:1beee7f8beb62848f15162ab6a0273af&#34;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;Putting this all together, we&amp;rsquo;ve developed a solution for keeping search
 documents in sync with Datastore entities that is robust to failure and race

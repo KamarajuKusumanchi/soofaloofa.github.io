@@ -117,7 +117,7 @@ another API and communicate with minimal duplicated effort.</p>
 offering a side-by-side comparison of their strengths and weaknesses. If you
 are impatient for the final result you can <a href="https://gist.github.com/soofaloofa/9350847">jump straight to the code</a>.</p>
 
-<h2 id="toc_0">The Model</h2>
+<h2 id="the-model:9ea1f4cb979d746b2853a2845c0d4dcb">The Model</h2>
 
 <p>To drive this discussion let&rsquo;s use a hypothetical API for managing a <code>Player</code>
 resource derived from the <a href="https://developer.apple.com/library/ios/documentation/GameKit/Reference/GKPlayer_Ref/Reference/Reference.html#//apple_ref/occ/cl/GKPlayer"><code>GKPlayer</code>
@@ -165,7 +165,7 @@ following.</p>
 
 <p>Let&rsquo;s take a look at how this API can be represented using hypermedia types.</p>
 
-<h2 id="toc_1">JSON-LD</h2>
+<h2 id="json-ld:9ea1f4cb979d746b2853a2845c0d4dcb">JSON-LD</h2>
 
 <p>We&rsquo;ll start by looking at JSON for Linked Documents (JSON-LD). JSON-LD is a well
 supported media type endorsed by the <a href="https://www.w3.org">World Wide Web
@@ -405,7 +405,7 @@ paged collections. For more details on HYDRA&rsquo;s reserved properties you can
 the full
 <a href="http://www.markus-lanthaler.com/hydra/spec/latest/core/#properties">documentation</a>.</p>
 
-<h2 id="toc_2">HAL</h2>
+<h2 id="hal:9ea1f4cb979d746b2853a2845c0d4dcb">HAL</h2>
 
 <p>HAL is a lightweight media type that uses the idea of <em>Resources</em> and <em>Links</em> to
 model your JSON responses. <em>Resources</em> can contain <em>State</em> defined by key-value
@@ -416,7 +416,7 @@ convenience.</p>
 <p>HAL is simple to use and easy to understand. These virtues have lead HAL to
 become one of the leading hypermedia types in modern APIs.</p>
 
-<h3 id="toc_3">State</h3>
+<h3 id="state:9ea1f4cb979d746b2853a2845c0d4dcb">State</h3>
 
 <p>State is the traditional JSON key-value pairs defining the current state of the
 resource.</p>
@@ -432,7 +432,7 @@ resource.</p>
 }
 </code></pre>
 
-<h3 id="toc_4">Links</h3>
+<h3 id="links:9ea1f4cb979d746b2853a2845c0d4dcb">Links</h3>
 
 <p>Links in HAL are identified as a JSON object named <code>_links</code>. Keys within
 <code>_links</code> are the name of the link and should describe the relationship between
@@ -472,7 +472,7 @@ the full list.</p>
 }
 </code></pre>
 
-<h3 id="toc_5">Embedded Resources</h3>
+<h3 id="embedded-resources:9ea1f4cb979d746b2853a2845c0d4dcb">Embedded Resources</h3>
 
 <p>Making a GET request to the <code>Friends</code> link would return a full list of
 <code>Player</code> resources. Each <code>Player</code> returned is embedded in the representation
@@ -521,7 +521,7 @@ list of items.</p>
 provide a reference to get the next set of friends in the list. The embedded
 resources are a list contained within the <code>player</code> property.</p>
 
-<h3 id="toc_6">Curies</h3>
+<h3 id="curies:9ea1f4cb979d746b2853a2845c0d4dcb">Curies</h3>
 
 <p>An important point about HAL is that each link relation points to a URL with
 documentation about that relation. This makes the API discoverable by always
@@ -570,7 +570,7 @@ and users. For more information on HAL you can refer to the draft standard that
 has been submitted to the <a href="https://tools.ietf.org/html/draft-kelly-json-hal-06">Network Working
 Group</a>.</p>
 
-<h2 id="toc_7">Collection+JSON</h2>
+<h2 id="collection-json:9ea1f4cb979d746b2853a2845c0d4dcb">Collection+JSON</h2>
 
 <p>The Collection+JSON standard is a media type that standardizes the reading,
 writing and querying of items in a collection. Although geared to handling
@@ -591,7 +591,7 @@ a <code>version</code> and a URI pointing to itself.</p>
 }
 </code></pre>
 
-<h3 id="toc_8">Returning Data</h3>
+<h3 id="returning-data:9ea1f4cb979d746b2853a2845c0d4dcb">Returning Data</h3>
 
 <p>Typically, the response would include a list of items in the collection. For a
 single resource, this collection would be a list of a single element. The
@@ -619,7 +619,7 @@ properties of each element are given by explicit name/value pairs within a
 }
 </code></pre>
 
-<h3 id="toc_9">Links</h3>
+<h3 id="links-1:9ea1f4cb979d746b2853a2845c0d4dcb">Links</h3>
 
 <p>Links can be a property of the collection or of individual items in the
 collection. Links may may also include a <code>name</code> and a <code>prompt</code> which can be
@@ -652,7 +652,7 @@ useful when creating HTML forms to reference the collection or item.</p>
 }
 </code></pre>
 
-<h3 id="toc_10">Templates</h3>
+<h3 id="templates:9ea1f4cb979d746b2853a2845c0d4dcb">Templates</h3>
 
 <p>As the name would imply, Collection+JSON is uniquely suited to handling
 collections. Templates are one aspect of this. A template is an object that
@@ -716,7 +716,7 @@ item.</p>
 template to the <code>href</code> link defined by the collection
 (<code>https://api.example.com/player/1234567890/friends</code>).</p>
 
-<h3 id="toc_11">Queries</h3>
+<h3 id="queries:9ea1f4cb979d746b2853a2845c0d4dcb">Queries</h3>
 
 <p>The final piece of Collecion+JSON is the <code>queries</code> property. Queries, as the
 name implies, define the queries that are supported by this collection. Here the
@@ -786,14 +786,14 @@ APIs using the Collection+JSON media type. Collection+JSON was designed by <a hr
 Amundsen</a>. You can find detailed examples, the full spec
 and sample code <a href="https://amundsen.com/media-types/collection/">on his website</a>.</p>
 
-<h2 id="toc_12">SIREN</h2>
+<h2 id="siren:9ea1f4cb979d746b2853a2845c0d4dcb">SIREN</h2>
 
 <p>The last media type we&rsquo;ll look at is
 <a href="https://github.com/kevinswiber/siren">SIREN</a>. SIREN aims to represent generic
 entities along with actions for modifying those entities and links for client
 navigation.</p>
 
-<h3 id="toc_13">Entities</h3>
+<h3 id="entities:9ea1f4cb979d746b2853a2845c0d4dcb">Entities</h3>
 
 <p>Each SIREN entity may have an optional class that describes the nature of the
 entity. This class defines the type of resource being returned by the API.
@@ -809,7 +809,7 @@ data being returned.</p>
 }
 </code></pre>
 
-<h3 id="toc_14">Properties</h3>
+<h3 id="properties:9ea1f4cb979d746b2853a2845c0d4dcb">Properties</h3>
 
 <p>The state of the entity is reflected as key-value pairs in a <code>properties</code> object.</p>
 
@@ -824,7 +824,7 @@ data being returned.</p>
 }
 </code></pre>
 
-<h3 id="toc_15">Links</h3>
+<h3 id="links-2:9ea1f4cb979d746b2853a2845c0d4dcb">Links</h3>
 
 <p>Links are used in the same sense we&rsquo;ve already seen in other media types &ndash;
 navigating to related resources. With SIREN links have a relation and a URL.</p>
@@ -847,7 +847,7 @@ navigating to related resources. With SIREN links have a relation and a URL.</p>
 }
 </code></pre>
 
-<h3 id="toc_16">Actions</h3>
+<h3 id="actions:9ea1f4cb979d746b2853a2845c0d4dcb">Actions</h3>
 
 <p>One of the biggest pieces missing from common Hypermedia types is the ability to
 dictate what requests can be made to alter the application state. SIREN
@@ -910,21 +910,21 @@ friend to the list, or search for a friend.</p>
 }
 </code></pre>
 
-<h3 id="toc_17">Entities</h3>
+<h3 id="entities-1:9ea1f4cb979d746b2853a2845c0d4dcb">Entities</h3>
 
 <p>The previous example also introduces <code>entities</code> to the response.  Any related
 entities that you wish to embed in the current representation are entered as a
 list of <code>entities</code>. Entities are nested. Each entity in this list can have a
 class, properties and additional entities.</p>
 
-<h2 id="toc_18">Conclusions</h2>
+<h2 id="conclusions:9ea1f4cb979d746b2853a2845c0d4dcb">Conclusions</h2>
 
 <p>I&rsquo;ve create a <a href="https://gist.github.com/soofaloofa/9350847">Gist</a> comparing each
 of the media types discussed in this post.</p>
 
 <p>After going through this exercise I&rsquo;ve come to a few conclusions.</p>
 
-<h3 id="toc_19">JSON-LD</h3>
+<h3 id="json-ld-1:9ea1f4cb979d746b2853a2845c0d4dcb">JSON-LD</h3>
 
 <p>JSON-LD is great for augmenting existing APIs without introducing
 breaking changes. This augmentation mostly serves as a way to self document your
@@ -933,7 +933,7 @@ HYDRA adds a vocabulary for communicating using the JSON-LD specification. This
 is an interesting choice as it decouples the API serialization format from the
 communication format.</p>
 
-<h3 id="toc_20">HAL</h3>
+<h3 id="hal-1:9ea1f4cb979d746b2853a2845c0d4dcb">HAL</h3>
 
 <p>The light weight syntax and semantics of HAL is appealing in a lot of contexts.
 HAL is a minimal representation that offers most of the benefits of using a
@@ -941,7 +941,7 @@ hypermedia type without adding too much complexity to the implementation. One
 area where HAL falters is, like JSON-LD, the lack of support for specifying
 actions.</p>
 
-<h3 id="toc_21">Collection+JSON</h3>
+<h3 id="collection-json-1:9ea1f4cb979d746b2853a2845c0d4dcb">Collection+JSON</h3>
 
 <p>Don&rsquo;t be fooled by the name. Collection+JSON can be used to represent single
 items as well and it does this quite well. Of course it shines when representing
@@ -949,14 +949,14 @@ data collections. Particularly appealing is the ability to list queries that
 your collection supports and templates that clients can use to alter your
 collection. For publishing user editable data Collection+JSON shines.</p>
 
-<h3 id="toc_22">SIREN</h3>
+<h3 id="siren-1:9ea1f4cb979d746b2853a2845c0d4dcb">SIREN</h3>
 
 <p>SIREN attempts to represent generic classes of items and overcome the main
 drawback of HAL &ndash; support for actions. It does this admirably well and also
 introduces the concept of classes to your model bringing a sense of type
 information to your API responses.</p>
 
-<h3 id="toc_23">And the winner is?</h3>
+<h3 id="and-the-winner-is:9ea1f4cb979d746b2853a2845c0d4dcb">And the winner is?</h3>
 
 <p>Unfortunately, there is no clear winner. It depends on the contraints in place
 on your API. However, I will offer some suggestions.</p>

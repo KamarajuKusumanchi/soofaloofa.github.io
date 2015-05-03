@@ -80,7 +80,7 @@
           <div class=".post-content">
             
 
-<h2 id="toc_0">MapReduce API Series</h2>
+<h2 id="mapreduce-api-series:3612a0fb215e4407132f27822867cc76">MapReduce API Series</h2>
 
 <ul>
 <li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
@@ -94,7 +94,7 @@
 
 <p><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">In the last article</a> we examined how to run one-off tasks that operate on a large dataset using a <code>mapreduce.yaml</code> configuration file. This article will take us a step further and look at how to run a MapReduce job programmatically using the App Engine Pipeline API.</p>
 
-<h2 id="toc_1">Running a Mapper Job Using the App Engine Pipeline API</h2>
+<h2 id="running-a-mapper-job-using-the-app-engine-pipeline-api:3612a0fb215e4407132f27822867cc76">Running a Mapper Job Using the App Engine Pipeline API</h2>
 
 <p>MapReduce jobs are based on the <a href="https://code.google.com/p/appengine-pipeline/">App Engine Pipeline API</a> for connecting together time-consuming or complex workflows. We can define a pipeline for our MapReduce job to connect each stage of the MapReduce flow to one another. Let&rsquo;s start by defining a pipeline for our simple <code>Touch</code> job that will update the timestamp of every entity Kind we specify.</p>
 
@@ -140,7 +140,7 @@ pipeline.start()
 
 <p>Executing this code will start the MapReduce job. You can view the progress at the URL <code>/mapreduce</code>, analagous to when starting the MapReduce job through the UI using <code>mapreduce.yaml</code>.</p>
 
-<h2 id="toc_2">Adding a Reduce Step to Our MapReduce Job</h2>
+<h2 id="adding-a-reduce-step-to-our-mapreduce-job:3612a0fb215e4407132f27822867cc76">Adding a Reduce Step to Our MapReduce Job</h2>
 
 <p>The previous example uses a <code>MapperPipeline</code> to define a job that executes a map function on every entity of a certain Kind. What about reduce? For this we turn to the <code>MapreducePipeline</code> object. This object accepts parameters for a <code>mapper_spec</code> and a <code>reducer_spec</code>. We can use this pipeline to perform a full MapReduce job. To make this discussion concrete and generate some useable code let&rsquo;s use a feature built in to the MapReduce library especially for testing, the <code>RandomStringInputReader</code>.</p>
 
@@ -235,7 +235,7 @@ sums them.</p>
 <img src="http://sookocheff.com/img/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/skeleton-job.png" alt="Skeleton MapReduce job.">
 </a></p>
 
-<h2 id="toc_3">Where Is My Data?</h2>
+<h2 id="where-is-my-data:3612a0fb215e4407132f27822867cc76">Where Is My Data?</h2>
 
 <p>How does the output of the <code>map</code> function arrive at the <code>reduce</code> function? If you look at the application logs you will see periodic writes to the blobstore.</p>
 
@@ -245,7 +245,7 @@ Finalized name is /blobstore/7BpFYTPsvNp95XA2uS1MlBm1DsVegjTEO9EP6TAbXZAtsxV5C7H
 
 <p>These writes provide the blobstore location of the intermediate results from our calculation. A <em>master</em> MapReduce task coordinates with the individual <code>map</code>, <code>shuffle</code> and <code>reduce</code> shards to share these results via blobstore keys.</p>
 
-<h2 id="toc_4">Writing our Results with OutputWriters</h2>
+<h2 id="writing-our-results-with-outputwriters:3612a0fb215e4407132f27822867cc76">Writing our Results with OutputWriters</h2>
 
 <p>The last thing we need to finish our MapReduce job is outputting the result. To do so we add an <code>output_writer_spec</code> to our MapReduce initialization.</p>
 
@@ -306,7 +306,7 @@ class StoreOutput(pipeline.Pipeline):
 
 <p>This is a simplified version of the StoreOutput pipeline provided by the <a href="https://code.google.com/p/appengine-mapreduce/source/browse/trunk/python/demo/main.py#333">MapReduce Made Easy demo application</a>.</p>
 
-<h2 id="toc_5">Conclusions</h2>
+<h2 id="conclusions:3612a0fb215e4407132f27822867cc76">Conclusions</h2>
 
 <p>In this article we&rsquo;ve shown how to perform a full MapReduce job using the Google App Engine MapReduce API for Python. MapReduce is a powerful abstraction to use when processing large datasets. This article should provide a good starting point for defining and running your own MapReduce jobs. For reference here is the full source code used in this post.</p>
 

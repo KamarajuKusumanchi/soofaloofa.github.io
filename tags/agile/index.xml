@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/tags/agile/index.xml/</link>
+    <link>http://sookocheff.com/tags/agile/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Thu, 23 Apr 2015 08:32:37 CST</lastBuildDate>
@@ -25,7 +25,7 @@
 
 &lt;p&gt;You can, with continuous delivery.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_0&#34;&gt;Terminology&lt;/h2&gt;
+&lt;h2 id=&#34;terminology:682641b8f6aff1fdce173832bfccddae&#34;&gt;Terminology&lt;/h2&gt;
 
 &lt;p&gt;First, some terminology. What distinguishes continuous integration, continuous
 deployment and continuous delivery? Continuous integration revolves around the
@@ -35,7 +35,7 @@ change to the code. Continuous delivery implies that you can deploy any change
 to production but for any number of reasons you may choose not to. The focus of
 this article is on continuous delivery.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_1&#34;&gt;What is continuous delivery?&lt;/h2&gt;
+&lt;h2 id=&#34;what-is-continuous-delivery:682641b8f6aff1fdce173832bfccddae&#34;&gt;What is continuous delivery?&lt;/h2&gt;
 
 &lt;p&gt;Continuous delivery is a set of development practices that allow you to release
 software to production at any time (&lt;a href=&#34;http://martinfowler.com/bliki/ContinuousDelivery.html&#34; title=&#34;Continuous Delivery&#34;&gt;Fowler, 2014&lt;/a&gt;). By following
@@ -66,9 +66,10 @@ released to customers at &lt;em&gt;any&lt;/em&gt; point in time.&lt;/p&gt;
 
 &lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://commons.wikimedia.org/wiki/File:Continuous_Delivery_process_diagram.png#/media/File:Continuous_Delivery_process_diagram.png&#34;&gt;
   &lt;img src=&#34;http://upload.wikimedia.org/wikipedia/commons/7/74/Continuous_Delivery_process_diagram.png&#34; alt=&#34;Continuous Delivery process diagram - Jez Humble&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_2&#34;&gt;Why Continuous Delivery?&lt;/h2&gt;
+&lt;h2 id=&#34;why-continuous-delivery:682641b8f6aff1fdce173832bfccddae&#34;&gt;Why Continuous Delivery?&lt;/h2&gt;
 
 &lt;p&gt;Google, Facebook, LinkedIn, Netflix, Etsy, Ebay, Github and Hewlett-Packard,
 among many others, have adopted continuous delivery in their products. On
@@ -79,27 +80,27 @@ a day (&lt;a href=&#34;http://www.infoq.com/presentations/Facebook-Release-Proce
 (&lt;a href=&#34;http://www.infoq.com/news/2014/03/etsy-deploy-50-times-a-day&#34; title=&#34;How Etsy Deploys More Than 50 Times a Day&#34;&gt;Miranda, 2014&lt;/a&gt;). Why would companies do this? What is the
 benefit?&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_3&#34;&gt;Reduced Risk&lt;/h3&gt;
+&lt;h3 id=&#34;reduced-risk:682641b8f6aff1fdce173832bfccddae&#34;&gt;Reduced Risk&lt;/h3&gt;
 
 &lt;p&gt;The first benefit is reduced risk. Each deployment is a smaller change that can
 easily be understood in isolation. If an error occurs it is trivially easy to
 roll-back a single change or push a new release on top of the change.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_4&#34;&gt;Believable Progress&lt;/h3&gt;
+&lt;h3 id=&#34;believable-progress:682641b8f6aff1fdce173832bfccddae&#34;&gt;Believable Progress&lt;/h3&gt;
 
 &lt;p&gt;Developers are generally quite bad at estimating software delivery projects
 ([Milstein, 2013][Milstein2103]). If the definition of &amp;ldquo;done&amp;rdquo; means &amp;ldquo;developers
 declare it to be done&amp;rdquo; that is much less believable than if it&amp;rsquo;s safely deployed
 into a production environment.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_5&#34;&gt;Faster Iteration Towards Product Fit&lt;/h3&gt;
+&lt;h3 id=&#34;faster-iteration-towards-product-fit:682641b8f6aff1fdce173832bfccddae&#34;&gt;Faster Iteration Towards Product Fit&lt;/h3&gt;
 
 &lt;p&gt;Generally speaking, the biggest risk in software development is building
 something that the user doesn&amp;rsquo;t want. Continuous delivery is a great enabler of
 A/B testing and allows you to frequently get working software in front of real
 users to assess user behaviour and performance impact of software changes.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_6&#34;&gt;Expose Inefficiencies&lt;/h3&gt;
+&lt;h3 id=&#34;expose-inefficiencies:682641b8f6aff1fdce173832bfccddae&#34;&gt;Expose Inefficiencies&lt;/h3&gt;
 
 &lt;p&gt;Continuous delivery enforces discipline on the software development team to
 always keep the product in deployable condition. This discipline naturally
@@ -107,7 +108,7 @@ exposes inefficiencies in the development process &amp;ndash; anything that gets
 way of the goal of releasing working software quickly is an impediment to
 development that will quickly be brought to light with continuous delivery.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_7&#34;&gt;Encourage Responsibility&lt;/h3&gt;
+&lt;h3 id=&#34;encourage-responsibility:682641b8f6aff1fdce173832bfccddae&#34;&gt;Encourage Responsibility&lt;/h3&gt;
 
 &lt;p&gt;With continuous delivery, the developer making a change and the developer
 deploying the code is the same person. This avoids any problems with handing
@@ -115,7 +116,7 @@ your deployment &amp;lsquo;over the wall&amp;rsquo; and allowing another person 
 deploy and verify the code. It keeps the onus on working software with the
 people most knowledge about how the software works.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_8&#34;&gt;Does Continuous Delivery Actually Work?&lt;/h2&gt;
+&lt;h2 id=&#34;does-continuous-delivery-actually-work:682641b8f6aff1fdce173832bfccddae&#34;&gt;Does Continuous Delivery Actually Work?&lt;/h2&gt;
 
 &lt;p&gt;Rather than reflect on a few abstract benefits, let&amp;rsquo;s look at some of the
 available data on continuous delivery.&lt;/p&gt;
@@ -135,20 +136,20 @@ of features under active development increased by 140% and development costs
 per feature reduced by 78%. This amounted to a total development cost
 reduction of 40%.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_9&#34;&gt;How to do Continuous Delivery?&lt;/h2&gt;
+&lt;h2 id=&#34;how-to-do-continuous-delivery:682641b8f6aff1fdce173832bfccddae&#34;&gt;How to do Continuous Delivery?&lt;/h2&gt;
 
 &lt;p&gt;At this point, you may be sold on the benefits of continuous delivery and are
 asking how to get started. Continuous delivery requires a few components to be
 effective.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_10&#34;&gt;1. Continuous Integration&lt;/h4&gt;
+&lt;h4 id=&#34;1-continuous-integration:682641b8f6aff1fdce173832bfccddae&#34;&gt;1. Continuous Integration&lt;/h4&gt;
 
 &lt;p&gt;A build server performing continuous intergration of every commit is a
 necessity. Once a code change is committed, the build server triggers the
 testing and deployment pipeline ultimately leading to successfully deploying a
 production release.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_11&#34;&gt;2. Automated Testing&lt;/h4&gt;
+&lt;h4 id=&#34;2-automated-testing:682641b8f6aff1fdce173832bfccddae&#34;&gt;2. Automated Testing&lt;/h4&gt;
 
 &lt;p&gt;Automated unit testing, and, where applicable, automated performance testing,
 makes it easy to spot issues in code about to be deployed. If any of
@@ -156,24 +157,24 @@ these tests fail the current release is rejected. This is not a silver
 bullet. Manual QA is still needed to verify a build and test before
 releasing.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_12&#34;&gt;3. Feature Flags&lt;/h4&gt;
+&lt;h4 id=&#34;3-feature-flags:682641b8f6aff1fdce173832bfccddae&#34;&gt;3. Feature Flags&lt;/h4&gt;
 
 &lt;p&gt;Some features are too big to commit as one chunk. In these cases a &lt;a href=&#34;http://martinfowler.com/bliki/FeatureToggle.html&#34;&gt;feature
 flag&lt;/a&gt; is used to hide
 functionality that is not ready for general release, while still allowing code
 to be released to production.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_13&#34;&gt;4. Monitoring&lt;/h4&gt;
+&lt;h4 id=&#34;4-monitoring:682641b8f6aff1fdce173832bfccddae&#34;&gt;4. Monitoring&lt;/h4&gt;
 
 &lt;p&gt;Monitoring systems allow the development and test teams to easily see the effect
 a given change has on user behaviour, system performance or system stability.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_14&#34;&gt;5. &amp;ldquo;One-Click&amp;rdquo; Deployment and Roll-Back.&lt;/h4&gt;
+&lt;h4 id=&#34;5-one-click-deployment-and-roll-back:682641b8f6aff1fdce173832bfccddae&#34;&gt;5. &amp;ldquo;One-Click&amp;rdquo; Deployment and Roll-Back.&lt;/h4&gt;
 
 &lt;p&gt;Deployments and roll-backs must be easy enough for anyone to do at a moments
 notice.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_15&#34;&gt;Continuous Delivery in Practice&lt;/h2&gt;
+&lt;h2 id=&#34;continuous-delivery-in-practice:682641b8f6aff1fdce173832bfccddae&#34;&gt;Continuous Delivery in Practice&lt;/h2&gt;
 
 &lt;p&gt;Let&amp;rsquo;s run through three examples of how continuous delivery would look like in
 practice, contrasting continuous delivery with a more traditional release
@@ -186,11 +187,12 @@ take place to push the development code up to the test branch (and staging
 environment) and the test code up to the master branch (and production
 environment).&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png&#34; alt=&#34;Traditional Release Structure&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png&#34; alt=&#34;Traditional Release Structure&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_16&#34;&gt;Scenario 1: Bug Fix&lt;/h3&gt;
+&lt;h3 id=&#34;scenario-1-bug-fix:682641b8f6aff1fdce173832bfccddae&#34;&gt;Scenario 1: Bug Fix&lt;/h3&gt;
 
 &lt;p&gt;Imagine a scenario where a customer reports a bug in the system. The bug is
 simple enough for a single developer to work on and the fix is small enough to
@@ -202,35 +204,39 @@ branch, and begins work on the bug. Once he is confident that the bug has been
 fixed he goes over the changes with QA and merges the bug into the develop
 branch where it waits for the weekly deployment to test.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png&#34; alt=&#34;Merging to Develop&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png&#34; alt=&#34;Merging to Develop&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Brad is now free to pick up another issue and commit the code for that issue to
 develop, where it waits once again for the weekly deployment to test. Test now
 has two issues that have been committed to development that will be released to
 the test environment in one week.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png&#34; alt=&#34;Second Merge to Develop&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png&#34; alt=&#34;Second Merge to Develop&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Meanwhile, other developers are working on issues and committing the code to
 develop. By the time the weekly deployment to the testing environment comes
 around we end up with 13 disparate issues being pushed to the test environment.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png&#34; alt=&#34;Group of Merges to Develop&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png&#34; alt=&#34;Group of Merges to Develop&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Now, the QA team can perform regression testing of all of these 13 issues for
 the week that this release is held in the test environment for staging. After
 one week has passed, the test branch is merged with the master branch and a
 deployment to production is done.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png&#34; alt=&#34;Group of Merges to Develop&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png&#34; alt=&#34;Group of Merges to Develop&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;It&amp;rsquo;s also important to note that &lt;em&gt;we still do not know that the bug fix will
 address the customer&amp;rsquo;s issues on production&lt;/em&gt;. We can&amp;rsquo;t know for sure that the
@@ -245,22 +251,22 @@ and to test this bug fix on the production environment. For
 arguments sake, let&amp;rsquo;s say this testing time took 1 hour on each
 environment.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_17&#34;&gt;Total Customer Time Waiting For This Bug Fix:&lt;/h4&gt;
+&lt;h4 id=&#34;total-customer-time-waiting-for-this-bug-fix:682641b8f6aff1fdce173832bfccddae&#34;&gt;Total Customer Time Waiting For This Bug Fix:&lt;/h4&gt;
 
 &lt;p&gt;2 weeks&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_18&#34;&gt;Total Testing Time:&lt;/h4&gt;
+&lt;h4 id=&#34;total-testing-time:682641b8f6aff1fdce173832bfccddae&#34;&gt;Total Testing Time:&lt;/h4&gt;
 
 &lt;p&gt;3 hours&lt;/p&gt;
 
 &lt;p&gt;Now imagine we have 13 issues that have been delivered with this release, we can
 compound the total waiting time and total testing time.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_19&#34;&gt;Total Customer Time Waiting For This Release:&lt;/h4&gt;
+&lt;h4 id=&#34;total-customer-time-waiting-for-this-release:682641b8f6aff1fdce173832bfccddae&#34;&gt;Total Customer Time Waiting For This Release:&lt;/h4&gt;
 
 &lt;p&gt;26 weeks&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_20&#34;&gt;Total Testing Time For This Release:&lt;/h4&gt;
+&lt;h4 id=&#34;total-testing-time-for-this-release:682641b8f6aff1fdce173832bfccddae&#34;&gt;Total Testing Time For This Release:&lt;/h4&gt;
 
 &lt;p&gt;39 hours&lt;/p&gt;
 
@@ -271,25 +277,25 @@ she merges the bug in to the master branch and deploys the fix to
 production. Let&amp;rsquo;s assume that she took two hours to fix the bug and that
 the bug required one hour of testing.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_21&#34;&gt;Total Customer Time Waiting For This Release:&lt;/h4&gt;
+&lt;h4 id=&#34;total-customer-time-waiting-for-this-release-1:682641b8f6aff1fdce173832bfccddae&#34;&gt;Total Customer Time Waiting For This Release:&lt;/h4&gt;
 
 &lt;p&gt;2 hours&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_22&#34;&gt;Total Testing Time For This Release:&lt;/h4&gt;
+&lt;h4 id=&#34;total-testing-time-for-this-release-1:682641b8f6aff1fdce173832bfccddae&#34;&gt;Total Testing Time For This Release:&lt;/h4&gt;
 
 &lt;p&gt;1 hour&lt;/p&gt;
 
 &lt;p&gt;We can compound this by assuming we have 13 issues that are being worked on for the week.&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_23&#34;&gt;Total Customer Time Waiting For This Week:&lt;/h4&gt;
+&lt;h4 id=&#34;total-customer-time-waiting-for-this-week:682641b8f6aff1fdce173832bfccddae&#34;&gt;Total Customer Time Waiting For This Week:&lt;/h4&gt;
 
 &lt;p&gt;26 hours&lt;/p&gt;
 
-&lt;h4 id=&#34;toc_24&#34;&gt;Total Testing Time For This Week:&lt;/h4&gt;
+&lt;h4 id=&#34;total-testing-time-for-this-week:682641b8f6aff1fdce173832bfccddae&#34;&gt;Total Testing Time For This Week:&lt;/h4&gt;
 
 &lt;p&gt;13 hours&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_25&#34;&gt;Scenario 2: Regressions and Rollback&lt;/h3&gt;
+&lt;h3 id=&#34;scenario-2-regressions-and-rollback:682641b8f6aff1fdce173832bfccddae&#34;&gt;Scenario 2: Regressions and Rollback&lt;/h3&gt;
 
 &lt;p&gt;Now imagine that the bug fix in the scenario above actually causes a regression
 on production that needs to be fixed immediately or rolled back.&lt;/p&gt;
@@ -308,9 +314,10 @@ fully understanding the intricacies and risks involved with the chage.
 Ultimately, the team decides they can&amp;rsquo;t go forward and all 13 change sets are
 rolled back until they can properly fix the problem.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/weekly-regression.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/weekly-regression.png&#34; alt=&#34;Regression in Weekly Release&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/weekly-regression.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/weekly-regression.png&#34; alt=&#34;Regression in Weekly Release&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Contrast this with a continuous delivery approach. Alice works with QA to verify
 her change. Alice and QA deploy the change to production and immediately verify
@@ -323,14 +330,15 @@ integrity of her changes and for verifying that her work was done correctly. She
 is able to work in concert with QA to test the issue and does not simply push
 her issue &amp;lsquo;over the wall&amp;rsquo; for someone else to test and deploy.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/continuous-regression.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/continuous-regression.png&#34; alt=&#34;Regression With Continuous Delivery&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/continuous-regression.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/continuous-regression.png&#34; alt=&#34;Regression With Continuous Delivery&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;With continuous delivery, each deployment is a smaller change that can be easily
 understood, fixed or, when necessary, rolled-back.&lt;/p&gt;
 
-&lt;h3 id=&#34;toc_26&#34;&gt;Scenario 3: New Features&lt;/h3&gt;
+&lt;h3 id=&#34;scenario-3-new-features:682641b8f6aff1fdce173832bfccddae&#34;&gt;Scenario 3: New Features&lt;/h3&gt;
 
 &lt;p&gt;We&amp;rsquo;ve seen how continuous delivery can aid in deploying bug fixes, but what
 about delivery new features? Remember that with continuous delivery any commit
@@ -361,16 +369,18 @@ in, we route the request to both the old and new code and can measure &amp;ndash
 production &amp;ndash; the performance of the new code. We can easily see if our proposed
 refactoring has measurable performance improvements in a real-world setting.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/parallel-code.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/parallel-code.png&#34; alt=&#34;Parallel Code&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/parallel-code.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/parallel-code.png&#34; alt=&#34;Parallel Code&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;For example, by extracting performance measurements over each iteration of the
 code we visually compare the effect of a code change.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/performance-comparison.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/performance-comparison.png&#34; alt=&#34;Performance Comparison&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/performance-comparison.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/performance-comparison.png&#34; alt=&#34;Performance Comparison&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;We can also use the same pattern to ensure we have confidence in the results of
 our new code. For example, on each request, we can run both the old and the new
@@ -380,14 +390,15 @@ acceptable error range the new code is ready to go live. We also have the
 ability to use production data to inform our unit tests and guard against future
 regressions.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;/img/2015-04-23-continuous-delivery-distilled/accuracy-comparison.png&#34;&gt;
-  &lt;img src=&#34;/img/2015-04-23-continuous-delivery-distilled/accuracy-comparison.png&#34; alt=&#34;Accuracy Comparison&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/accuracy-comparison.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/accuracy-comparison.png&#34; alt=&#34;Accuracy Comparison&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Caution must be exercised whenever using feature flags. Every feature flag that
 is in use within the product is technical debt that should be short lived.&lt;/p&gt;
 
-&lt;h2 id=&#34;toc_27&#34;&gt;Towards Continuous Delivery&lt;/h2&gt;
+&lt;h2 id=&#34;towards-continuous-delivery:682641b8f6aff1fdce173832bfccddae&#34;&gt;Towards Continuous Delivery&lt;/h2&gt;
 
 &lt;p&gt;Continuous delivery is not a panacea &amp;ndash; it requires diligence and responsibility
 on behalf of the development team. However, if the team is able to cross these

@@ -90,7 +90,7 @@
 
 <p>You can, with continuous delivery.</p>
 
-<h2 id="toc_0">Terminology</h2>
+<h2 id="terminology:682641b8f6aff1fdce173832bfccddae">Terminology</h2>
 
 <p>First, some terminology. What distinguishes continuous integration, continuous
 deployment and continuous delivery? Continuous integration revolves around the
@@ -100,7 +100,7 @@ change to the code. Continuous delivery implies that you can deploy any change
 to production but for any number of reasons you may choose not to. The focus of
 this article is on continuous delivery.</p>
 
-<h2 id="toc_1">What is continuous delivery?</h2>
+<h2 id="what-is-continuous-delivery:682641b8f6aff1fdce173832bfccddae">What is continuous delivery?</h2>
 
 <p>Continuous delivery is a set of development practices that allow you to release
 software to production at any time (<a href="http://martinfowler.com/bliki/ContinuousDelivery.html" title="Continuous Delivery">Fowler, 2014</a>). By following
@@ -131,9 +131,10 @@ released to customers at <em>any</em> point in time.</p>
 
 <p><a class="thumbnail" href="http://commons.wikimedia.org/wiki/File:Continuous_Delivery_process_diagram.png#/media/File:Continuous_Delivery_process_diagram.png">
   <img src="http://upload.wikimedia.org/wikipedia/commons/7/74/Continuous_Delivery_process_diagram.png" alt="Continuous Delivery process diagram - Jez Humble">
-</a></p>
+</a>
+</p>
 
-<h2 id="toc_2">Why Continuous Delivery?</h2>
+<h2 id="why-continuous-delivery:682641b8f6aff1fdce173832bfccddae">Why Continuous Delivery?</h2>
 
 <p>Google, Facebook, LinkedIn, Netflix, Etsy, Ebay, Github and Hewlett-Packard,
 among many others, have adopted continuous delivery in their products. On
@@ -144,27 +145,27 @@ a day (<a href="http://www.infoq.com/presentations/Facebook-Release-Process" tit
 (<a href="http://www.infoq.com/news/2014/03/etsy-deploy-50-times-a-day" title="How Etsy Deploys More Than 50 Times a Day">Miranda, 2014</a>). Why would companies do this? What is the
 benefit?</p>
 
-<h3 id="toc_3">Reduced Risk</h3>
+<h3 id="reduced-risk:682641b8f6aff1fdce173832bfccddae">Reduced Risk</h3>
 
 <p>The first benefit is reduced risk. Each deployment is a smaller change that can
 easily be understood in isolation. If an error occurs it is trivially easy to
 roll-back a single change or push a new release on top of the change.</p>
 
-<h3 id="toc_4">Believable Progress</h3>
+<h3 id="believable-progress:682641b8f6aff1fdce173832bfccddae">Believable Progress</h3>
 
 <p>Developers are generally quite bad at estimating software delivery projects
 ([Milstein, 2013][Milstein2103]). If the definition of &ldquo;done&rdquo; means &ldquo;developers
 declare it to be done&rdquo; that is much less believable than if it&rsquo;s safely deployed
 into a production environment.</p>
 
-<h3 id="toc_5">Faster Iteration Towards Product Fit</h3>
+<h3 id="faster-iteration-towards-product-fit:682641b8f6aff1fdce173832bfccddae">Faster Iteration Towards Product Fit</h3>
 
 <p>Generally speaking, the biggest risk in software development is building
 something that the user doesn&rsquo;t want. Continuous delivery is a great enabler of
 A/B testing and allows you to frequently get working software in front of real
 users to assess user behaviour and performance impact of software changes.</p>
 
-<h3 id="toc_6">Expose Inefficiencies</h3>
+<h3 id="expose-inefficiencies:682641b8f6aff1fdce173832bfccddae">Expose Inefficiencies</h3>
 
 <p>Continuous delivery enforces discipline on the software development team to
 always keep the product in deployable condition. This discipline naturally
@@ -172,7 +173,7 @@ exposes inefficiencies in the development process &ndash; anything that gets in 
 way of the goal of releasing working software quickly is an impediment to
 development that will quickly be brought to light with continuous delivery.</p>
 
-<h3 id="toc_7">Encourage Responsibility</h3>
+<h3 id="encourage-responsibility:682641b8f6aff1fdce173832bfccddae">Encourage Responsibility</h3>
 
 <p>With continuous delivery, the developer making a change and the developer
 deploying the code is the same person. This avoids any problems with handing
@@ -180,7 +181,7 @@ your deployment &lsquo;over the wall&rsquo; and allowing another person or team 
 deploy and verify the code. It keeps the onus on working software with the
 people most knowledge about how the software works.</p>
 
-<h2 id="toc_8">Does Continuous Delivery Actually Work?</h2>
+<h2 id="does-continuous-delivery-actually-work:682641b8f6aff1fdce173832bfccddae">Does Continuous Delivery Actually Work?</h2>
 
 <p>Rather than reflect on a few abstract benefits, let&rsquo;s look at some of the
 available data on continuous delivery.</p>
@@ -200,20 +201,20 @@ of features under active development increased by 140% and development costs
 per feature reduced by 78%. This amounted to a total development cost
 reduction of 40%.</p>
 
-<h2 id="toc_9">How to do Continuous Delivery?</h2>
+<h2 id="how-to-do-continuous-delivery:682641b8f6aff1fdce173832bfccddae">How to do Continuous Delivery?</h2>
 
 <p>At this point, you may be sold on the benefits of continuous delivery and are
 asking how to get started. Continuous delivery requires a few components to be
 effective.</p>
 
-<h4 id="toc_10">1. Continuous Integration</h4>
+<h4 id="1-continuous-integration:682641b8f6aff1fdce173832bfccddae">1. Continuous Integration</h4>
 
 <p>A build server performing continuous intergration of every commit is a
 necessity. Once a code change is committed, the build server triggers the
 testing and deployment pipeline ultimately leading to successfully deploying a
 production release.</p>
 
-<h4 id="toc_11">2. Automated Testing</h4>
+<h4 id="2-automated-testing:682641b8f6aff1fdce173832bfccddae">2. Automated Testing</h4>
 
 <p>Automated unit testing, and, where applicable, automated performance testing,
 makes it easy to spot issues in code about to be deployed. If any of
@@ -221,24 +222,24 @@ these tests fail the current release is rejected. This is not a silver
 bullet. Manual QA is still needed to verify a build and test before
 releasing.</p>
 
-<h4 id="toc_12">3. Feature Flags</h4>
+<h4 id="3-feature-flags:682641b8f6aff1fdce173832bfccddae">3. Feature Flags</h4>
 
 <p>Some features are too big to commit as one chunk. In these cases a <a href="http://martinfowler.com/bliki/FeatureToggle.html">feature
 flag</a> is used to hide
 functionality that is not ready for general release, while still allowing code
 to be released to production.</p>
 
-<h4 id="toc_13">4. Monitoring</h4>
+<h4 id="4-monitoring:682641b8f6aff1fdce173832bfccddae">4. Monitoring</h4>
 
 <p>Monitoring systems allow the development and test teams to easily see the effect
 a given change has on user behaviour, system performance or system stability.</p>
 
-<h4 id="toc_14">5. &ldquo;One-Click&rdquo; Deployment and Roll-Back.</h4>
+<h4 id="5-one-click-deployment-and-roll-back:682641b8f6aff1fdce173832bfccddae">5. &ldquo;One-Click&rdquo; Deployment and Roll-Back.</h4>
 
 <p>Deployments and roll-backs must be easy enough for anyone to do at a moments
 notice.</p>
 
-<h2 id="toc_15">Continuous Delivery in Practice</h2>
+<h2 id="continuous-delivery-in-practice:682641b8f6aff1fdce173832bfccddae">Continuous Delivery in Practice</h2>
 
 <p>Let&rsquo;s run through three examples of how continuous delivery would look like in
 practice, contrasting continuous delivery with a more traditional release
@@ -253,9 +254,10 @@ environment).</p>
 
 <p><a class="thumbnail" href="/img/2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png">
   <img src="/img/2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png" alt="Traditional Release Structure">
-</a></p>
+</a>
+</p>
 
-<h3 id="toc_16">Scenario 1: Bug Fix</h3>
+<h3 id="scenario-1-bug-fix:682641b8f6aff1fdce173832bfccddae">Scenario 1: Bug Fix</h3>
 
 <p>Imagine a scenario where a customer reports a bug in the system. The bug is
 simple enough for a single developer to work on and the fix is small enough to
@@ -269,7 +271,8 @@ branch where it waits for the weekly deployment to test.</p>
 
 <p><a class="thumbnail" href="/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png">
   <img src="/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png" alt="Merging to Develop">
-</a></p>
+</a>
+</p>
 
 <p>Brad is now free to pick up another issue and commit the code for that issue to
 develop, where it waits once again for the weekly deployment to test. Test now
@@ -278,7 +281,8 @@ the test environment in one week.</p>
 
 <p><a class="thumbnail" href="/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png">
   <img src="/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png" alt="Second Merge to Develop">
-</a></p>
+</a>
+</p>
 
 <p>Meanwhile, other developers are working on issues and committing the code to
 develop. By the time the weekly deployment to the testing environment comes
@@ -286,7 +290,8 @@ around we end up with 13 disparate issues being pushed to the test environment.<
 
 <p><a class="thumbnail" href="/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png">
   <img src="/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png" alt="Group of Merges to Develop">
-</a></p>
+</a>
+</p>
 
 <p>Now, the QA team can perform regression testing of all of these 13 issues for
 the week that this release is held in the test environment for staging. After
@@ -295,7 +300,8 @@ deployment to production is done.</p>
 
 <p><a class="thumbnail" href="/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png">
   <img src="/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png" alt="Group of Merges to Develop">
-</a></p>
+</a>
+</p>
 
 <p>It&rsquo;s also important to note that <em>we still do not know that the bug fix will
 address the customer&rsquo;s issues on production</em>. We can&rsquo;t know for sure that the
@@ -310,22 +316,22 @@ and to test this bug fix on the production environment. For
 arguments sake, let&rsquo;s say this testing time took 1 hour on each
 environment.</p>
 
-<h4 id="toc_17">Total Customer Time Waiting For This Bug Fix:</h4>
+<h4 id="total-customer-time-waiting-for-this-bug-fix:682641b8f6aff1fdce173832bfccddae">Total Customer Time Waiting For This Bug Fix:</h4>
 
 <p>2 weeks</p>
 
-<h4 id="toc_18">Total Testing Time:</h4>
+<h4 id="total-testing-time:682641b8f6aff1fdce173832bfccddae">Total Testing Time:</h4>
 
 <p>3 hours</p>
 
 <p>Now imagine we have 13 issues that have been delivered with this release, we can
 compound the total waiting time and total testing time.</p>
 
-<h4 id="toc_19">Total Customer Time Waiting For This Release:</h4>
+<h4 id="total-customer-time-waiting-for-this-release:682641b8f6aff1fdce173832bfccddae">Total Customer Time Waiting For This Release:</h4>
 
 <p>26 weeks</p>
 
-<h4 id="toc_20">Total Testing Time For This Release:</h4>
+<h4 id="total-testing-time-for-this-release:682641b8f6aff1fdce173832bfccddae">Total Testing Time For This Release:</h4>
 
 <p>39 hours</p>
 
@@ -336,25 +342,25 @@ she merges the bug in to the master branch and deploys the fix to
 production. Let&rsquo;s assume that she took two hours to fix the bug and that
 the bug required one hour of testing.</p>
 
-<h4 id="toc_21">Total Customer Time Waiting For This Release:</h4>
+<h4 id="total-customer-time-waiting-for-this-release-1:682641b8f6aff1fdce173832bfccddae">Total Customer Time Waiting For This Release:</h4>
 
 <p>2 hours</p>
 
-<h4 id="toc_22">Total Testing Time For This Release:</h4>
+<h4 id="total-testing-time-for-this-release-1:682641b8f6aff1fdce173832bfccddae">Total Testing Time For This Release:</h4>
 
 <p>1 hour</p>
 
 <p>We can compound this by assuming we have 13 issues that are being worked on for the week.</p>
 
-<h4 id="toc_23">Total Customer Time Waiting For This Week:</h4>
+<h4 id="total-customer-time-waiting-for-this-week:682641b8f6aff1fdce173832bfccddae">Total Customer Time Waiting For This Week:</h4>
 
 <p>26 hours</p>
 
-<h4 id="toc_24">Total Testing Time For This Week:</h4>
+<h4 id="total-testing-time-for-this-week:682641b8f6aff1fdce173832bfccddae">Total Testing Time For This Week:</h4>
 
 <p>13 hours</p>
 
-<h3 id="toc_25">Scenario 2: Regressions and Rollback</h3>
+<h3 id="scenario-2-regressions-and-rollback:682641b8f6aff1fdce173832bfccddae">Scenario 2: Regressions and Rollback</h3>
 
 <p>Now imagine that the bug fix in the scenario above actually causes a regression
 on production that needs to be fixed immediately or rolled back.</p>
@@ -375,7 +381,8 @@ rolled back until they can properly fix the problem.</p>
 
 <p><a class="thumbnail" href="/img/2015-04-23-continuous-delivery-distilled/weekly-regression.png">
   <img src="/img/2015-04-23-continuous-delivery-distilled/weekly-regression.png" alt="Regression in Weekly Release">
-</a></p>
+</a>
+</p>
 
 <p>Contrast this with a continuous delivery approach. Alice works with QA to verify
 her change. Alice and QA deploy the change to production and immediately verify
@@ -390,12 +397,13 @@ her issue &lsquo;over the wall&rsquo; for someone else to test and deploy.</p>
 
 <p><a class="thumbnail" href="/img/2015-04-23-continuous-delivery-distilled/continuous-regression.png">
   <img src="/img/2015-04-23-continuous-delivery-distilled/continuous-regression.png" alt="Regression With Continuous Delivery">
-</a></p>
+</a>
+</p>
 
 <p>With continuous delivery, each deployment is a smaller change that can be easily
 understood, fixed or, when necessary, rolled-back.</p>
 
-<h3 id="toc_26">Scenario 3: New Features</h3>
+<h3 id="scenario-3-new-features:682641b8f6aff1fdce173832bfccddae">Scenario 3: New Features</h3>
 
 <p>We&rsquo;ve seen how continuous delivery can aid in deploying bug fixes, but what
 about delivery new features? Remember that with continuous delivery any commit
@@ -428,14 +436,16 @@ refactoring has measurable performance improvements in a real-world setting.</p>
 
 <p><a class="thumbnail" href="/img/2015-04-23-continuous-delivery-distilled/parallel-code.png">
   <img src="/img/2015-04-23-continuous-delivery-distilled/parallel-code.png" alt="Parallel Code">
-</a></p>
+</a>
+</p>
 
 <p>For example, by extracting performance measurements over each iteration of the
 code we visually compare the effect of a code change.</p>
 
 <p><a class="thumbnail" href="/img/2015-04-23-continuous-delivery-distilled/performance-comparison.png">
   <img src="/img/2015-04-23-continuous-delivery-distilled/performance-comparison.png" alt="Performance Comparison">
-</a></p>
+</a>
+</p>
 
 <p>We can also use the same pattern to ensure we have confidence in the results of
 our new code. For example, on each request, we can run both the old and the new
@@ -447,12 +457,13 @@ regressions.</p>
 
 <p><a class="thumbnail" href="/img/2015-04-23-continuous-delivery-distilled/accuracy-comparison.png">
   <img src="/img/2015-04-23-continuous-delivery-distilled/accuracy-comparison.png" alt="Accuracy Comparison">
-</a></p>
+</a>
+</p>
 
 <p>Caution must be exercised whenever using feature flags. Every feature flag that
 is in use within the product is technical debt that should be short lived.</p>
 
-<h2 id="toc_27">Towards Continuous Delivery</h2>
+<h2 id="towards-continuous-delivery:682641b8f6aff1fdce173832bfccddae">Towards Continuous Delivery</h2>
 
 <p>Continuous delivery is not a panacea &ndash; it requires diligence and responsibility
 on behalf of the development team. However, if the team is able to cross these

@@ -80,7 +80,7 @@
           <div class=".post-content">
             
 
-<h2 id="toc_0">MapReduce API Series</h2>
+<h2 id="mapreduce-api-series:0c5a7b6bb7a566ac635a554a6adae451">MapReduce API Series</h2>
 
 <ul>
 <li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
@@ -96,11 +96,11 @@
 large data sets and combined multiple pipelines in succession. In this article
 we will look at how to reduce the amount of data transfer by using a combiner.</p>
 
-<h2 id="toc_1">What is a combiner?</h2>
+<h2 id="what-is-a-combiner:0c5a7b6bb7a566ac635a554a6adae451">What is a combiner?</h2>
 
 <p>A combiner is a function that takes the output of a series of map calls as input and outputs a value of the same format to be processed by the reducer. The combiner is run just before the output of the mapper is written to disk. In fact, the combiner may not be run at all if the data can reside completely in memory and so your algorithm must be able to complete with our without the combiner. By reducing the amount of data that needs to be written to disk you can increase performance of the reduce stage.</p>
 
-<h2 id="toc_2">Example</h2>
+<h2 id="example:0c5a7b6bb7a566ac635a554a6adae451">Example</h2>
 
 <p>Let&rsquo;s look at an example that uses a combiner to reduce data throughput. To drive this discussion we will use an example that counts the number of occurrences of a character in a string. We originally looked at this example <a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">here</a>. In this version we will only include the character or characters that occur the most. The operation will work like this: the mapper function will count the occurrence of each character in a string. The combiner will take these (key, value) pairs and output only the character or characters that appear the most. Finally, the reducer will sum those values to find our result. This contrived problem will provide a working example of a combiner.</p>
 

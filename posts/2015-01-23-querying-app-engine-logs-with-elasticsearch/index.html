@@ -98,7 +98,7 @@ traffic between applications.</p>
 need a refresher on this API please check out my <a href="http://sookocheff.com/series/mapreduce-api/">MapReduce tutorial
 series</a>.</p>
 
-<h2 id="toc_0">Overview</h2>
+<h2 id="overview:910e0d5fe0b44f1ddf1d486376d42c6d">Overview</h2>
 
 <p>The gist of this solution is to run a MapReduce job that reads data from the
 <a href="https://cloud.google.com/appengine/docs/python/logs/">App Engine Logs API</a> using the <a href="https://github.com/GoogleCloudPlatform/appengine-mapreduce/blob/master/python/src/mapreduce/input_readers.py#L1952">LogInputReader</a>,
@@ -114,9 +114,10 @@ minutes to provide a relatively recent view of current operational data.</p>
 
 <p><a class="thumbnail" href="/img/2015-01-23-querying-app-engine-logs-with-elasticsearch/elasticsearch-sequence-diagram.png">
   <img src="/img/2015-01-23-querying-app-engine-logs-with-elasticsearch/elasticsearch-sequence-diagram.png" alt="Architecture for Logging to elasticsearch">
-</a></p>
+</a>
+</p>
 
-<h2 id="toc_1">Example</h2>
+<h2 id="example:910e0d5fe0b44f1ddf1d486376d42c6d">Example</h2>
 
 <p>The majority of the solution is contained in a MapperPipeline. The following
 code illustrates how to setup the MapperPipeline. What&rsquo;s remaining is to write a

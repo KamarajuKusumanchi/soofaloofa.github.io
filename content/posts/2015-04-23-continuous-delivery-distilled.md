@@ -58,7 +58,7 @@ and approved the change a release can go out. From a development standpoint it
 is important to understand that any code commit that passes testing may be
 released to customers at *any* point in time.
 
-{{% img_wikipedia http://commons.wikimedia.org/wiki/File:Continuous_Delivery_process_diagram.png#/media/File:Continuous_Delivery_process_diagram.png http://upload.wikimedia.org/wikipedia/commons/7/74/Continuous_Delivery_process_diagram.png "Continuous Delivery process diagram - Jez Humble" %}}
+{{% img_wikipedia "http://commons.wikimedia.org/wiki/File:Continuous_Delivery_process_diagram.png#/media/File:Continuous_Delivery_process_diagram.png" "http://upload.wikimedia.org/wikipedia/commons/7/74/Continuous_Delivery_process_diagram.png" "Continuous Delivery process diagram - Jez Humble" %}}
 
 ## Why Continuous Delivery?
 
@@ -178,7 +178,7 @@ take place to push the development code up to the test branch (and staging
 environment) and the test code up to the master branch (and production
 environment). 
 
-{{% img 2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png "Traditional Release Structure" %}}
+{{% img "2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png" "Traditional Release Structure" %}}
 
 ### Scenario 1: Bug Fix
 
@@ -192,27 +192,27 @@ branch, and begins work on the bug. Once he is confident that the bug has been
 fixed he goes over the changes with QA and merges the bug into the develop
 branch where it waits for the weekly deployment to test.
 
-{{% img 2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png "Merging to Develop" %}}
+{{% img "2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png" "Merging to Develop" %}}
 
 Brad is now free to pick up another issue and commit the code for that issue to
 develop, where it waits once again for the weekly deployment to test. Test now
 has two issues that have been committed to development that will be released to
 the test environment in one week.
 
-{{% img 2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png "Second Merge to Develop" %}}
+{{% img "2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png" "Second Merge to Develop" %}}
 
 Meanwhile, other developers are working on issues and committing the code to
 develop. By the time the weekly deployment to the testing environment comes
 around we end up with 13 disparate issues being pushed to the test environment.
 
-{{% img 2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png "Group of Merges to Develop" %}}
+{{% img "2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png" "Group of Merges to Develop" %}}
 
 Now, the QA team can perform regression testing of all of these 13 issues for
 the week that this release is held in the test environment for staging. After
 one week has passed, the test branch is merged with the master branch and a
 deployment to production is done.
 
-{{% img 2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png "Group of Merges to Develop" %}}
+{{% img "2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png" "Group of Merges to Develop" %}}
 
 It's also important to note that *we still do not know that the bug fix will
 address the customer's issues on production*. We can't know for sure that the
@@ -282,7 +282,7 @@ fully understanding the intricacies and risks involved with the chage.
 Ultimately, the team decides they can't go forward and all 13 change sets are
 rolled back until they can properly fix the problem.
 
-{{% img 2015-04-23-continuous-delivery-distilled/weekly-regression.png "Regression in Weekly Release" %}}
+{{% img "2015-04-23-continuous-delivery-distilled/weekly-regression.png" "Regression in Weekly Release" %}}
 
 Contrast this with a continuous delivery approach. Alice works with QA to verify
 her change. Alice and QA deploy the change to production and immediately verify
@@ -295,7 +295,7 @@ integrity of her changes and for verifying that her work was done correctly. She
 is able to work in concert with QA to test the issue and does not simply push
 her issue 'over the wall' for someone else to test and deploy.
 
-{{% img 2015-04-23-continuous-delivery-distilled/continuous-regression.png "Regression With Continuous Delivery" %}}
+{{% img "2015-04-23-continuous-delivery-distilled/continuous-regression.png" "Regression With Continuous Delivery" %}}
 
 With continuous delivery, each deployment is a smaller change that can be easily
 understood, fixed or, when necessary, rolled-back. 
@@ -331,12 +331,12 @@ in, we route the request to both the old and new code and can measure -- on
 production -- the performance of the new code. We can easily see if our proposed
 refactoring has measurable performance improvements in a real-world setting.
 
-{{% img 2015-04-23-continuous-delivery-distilled/parallel-code.png "Parallel Code" %}}
+{{% img "2015-04-23-continuous-delivery-distilled/parallel-code.png" "Parallel Code" %}}
 
 For example, by extracting performance measurements over each iteration of the
 code we visually compare the effect of a code change.
 
-{{% img 2015-04-23-continuous-delivery-distilled/performance-comparison.png "Performance Comparison" %}}
+{{% img "2015-04-23-continuous-delivery-distilled/performance-comparison.png" "Performance Comparison" %}}
 
 We can also use the same pattern to ensure we have confidence in the results of
 our new code. For example, on each request, we can run both the old and the new
@@ -346,7 +346,7 @@ acceptable error range the new code is ready to go live. We also have the
 ability to use production data to inform our unit tests and guard against future
 regressions.
 
-{{% img 2015-04-23-continuous-delivery-distilled/accuracy-comparison.png "Accuracy Comparison" %}}
+{{% img "2015-04-23-continuous-delivery-distilled/accuracy-comparison.png" "Accuracy Comparison" %}}
 
 Caution must be exercised whenever using feature flags. Every feature flag that
 is in use within the product is technical debt that should be short lived.

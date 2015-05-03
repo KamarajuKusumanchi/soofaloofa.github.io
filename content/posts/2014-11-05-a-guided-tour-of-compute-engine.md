@@ -22,7 +22,7 @@ There are few basic resources required to get up and running with any virtual
 machine running on Compute Engine. These are Images, Instances and
 Disks.
 
-{{% img 2014-11-05-a-guided-tour-of-compute-engine/ImagesInstancesDisks.png "Images, Instances and Disks" %}}
+{{% img "2014-11-05-a-guided-tour-of-compute-engine/ImagesInstancesDisks.png" "Images, Instances and Disks" %}}
 
 ### Images
 
@@ -57,7 +57,7 @@ attach services to that group of machines. A service is a simple label attached
 to the group that advertises this group of virtual machines as providing the
 same backend web service.
 
-{{% img 2014-11-05-a-guided-tour-of-compute-engine/InstanceGroup.png "Instance Groups" %}}
+{{% img "2014-11-05-a-guided-tour-of-compute-engine/InstanceGroup.png" "Instance Groups" %}}
 
 ## Instance Group Manager
 
@@ -88,7 +88,7 @@ command and those Instances will be brought to life and join your Instance
 Group. If any Instances are destroyed or deleted the manager will bring them
 back to life for you.
 
-{{% img 2014-11-05-a-guided-tour-of-compute-engine/InstanceGroupManager.png "Instance Group Manager." %}}
+{{% img "2014-11-05-a-guided-tour-of-compute-engine/InstanceGroupManager.png" "Instance Group Manager." %}}
 
 ## Regions & Zones
 
@@ -105,7 +105,7 @@ out over multiple zones. To distribute your system globally you can spread your
 instances across multiple regions. In the following example, we have two
 separate Managed Instance Groups in two different zones.
 
-{{% img 2014-11-05-a-guided-tour-of-compute-engine/RegionsAndZones.png "Instance Group Manager" %}}
+{{% img "2014-11-05-a-guided-tour-of-compute-engine/RegionsAndZones.png" "Instance Group Manager" %}}
 
 ## Load Balancing
 
@@ -122,7 +122,7 @@ To use HTTP load balancing we need to declare our instance groups as backend
 services. This is a simple label attached to the group. In effect we are telling
 Compute Engine which groups are related to one another.
 
-{{% img 2014-11-05-a-guided-tour-of-compute-engine/BackendServices.png "Backend Services" %}}
+{{% img "2014-11-05-a-guided-tour-of-compute-engine/BackendServices.png" "Backend Services" %}}
 
 ### URL Maps
 
@@ -132,14 +132,14 @@ than requests to the url `/`. In this example we have a URL Map that routes
 requests with the pattern `/static` and `/images` to the `static` Backend
 Service. Any other requests are routed to the `web` service.
 
-{{% img 2014-11-05-a-guided-tour-of-compute-engine/UrlMap.png "Url Map" %}}
+{{% img "2014-11-05-a-guided-tour-of-compute-engine/UrlMap.png" "Url Map" %}}
 
 ### Target HTTP Proxy
 
 The Target HTTP Proxy is a simple proxy that receives requests and routes them
 to the URL Maps. 
 
-{{% img 2014-11-05-a-guided-tour-of-compute-engine/TargetHttpProxy.png "Target HTTP Proxy" %}}
+{{% img "2014-11-05-a-guided-tour-of-compute-engine/TargetHttpProxy.png" "Target HTTP Proxy" %}}
 
 ### Global Forwarding Rule
 
@@ -147,7 +147,7 @@ The global forwarding rule provides an external IP address that we can use to
 address our instances. This IP address routes to the target HTTP proxy which
 ultimately directs our traffic to the proper Backend Service through the URL Map.
 
-{{% img 2014-11-05-a-guided-tour-of-compute-engine/GlobalForwardingRule.png "Global Forwarding Rule" %}}
+{{% img "2014-11-05-a-guided-tour-of-compute-engine/GlobalForwardingRule.png" "Global Forwarding Rule" %}}
 
 ## Conclusion
 

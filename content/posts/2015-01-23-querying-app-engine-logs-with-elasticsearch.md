@@ -39,7 +39,7 @@ minutes to provide a relatively recent view of current operational data.
 
 The following diagram presents the architecture of our solution.
 
-{{% img 2015-01-23-querying-app-engine-logs-with-elasticsearch/elasticsearch-sequence-diagram.png "Architecture for Logging to elasticsearch" %}}
+{{% img "2015-01-23-querying-app-engine-logs-with-elasticsearch/elasticsearch-sequence-diagram.png" "Architecture for Logging to elasticsearch" %}}
 
 ## Example
 

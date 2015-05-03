@@ -23,32 +23,32 @@ choice of search term given a prefix (i.e., an incomplete search term). For
 example, given the incomplete search term `ne` we need to return the most
 frequent searches that have been made using that prefix.
 
-{{% img 2014-10-06-search-suggestions/search1.png "Incomplete Search." %}}
+{{% img "2014-10-06-search-suggestions/search1.png" "Incomplete Search." %}}
 
 Suppose the user searches for the term `Netflix`. Given the search term we
 increment the frequency of a `(prefix, search term)` tuple for each prefix of
 the search term `Netflix`. The end result is a datastore model with entries for
 each `(prefix, search term)` tuple.
 
-{{% img 2014-10-06-search-suggestions/search2.png "Netflix Search." %}}
+{{% img "2014-10-06-search-suggestions/search2.png" "Netflix Search." %}}
 
 If that term `Netflix` is searched for a second time we increment the frequency
 count of each `(prefix, search term)` tuple.
 
-{{% img 2014-10-06-search-suggestions/search3.png "Tuples of Netflix." %}}
+{{% img "2014-10-06-search-suggestions/search3.png" "Tuples of Netflix." %}}
 
 Now suppose one person searched for the term `news`. We build up our frequency
 table with each `(prefix, search term)` tuple again, using `news` as the search
 term.
 
-{{% img 2014-10-06-search-suggestions/search4.png "Tuples of news." %}}
+{{% img "2014-10-06-search-suggestions/search4.png" "Tuples of news." %}}
 
 Once we've assembled the data we can go back to our original problem of finding
 the most likely searches for a given incomplete search. Given our dataset this
 is lookup for each record matching our prefix in the dataset ordered by
 frequency.
 
-{{% img 2014-10-06-search-suggestions/search5.png "Ordered table." %}}
+{{% img "2014-10-06-search-suggestions/search5.png" "Ordered table." %}}
 
 ## A sample implementation
 

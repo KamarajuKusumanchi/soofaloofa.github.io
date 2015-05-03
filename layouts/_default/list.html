@@ -6,8 +6,8 @@
     <div class="col-md-8 col-md-offset-2">
       <section class="page">
         <h1>{{ .Title }}</h1>
-
-        {{ range .Data.Pages }}
+        {{ $paginator := .Paginate (where .Data.Pages "Type" "posts") }}
+        {{ range $paginator.Pages }}
           <article>
             <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
             <small class="text-muted">
@@ -22,6 +22,9 @@
             <hr>
           </article>
         {{ end }}
+        <div class="text-center">
+          {{ template "_internal/pagination.html" . }}
+        </div>
       </section>
     </div>
   </div>

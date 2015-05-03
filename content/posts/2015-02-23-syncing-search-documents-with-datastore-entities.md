@@ -155,7 +155,7 @@ read problem arises when the second task to update the search document reads old
 data from the Datastore that may not have been fully replicated throughout the
 Datastore.
 
-{{% img 2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png  "Syncing Search Documents" %}}
+{{% img "2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png"  "Syncing Search Documents" %}}
 
 We can overcome this problem by versioning our tasks to coincide with the
 version of our Datastore entity. We add a version number to the entity and

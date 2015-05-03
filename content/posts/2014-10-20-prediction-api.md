@@ -49,13 +49,13 @@ decidedly mixed as the following examples show. In the first example we attempt
 to classify the text "this restaurant has the best soup in town" and correctly
 receive a "very positive" result.
 
-{{% img 2014-10-20-prediction-api/bestsoup.png "The Best Soup in Town" %}}
+{{% img "2014-10-20-prediction-api/bestsoup.png" "The Best Soup in Town" %}}
 
 As a counter example, the text "this restaurant has the worst soup in town" also
 recieves a "very positive" result, although with less confidence and with "very
 negative" being the most likely second choice.
 
-{{% img 2014-10-20-prediction-api/worstsoup.png "The Worst Soup in Town" %}}
+{{% img "2014-10-20-prediction-api/worstsoup.png" "The Worst Soup in Town" %}}
 
 ## Conclusions
 

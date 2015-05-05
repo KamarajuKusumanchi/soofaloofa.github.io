@@ -5,7 +5,281 @@
     <link>http://sookocheff.com/posts/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Wed, 29 Apr 2015 06:19:23 CST</lastBuildDate>
+    <lastBuildDate>Tue, 05 May 2015 05:57:19 CST</lastBuildDate>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 1: The Basics</title>
+      <link>http://sookocheff.com/posts/2015-05-05-app-engine-pipelines-part-one-the-basics/</link>
+      <pubDate>Tue, 05 May 2015 05:57:19 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2015-05-05-app-engine-pipelines-part-one-the-basics/</guid>
+      <description>
+
+&lt;p&gt;The &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines&#34;&gt;Pipelines API&lt;/a&gt;
+is a general purpose workflow engine for App Engine applications. With the
+Pipelines API we can connect together complex workflows into a coherent run time
+backed by the Datastore. This article provides a basic overview of the Pipelines
+API and how it can be used for abritrary computational workflows.&lt;/p&gt;
+
+&lt;p&gt;In the most basic sense a Pipeline is an object that takes input, performs some
+logic or computation on that input, and produces output. Pipelines can take two
+general forms &amp;ndash; synchronous or asynchronous. Synchronous pipelines act as basic
+functions that must complete during a single request. Asynchronous pipelines
+spawn child pipelines and connect them together into a workflow by passing input
+and output parameters around.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;A word of warning&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Pipelines must be idempotent and it is up to the developer to ensure that they
+are &amp;ndash; this is not enforced by the run-time. A pipeline may fail and be retried
+and it is important that running the same pipeline with the same set of inputs
+will product the same results.&lt;/p&gt;
+
+&lt;h2 id=&#34;getting-started:6f756ce5c8adfdb788373dfc5173280d&#34;&gt;Getting Started&lt;/h2&gt;
+
+&lt;p&gt;The first step is to grab the latest version of the Pipelines API (and its
+        dependencies) using pip. The following assumes you install third party
+App Engine dependencies in the lib directory relative to where pip is being run.
+You can also grab the source code from
+&lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;pip install GoogleAppEnginePipeline -t lib/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Pipeline requests need to be handled by the Pipeline application. We set that up
+by adding a handler to &lt;code&gt;app.yaml&lt;/code&gt;. Since these are internal application requrest
+we can secure them using the &lt;code&gt;login: admin&lt;/code&gt; directive.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;handlers:
+- url: /_ah/pipeline.*
+  script: pipeline.handlers._APP
+  login: admin
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;basic-synchronous-pipelines:6f756ce5c8adfdb788373dfc5173280d&#34;&gt;Basic Synchronous Pipelines&lt;/h2&gt;
+
+&lt;p&gt;A synchronous pipeline runs within the bounds of a single App Engine request.
+Once the request has been made the pipeline starts and pipeline processing
+happens automatically. We can set up this pipeline by defining a handler
+responsible for starting the pipeline. For now, create a default handler that
+will receive a request at the URL of your choosing.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        logging.info(&#39;Launch pipeline&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A request processed by this handler will kick off our Pipeline. To define a
+pipeline we inherit from the Pipeline object and the method &lt;code&gt;run&lt;/code&gt;. The pipeline
+is launched via the &lt;code&gt;start&lt;/code&gt; method. The code below instantiates a custom
+pipeline and launches it. Accessing the URL for the RunPipelineHandler will
+print the message &amp;lsquo;Do something here&amp;rsquo; to the logs.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        logging.info(&#39;Launch pipeline&#39;)
+        pipeline = MyPipeline()
+        pipeline.start()
+
+
+class MyPipeline(pipeline.Pipeline):
+    def run(self, *args, **kwargs):
+        logging.info(&#39;Do something here.&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can update our pipeline to do a simple operation, like squaring a number.
+You&amp;rsquo;ll notice in the code that follows that the arguments passed when
+initializing the pipeline are accessible as parameters to the &lt;code&gt;run&lt;/code&gt; method
+within the pipeline.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+    def run(self, number):
+        return number * number
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running this pipeline will show that the pipeline executes correctly. But where
+does our return value go? How can we access the output of &lt;code&gt;SquarePipeline&lt;/code&gt;?&lt;/p&gt;
+
+&lt;h2 id=&#34;accessing-pipeline-output:6f756ce5c8adfdb788373dfc5173280d&#34;&gt;Accessing Pipeline Output&lt;/h2&gt;
+
+&lt;p&gt;You&amp;rsquo;ll notice that in &lt;code&gt;SquarePipeline&lt;/code&gt; we are returning a value directly but
+we never actually access it. Pipeline output can only ever be accessed after the
+pipeline has finished executing. We can check for the end of pipeline execution
+using the &lt;code&gt;has_finalized&lt;/code&gt; property. This property will be set to &lt;code&gt;True&lt;/code&gt; when all
+stages of a pipeline have finished executing. At this point in time our output
+will be available as a value on the Pipeline object. Let&amp;rsquo;s see what happens when
+we try to check if our pipeline has finalized. To do this we need to store the
+pipeline_id generated from our start method and check the &lt;code&gt;has_finalized&lt;/code&gt;
+property.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+        pipeline_id = square_stage.pipeline_id
+
+        stage = SquarePipeline.from_id(pipeline_id)
+        if stage.has_finalized:
+            logging.info(&#39;Finalized&#39;)
+        else:
+            logging.info(&#39;Not finalized&#39;)
+
+
+class SquarePipeline(pipeline.Pipeline):
+    def run(self, number):
+        return number * number
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running the preceding code we see that our pipeline is not finalized. What
+happened here? The pipeline is executed as an ayschronous task after it has been
+started and may or may not complete by the time we check that it has finalized.
+The pipeline itself is a future whose value has not materialized. Any output
+from a pipeline is not actually available until all child pipeline tasks are
+executed. So how do we get the final value of the SquarePipeline?&lt;/p&gt;
+
+&lt;h2 id=&#34;finalized:6f756ce5c8adfdb788373dfc5173280d&#34;&gt;Finalized&lt;/h2&gt;
+
+&lt;p&gt;The finalized method is called by the pipeline API once a Pipeline has completed
+its work (by filling all of is slots &amp;ndash; to be described later). By overriding
+the &lt;code&gt;finalized&lt;/code&gt; method we can see the result of our pipeline and do further
+processing on that result if necessary. By default our output is set to
+&lt;code&gt;self.outputs.default.value&lt;/code&gt;. As an example, executing the following code will
+log the message &amp;ldquo;All done! Square is 100&amp;rdquo;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+    def run(self, number):
+        return number * number
+
+    def finalized(self):
+        logging.info(&#39;All done! Square is %s&#39;, self.outputs.default.value)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We will see in a later article how to connect the output of one pipeline with
+another.&lt;/p&gt;
+
+&lt;h2 id=&#34;named-outputs:6f756ce5c8adfdb788373dfc5173280d&#34;&gt;Named outputs&lt;/h2&gt;
+
+&lt;p&gt;Pipelines also allow you to explicitly name outputs, this is useful in the case
+where you have more than one output to return or as a means of passing data
+between one pipeline execution and the next. When using named outputs, instead
+of returning a value from the &lt;code&gt;run&lt;/code&gt; method we fill a pipeline slot with our
+value. To use named outputs we define an &lt;code&gt;output_names&lt;/code&gt; class variable listing
+the names of our outputs. By calling &lt;code&gt;self.fill&lt;/code&gt; on our named output we store
+the return value of our pipeline for later access in the &lt;code&gt;run&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    output_names = [&#39;square&#39;]
+
+    def run(self, number):
+        self.fill(self.outputs.square, number * number)
+
+    def finalized(self):
+        logging.info(&#39;All done! Square is %s&#39;, self.outputs.square.value)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;testing-a-pipeline:6f756ce5c8adfdb788373dfc5173280d&#34;&gt;Testing a pipeline&lt;/h2&gt;
+
+&lt;p&gt;Sometimes our pipelines call out over the wire or perform expensive data
+operations. The Pipeline API provides a convenient way to test pipelines. By
+calling &lt;code&gt;start_test&lt;/code&gt; instead of &lt;code&gt;start&lt;/code&gt;. In our example we verify the
+expected output of our squaring pipeline by calling &lt;code&gt;start_test&lt;/code&gt;. The final
+value of our pipeline is available immediately.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start_test()
+        assert stage.outputs.square.value == 100
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If we need to mock out any behaviour from our &lt;code&gt;run&lt;/code&gt; method, we can supply a
+&lt;code&gt;run_test&lt;/code&gt; method that is executed whenever we run our pipeline with
+&lt;code&gt;start_test&lt;/code&gt;. Within this method we can mock out or adjust the behaviour of the
+pipeline to work under test.&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusion:6f756ce5c8adfdb788373dfc5173280d&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;This article gives a basic outline of how to start and execute pipelines. Full
+source code for the final example is listed below. In the next article we will
+see how to pass the output of one pipeline to another and understand how parent
+and child pipelines interact.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    output_names = [&#39;square&#39;]
+
+    def run(self, number):
+        self.fill(self.outputs.square, number * number)
+
+    def finalized(self):
+        logging.info(&#39;All done! Square is %s&#39;, self.outputs.square.value)
+
+routes = [
+    webapp2.Route(&#39;/pipeline-test/&#39;, handler=&#39;main.RunPipelineHandler&#39;)
+]
+
+APP = webapp2.WSGIApplication(routes)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>Durabledict for App Engine</title>
@@ -2020,358 +2294,6 @@ goodbye world, hello jim
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
 &amp;gt; echo ${string//hello/goodbye}
 goodbye world, goodbye jim
-&lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>App Engine MapReduce API - Part 6: Writing a Custom Input Reader</title>
-      <link>http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/</link>
-      <pubDate>Thu, 04 Dec 2014 22:54:12 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/</guid>
-      <description>
-
-&lt;h2 id=&#34;mapreduce-api-series:8a4ce915aba4ff843eb6b0f21aab7dc8&#34;&gt;MapReduce API Series&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/&#34;&gt;Part 6: Writing a Custom Input Reader&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/&#34;&gt;Part 7: Writing a Custom Output Writer&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;One of the great things about the MapReduce library is the abilitiy to write a
-cutom InputReader to process data from any data source. In this post we will
-explore how to write an InputReader the leases tasks from an AppEngine pull
-queue by implementing the &lt;code&gt;InputReader&lt;/code&gt; interface.&lt;/p&gt;
-
-&lt;p&gt;The interface we need to implement is available at
-&lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-mapreduce/blob/master/python/src/mapreduce/input_readers.py#L119&#34;&gt;&lt;code&gt;mapreduce.input_readers.InputReader&lt;/code&gt;&lt;/a&gt;.
-Take a minute to examine the abstract methods that need to be implmemented.
-Relevant portions of the source are copied below.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class InputReader(json_util.JsonMixin):
-  &amp;quot;&amp;quot;&amp;quot;Abstract base class for input readers.
-  InputReaders have the following properties:
-   * They are created by using the split_input method to generate a set of
-     InputReaders from a MapperSpec.
-   * They generate inputs to the mapper via the iterator interface.
-   * After creation, they can be serialized and resumed using the JsonMixin
-     interface.
-  &amp;quot;&amp;quot;&amp;quot;
-
-  def next(self):
-    &amp;quot;&amp;quot;&amp;quot;Returns the next input from this input reader as a key, value pair.
-    Returns:
-      The next input from this input reader.
-    &amp;quot;&amp;quot;&amp;quot;
-    raise NotImplementedError(&amp;quot;next() not implemented in %s&amp;quot; % self.__class__)
-
-  @classmethod
-  def from_json(cls, input_shard_state):
-    &amp;quot;&amp;quot;&amp;quot;Creates an instance of the InputReader for the given input shard state.
-    Args:
-      input_shard_state: The InputReader state as a dict-like object.
-    Returns:
-      An instance of the InputReader configured using the values of json.
-    &amp;quot;&amp;quot;&amp;quot;
-    raise NotImplementedError(&amp;quot;from_json() not implemented in %s&amp;quot; % cls)
-
-  def to_json(self):
-    &amp;quot;&amp;quot;&amp;quot;Returns an input shard state for the remaining inputs.
-    Returns:
-      A json-izable version of the remaining InputReader.
-    &amp;quot;&amp;quot;&amp;quot;
-    raise NotImplementedError(&amp;quot;to_json() not implemented in %s&amp;quot; %
-                              self.__class__)
-
-  @classmethod
-  def split_input(cls, mapper_spec):
-    &amp;quot;&amp;quot;&amp;quot;Returns a list of input readers.
-    This method creates a list of input readers, each for one shard.
-    It attempts to split inputs among readers evenly.
-    Args:
-      mapper_spec: model.MapperSpec specifies the inputs and additional
-        parameters to define the behavior of input readers.
-    Returns:
-      A list of InputReaders. None or [] when no input data can be found.
-    &amp;quot;&amp;quot;&amp;quot;
-    raise NotImplementedError(&amp;quot;split_input() not implemented in %s&amp;quot; % cls)
-
-  @classmethod
-  def validate(cls, mapper_spec):
-    &amp;quot;&amp;quot;&amp;quot;Validates mapper spec and all mapper parameters.
-    Input reader parameters are expected to be passed as &amp;quot;input_reader&amp;quot;
-    subdictionary in mapper_spec.params.
-    Pre 1.6.4 API mixes input reader parameters with all other parameters. Thus
-    to be compatible, input reader check mapper_spec.params as well and
-    issue a warning if &amp;quot;input_reader&amp;quot; subdicationary is not present.
-    Args:
-      mapper_spec: The MapperSpec for this InputReader.
-    Raises:
-      BadReaderParamsError: required parameters are missing or invalid.
-    &amp;quot;&amp;quot;&amp;quot;
-    if mapper_spec.input_reader_class() != cls:
-      raise BadReaderParamsError(&amp;quot;Input reader class mismatch&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Let&amp;rsquo;s fill out this interface with our InputReader that leases tasks from an
-AppEngine pull queue. To start, we implement the &lt;code&gt;split_input&lt;/code&gt; method that
-instantiates a list of InputReaders, splitting the work among each reader. One
-of the standard parameters for a MapReduce job is the number of shards you want
-to use. For leasing tasks we will create one InputReader for shard
-parameter.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@classmethod
-def split_input(cls, mapper_spec):
-    &amp;quot;&amp;quot;&amp;quot;
-    Returns a list of input readers
-    &amp;quot;&amp;quot;&amp;quot;
-    shard_count = mapper_spec.shard_count
-
-    return [cls()] * shard_count
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;split_input&lt;/code&gt; is called to start our InputReader and returns a list of readers.
-Each of these reader instances must implement a the &lt;code&gt;next&lt;/code&gt; method which returns
-a single value from our Reader. This method is part of the generator interface
-and will be called during MapReduce operation. We can use &lt;code&gt;next&lt;/code&gt; to attempt to lease
-a single task from our queue, returning the task as a key-value tuple.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def next(self):
-    &amp;quot;&amp;quot;&amp;quot;
-    Returns the queue, and a task leased from it as a tuple
-    Returns:
-      The next input from this input reader.
-    &amp;quot;&amp;quot;&amp;quot;
-    ctx = context.get()
-    input_reader_params = ctx.mapreduce_spec.mapper.params.get(&#39;input_reader&#39;, {})
-    queue_name = input_reader_params.get(self.QUEUE_PARAM)
-    tag = input_reader_params.get(self.TAG_PARAM)
-    lease_seconds = input_reader_params.get(self.LEASE_SECONDS_PARAM, 60)
-
-    # Attempt to lease a task
-    queue = taskqueue.Queue(queue_name)
-    if tag:
-        tasks = queue.lease_tasks_by_tag(lease_seconds, 1, tag=tag)
-    else:
-        tasks = queue.lease_tasks(lease_seconds, 1)
-
-    if tasks:
-        operation.counters.Increment(self.TASKS_LEASED_COUNTER)(ctx)
-        return (queue, tasks[0])
-    raise StopIteration()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We begin this function by reading in our parameters, using the context helper to
-find the current parameters for this InputReder. We then attempt to lease a
-task. If tasks are available to lease we return the task, otherwise we raise
-&lt;code&gt;StopIteration&lt;/code&gt; to halt the generator.&lt;/p&gt;
-
-&lt;p&gt;This basic implementation is all that&amp;rsquo;s needed to write an InputReader &amp;ndash; split
-our source into multiple shards and return a single &lt;code&gt;next&lt;/code&gt; value from within
-each shard. The MapReduce library will use this skeleton to call your &lt;code&gt;map&lt;/code&gt;
-function for each &lt;code&gt;next&lt;/code&gt; value that is returned by the input reader.&lt;/p&gt;
-
-&lt;p&gt;To finish this up, we add some boilerplate required for serialization of reader
-state and parameter validation.&lt;/p&gt;
-
-&lt;p&gt;If your InputReader needs to hold any state between execution of the &lt;code&gt;next&lt;/code&gt;
-method you must serialize that state using the &lt;code&gt;to_json&lt;/code&gt; and &lt;code&gt;from_json&lt;/code&gt;
-methods. &lt;code&gt;to_json&lt;/code&gt; returns the current state of the reader in JSON format.
-&lt;code&gt;from_json&lt;/code&gt; creates an instance of an InputReader given a JSON format. Typically
-we use this to save the constructor values used to create our InputReader. We&amp;rsquo;ll
-also need to formally define our constructor here.&lt;/p&gt;
-
-&lt;p&gt;The constructor takes only a few parameters. A queue name, a tag to lease tasks
-with and the number of seconds to hold the lease.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def __init__(self, queue_name=&#39;default&#39;, tag=None, lease_seconds=60):
-    super(TaskInputReader, self).__init__()
-    self.queue_name = queue_name
-    self.tag = tag
-    self.lease_seconds = lease_seconds
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now we can define how to serialize and deserialize the state of our reader.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@classmethod
-def from_json(cls, input_shard_state):
-    &amp;quot;&amp;quot;&amp;quot;Creates an instance of the InputReader for the given input shard state.
-    Args:
-      input_shard_state: The InputReader state as a dict-like object.
-    Returns:
-      An instance of the InputReader configured using the values of json.
-    &amp;quot;&amp;quot;&amp;quot;
-    return cls(input_shard_state.get(&#39;queue_name&#39;),
-               input_shard_state.get(&#39;tag&#39;),
-               input_shard_state.get(&#39;lease_seconds&#39;)))
-
-def to_json(self):
-    &amp;quot;&amp;quot;&amp;quot;Returns an input shard state for the remaining inputs.
-    Returns:
-      A json-izable version of the remaining InputReader.
-    &amp;quot;&amp;quot;&amp;quot;
-    return {
-        &#39;queue_name&#39;: self.queue_name,
-        &#39;tag&#39;: self.tag,
-        &#39;lease_seconds&#39;: self.lease_seconds,
-    }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The last method to implement is &lt;code&gt;validate&lt;/code&gt;. This method parses the parameters
-used to start your InputReader to make sure they are valid. In our example we
-validate that the &lt;code&gt;queue_name&lt;/code&gt; we are attempting to lease tasks from is valid
-and that the number of seconds we wish to lease is an integer.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@classmethod
-def validate(cls, mapper_spec):
-    &amp;quot;&amp;quot;&amp;quot;
-    Validates mapper spec and all mapper parameters.
-    Input reader parameters are expected to be passed as &amp;quot;input_reader&amp;quot;
-    subdictionary in mapper_spec.params.
-    Args:
-      mapper_spec: The MapperSpec for this InputReader.
-    Raises:
-      BadReaderParamsError: required parameters are missing or invalid.
-    &amp;quot;&amp;quot;&amp;quot;
-    if mapper_spec.input_reader_class() != cls:
-        raise BadReaderParamsError(&amp;quot;Input reader class mismatch&amp;quot;)
-
-    # Check that a valid queue is specified
-    input_reader_params = mapper_spec.params.get(&#39;input_reader&#39;, {})
-    queue_name = input_reader_params.get(&#39;queue_name&#39;)
-    lease_seconds = input_reader_params.get(&#39;lease_seconds&#39;, 60)
-    if not queue_name:
-        raise BadReaderParamsError(&#39;queue_name is required&#39;)
-    if not isinstance(lease_seconds, int):
-        raise BadReaderParamsError(&#39;lease_seconds must be an integer&#39;)
-    try:
-        queue = taskqueue.Queue(name=queue_name)
-        queue.fetch_statistics()
-    except Exception as e:
-        raise BadReaderParamsError(&#39;queue_name is invalid&#39;, e.message)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Putting this all together we get our final InputReader. We can use this as a
-basis to make more complex readers for additional data sources.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;quot;&amp;quot;&amp;quot;
-TaskInputReader
-&amp;quot;&amp;quot;&amp;quot;
-from google.appengine.api import taskqueue
-
-from mapreduce.input_readers import InputReader
-from mapreduce.errors import BadReaderParamsError
-from mapreduce import context
-from mapreduce import operation
-
-
-class TaskInputReader(InputReader):
-    &amp;quot;&amp;quot;&amp;quot;
-    Input reader for Pull-queue tasks
-    &amp;quot;&amp;quot;&amp;quot;
-
-    QUEUE_PARAM = &#39;queue&#39;
-    TAG_PARAM = &#39;tag&#39;
-    LEASE_SECONDS_PARAM = &#39;lease-seconds&#39;
-
-    TASKS_LEASED_COUNTER = &#39;tasks leased&#39;
-
-    def next(self):
-        &amp;quot;&amp;quot;&amp;quot;
-        Returns the queue, and a task leased from it as a tuple
-
-        Returns:
-          The next input from this input reader.
-        &amp;quot;&amp;quot;&amp;quot;
-        ctx = context.get()
-        input_reader_params = ctx.mapreduce_spec.mapper.params.get(&#39;input_reader&#39;, {})
-        queue_name = input_reader_params.get(self.QUEUE_PARAM)
-        tag = input_reader_params.get(self.TAG_PARAM)
-        lease_seconds = input_reader_params.get(self.LEASE_SECONDS_PARAM, 60)
-
-        # Attempt to lease a task
-        queue = taskqueue.Queue(queue_name)
-        if tag:
-            tasks = queue.lease_tasks_by_tag(lease_seconds, 1, tag=tag)
-        else:
-            tasks = queue.lease_tasks(lease_seconds, 1)
-
-        if tasks:
-            operation.counters.Increment(self.TASKS_LEASED_COUNTER)(ctx)
-            return (queue, tasks[0])
-        raise StopIteration()
-
-    @classmethod
-    def from_json(cls, input_shard_state):
-        &amp;quot;&amp;quot;&amp;quot;Creates an instance of the InputReader for the given input shard state.
-
-        Args:
-          input_shard_state: The InputReader state as a dict-like object.
-
-        Returns:
-          An instance of the InputReader configured using the values of json.
-        &amp;quot;&amp;quot;&amp;quot;
-        return cls(input_shard_state.get(cls.QUEUE_NAME),
-               input_shard_state.get(cls.TAG),
-               input_shard_state.get(cls.LEASE_SECONDS)))
-
-    def to_json(self):
-        &amp;quot;&amp;quot;&amp;quot;Returns an input shard state for the remaining inputs.
-
-        Returns:
-          A json-izable version of the remaining InputReader.
-        &amp;quot;&amp;quot;&amp;quot;
-        return {
-            &#39;queue_name&#39;: self.queue_name,
-            &#39;tag&#39;: self.tag,
-            &#39;lease_seconds&#39;: self.lease_seconds,
-        }
-
-    @classmethod
-    def split_input(cls, mapper_spec):
-        &amp;quot;&amp;quot;&amp;quot;
-        Returns a list of input readers
-        &amp;quot;&amp;quot;&amp;quot;
-        shard_count = mapper_spec.shard_count
-
-        return [cls()] * shard_count
-
-    @classmethod
-    def validate(cls, mapper_spec):
-        &amp;quot;&amp;quot;&amp;quot;
-        Validates mapper spec and all mapper parameters.
-
-        Input reader parameters are expected to be passed as &amp;quot;input_reader&amp;quot;
-        subdictionary in mapper_spec.params.
-
-        Args:
-          mapper_spec: The MapperSpec for this InputReader.
-
-        Raises:
-          BadReaderParamsError: required parameters are missing or invalid.
-        &amp;quot;&amp;quot;&amp;quot;
-        if mapper_spec.input_reader_class() != cls:
-            raise BadReaderParamsError(&amp;quot;Input reader class mismatch&amp;quot;)
-
-        # Check that a valid queue is specified
-        input_reader_params = mapper_spec.params.get(&#39;input_reader&#39;, {})
-        queue_name = input_reader_params.get(cls.QUEUE_NAME)
-        lease_seconds = input_reader_params.get(cls.LEASE_SECONDS, 60)
-        if not queue_name:
-            raise BadReaderParamsError(&#39;%s is required&#39; % cls.QUEUE_NAME)
-        if not isinstance(lease_seconds, int):
-            raise BadReaderParamsError(&#39;%s must be an integer&#39; % cls.LEASE_SECONDS)
-        try:
-            queue = taskqueue.Queue(name=queue_name)
-            queue.fetch_statistics()
-        except Exception as e:
-            raise BadReaderParamsError(&#39;%s is invalid&#39; % cls.QUEUE_NAME, e.message)
 &lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>

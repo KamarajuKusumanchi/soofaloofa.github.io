@@ -16,9 +16,11 @@
             <p>
               {{ .Summary }}
             </p>
+            {{ if .Truncated }}
             <p class="text-center">
               <a href="{{ .Permalink }}"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            {{ end }}
             <hr>
           </article>
         {{ end }}

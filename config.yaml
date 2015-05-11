@@ -1,13 +1,14 @@
 ---
-MetaDataFormat: "yaml"
+metadataformat: "yaml"
+paginate: 20
 baseurl: "http://sookocheff.com"
 title: "Kevin Sookocheff"
-languageCode: "en-us"
+languagecode: "en-us"
 copyright: "Copyright Kevin Sookocheff."
 author:
   name: "Kevin Sookocheff"
   email: "kevin.sookocheff@gmail.com"
-Taxonomies:
+taxonomies:
   tag: "tags"
   category: "categories"
   series: "series"

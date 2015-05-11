@@ -5,7 +5,7 @@ tags:
   - "appengine"
   - "pipelines"
 series:
-  - "Pipeline API"
+  - "Pipelines API"
 ---
 
 The [Pipelines API](https://github.com/GoogleCloudPlatform/appengine-pipelines)
@@ -21,7 +21,7 @@ functions that must complete during a single request. Asynchronous pipelines
 spawn child pipelines and connect them together into a workflow by passing input
 and output parameters around.
 
-*A word of warning*
+**A word of warning.**
 
 Pipelines must be idempotent and it is up to the developer to ensure that they
 are -- this is not enforced by the run-time. A pipeline may fail and be retried

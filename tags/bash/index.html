@@ -80,9 +80,11 @@
             <p>
               At Vendasta we&rsquo;ve been slowly adopting pypi and pip for our internal code libraries and the time has come to deploy our own private pypi server. After evaluating a few options I settled on the simplistic pypiserver &ndash; a barebones implementation of the simple HTTP API to pypi. The deployment uses nginx as a front-end to pypiserver. pypiserver itself is ran and monitored using supervisord. I created a bash script that creates a user and group to run pypiserver and installs and runs nginx, supervisord and pypiserver.
             </p>
+            
             <p class="text-center">
               <a href="http://sookocheff.com/posts/2015-02-01-a-pypiserver-deployment-script/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
@@ -97,9 +99,11 @@ script. Bash provides the <code>getopts</code> built-in function to do just that
 tutorial explains how to use the <code>getopts</code> built-in function to parse arguments and options to a bash script.</p>
 
             </p>
+            
             <p class="text-center">
               <a href="http://sookocheff.com/posts/2015-01-04-parsing-bash-script-arguments-with-shopts/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
@@ -111,9 +115,11 @@ tutorial explains how to use the <code>getopts</code> built-in function to parse
             <p>
               A common task in bash programming is to manipulate portions of a string and return the result. bash provides rich support for these manipulations via string operators. The syntax is not always intuitive so I wanted to use this blog post to serve as a permanent reminder of the operators. The string operators are signified with the ${} notation. The operations can be grouped in to a few classes. Each heading in this article describes a class of operation.
             </p>
+            
             <p class="text-center">
               <a href="http://sookocheff.com/posts/2014-12-11-bash-string-operators/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
@@ -134,6 +140,7 @@ tutorial explains how to use the <code>getopts</code> built-in function to parse
          <h3>App Engine</h3>
          <ul class="list-unstyled">
            <li><a href="/series/mapreduce-api/">MapReduce API</a></li>
+           <li><a href="/series/pipelines-api/">Pipelines API</a></li>
            <li><a href="/series/cloud-endpoints/">Cloud Endpoints</a></li>
          </ul>
        </div>

@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kevin Sookocheff</title>
+    <link>http://sookocheff.com/series/pipelines-api/</link>
+    <language>en-us</language>
+    <copyright>Copyright Kevin Sookocheff.</copyright>
+    <lastBuildDate>Tue, 12 May 2015 05:57:19 CST</lastBuildDate>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 2: Connecting Pipelines</title>
+      <link>http://sookocheff.com/posts/2015-05-12-app-engine-pipelines-part-two-connecting-pipelines/</link>
+      <pubDate>Tue, 12 May 2015 05:57:19 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2015-05-12-app-engine-pipelines-part-two-connecting-pipelines/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/2015-05-05-app-engine-pipelines-part-one-the-basics/&#34;&gt;Last time&lt;/a&gt;,
+we discussed basic pipeline instantiation and execution. This time, we will
+cover sequential pipelines, answering the question &amp;ldquo;How do I connect the output
+of one pipeline with the input of another pipeline&amp;rdquo;?&lt;/p&gt;
+
+&lt;p&gt;To begin, let&amp;rsquo;s review a basic pipeline that squares its input. If any of this
+does not make sense refer to the &lt;a href=&#34;http://sookocheff.com/posts/2015-05-05-app-engine-pipelines-part-one-the-basics/&#34;&gt;first part of this tutorial&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        stage = SquarePipeline(10)
+        stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        return number * number
+
+    def finalized(self):
+        logging.info(&#39;All done! Square is %s&#39;, self.outputs.default.value)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The first step in passing data between two pipelines is updating our pipeline to
+use the generator interface. The generator interface uses the &lt;code&gt;yield&lt;/code&gt; keyword as
+a means of connecting pipelines together. For this contrived example, let&amp;rsquo;s
+create a &lt;em&gt;parent&lt;/em&gt; pipeline that executes &lt;code&gt;SquarePipeline&lt;/code&gt; twice in succession.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class TwiceSquaredPipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        first_square = yield SquarePipeline(number)
+        second_square = yield SquarePipeline(first_square)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;What now? We need a way to access the value stored in &lt;code&gt;second_square&lt;/code&gt;. When
+execution hits a &lt;code&gt;yield&lt;/code&gt; statement a task is started to run the pipeline and a
+&lt;code&gt;PipelineFuture&lt;/code&gt; is returned. The &lt;code&gt;PipelineFuture&lt;/code&gt; will have a value &lt;em&gt;after&lt;/em&gt; the
+task has finished executing but not immediately. So how do we access the value?
+With a &lt;em&gt;child&lt;/em&gt; pipeline that can read the result. In this example, we simply log
+the value of the computation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class TwiceSquaredPipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        first_square = yield SquarePipeline(number)
+        second_square = yield SquarePipeline(first_square)
+        yield LogResult(second_square)
+
+class LogResult(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;All done! Value is %s&#39;, number)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The rule of thumb here is that &lt;em&gt;anything you instantiate your pipeline with (and
+subsequently pass to the &lt;code&gt;run&lt;/code&gt; method) is accessible within your
+pipeline&lt;/em&gt;. These are called &lt;em&gt;immediate values&lt;/em&gt; and you can treat them as regular
+Python values. When this code is executed, each pipeline started by a &lt;code&gt;yield&lt;/code&gt;
+call is separate App Engine Task that executes in the Task Queue. The Pipeline
+runtime coordinates running these tasks and shares the results of execution
+between tasks, allowing you to safely connect pipelines together.&lt;/p&gt;
+
+&lt;p&gt;Full source code for this example follows.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        stage = TwiceSquaredPipeline(10)
+        stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        return number * number
+
+
+class TwiceSquaredPipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        first_square = yield SquarePipeline(number)
+        second_square = yield SquarePipeline(first_square)
+        yield LogResult(second_square)
+
+
+class LogResult(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;All done! Value is %s&#39;, number)
+
+
+routes = [
+    webapp2.Route(&#39;/pipeline-test/&#39;, handler=&#39;main.RunPipelineHandler&#39;)
+]
+
+APP = webapp2.WSGIApplication(routes)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 1: The Basics</title>
+      <link>http://sookocheff.com/posts/2015-05-05-app-engine-pipelines-part-one-the-basics/</link>
+      <pubDate>Tue, 05 May 2015 05:57:19 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2015-05-05-app-engine-pipelines-part-one-the-basics/</guid>
+      <description>
+
+&lt;p&gt;The &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines&#34;&gt;Pipelines API&lt;/a&gt;
+is a general purpose workflow engine for App Engine applications. With the
+Pipelines API we can connect together complex workflows into a coherent run time
+backed by the Datastore. This article provides a basic overview of the Pipelines
+API and how it can be used for abritrary computational workflows.&lt;/p&gt;
+
+&lt;p&gt;In the most basic sense a Pipeline is an object that takes input, performs some
+logic or computation on that input, and produces output. Pipelines can take two
+general forms &amp;ndash; synchronous or asynchronous. Synchronous pipelines act as basic
+functions that must complete during a single request. Asynchronous pipelines
+spawn child pipelines and connect them together into a workflow by passing input
+and output parameters around.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;A word of warning.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Pipelines must be idempotent and it is up to the developer to ensure that they
+are &amp;ndash; this is not enforced by the run-time. A pipeline may fail and be retried
+and it is important that running the same pipeline with the same set of inputs
+will product the same results.&lt;/p&gt;
+
+&lt;h2 id=&#34;getting-started:6f756ce5c8adfdb788373dfc5173280d&#34;&gt;Getting Started&lt;/h2&gt;
+
+&lt;p&gt;The first step is to grab the latest version of the Pipelines API (and its
+        dependencies) using pip. The following assumes you install third party
+App Engine dependencies in the lib directory relative to where pip is being run.
+You can also grab the source code from
+&lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;pip install GoogleAppEnginePipeline -t lib/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Pipeline requests need to be handled by the Pipeline application. We set that up
+by adding a handler to &lt;code&gt;app.yaml&lt;/code&gt;. Since these are internal application requrest
+we can secure them using the &lt;code&gt;login: admin&lt;/code&gt; directive.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;handlers:
+- url: /_ah/pipeline.*
+  script: pipeline.handlers._APP
+  login: admin
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;basic-synchronous-pipelines:6f756ce5c8adfdb788373dfc5173280d&#34;&gt;Basic Synchronous Pipelines&lt;/h2&gt;
+
+&lt;p&gt;A synchronous pipeline runs within the bounds of a single App Engine request.
+Once the request has been made the pipeline starts and pipeline processing
+happens automatically. We can set up this pipeline by defining a handler
+responsible for starting the pipeline. For now, create a default handler that
+will receive a request at the URL of your choosing.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        logging.info(&#39;Launch pipeline&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A request processed by this handler will kick off our Pipeline. To define a
+pipeline we inherit from the Pipeline object and the method &lt;code&gt;run&lt;/code&gt;. The pipeline
+is launched via the &lt;code&gt;start&lt;/code&gt; method. The code below instantiates a custom
+pipeline and launches it. Accessing the URL for the RunPipelineHandler will
+print the message &amp;lsquo;Do something here&amp;rsquo; to the logs.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        logging.info(&#39;Launch pipeline&#39;)
+        pipeline = MyPipeline()
+        pipeline.start()
+
+
+class MyPipeline(pipeline.Pipeline):
+    def run(self, *args, **kwargs):
+        logging.info(&#39;Do something here.&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can update our pipeline to do a simple operation, like squaring a number.
+You&amp;rsquo;ll notice in the code that follows that the arguments passed when
+initializing the pipeline are accessible as parameters to the &lt;code&gt;run&lt;/code&gt; method
+within the pipeline.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+    def run(self, number):
+        return number * number
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running this pipeline will show that the pipeline executes correctly. But where
+does our return value go? How can we access the output of &lt;code&gt;SquarePipeline&lt;/code&gt;?&lt;/p&gt;
+
+&lt;h2 id=&#34;accessing-pipeline-output:6f756ce5c8adfdb788373dfc5173280d&#34;&gt;Accessing Pipeline Output&lt;/h2&gt;
+
+&lt;p&gt;You&amp;rsquo;ll notice that in &lt;code&gt;SquarePipeline&lt;/code&gt; we are returning a value directly but
+we never actually access it. Pipeline output can only ever be accessed after the
+pipeline has finished executing. We can check for the end of pipeline execution
+using the &lt;code&gt;has_finalized&lt;/code&gt; property. This property will be set to &lt;code&gt;True&lt;/code&gt; when all
+stages of a pipeline have finished executing. At this point in time our output
+will be available as a value on the Pipeline object. Let&amp;rsquo;s see what happens when
+we try to check if our pipeline has finalized. To do this we need to store the
+pipeline_id generated from our start method and check the &lt;code&gt;has_finalized&lt;/code&gt;
+property.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+        pipeline_id = square_stage.pipeline_id
+
+        stage = SquarePipeline.from_id(pipeline_id)
+        if stage.has_finalized:
+            logging.info(&#39;Finalized&#39;)
+        else:
+            logging.info(&#39;Not finalized&#39;)
+
+
+class SquarePipeline(pipeline.Pipeline):
+    def run(self, number):
+        return number * number
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running the preceding code we see that our pipeline is not finalized. What
+happened here? The pipeline is executed as an ayschronous task after it has been
+started and may or may not complete by the time we check that it has finalized.
+The pipeline itself is a future whose value has not materialized. Any output
+from a pipeline is not actually available until all child pipeline tasks are
+executed. So how do we get the final value of the SquarePipeline?&lt;/p&gt;
+
+&lt;h2 id=&#34;finalized:6f756ce5c8adfdb788373dfc5173280d&#34;&gt;Finalized&lt;/h2&gt;
+
+&lt;p&gt;The finalized method is called by the pipeline API once a Pipeline has completed
+its work (by filling all of is slots &amp;ndash; to be described later). By overriding
+the &lt;code&gt;finalized&lt;/code&gt; method we can see the result of our pipeline and do further
+processing on that result if necessary. By default our output is set to
+&lt;code&gt;self.outputs.default.value&lt;/code&gt;. As an example, executing the following code will
+log the message &amp;ldquo;All done! Square is 100&amp;rdquo;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+    def run(self, number):
+        return number * number
+
+    def finalized(self):
+        logging.info(&#39;All done! Square is %s&#39;, self.outputs.default.value)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We will see in a later article how to connect the output of one pipeline with
+another.&lt;/p&gt;
+
+&lt;h2 id=&#34;named-outputs:6f756ce5c8adfdb788373dfc5173280d&#34;&gt;Named outputs&lt;/h2&gt;
+
+&lt;p&gt;Pipelines also allow you to explicitly name outputs, this is useful in the case
+where you have more than one output to return or as a means of passing data
+between one pipeline execution and the next. When using named outputs, instead
+of returning a value from the &lt;code&gt;run&lt;/code&gt; method we fill a pipeline slot with our
+value. To use named outputs we define an &lt;code&gt;output_names&lt;/code&gt; class variable listing
+the names of our outputs. By calling &lt;code&gt;self.fill&lt;/code&gt; on our named output we store
+the return value of our pipeline for later access in the &lt;code&gt;run&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    output_names = [&#39;square&#39;]
+
+    def run(self, number):
+        self.fill(self.outputs.square, number * number)
+
+    def finalized(self):
+        logging.info(&#39;All done! Square is %s&#39;, self.outputs.square.value)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;testing-a-pipeline:6f756ce5c8adfdb788373dfc5173280d&#34;&gt;Testing a pipeline&lt;/h2&gt;
+
+&lt;p&gt;Sometimes our pipelines call out over the wire or perform expensive data
+operations. The Pipeline API provides a convenient way to test pipelines. By
+calling &lt;code&gt;start_test&lt;/code&gt; instead of &lt;code&gt;start&lt;/code&gt;. In our example we verify the
+expected output of our squaring pipeline by calling &lt;code&gt;start_test&lt;/code&gt;. The final
+value of our pipeline is available immediately.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start_test()
+        assert stage.outputs.square.value == 100
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If we need to mock out any behaviour from our &lt;code&gt;run&lt;/code&gt; method, we can supply a
+&lt;code&gt;run_test&lt;/code&gt; method that is executed whenever we run our pipeline with
+&lt;code&gt;start_test&lt;/code&gt;. Within this method we can mock out or adjust the behaviour of the
+pipeline to work under test.&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusion:6f756ce5c8adfdb788373dfc5173280d&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;This article gives a basic outline of how to start and execute pipelines. Full
+source code for the final example is listed below. In the next article we will
+see how to pass the output of one pipeline to another and understand how parent
+and child pipelines interact.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    output_names = [&#39;square&#39;]
+
+    def run(self, number):
+        self.fill(self.outputs.square, number * number)
+
+    def finalized(self):
+        logging.info(&#39;All done! Square is %s&#39;, self.outputs.square.value)
+
+routes = [
+    webapp2.Route(&#39;/pipeline-test/&#39;, handler=&#39;main.RunPipelineHandler&#39;)
+]
+
+APP = webapp2.WSGIApplication(routes)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

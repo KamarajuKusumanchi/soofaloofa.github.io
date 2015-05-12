@@ -5,7 +5,123 @@
     <link>http://sookocheff.com/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Tue, 05 May 2015 05:57:19 CST</lastBuildDate>
+    <lastBuildDate>Tue, 12 May 2015 05:57:19 CST</lastBuildDate>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 2: Connecting Pipelines</title>
+      <link>http://sookocheff.com/posts/2015-05-12-app-engine-pipelines-part-two-connecting-pipelines/</link>
+      <pubDate>Tue, 12 May 2015 05:57:19 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2015-05-12-app-engine-pipelines-part-two-connecting-pipelines/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/2015-05-05-app-engine-pipelines-part-one-the-basics/&#34;&gt;Last time&lt;/a&gt;,
+we discussed basic pipeline instantiation and execution. This time, we will
+cover sequential pipelines, answering the question &amp;ldquo;How do I connect the output
+of one pipeline with the input of another pipeline&amp;rdquo;?&lt;/p&gt;
+
+&lt;p&gt;To begin, let&amp;rsquo;s review a basic pipeline that squares its input. If any of this
+does not make sense refer to the &lt;a href=&#34;http://sookocheff.com/posts/2015-05-05-app-engine-pipelines-part-one-the-basics/&#34;&gt;first part of this tutorial&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        stage = SquarePipeline(10)
+        stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        return number * number
+
+    def finalized(self):
+        logging.info(&#39;All done! Square is %s&#39;, self.outputs.default.value)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The first step in passing data between two pipelines is updating our pipeline to
+use the generator interface. The generator interface uses the &lt;code&gt;yield&lt;/code&gt; keyword as
+a means of connecting pipelines together. For this contrived example, let&amp;rsquo;s
+create a &lt;em&gt;parent&lt;/em&gt; pipeline that executes &lt;code&gt;SquarePipeline&lt;/code&gt; twice in succession.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class TwiceSquaredPipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        first_square = yield SquarePipeline(number)
+        second_square = yield SquarePipeline(first_square)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;What now? We need a way to access the value stored in &lt;code&gt;second_square&lt;/code&gt;. When
+execution hits a &lt;code&gt;yield&lt;/code&gt; statement a task is started to run the pipeline and a
+&lt;code&gt;PipelineFuture&lt;/code&gt; is returned. The &lt;code&gt;PipelineFuture&lt;/code&gt; will have a value &lt;em&gt;after&lt;/em&gt; the
+task has finished executing but not immediately. So how do we access the value?
+With a &lt;em&gt;child&lt;/em&gt; pipeline that can read the result. In this example, we simply log
+the value of the computation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class TwiceSquaredPipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        first_square = yield SquarePipeline(number)
+        second_square = yield SquarePipeline(first_square)
+        yield LogResult(second_square)
+
+class LogResult(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;All done! Value is %s&#39;, number)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The rule of thumb here is that &lt;em&gt;anything you instantiate your pipeline with (and
+subsequently pass to the &lt;code&gt;run&lt;/code&gt; method) is accessible within your
+pipeline&lt;/em&gt;. These are called &lt;em&gt;immediate values&lt;/em&gt; and you can treat them as regular
+Python values. When this code is executed, each pipeline started by a &lt;code&gt;yield&lt;/code&gt;
+call is separate App Engine Task that executes in the Task Queue. The Pipeline
+runtime coordinates running these tasks and shares the results of execution
+between tasks, allowing you to safely connect pipelines together.&lt;/p&gt;
+
+&lt;p&gt;Full source code for this example follows.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        stage = TwiceSquaredPipeline(10)
+        stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        return number * number
+
+
+class TwiceSquaredPipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        first_square = yield SquarePipeline(number)
+        second_square = yield SquarePipeline(first_square)
+        yield LogResult(second_square)
+
+
+class LogResult(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;All done! Value is %s&#39;, number)
+
+
+routes = [
+    webapp2.Route(&#39;/pipeline-test/&#39;, handler=&#39;main.RunPipelineHandler&#39;)
+]
+
+APP = webapp2.WSGIApplication(routes)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>App Engine Pipelines API - Part 1: The Basics</title>
@@ -28,7 +144,7 @@ functions that must complete during a single request. Asynchronous pipelines
 spawn child pipelines and connect them together into a workflow by passing input
 and output parameters around.&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;A word of warning&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;A word of warning.&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;Pipelines must be idempotent and it is up to the developer to ensure that they
 are &amp;ndash; this is not enforced by the run-time. A pipeline may fail and be retried
@@ -926,6 +1042,96 @@ faster than ever before.&lt;/p&gt;
     </item>
     
     <item>
+      <title>Deploying R Studio on Compute Engine</title>
+      <link>http://sookocheff.com/posts/2015-03-30-deploying-r-studio-to-compute-engine/</link>
+      <pubDate>Mon, 23 Mar 2015 15:32:37 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2015-03-30-deploying-r-studio-to-compute-engine/</guid>
+      <description>
+
+&lt;p&gt;Sometimes you have a data analysis problem that is just too big for your desktop
+or laptop. The limiting factor here is generally RAM. Thankfully, services like
+Google Compute Engine allow you to lease servers with up to 208GB of RAM, large
+enough for a wide variety of intensive tasks. An ancillary benefit of using a
+service like Compute Engine is that it allows you to easily load your data from
+a Cloud Storage Bucket, meaning you don&amp;rsquo;t need to keep a copy of the large
+dataset locally at all times.&lt;/p&gt;
+
+&lt;p&gt;R Studio has a remote mode allowing you to install it on a server with access
+through a remote interface. This tutorial details how to start a Compute Engine
+instance, install R Studio on it and access R Studio from the remote interface.&lt;/p&gt;
+
+&lt;p&gt;The rest of this tutorial assumes that you have a Google Cloud Platform account
+with billing enabled and have installed the &lt;a href=&#34;https://cloud.google.com/sdk/&#34;&gt;Google Cloud
+SDK&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;deploying-a-compute-engine-instance:fe69c3491bab8cb03451503db88c7996&#34;&gt;Deploying a Compute Engine Instance&lt;/h2&gt;
+
+&lt;p&gt;The first step is to deploy your Compute Engine instance. The &lt;code&gt;gcloud compute&lt;/code&gt;
+command allows you to create instances. The only required parameter to create an
+instance is the instance name. We will call our instance &lt;code&gt;r-studio&lt;/code&gt; but you can
+choose any name you like. R Studio Server is typically built on Ubuntu so it is
+safest to use the Ubuntu distribution for your server.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute instances create r-studio
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You will be prompted to choose a
+&lt;a href=&#34;https://cloud.google.com/compute/docs/zones&#34;&gt;Zone&lt;/a&gt;. Just choose a zone close to
+you. You can also specify the zone when creating the instance using the &lt;code&gt;--zone&lt;/code&gt;
+parameter. For example.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute instances create r-studio --zone us-central1-a
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;installing-r-studio:fe69c3491bab8cb03451503db88c7996&#34;&gt;Installing R Studio&lt;/h2&gt;
+
+&lt;p&gt;Once we have our Compute Engine instance set up, we log in to the machine using ssh.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute ssh r-studio --zone us-central1-a
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now that we are logged in to the Compute Engine instance, it&amp;rsquo;s time to install
+R by first updating the Debian apt-get repository and then installing R.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo apt-get update
+sudo apt-get install r-base r-base-dev
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;R Studio currently requries OpenSSL version 0.9.8. We need to install this
+separately and then install install R Studio&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;wget http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl0.9.8_0.9.8o-4squeeze14_amd64.deb
+sudo dpkg -i libssl0.9.8_0.9.8o-4squeeze14_amd64.deb
+sudo apt-get install gdebi-core
+wget http://download2.rstudio.org/rstudio-server-0.98.1103-amd64.deb
+sudo gdebi rstudio-server-0.98.1103-amd64.deb
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You should be up and running with R Studio on your compute engine instance. To
+verify, navigate to the IP address of your Compute Engine instance on port 8787
+(the default R Studio port).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http://&amp;lt;ipaddress&amp;gt;:8787
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;R Studio only permits access to users of the system, we can add a user with
+standard Linux tools like adduser. For example, to create a new user named
+rstudio and specify the password you could execute the following commands.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo adduser rstudio
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You will be prompted to enter a password for the user and confirm the users name
+and phone number.&lt;/p&gt;
+
+&lt;p&gt;Afterwards, logging in with the user you created will present a web UI of the
+familiar R Studio. You can now perform analysis on those larger data sets using
+the R Studio that just weren&amp;rsquo;t possible on a laptop.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Creating a BigQuery Table using the Java Client Library</title>
       <link>http://sookocheff.com/posts/2015-03-23-creating-a-big-query-table-java-api/</link>
       <pubDate>Mon, 23 Mar 2015 15:32:37 CST</pubDate>
@@ -1033,96 +1239,6 @@ client.tables().insert(ref.getProjectId(), ref.getDatasetId(), content).execute(
   client.tables().insert(ref.getProjectId(), ref.getDatasetId(), content).execute();
 }
 &lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Deploying R Studio on Compute Engine</title>
-      <link>http://sookocheff.com/posts/2015-03-30-deploying-r-studio-to-compute-engine/</link>
-      <pubDate>Mon, 23 Mar 2015 15:32:37 CST</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2015-03-30-deploying-r-studio-to-compute-engine/</guid>
-      <description>
-
-&lt;p&gt;Sometimes you have a data analysis problem that is just too big for your desktop
-or laptop. The limiting factor here is generally RAM. Thankfully, services like
-Google Compute Engine allow you to lease servers with up to 208GB of RAM, large
-enough for a wide variety of intensive tasks. An ancillary benefit of using a
-service like Compute Engine is that it allows you to easily load your data from
-a Cloud Storage Bucket, meaning you don&amp;rsquo;t need to keep a copy of the large
-dataset locally at all times.&lt;/p&gt;
-
-&lt;p&gt;R Studio has a remote mode allowing you to install it on a server with access
-through a remote interface. This tutorial details how to start a Compute Engine
-instance, install R Studio on it and access R Studio from the remote interface.&lt;/p&gt;
-
-&lt;p&gt;The rest of this tutorial assumes that you have a Google Cloud Platform account
-with billing enabled and have installed the &lt;a href=&#34;https://cloud.google.com/sdk/&#34;&gt;Google Cloud
-SDK&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;deploying-a-compute-engine-instance:fe69c3491bab8cb03451503db88c7996&#34;&gt;Deploying a Compute Engine Instance&lt;/h2&gt;
-
-&lt;p&gt;The first step is to deploy your Compute Engine instance. The &lt;code&gt;gcloud compute&lt;/code&gt;
-command allows you to create instances. The only required parameter to create an
-instance is the instance name. We will call our instance &lt;code&gt;r-studio&lt;/code&gt; but you can
-choose any name you like. R Studio Server is typically built on Ubuntu so it is
-safest to use the Ubuntu distribution for your server.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute instances create r-studio
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;You will be prompted to choose a
-&lt;a href=&#34;https://cloud.google.com/compute/docs/zones&#34;&gt;Zone&lt;/a&gt;. Just choose a zone close to
-you. You can also specify the zone when creating the instance using the &lt;code&gt;--zone&lt;/code&gt;
-parameter. For example.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute instances create r-studio --zone us-central1-a
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;installing-r-studio:fe69c3491bab8cb03451503db88c7996&#34;&gt;Installing R Studio&lt;/h2&gt;
-
-&lt;p&gt;Once we have our Compute Engine instance set up, we log in to the machine using ssh.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute ssh r-studio --zone us-central1-a
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now that we are logged in to the Compute Engine instance, it&amp;rsquo;s time to install
-R by first updating the Debian apt-get repository and then installing R.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo apt-get update
-sudo apt-get install r-base r-base-dev
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;R Studio currently requries OpenSSL version 0.9.8. We need to install this
-separately and then install install R Studio&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;wget http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl0.9.8_0.9.8o-4squeeze14_amd64.deb
-sudo dpkg -i libssl0.9.8_0.9.8o-4squeeze14_amd64.deb
-sudo apt-get install gdebi-core
-wget http://download2.rstudio.org/rstudio-server-0.98.1103-amd64.deb
-sudo gdebi rstudio-server-0.98.1103-amd64.deb
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;You should be up and running with R Studio on your compute engine instance. To
-verify, navigate to the IP address of your Compute Engine instance on port 8787
-(the default R Studio port).&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http://&amp;lt;ipaddress&amp;gt;:8787
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;R Studio only permits access to users of the system, we can add a user with
-standard Linux tools like adduser. For example, to create a new user named
-rstudio and specify the password you could execute the following commands.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo adduser rstudio
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;You will be prompted to enter a password for the user and confirm the users name
-and phone number.&lt;/p&gt;
-
-&lt;p&gt;Afterwards, logging in with the user you created will present a web UI of the
-familiar R Studio. You can now perform analysis on those larger data sets using
-the R Studio that just weren&amp;rsquo;t possible on a laptop.&lt;/p&gt;
 </description>
     </item>
     
@@ -2154,147 +2270,6 @@ elasticsearch cluster.&lt;/p&gt;
 
 &lt;p&gt;You can use this code as the basis for writing OutputWriters for almost any
 custom destination.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>The Bash String Operators</title>
-      <link>http://sookocheff.com/posts/2014-12-11-bash-string-operators/</link>
-      <pubDate>Thu, 11 Dec 2014 19:54:12 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2014-12-11-bash-string-operators/</guid>
-      <description>
-
-&lt;p&gt;A common task in &lt;em&gt;bash&lt;/em&gt; programming is to manipulate portions of a string and
-return the result. &lt;em&gt;bash&lt;/em&gt; provides rich support for these manipulations via
-string operators. The syntax is not always intuitive so I wanted to use this
-blog post to serve as a permanent reminder of the operators.&lt;/p&gt;
-
-&lt;p&gt;The string operators are signified with the &lt;code&gt;${}&lt;/code&gt; notation. The operations can be
-grouped in to a few classes. Each heading in this article describes a class of
-operation.&lt;/p&gt;
-
-&lt;h2 id=&#34;substring-extraction:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Substring Extraction&lt;/h2&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&#34;extract-from-a-position:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Extract from a position&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${string:position}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Extraction returns a substring of &lt;code&gt;string&lt;/code&gt; starting at &lt;code&gt;position&lt;/code&gt; and ending at the end of &lt;code&gt;string&lt;/code&gt;. &lt;code&gt;string&lt;/code&gt; is treated as an array of characters starting at 0.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world&amp;quot;
-&amp;gt; echo ${string:1}
-ello world
-&amp;gt; echo ${string:6}
-world
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&#34;extract-from-a-position-with-a-length:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Extract from a position with a length&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${string:position:length}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Adding a length returns a substring only as long as the &lt;code&gt;length&lt;/code&gt; parameter.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world&amp;quot;
-&amp;gt; echo ${string:1:2}
-el
-&amp;gt; echo ${string:6:3}
-wor
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;substring-removal:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Substring Removal&lt;/h2&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&#34;remove-shortest-starting-match:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Remove shortest starting match&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable#pattern}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;If &lt;code&gt;variable&lt;/code&gt; &lt;em&gt;starts&lt;/em&gt; with &lt;code&gt;pattern&lt;/code&gt;, delete the &lt;em&gt;shortest&lt;/em&gt; part that matches the pattern.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
-&amp;gt; echo ${string#*hello}
-world, hello jim
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&#34;remove-longest-starting-match:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Remove longest starting match&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable##pattern}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;If &lt;code&gt;variable&lt;/code&gt; &lt;em&gt;starts&lt;/em&gt; with &lt;code&gt;pattern&lt;/code&gt;, delete the &lt;em&gt;longest&lt;/em&gt; match from &lt;code&gt;variable&lt;/code&gt; and return the rest.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
-&amp;gt; echo ${string##*hello}
-jim
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&#34;remove-shortest-ending-match:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Remove shortest ending match&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable%pattern}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;If &lt;code&gt;variable&lt;/code&gt; ends with &lt;code&gt;pattern&lt;/code&gt;, delete the shortest match from the end of &lt;code&gt;variable&lt;/code&gt; and return the rest.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
-&amp;gt; echo ${string%hello*}
-hello world,
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&#34;remove-longest-ending-match:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Remove longest ending match&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable%%pattern}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;If &lt;code&gt;variable&lt;/code&gt; ends with &lt;code&gt;pattern&lt;/code&gt;, delete the longest match from the end of &lt;code&gt;variable&lt;/code&gt; and return the rest.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
-&amp;gt; echo ${string%%hello*}
-
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;substring-replacement:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Substring Replacement&lt;/h2&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&#34;replace-first-occurrence-of-word:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Replace first occurrence of word&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable/pattern/string}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Find the first occurrence of &lt;code&gt;pattern&lt;/code&gt; in &lt;code&gt;variable&lt;/code&gt; and replace it with &lt;code&gt;string&lt;/code&gt;. If &lt;code&gt;string&lt;/code&gt; is null, &lt;code&gt;pattern&lt;/code&gt; is deleted from &lt;code&gt;variable&lt;/code&gt;. If &lt;code&gt;pattern&lt;/code&gt; starts with &lt;code&gt;#&lt;/code&gt;, the match must occur at the beginning of &lt;code&gt;variable&lt;/code&gt;. If &lt;code&gt;pattern&lt;/code&gt; starts with &lt;code&gt;%&lt;/code&gt;, the match must occur at the end of the &lt;code&gt;variable&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
-&amp;gt; echo ${string/hello/goodbye}
-goodbye world, hello jim
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&#34;replace-all-occurrences-of-word:6ec92dff97a5a07ec51d4bc99cd166f2&#34;&gt;Replace all occurrences of word&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;${variable//pattern/string}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Same as above but finds &lt;strong&gt;all&lt;/strong&gt; occurrences of &lt;code&gt;pattern&lt;/code&gt; in &lt;code&gt;variable&lt;/code&gt; and replace them with &lt;code&gt;string&lt;/code&gt;. If &lt;code&gt;string&lt;/code&gt; is null, &lt;code&gt;pattern&lt;/code&gt; is deleted from &lt;code&gt;variable&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; string=&amp;quot;hello world, hello jim&amp;quot;
-&amp;gt; echo ${string//hello/goodbye}
-goodbye world, goodbye jim
-&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     

@@ -8,7 +8,7 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/posts/">
+<link rel="canonical" href="http://localhost:1313/posts/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -73,9 +73,67 @@
         
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">App Engine MapReduce API - Part 1: The Basics</a></h2>
+            <h2><a href="http://localhost:1313/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">App Engine MapReduce API - Part 3: Programmatic MapReduce using Pipelines</a></h2>
             <small class="text-muted">
-              Posted on Tuesday, April 15, 2014 · <a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics//#disqus_thread">0 Comments</a>
+              Posted on Monday, April 28, 2014 · <a href="http://localhost:1313/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <h2 id="mapreduce-api-series:3612a0fb215e4407132f27822867cc76">MapReduce API Series</h2>
+
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">Part 6: Writing a Custom Input Reader</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">Part 7: Writing a Custom Output Writer</a></li>
+</ul>
+
+<p><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">In the last article</a> we examined how to run one-off tasks that operate on a large dataset using a <code>mapreduce.yaml</code> configuration file. This article will take us a step further and look at how to run a MapReduce job programmatically using the App Engine Pipeline API.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://localhost:1313/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://localhost:1313/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml</a></h2>
+            <small class="text-muted">
+              Posted on Tuesday, April 22, 2014 · <a href="http://localhost:1313/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <h2 id="mapreduce-api-series:62102699eed8b8c281da9eed3873c1d3">MapReduce API Series</h2>
+
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">Part 6: Writing a Custom Input Reader</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">Part 7: Writing a Custom Output Writer</a></li>
+</ul>
+
+<p><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Last time</a> we looked at an overview of how MapReduce works. In this article we&rsquo;ll be getting our hands dirty writing some code to handle the Map Stage. If you&rsquo;ll recall, the Map Stage is composed of two separate components: an InputReader and a <code>map</code> function. We&rsquo;ll look at each of these in turn.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://localhost:1313/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://localhost:1313/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">App Engine MapReduce API - Part 1: The Basics</a></h2>
+            <small class="text-muted">
+              Posted on Tuesday, April 15, 2014 · <a href="http://localhost:1313/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics//#disqus_thread">0 Comments</a>
             </small>
             <p>
               <h2 id="mapreduce-api-series:54d8a613c12c57201264032edc68384d">MapReduce API Series</h2>
@@ -96,46 +154,52 @@ will give a basic overview of what MapReduce is and how it is used to do
 parallel and distributed processing of large datasets.</p>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://localhost:1313/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-04-08-understanding-json-patch/">Understanding JSON Patch</a></h2>
+            <h2><a href="http://localhost:1313/posts/2014-04-08-understanding-json-patch/">Understanding JSON Patch</a></h2>
             <small class="text-muted">
-              Posted on Tuesday, April 8, 2014 · <a href="http://sookocheff.com/posts/2014-04-08-understanding-json-patch//#disqus_thread">0 Comments</a>
+              Posted on Tuesday, April 8, 2014 · <a href="http://localhost:1313/posts/2014-04-08-understanding-json-patch//#disqus_thread">0 Comments</a>
             </small>
             <p>
               <p>The typical update cycle for an API resource is to (1) GET the representation, (2) modify it and (3) PUT back the entire representation. This can waste bandwidth and processing time for large resources. An alternative is to use the <a href="https://tools.ietf.org/html/rfc5789">HTTP PATCH</a> extension method to only send the differences between two resources. HTTP PATCH applies a set of changes to the document referenced by the HTTP request.</p>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-04-08-understanding-json-patch/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://localhost:1313/posts/2014-04-08-understanding-json-patch/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api/">How to Version a REST API</a></h2>
+            <h2><a href="http://localhost:1313/posts/2014-04-01-how-to-version-a-rest-api/">How to Version a REST API</a></h2>
             <small class="text-muted">
-              Posted on Tuesday, April 1, 2014 · <a href="http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api//#disqus_thread">0 Comments</a>
+              Posted on Tuesday, April 1, 2014 · <a href="http://localhost:1313/posts/2014-04-01-how-to-version-a-rest-api//#disqus_thread">0 Comments</a>
             </small>
             <p>
               <p>API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients.</p>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://localhost:1313/posts/2014-04-01-how-to-version-a-rest-api/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post/">When to Use HTTP PUT and HTTP POST</a></h2>
+            <h2><a href="http://localhost:1313/posts/2014-03-27-when-to-use-http-put-and-http-post/">When to Use HTTP PUT and HTTP POST</a></h2>
             <small class="text-muted">
-              Posted on Thursday, March 27, 2014 · <a href="http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post//#disqus_thread">0 Comments</a>
+              Posted on Thursday, March 27, 2014 · <a href="http://localhost:1313/posts/2014-03-27-when-to-use-http-put-and-http-post//#disqus_thread">0 Comments</a>
             </small>
             <p>
               <p>The HTTP protocol defines two methods for updating a resource &ndash; <code>PUT</code> and
@@ -148,31 +212,35 @@ use <code>POST</code> for any action which may modify the state of a resource, i
 methods and offers clear suggestions on when to use each method.</p>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://localhost:1313/posts/2014-03-27-when-to-use-http-put-and-http-post/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab/">Stripe checkout opening in a new tab</a></h2>
+            <h2><a href="http://localhost:1313/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab/">Stripe checkout opening in a new tab</a></h2>
             <small class="text-muted">
-              Posted on Tuesday, March 25, 2014 · <a href="http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab//#disqus_thread">0 Comments</a>
+              Posted on Tuesday, March 25, 2014 · <a href="http://localhost:1313/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab//#disqus_thread">0 Comments</a>
             </small>
             <p>
               <p>At <a href="http://www.vendasta.com">VendAsta</a> we&rsquo;ve been integrating with the <a href="http://stripe.com/checkout">Stripe</a> payment system using Stripe Checkout. The experience has been completely painless and surprisingly simple. Then came a hiccup. While demoing the new functionality we found that one particular computer in the office would open the checkout modal dialog in a new browser window. Just one laptop. It was running the same version of Chrome that we were developing on. It was running the same OS as a working test machine. But the dialog would consistently open in a new browser window on just this one laptop.</p>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://localhost:1313/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/">How REST Constraints Affect API Design</a></h2>
+            <h2><a href="http://localhost:1313/posts/2014-03-19-how-rest-constraints-affect-api-design/">How REST Constraints Affect API Design</a></h2>
             <small class="text-muted">
-              Posted on Wednesday, March 19, 2014 · <a href="http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design//#disqus_thread">0 Comments</a>
+              Posted on Wednesday, March 19, 2014 · <a href="http://localhost:1313/posts/2014-03-19-how-rest-constraints-affect-api-design//#disqus_thread">0 Comments</a>
             </small>
             <p>
               <p>REST was developed and formalized by analyzing the existing Web and extracting
@@ -189,16 +257,18 @@ and, hypermedia as the engine of application state.</p>
 </blockquote>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://localhost:1313/posts/2014-03-19-how-rest-constraints-affect-api-design/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format/">On choosing a hypermedia type for your API - HAL, JSON-LD, Collection&#43;JSON, SIREN, Oh My!</a></h2>
+            <h2><a href="http://localhost:1313/posts/2014-03-11-on-choosing-a-hypermedia-format/">On choosing a hypermedia type for your API - HAL, JSON-LD, Collection&#43;JSON, SIREN, Oh My!</a></h2>
             <small class="text-muted">
-              Posted on Tuesday, March 11, 2014 · <a href="http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format//#disqus_thread">0 Comments</a>
+              Posted on Tuesday, March 11, 2014 · <a href="http://localhost:1313/posts/2014-03-11-on-choosing-a-hypermedia-format//#disqus_thread">0 Comments</a>
             </small>
             <p>
               <p>In recent years REST has been at the forefront of modern API
@@ -209,16 +279,18 @@ intuitive model for client developers. Unfortunately, there are two problems
 that REST doesn&rsquo;t solve alone.</p>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://localhost:1313/posts/2014-03-11-on-choosing-a-hypermedia-format/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-01-04-three-questions-that-define-an-ideal-customer/">Three questions that define an ideal customer</a></h2>
+            <h2><a href="http://localhost:1313/posts/2014-01-04-three-questions-that-define-an-ideal-customer/">Three questions that define an ideal customer</a></h2>
             <small class="text-muted">
-              Posted on Saturday, January 4, 2014 · <a href="http://sookocheff.com/posts/2014-01-04-three-questions-that-define-an-ideal-customer//#disqus_thread">0 Comments</a>
+              Posted on Saturday, January 4, 2014 · <a href="http://localhost:1313/posts/2014-01-04-three-questions-that-define-an-ideal-customer//#disqus_thread">0 Comments</a>
             </small>
             <p>
               <p>One of the first steps in selling a new product or service is finding your target market and one of the best ways of finding your target market is by defining your ideal customer. Ask yourself &ndash; out of all the people in the world who would be the most likely to buy this thing? If you can clearly answer this question you have your ideal customer and you can start a marketing campaign targetting exactly the demographic you are trying to sell to.</p>
@@ -226,39 +298,11 @@ that REST doesn&rsquo;t solve alone.</p>
 <p>Let&rsquo;s go through an exercise that can help to find that ideal customer by asking three simple questions.</p>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-01-04-three-questions-that-define-an-ideal-customer/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://localhost:1313/posts/2014-01-04-three-questions-that-define-an-ideal-customer/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
-            <hr>
-          </article>
-        
-          <article>
-            <h2><a href="http://sookocheff.com/posts/2013-12-19-how-to-get-accepted-to-a-business-plan-competition/">How to get accepted to a business plan competition</a></h2>
-            <small class="text-muted">
-              Posted on Thursday, December 19, 2013 · <a href="http://sookocheff.com/posts/2013-12-19-how-to-get-accepted-to-a-business-plan-competition//#disqus_thread">0 Comments</a>
-            </small>
-            <p>
-              <p>I recently received the good news that my business idea was accepted for the <a href="http://www.usask.ca/research/ilo/business_plan.php">University of Saskatchewan&rsquo;s 2014 Tech Venture Challenge</a>. The Tech Venture Challenge is a business plan competition for students and alumni where participants are judged by their finished business plan and pitch after a four month workshop program. I&rsquo;m going to blog about the experience as a way to absorb the material and hopefully help someone else who may be applying in the future. This post will provide some admittedly biased advice on submitting your application to the Tech Venture Challenge.</p>
-
-            </p>
-            <p class="text-center">
-              <a href="http://sookocheff.com/posts/2013-12-19-how-to-get-accepted-to-a-business-plan-competition/"><button type="button" class="btn btn-primary">Read More</button></a>
-            </p>
-            <hr>
-          </article>
-        
-          <article>
-            <h2><a href="http://sookocheff.com/posts/2013-06-04-install-npm-packages-with-a-chef-cookbook/">Install node.js packages via npm with a Chef Cookbook</a></h2>
-            <small class="text-muted">
-              Posted on Thursday, June 6, 2013 · <a href="http://sookocheff.com/posts/2013-06-04-install-npm-packages-with-a-chef-cookbook//#disqus_thread">0 Comments</a>
-            </small>
-            <p>
-              <p>I wanted to set up a Vagrant instance with node.js and some specific packages pre-installed. I found a Chef cookbook to install node and after a bit of work have a cookbook that will install arbitrary node packages through npm.  I based this heavily on [balbeko][2]&rsquo;s chef-npm cookbook with modifications to accept a data bag list of npm packages.</p>
-
-            </p>
-            <p class="text-center">
-              <a href="http://sookocheff.com/posts/2013-06-04-install-npm-packages-with-a-chef-cookbook/"><button type="button" class="btn btn-primary">Read More</button></a>
-            </p>
+            
             <hr>
           </article>
         
@@ -394,6 +438,9 @@ s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
 (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
 }());
 </script>
-</body>
+<script>document.write('<script src="http://'
+        + (location.host || 'localhost').split(':')[0]
+		+ ':1313/livereload.js?mindelay=10"></'
+        + 'script>')</script></body>
 </html>
 

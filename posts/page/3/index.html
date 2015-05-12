@@ -73,188 +73,397 @@
         
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm/">Packaging a Compute Engine Virtual Machine Image</a></h2>
+            <h2><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml</a></h2>
             <small class="text-muted">
-              Posted on Tuesday, October 28, 2014 · <a href="http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm//#disqus_thread">0 Comments</a>
+              Posted on Tuesday, April 22, 2014 · <a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml//#disqus_thread">0 Comments</a>
             </small>
             <p>
-              <p>Google Compute Engine allows you to make custom images from a running virtual
-machine. The documentation provides a sufficient example but is a little bit
-scattered. This article collects and presents all the steps necessary to create
-your own Compute Engine images that you can use as a base for virtual machines.</p>
+              <h2 id="mapreduce-api-series:62102699eed8b8c281da9eed3873c1d3">MapReduce API Series</h2>
+
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">Part 6: Writing a Custom Input Reader</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">Part 7: Writing a Custom Output Writer</a></li>
+</ul>
+
+<p><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Last time</a> we looked at an overview of how MapReduce works. In this article we&rsquo;ll be getting our hands dirty writing some code to handle the Map Stage. If you&rsquo;ll recall, the Map Stage is composed of two separate components: an InputReader and a <code>map</code> function. We&rsquo;ll look at each of these in turn.</p>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-10-20-prediction-api/">Using the Google Prediction API to Predict the Sentiment of a Tweet</a></h2>
+            <h2><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">App Engine MapReduce API - Part 1: The Basics</a></h2>
             <small class="text-muted">
-              Posted on Monday, October 20, 2014 · <a href="http://sookocheff.com/posts/2014-10-20-prediction-api//#disqus_thread">0 Comments</a>
+              Posted on Tuesday, April 15, 2014 · <a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics//#disqus_thread">0 Comments</a>
             </small>
             <p>
-              <p>The <a href="https://cloud.google.com/prediction/">Google Prediction API</a> offers the
-power of Google&rsquo;s machine learning algorithms over a RESTful API interface. The
-machine learning algorithms themselves are a complete black box. As a user you
-upload the training data and, once it has been analyzed, start classifying new
-observations based on the analysis of the training data. I recently spent some
-time investigating how to use the API to determine the sentiment of a tweet.
-This article collects my thoughts on the experience and a few recommendations
-for future work.</p>
+              <h2 id="mapreduce-api-series:54d8a613c12c57201264032edc68384d">MapReduce API Series</h2>
+
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">Part 6: Writing a Custom Input Reader</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">Part 7: Writing a Custom Output Writer</a></li>
+</ul>
+
+<p>The first arcticle in this series provides an overview of the <a href="https://developers.google.com/appengine/docs/python/dataprocessing/">App Engine MapReduce
+API</a>. We
+will give a basic overview of what MapReduce is and how it is used to do
+parallel and distributed processing of large datasets.</p>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-10-20-prediction-api/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-10-06-suggested-searches/">Suggested Searches with Google App Engine</a></h2>
+            <h2><a href="http://sookocheff.com/posts/2014-04-08-understanding-json-patch/">Understanding JSON Patch</a></h2>
             <small class="text-muted">
-              Posted on Monday, October 6, 2014 · <a href="http://sookocheff.com/posts/2014-10-06-suggested-searches//#disqus_thread">0 Comments</a>
+              Posted on Tuesday, April 8, 2014 · <a href="http://sookocheff.com/posts/2014-04-08-understanding-json-patch//#disqus_thread">0 Comments</a>
             </small>
             <p>
-              <p>At <a href="http://www.vendasta.com">VendAsta</a> we have a few APIs that are backed by
-search documents built using the <a href="https://cloud.google.com/appengine/docs/python/search/">App Engine Search
-API</a>. These APIs are
-queried using a search string entered in a text box. One way to improve the user
-experience of this text box is to offer the user suggestions of popular searches
-to use as their query. This article describes how to achieve this.</p>
+              <p>The typical update cycle for an API resource is to (1) GET the representation, (2) modify it and (3) PUT back the entire representation. This can waste bandwidth and processing time for large resources. An alternative is to use the <a href="https://tools.ietf.org/html/rfc5789">HTTP PATCH</a> extension method to only send the differences between two resources. HTTP PATCH applies a set of changes to the document referenced by the HTTP request.</p>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-10-06-suggested-searches/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://sookocheff.com/posts/2014-04-08-understanding-json-patch/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/">Composing Asynchronous Functions With Tasklets</a></h2>
+            <h2><a href="http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api/">How to Version a REST API</a></h2>
             <small class="text-muted">
-              Posted on Saturday, September 27, 2014 · <a href="http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets//#disqus_thread">0 Comments</a>
+              Posted on Tuesday, April 1, 2014 · <a href="http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api//#disqus_thread">0 Comments</a>
             </small>
             <p>
-              <p>Asynchronous functions can provide a boon to application performance by allowing time consuming functions to operate in parallel and without blocking the main execution thread. This article explains how to use the Tasklet API to compose and execute asynchronous functions in Google App Engine.</p>
+              <p>API versioning is a fact of life. Even the most well designed API changes as new features and relationships are uncovered. Unfortunately, updating an API is seldom as simple as changing the behaviour of our existing URL endpoints on her he server. If we have existing clients we need to explicitly advertise breaking changes in a seamless way. This article explains a few methods of specifying breaking changes that offer a clear upgrade path for existing API clients.</p>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-09-15-working-from-home-retrospective/">Working From Home: A Retrospective</a></h2>
+            <h2><a href="http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post/">When to Use HTTP PUT and HTTP POST</a></h2>
             <small class="text-muted">
-              Posted on Thursday, September 18, 2014 · <a href="http://sookocheff.com/posts/2014-09-15-working-from-home-retrospective//#disqus_thread">0 Comments</a>
+              Posted on Thursday, March 27, 2014 · <a href="http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post//#disqus_thread">0 Comments</a>
             </small>
             <p>
-              <p>I&rsquo;ve spent the past eight months working from home thanks to some great support
-from my <a href="http://www.vendasta.com">employer</a>, allowing me to support my wife and
-children and still contribute as a meaningful employee. Working from home with
-four small children and a loving and supportive wife has brought its fair share
-of both challenges and delights. This post will describe the working from home
-experience and the lessons I&rsquo;ve learned along the way.</p>
+              <p>The HTTP protocol defines two methods for updating a resource &ndash; <code>PUT</code> and
+<code>POST</code>. Both <code>PUT</code> and <code>POST</code> are used to modify a resource and this semantic
+similarity can confuse API developers. This confusion has led most developers to
+use <code>POST</code> for any action which may modify the state of a resource, ignoring
+<code>PUT</code> entirely.</p>
+
+<p>This article attempts to explain the semantics behind the <code>PUT</code> and <code>POST</code>
+methods and offers clear suggestions on when to use each method.</p>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-09-15-working-from-home-retrospective/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/">Converting an ndb model to a BigQuery schema</a></h2>
+            <h2><a href="http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab/">Stripe checkout opening in a new tab</a></h2>
             <small class="text-muted">
-              Posted on Thursday, August 14, 2014 · <a href="http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema//#disqus_thread">0 Comments</a>
+              Posted on Tuesday, March 25, 2014 · <a href="http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab//#disqus_thread">0 Comments</a>
             </small>
             <p>
-              <p>I have been working on the problem of recording changes to an ndb model. One way to accomplish this is to stream data changes to a BigQuery table corresponding to the ndb model. It would be great to do this in a generic way which gives us the problem of generating a BigQuery table given an ndb model. This article will describe one solution to this problem.</p>
+              <p>At <a href="http://www.vendasta.com">VendAsta</a> we&rsquo;ve been integrating with the <a href="http://stripe.com/checkout">Stripe</a> payment system using Stripe Checkout. The experience has been completely painless and surprisingly simple. Then came a hiccup. While demoing the new functionality we found that one particular computer in the office would open the checkout modal dialog in a new browser window. Just one laptop. It was running the same version of Chrome that we were developing on. It was running the same OS as a working test machine. But the dialog would consistently open in a new browser window on just this one laptop.</p>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup/">Restoring an App Engine backup into a Big Query table</a></h2>
+            <h2><a href="http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/">How REST Constraints Affect API Design</a></h2>
             <small class="text-muted">
-              Posted on Monday, August 4, 2014 · <a href="http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup//#disqus_thread">0 Comments</a>
+              Posted on Wednesday, March 19, 2014 · <a href="http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design//#disqus_thread">0 Comments</a>
             </small>
             <p>
-              <p>An unfortunate DevOps task for any team running App Engine is restoring data
-from backups. One way to do this is by accessing the Google Cloud Storage URL
-for a given App Engine backup and importing that backup into BigQuery. This
-article will show you to get the Cloud Storage URL for an App Engine backup and
-manually perform that import.</p>
+              <p>REST was developed and formalized by analyzing the existing Web and extracting
+the principles that made it work. This set of principles was written down in the
+<a href="https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm">Fielding dissertation</a>
+which lays out the set of constraints that, when enforced, will make a generic
+network system into a resilient network like the Web. In Chapter 5 of the
+dissertation Fielding outlines REST&rsquo;s interface constraints.</p>
+
+<blockquote>
+<p>REST is defined by four interface constraints: identification of resources;
+manipulation of resources using representations; self-descriptive messages;
+and, hypermedia as the engine of application state.</p>
+</blockquote>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader/">Bypassing ndb hooks with the RawDatastoreInputReader</a></h2>
+            <h2><a href="http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format/">On choosing a hypermedia type for your API - HAL, JSON-LD, Collection&#43;JSON, SIREN, Oh My!</a></h2>
             <small class="text-muted">
-              Posted on Tuesday, July 29, 2014 · <a href="http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader//#disqus_thread">0 Comments</a>
+              Posted on Tuesday, March 11, 2014 · <a href="http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format//#disqus_thread">0 Comments</a>
             </small>
             <p>
-              <p>When doing a MapReduce operation there are times when you want to edit a set of
-entities without triggering the post or pre put hooks associated with those
-entities. On such ocassions using the raw datastore entity allows you to process
-the data without unwanted side effects. This article will show how to use the
-RawDatastoreInputReader to process datastore entities.</p>
+              <p>In recent years REST has been at the forefront of modern API
+design. This has led to APIs with manageable URLs that respect the HTTP verbs
+(GET, POST, PUT <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.html">and the
+ rest</a>), producing an
+intuitive model for client developers. Unfortunately, there are two problems
+that REST doesn&rsquo;t solve alone.</p>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/">Generating a C# client for an App Engine Cloud Endpoints API</a></h2>
+            <h2><a href="http://sookocheff.com/posts/2014-01-04-three-questions-that-define-an-ideal-customer/">Three questions that define an ideal customer</a></h2>
             <small class="text-muted">
-              Posted on Tuesday, July 22, 2014 · <a href="http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client//#disqus_thread">0 Comments</a>
+              Posted on Saturday, January 4, 2014 · <a href="http://sookocheff.com/posts/2014-01-04-three-questions-that-define-an-ideal-customer//#disqus_thread">0 Comments</a>
             </small>
             <p>
-              <p>The Cloud Endpoints API comes packaged with endpointscfg.py to generate client
-libraries in JavaScript, Objective-C (for iOS) and Java (for Android). You can
-also generate a few additional client libraries using the <a href="https://code.google.com/p/google-apis-client-generator/">Google APIs client
-generator</a>. This
-article will show you how to use the generator to create a C# client library.</p>
+              <p>One of the first steps in selling a new product or service is finding your target market and one of the best ways of finding your target market is by defining your ideal customer. Ask yourself &ndash; out of all the people in the world who would be the most likely to buy this thing? If you can clearly answer this question you have your ideal customer and you can start a marketing campaign targetting exactly the demographic you are trying to sell to.</p>
+
+<p>Let&rsquo;s go through an exercise that can help to find that ideal customer by asking three simple questions.</p>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://sookocheff.com/posts/2014-01-04-three-questions-that-define-an-ideal-customer/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/">Using Basic Authentication with Google Cloud Endpoints</a></h2>
+            <h2><a href="http://sookocheff.com/posts/2013-12-19-how-to-get-accepted-to-a-business-plan-competition/">How to get accepted to a business plan competition</a></h2>
             <small class="text-muted">
-              Posted on Wednesday, July 16, 2014 · <a href="http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints//#disqus_thread">0 Comments</a>
+              Posted on Thursday, December 19, 2013 · <a href="http://sookocheff.com/posts/2013-12-19-how-to-get-accepted-to-a-business-plan-competition//#disqus_thread">0 Comments</a>
             </small>
             <p>
-              <p>Cloud Endpoints provides strong integration with OAuth 2.0. If you can use this
-integration &ndash; do it. However, some legacy systems require supporting
-alternative authentication mechanisms. This article will show you how to secure
-an API endpoint using Basic Authentication. You can use this as a starting point
-for whatever authentication method you choose.</p>
+              <p>I recently received the good news that my business idea was accepted for the <a href="http://www.usask.ca/research/ilo/business_plan.php">University of Saskatchewan&rsquo;s 2014 Tech Venture Challenge</a>. The Tech Venture Challenge is a business plan competition for students and alumni where participants are judged by their finished business plan and pitch after a four month workshop program. I&rsquo;m going to blog about the experience as a way to absorb the material and hopefully help someone else who may be applying in the future. This post will provide some admittedly biased advice on submitting your application to the Tech Venture Challenge.</p>
 
             </p>
+            
             <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/"><button type="button" class="btn btn-primary">Read More</button></a>
+              <a href="http://sookocheff.com/posts/2013-12-19-how-to-get-accepted-to-a-business-plan-competition/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2013-06-04-install-npm-packages-with-a-chef-cookbook/">Install node.js packages via npm with a Chef Cookbook</a></h2>
+            <small class="text-muted">
+              Posted on Thursday, June 6, 2013 · <a href="http://sookocheff.com/posts/2013-06-04-install-npm-packages-with-a-chef-cookbook//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <p>I wanted to set up a Vagrant instance with node.js and some specific packages pre-installed. I found a Chef cookbook to install node and after a bit of work have a cookbook that will install arbitrary node packages through npm.  I based this heavily on [balbeko][2]&rsquo;s chef-npm cookbook with modifications to accept a data bag list of npm packages.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2013-06-04-install-npm-packages-with-a-chef-cookbook/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2013-05-16-why-photos-is-the-killer-feature-of-google-plus/">Photos is the Killer Feature of Google&#43;</a></h2>
+            <small class="text-muted">
+              Posted on Thursday, May 16, 2013 · <a href="http://sookocheff.com/posts/2013-05-16-why-photos-is-the-killer-feature-of-google-plus//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <p>Yesterday&rsquo;s [Google I/O keynote][1] unveiled some new features in Music, Maps and Search. But to me the biggest and most important announcement was the new [Google+ photo features][2]. Full-size high-resolution photos, automatic highlights of entire albums, automatic enhancement and auto-awesome combine to make Google+ <em>the</em> most feature packed photo hosting service on the web. Add the ability to share pictures with anyone via e-mail (take that Facebook) and Google+ is now <em>the</em> best social network to host and share photos.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2013-05-16-why-photos-is-the-killer-feature-of-google-plus/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2013-04-30-apple-has-a-software-problem-why-ill-be-switching-to-android/">Apple has a Software Problem - Why I&#39;ll be Switching to Android</a></h2>
+            <small class="text-muted">
+              Posted on Tuesday, April 30, 2013 · <a href="http://sookocheff.com/posts/2013-04-30-apple-has-a-software-problem-why-ill-be-switching-to-android//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <p>No one can question Apple’s dominance in hardware. The build quality and user experience of the iPod, iPhone and iPad positioned Apple as the most profitable company in the world. However, with the build quality of rival devices quickly approaching Apple quality, software will be the next battleground for consumer loyalty. And Apple has a software problem.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2013-04-30-apple-has-a-software-problem-why-ill-be-switching-to-android/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2013-04-19-creating-a-new-file-or-directoryin-vim-using-nerdtree/">Creating a new file or directory in Vim using NERDTree</a></h2>
+            <small class="text-muted">
+              Posted on Friday, April 19, 2013 · <a href="http://sookocheff.com/posts/2013-04-19-creating-a-new-file-or-directoryin-vim-using-nerdtree//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <p>I’m not sure why this was so difficult to discover. For the longest time I was not sure how to create a new file using NERDTree. I finally sat down and figure out how it works.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2013-04-19-creating-a-new-file-or-directoryin-vim-using-nerdtree/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/">Submitting a Unity3d Game to the Mac App Store</a></h2>
+            <small class="text-muted">
+              Posted on Tuesday, April 9, 2013 · <a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <p>Submitting a Unity3d game to the Mac App Store is a somewhat painful process. This guide refers to Unity3d 3.5 but should apply to Unity 4.0 and up.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2013-01-22-copying-from-the-vim-to-the-os-x-mountain-lion-clipboard/">Copying from Vim to the OS X Mountain Lion clipboard</a></h2>
+            <small class="text-muted">
+              Posted on Tuesday, January 22, 2013 · <a href="http://sookocheff.com/posts/2013-01-22-copying-from-the-vim-to-the-os-x-mountain-lion-clipboard//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <p>The latest version of OS X (Mountain Lion) broke compatibility with the vim and the OS clipboard. In most cases you can configure vim to use the operating system clipboard by setting <code>clipboard=unnamed</code> in your <code>.vimrc</code>. Unfortunately this setting does not work in OS X because the default version of vim was not compiled with clipboard support. You can check if your version of vim is compiled with clipboard support by typing <code>vim –version</code>  and looking for <code>clipboard</code>. A prepended <code>+</code> means support is enabled. A prepended <code>–</code> means support is disabled.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2013-01-22-copying-from-the-vim-to-the-os-x-mountain-lion-clipboard/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2012-11-15-etcetera-plugin-live-alerts-prompts-loading-views-push-localization-and-more/">Showing a local webpage in Unity3d using the Prime[31] etcetera plugin.</a></h2>
+            <small class="text-muted">
+              Posted on Thursday, November 15, 2012 · <a href="http://sookocheff.com/posts/2012-11-15-etcetera-plugin-live-alerts-prompts-loading-views-push-localization-and-more//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <p>I&rsquo;ve been working with Prime31&rsquo;s Etcetera plugin for iOS development with
+Unity3d. There are a lot of great things in there but some of the documentation
+is lacking.  Anyways, if you want to show a local web page with the
+<code>showWebPage</code> command it is a two step process.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2012-11-15-etcetera-plugin-live-alerts-prompts-loading-views-push-localization-and-more/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2012-10-08-using-unity3d-with-version-control/">Using Unity3d with Version Control</a></h2>
+            <small class="text-muted">
+              Posted on Monday, October 8, 2012 · <a href="http://sookocheff.com/posts/2012-10-08-using-unity3d-with-version-control//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <p>I had a tough time finding this page. The steps to get Unity set up with version control aren’t that difficult but it is one of those problems that you need to be told how to solve.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2012-10-08-using-unity3d-with-version-control/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/">Saving canvas data to an image file with JavaScript and PHP</a></h2>
+            <small class="text-muted">
+              Posted on Wednesday, July 27, 2011 · <a href="http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <p>Saving HTML canvas element data to an image in a user friendly manner is a tricky problem. Let&rsquo;s look at one way to solve it.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2011-06-28-using-leiningen-behind-a-windows-proxy/">Using Leiningen behind a Windows proxy</a></h2>
+            <small class="text-muted">
+              Posted on Tuesday, June 28, 2011 · <a href="http://sookocheff.com/posts/2011-06-28-using-leiningen-behind-a-windows-proxy//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <p>I’ve been getting familiar with the [Leiningen][1] build tool for [Clojure][2] but had trouble connecting to the Clojar and Maven repositories behind a proxy.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2011-06-28-using-leiningen-behind-a-windows-proxy/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
             <hr>
           </article>
         
@@ -285,24 +494,12 @@ for whatever authentication method you choose.</p>
         ><a href="/posts/page/4/">4</a></li>
         
         <li
-        ><a href="/posts/page/5/">5</a></li>
-        
-        <li
-        ><a href="/posts/page/6/">6</a></li>
-        
-        <li
-        ><a href="/posts/page/7/">7</a></li>
-        
-        <li
-        ><a href="/posts/page/8/">8</a></li>
-        
-        <li
         >
         <a href="/posts/page/4/" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
         </li>
         
         <li>
-            <a href="/posts/page/8/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+            <a href="/posts/page/4/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
         </li>
         
     </ul>
@@ -321,6 +518,7 @@ for whatever authentication method you choose.</p>
          <h3>App Engine</h3>
          <ul class="list-unstyled">
            <li><a href="/series/mapreduce-api/">MapReduce API</a></li>
+           <li><a href="/series/pipelines-api/">Pipelines API</a></li>
            <li><a href="/series/cloud-endpoints/">Cloud Endpoints</a></li>
          </ul>
        </div>

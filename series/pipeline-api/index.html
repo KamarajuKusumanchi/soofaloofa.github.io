@@ -8,7 +8,7 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://sookocheff.com/series/pipeline-api/">
+<link rel="canonical" href="http://localhost:1313/series/pipeline-api/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -73,16 +73,14 @@
         
         
           <article>
-            <h2><a href="http://sookocheff.com/posts/2015-05-05-app-engine-pipelines-part-one-the-basics/">App Engine Pipelines API - Part 1: The Basics</a></h2>
+            <h2><a href="http://localhost:1313/posts/2015-05-19-app-engine-pipelines-part-three-fan-in-fan-out/">App Engine Pipelines API - Part 3: Fan In, Fan Out, Sequencing</a></h2>
             <small class="text-muted">
-              Posted on Tuesday, May 5, 2015 · <a href="http://sookocheff.com/posts/2015-05-05-app-engine-pipelines-part-one-the-basics//#disqus_thread">0 Comments</a>
+              Posted on Tuesday, May 19, 2015 · <a href="http://localhost:1313/posts/2015-05-19-app-engine-pipelines-part-three-fan-in-fan-out//#disqus_thread">0 Comments</a>
             </small>
             <p>
-              The Pipelines API is a general purpose workflow engine for App Engine applications. With the Pipelines API we can connect together complex workflows into a coherent run time backed by the Datastore. This article provides a basic overview of the Pipelines API and how it can be used for abritrary computational workflows. In the most basic sense a Pipeline is an object that takes input, performs some logic or computation on that input, and produces output.
+              Fan-In Fan-Out Sequencing
             </p>
-            <p class="text-center">
-              <a href="http://sookocheff.com/posts/2015-05-05-app-engine-pipelines-part-one-the-basics/"><button type="button" class="btn btn-primary">Read More</button></a>
-            </p>
+            
             <hr>
           </article>
         
@@ -103,6 +101,7 @@
          <h3>App Engine</h3>
          <ul class="list-unstyled">
            <li><a href="/series/mapreduce-api/">MapReduce API</a></li>
+           <li><a href="/series/pipelines-api/">Pipelines API</a></li>
            <li><a href="/series/cloud-endpoints/">Cloud Endpoints</a></li>
          </ul>
        </div>
@@ -172,6 +171,9 @@ s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
 (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
 }());
 </script>
-</body>
+<script>document.write('<script src="http://'
+        + (location.host || 'localhost').split(':')[0]
+		+ ':1313/livereload.js?mindelay=10"></'
+        + 'script>')</script></body>
 </html>
 

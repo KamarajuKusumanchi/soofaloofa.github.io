@@ -73,6 +73,26 @@
         
         
           <article>
+            <h2><a href="http://sookocheff.com/posts/2015-05-12-app-engine-pipelines-part-two-connecting-pipelines/">App Engine Pipelines API - Part 2: Connecting Pipelines</a></h2>
+            <small class="text-muted">
+              Posted on Tuesday, May 12, 2015 · <a href="http://sookocheff.com/posts/2015-05-12-app-engine-pipelines-part-two-connecting-pipelines//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <p><a href="http://sookocheff.com/posts/2015-05-05-app-engine-pipelines-part-one-the-basics/">Last time</a>,
+we discussed basic pipeline instantiation and execution. This time, we will
+cover sequential pipelines, answering the question &ldquo;How do I connect the output
+of one pipeline with the input of another pipeline&rdquo;?</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2015-05-12-app-engine-pipelines-part-two-connecting-pipelines/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
             <h2><a href="http://sookocheff.com/posts/2015-05-05-app-engine-pipelines-part-one-the-basics/">App Engine Pipelines API - Part 1: The Basics</a></h2>
             <small class="text-muted">
               Posted on Tuesday, May 5, 2015 · <a href="http://sookocheff.com/posts/2015-05-05-app-engine-pipelines-part-one-the-basics//#disqus_thread">0 Comments</a>
@@ -80,9 +100,11 @@
             <p>
               The Pipelines API is a general purpose workflow engine for App Engine applications. With the Pipelines API we can connect together complex workflows into a coherent run time backed by the Datastore. This article provides a basic overview of the Pipelines API and how it can be used for abritrary computational workflows. In the most basic sense a Pipeline is an object that takes input, performs some logic or computation on that input, and produces output.
             </p>
+            
             <p class="text-center">
               <a href="http://sookocheff.com/posts/2015-05-05-app-engine-pipelines-part-one-the-basics/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
@@ -94,9 +116,11 @@
             <p>
               tldr; DatastoreDict. What&rsquo;s a durabledict? Good question. Durabledict is a Python implementation of a persistent dictionary. The dictionary values are cached locally and sync with the datastore whenever a value in the datastore changes. Disqus provides concrete implementations for Redis, Django, ZooKeeper and in memory. This blog post details an implementation using the App Engine datastore and memcache. Creating your own durabledict By following the guide the durabledict README we can create our own implementation.
             </p>
+            
             <p class="text-center">
               <a href="http://sookocheff.com/posts/2015-04-28-durabledict-for-app-engine/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
@@ -108,9 +132,11 @@
             <p>
               What if you could deliver more value, with more speed and with more stability? What if you could triage bugs faster? What if you could fix bugs easier and with less user facing impact? You can, with continuous delivery. Terminology First, some terminology. What distinguishes continuous integration, continuous deployment and continuous delivery? Continuous integration revolves around the continuous automated testing of software whenever change to the software is made. Continuous deployment is the practice of automatically deploying any change to the code.
             </p>
+            
             <p class="text-center">
               <a href="http://sookocheff.com/posts/2015-04-23-continuous-delivery-distilled/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
@@ -122,9 +148,11 @@
             <p>
               I haven&rsquo;t been able to find great documentation on creating a BigQuery TableSchema using the Java Client Library. This blog post hopes to rectify that :). You can use the BigQuery sample code for an idea of how to create a client connection to BigQuery. Assuming you have the connection set up you can start by creating a new TableSchema. The TableSchema provides a method for setting the list of fields that make up the columns of your BigQuery Table.
             </p>
+            
             <p class="text-center">
               <a href="http://sookocheff.com/posts/2015-03-23-creating-a-big-query-table-java-api/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
@@ -136,9 +164,11 @@
             <p>
               Sometimes you have a data analysis problem that is just too big for your desktop or laptop. The limiting factor here is generally RAM. Thankfully, services like Google Compute Engine allow you to lease servers with up to 208GB of RAM, large enough for a wide variety of intensive tasks. An ancillary benefit of using a service like Compute Engine is that it allows you to easily load your data from a Cloud Storage Bucket, meaning you don&rsquo;t need to keep a copy of the large dataset locally at all times.
             </p>
+            
             <p class="text-center">
               <a href="http://sookocheff.com/posts/2015-03-30-deploying-r-studio-to-compute-engine/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
@@ -150,9 +180,11 @@
             <p>
               At Vendasta the App Engine Datastore serves as the single point of truth for most operational data and the majority of interactions are against this single point of truth. However, a piece of required functionality in many of our products is to provide a searchable view of the data in the App Engine Datastore. Search is difficult using the Datastore and so we have moved to using the Search API as a managed solution for searching datastore entities.
             </p>
+            
             <p class="text-center">
               <a href="http://sookocheff.com/posts/2015-02-23-syncing-search-documents-with-datastore-entities/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
@@ -164,9 +196,11 @@
             <p>
               We all know the importance of unit tests. Especially in a dynamic language like Python. Occasionally you have a set of unit tests that are failing in a cascading fashion where the first error case causes subsequent tests to fail (these tests are likely no longer unit tests, but that&rsquo;s a different discussion). To help isolate the offending test case in a see of failures you can set the unittest.TestCase class to halt after the first error by overriding the run method as follows.
             </p>
+            
             <p class="text-center">
               <a href="http://sookocheff.com/posts/2015-02-12-halting-unittest-execution-at-first-error/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
@@ -178,9 +212,11 @@
             <p>
               I&rsquo;ve been experimenting with the Google Cloud Dataflow Java SDK for running managed data processing pipelines. One of the first tasks is getting a build environment up and running. For this I chose Gradle. We start by declaring this a java application and listing the configuration variables that declare the source compatibility level (which for now must be 1.7) and the main class to be executed by the run task to be defined later.
             </p>
+            
             <p class="text-center">
               <a href="http://sookocheff.com/posts/2015-02-11-cloud-dataflow-with-gradle/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
@@ -192,9 +228,11 @@
             <p>
               At Vendasta we&rsquo;ve been slowly adopting pypi and pip for our internal code libraries and the time has come to deploy our own private pypi server. After evaluating a few options I settled on the simplistic pypiserver &ndash; a barebones implementation of the simple HTTP API to pypi. The deployment uses nginx as a front-end to pypiserver. pypiserver itself is ran and monitored using supervisord. I created a bash script that creates a user and group to run pypiserver and installs and runs nginx, supervisord and pypiserver.
             </p>
+            
             <p class="text-center">
               <a href="http://sookocheff.com/posts/2015-02-01-a-pypiserver-deployment-script/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
             <hr>
           </article>
         
@@ -210,9 +248,208 @@ actually download the content I needed to write a webapp2 <code>RequestHandler</
 will retrieve the file from Cloud Storage and return it to the client.</p>
 
             </p>
+            
             <p class="text-center">
               <a href="http://sookocheff.com/posts/2015-01-27-webapp2-download-handler/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2015-01-23-querying-app-engine-logs-with-elasticsearch/">Querying App Engine Logs with Elasticsearch</a></h2>
+            <small class="text-muted">
+              Posted on Friday, January 23, 2015 · <a href="http://sookocheff.com/posts/2015-01-23-querying-app-engine-logs-with-elasticsearch//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              From a DevOps perspective having a historical record of application logs can aid immensely in tracking down bugs, responding to customer questions, or finding out when and why that critical piece of data was updated to the wrong value. One of the biggest grievances with the built-in log handling of Google App Engine is that historical logs are only available for the previous three days. We wanted to do a little bit better and have logs available for a 30 day time period.
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2015-01-23-querying-app-engine-logs-with-elasticsearch/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2015-01-04-parsing-bash-script-arguments-with-shopts/">Parsing bash script options with getopts</a></h2>
+            <small class="text-muted">
+              Posted on Sunday, January 4, 2015 · <a href="http://sookocheff.com/posts/2015-01-04-parsing-bash-script-arguments-with-shopts//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <p>A common task in shell scripting is to parse command line arguments to your
+script. Bash provides the <code>getopts</code> built-in function to do just that. This
+tutorial explains how to use the <code>getopts</code> built-in function to parse arguments and options to a bash script.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2015-01-04-parsing-bash-script-arguments-with-shopts/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip/">Managing App Engine Dependencies Using pip</a></h2>
+            <small class="text-muted">
+              Posted on Tuesday, December 30, 2014 · <a href="http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <p>One unfortunate difficulty when working with App Engine is managing your local
+dependencies. You don&rsquo;t have access to your Python environment so all libraries
+you wish to use must be <em>vendored</em> with your installation. That is, you need to
+copy all of your library code into a local folder to ship along with your app.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">App Engine MapReduce API - Part 7: Writing a Custom Output Writer</a></h2>
+            <small class="text-muted">
+              Posted on Monday, December 22, 2014 · <a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <h2 id="mapreduce-api-series:5ca834111719e09d1ef6cc6ef5cbc0cd">MapReduce API Series</h2>
+
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">Part 6: Writing a Custom Input Reader</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">Part 7: Writing a Custom Output Writer</a></li>
+</ul>
+
+<p>The MapReduce library supports a number of default output writers. You can also
+write your own that implements the output writer interface. This article
+examines how to write a custom output writer that pushes data from the App
+Engine datastore to an elasticsearch cluster. A similar pattern can be followed
+to push the output from your MapReduce job to any number of places.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2014-12-11-bash-string-operators/">The Bash String Operators</a></h2>
+            <small class="text-muted">
+              Posted on Thursday, December 11, 2014 · <a href="http://sookocheff.com/posts/2014-12-11-bash-string-operators//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              A common task in bash programming is to manipulate portions of a string and return the result. bash provides rich support for these manipulations via string operators. The syntax is not always intuitive so I wanted to use this blog post to serve as a permanent reminder of the operators. The string operators are signified with the ${} notation. The operations can be grouped in to a few classes. Each heading in this article describes a class of operation.
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-12-11-bash-string-operators/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">App Engine MapReduce API - Part 6: Writing a Custom Input Reader</a></h2>
+            <small class="text-muted">
+              Posted on Thursday, December 4, 2014 · <a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <h2 id="mapreduce-api-series:8a4ce915aba4ff843eb6b0f21aab7dc8">MapReduce API Series</h2>
+
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">Part 6: Writing a Custom Input Reader</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">Part 7: Writing a Custom Output Writer</a></li>
+</ul>
+
+<p>One of the great things about the MapReduce library is the abilitiy to write a
+cutom InputReader to process data from any data source. In this post we will
+explore how to write an InputReader the leases tasks from an AppEngine pull
+queue by implementing the <code>InputReader</code> interface.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2014-11-18-installing-mysql-python-on-yosemite/">Installing MySQL-Python on OS X Yosemite</a></h2>
+            <small class="text-muted">
+              Posted on Tuesday, November 18, 2014 · <a href="http://sookocheff.com/posts/2014-11-18-installing-mysql-python-on-yosemite//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              Installing the MySQL-Python package requires a few steps. In an effort to aid future Internet travellers, this post will document how to install the MySQL-Python package on OS X Yosemite. First, install MariaDB, the drop-in replacement for MySQL. I chose MacPorts for this task, though Homebrew would work just fine. Second, update your PATH to include the mariadb executables. Third, install the Python MySQL connector. sudo port install mariadb PATH=/opt/local/lib/mariadb/bin:$PATH pip install MySQL-Python That&rsquo;s it!
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-11-18-installing-mysql-python-on-yosemite/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2014-11-11-automatically-resizing-a-compute-engine-disk/">Automatically Resizing a Compute Engine Disk</a></h2>
+            <small class="text-muted">
+              Posted on Tuesday, November 11, 2014 · <a href="http://sookocheff.com/posts/2014-11-11-automatically-resizing-a-compute-engine-disk//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <p>A recurring issue when working with <a href="https://cloud.google.com/compute/">Compute
+Engine</a> is that newly created Instances have
+only 10GB of free space available. To take advantage of the full disk size you
+need to manually partition and resize it. This article shows one method of
+accomplishing this task.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-11-11-automatically-resizing-a-compute-engine-disk/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
+            <h2><a href="http://sookocheff.com/posts/2014-11-05-a-guided-tour-of-compute-engine/">A Guided Tour of Google Compute Engine</a></h2>
+            <small class="text-muted">
+              Posted on Wednesday, November 5, 2014 · <a href="http://sookocheff.com/posts/2014-11-05-a-guided-tour-of-compute-engine//#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <h2 id="overview:d7a4cf20ba6fc9a7008ea6a4fe87eb88">Overview</h2>
+
+<p>The Google <a href="https://www.youtube.com/watch?v=43gvHZyPRVk">Compute Engine core
+concepts video</a> provides a great
+overview of the technology. Please take a moment to watch it. As the video
+shows, Compute Engine is defined by Resources, and each of these Resources is
+available through the Compute Engine API. You can access this API through the
+Google API Explorer or by installing the <a href="https://cloud.google.com/sdk/">gcloud sdk</a>.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-11-05-a-guided-tour-of-compute-engine/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
             <hr>
           </article>
         
@@ -243,24 +480,12 @@ will retrieve the file from Cloud Storage and return it to the client.</p>
         ><a href="/posts/page/4/">4</a></li>
         
         <li
-        ><a href="/posts/page/5/">5</a></li>
-        
-        <li
-        ><a href="/posts/page/6/">6</a></li>
-        
-        <li
-        ><a href="/posts/page/7/">7</a></li>
-        
-        <li
-        ><a href="/posts/page/8/">8</a></li>
-        
-        <li
         >
         <a href="/posts/page/2/" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
         </li>
         
         <li>
-            <a href="/posts/page/8/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+            <a href="/posts/page/4/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
         </li>
         
     </ul>
@@ -279,6 +504,7 @@ will retrieve the file from Cloud Storage and return it to the client.</p>
          <h3>App Engine</h3>
          <ul class="list-unstyled">
            <li><a href="/series/mapreduce-api/">MapReduce API</a></li>
+           <li><a href="/series/pipelines-api/">Pipelines API</a></li>
            <li><a href="/series/cloud-endpoints/">Cloud Endpoints</a></li>
          </ul>
        </div>

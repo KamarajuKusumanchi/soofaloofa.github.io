@@ -78,7 +78,7 @@ The rule of thumb here is that *anything you instantiate your pipeline with (and
 subsequently pass to the `run` method) is accessible within your
 pipeline*. These are called *immediate values* and you can treat them as regular
 Python values. When this code is executed, each pipeline started by a `yield`
-call is separate App Engine Task that executes in the Task Queue. The Pipeline
+call is a separate App Engine Task that executes in the Task Queue. The Pipeline
 runtime coordinates running these tasks and shares the results of execution
 between tasks, allowing you to safely connect pipelines together.
 

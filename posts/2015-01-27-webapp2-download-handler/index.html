@@ -84,8 +84,9 @@ actually download the content I needed to write a webapp2 <code>RequestHandler</
 will retrieve the file from Cloud Storage and return it to the client.</p>
 
 <p>The trick to this is to set the proper content type in your response header. In
-the example below I used the <a href="(https://cloud.google.com/appengine/docs/python/googlecloudstorageclient/)">Cloud Storage Client Library</a> to open and
-read the file, then set the response appropriately.</p>
+the example below I used the <a href="https://cloud.google.com/appengine/docs/python/googlecloudstorageclient/">Cloud Storage Client
+Library</a>
+to open and read the file, then set the response appropriately.</p>
 
 <pre><code class="language-python">import webapp2
 import cloudstorage

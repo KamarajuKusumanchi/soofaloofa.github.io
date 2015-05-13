@@ -77,7 +77,7 @@ class LogResult(pipeline.Pipeline):
 subsequently pass to the &lt;code&gt;run&lt;/code&gt; method) is accessible within your
 pipeline&lt;/em&gt;. These are called &lt;em&gt;immediate values&lt;/em&gt; and you can treat them as regular
 Python values. When this code is executed, each pipeline started by a &lt;code&gt;yield&lt;/code&gt;
-call is separate App Engine Task that executes in the Task Queue. The Pipeline
+call is a separate App Engine Task that executes in the Task Queue. The Pipeline
 runtime coordinates running these tasks and shares the results of execution
 between tasks, allowing you to safely connect pipelines together.&lt;/p&gt;
 
@@ -1718,8 +1718,9 @@ actually download the content I needed to write a webapp2 &lt;code&gt;RequestHan
 will retrieve the file from Cloud Storage and return it to the client.&lt;/p&gt;
 
 &lt;p&gt;The trick to this is to set the proper content type in your response header. In
-the example below I used the &lt;a href=&#34;(https://cloud.google.com/appengine/docs/python/googlecloudstorageclient/)&#34;&gt;Cloud Storage Client Library&lt;/a&gt; to open and
-read the file, then set the response appropriately.&lt;/p&gt;
+the example below I used the &lt;a href=&#34;https://cloud.google.com/appengine/docs/python/googlecloudstorageclient/&#34;&gt;Cloud Storage Client
+Library&lt;/a&gt;
+to open and read the file, then set the response appropriately.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import webapp2
 import cloudstorage

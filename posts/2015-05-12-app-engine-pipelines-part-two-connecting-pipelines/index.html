@@ -142,7 +142,7 @@ class LogResult(pipeline.Pipeline):
 subsequently pass to the <code>run</code> method) is accessible within your
 pipeline</em>. These are called <em>immediate values</em> and you can treat them as regular
 Python values. When this code is executed, each pipeline started by a <code>yield</code>
-call is separate App Engine Task that executes in the Task Queue. The Pipeline
+call is a separate App Engine Task that executes in the Task Queue. The Pipeline
 runtime coordinates running these tasks and shares the results of execution
 between tasks, allowing you to safely connect pipelines together.</p>
 

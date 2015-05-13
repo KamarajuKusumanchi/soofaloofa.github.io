@@ -15,8 +15,9 @@ will retrieve the file from Cloud Storage and return it to the client.
 <!--more-->
 
 The trick to this is to set the proper content type in your response header. In
-the example below I used the [Cloud Storage Client Library][client] to open and
-read the file, then set the response appropriately.
+the example below I used the [Cloud Storage Client
+Library](https://cloud.google.com/appengine/docs/python/googlecloudstorageclient/)
+to open and read the file, then set the response appropriately.
 
 ```python
 import webapp2

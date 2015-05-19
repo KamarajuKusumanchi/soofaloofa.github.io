@@ -5,7 +5,162 @@
     <link>http://sookocheff.com/series/pipelines-api/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Tue, 12 May 2015 05:57:19 CST</lastBuildDate>
+    <lastBuildDate>Tue, 19 May 2015 05:57:19 CST</lastBuildDate>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 3: Fan In, Fan Out, Sequencing</title>
+      <link>http://sookocheff.com/posts/2015-05-19-app-engine-pipelines-part-three-fan-in-fan-out/</link>
+      <pubDate>Tue, 19 May 2015 05:57:19 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2015-05-19-app-engine-pipelines-part-three-fan-in-fan-out/</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/2015-05-12-app-engine-pipelines-part-two-connecting-pipelines/&#34;&gt;Last time&lt;/a&gt;,
+we studied how to connect two pipelines together. In this post, we expand on
+this topic, exploring how to fan-out to do multiple tasks in parallel, fan-in
+to combine multiple tasks into one, and how to do sequential work.&lt;/p&gt;
+
+&lt;h2 id=&#34;fan-out:6bc50abb61474260c1188e91459be69a&#34;&gt;Fan-Out&lt;/h2&gt;
+
+&lt;p&gt;Fan-Out refers to spreading a task to multiple destinations in parallel. Using
+the Pipelines API, fan-out can be achieved elegantly by yielding a new pipeline
+for every task you wish to execute. Each of these pipelines is exeucted
+immediately via a Task in the App Engine Task Queue. Fan-out parallelizes
+implicitly when additional App Engine instances are started to handle the
+increased number of requests arriving in the Task Queue. You can moderate the
+amount of fan-out by changing the processing rate on the task queue that
+executes your pipelines.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;Squaring: %s&#39;, number)
+        return number * number
+
+
+class FanOutPipeline(pipeline.Pipeline):
+
+    def run(self, count):
+        for i in xrange(0, count):
+            yield SquarePipeline(i)
+        # All children run immediately
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;fan-in:6bc50abb61474260c1188e91459be69a&#34;&gt;Fan-In&lt;/h2&gt;
+
+&lt;p&gt;Fan-In implies waiting for a collection of related tasks to complete before
+continuing processing. The example can be extended by summing the list of
+squared values — when we call &lt;code&gt;yield Sum(*results)&lt;/code&gt; the pipeline run-time will
+wait until all results are ready before executing Sum. Internally, a &lt;em&gt;barrier&lt;/em&gt;
+record is created that blocks execution of Sum and tracks the dependencies
+required to lift the barrier. Once all dependencies have been satisfied the
+barrier is lifted and Sum can execute.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;Squaring: %s&#39; % number)
+        return number * number
+
+
+class Sum(pipeline.Pipeline):
+
+    def run(self, *args):
+        value = sum(list(args))
+        logging.info(&#39;Sum: %s&#39;, value)
+        return value
+
+
+class FanInPipeline(pipeline.Pipeline):
+
+    def run(self, count):
+        results = []
+        for i in xrange(0, count):
+            result = yield SquarePipeline(i)
+            results.append(result)
+
+        # Waits until all SquarePipeline results are complete
+        yield Sum(*results)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;sequencing:6bc50abb61474260c1188e91459be69a&#34;&gt;Sequencing&lt;/h2&gt;
+
+&lt;p&gt;A common workflow is running pipelines in a predefined sequence. The Pipelines
+API provides context managers that will force execution ordering using the
+&lt;code&gt;with&lt;/code&gt; keyword. This is useful for Pipelines with no output that you wish to
+execute in a specific order — we cannot wait for the output and so no barrier
+must be satisfied, but we still want to enforce an execution order. In the
+following example, we extend the FanOutFanInPipeline to update an HTML
+dashboard with our results and, once that is complete, send out an e-mail to the
+development team. This example is taken from the excellent &lt;a href=&#34;https://www.youtube.com/watch?v=Rsfy_TYA2ZY&#34;&gt;Pipelines API
+introductory video&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class FanOutFanInPipeline(pipeline.Pipeline):
+
+    def run(self, count):
+        results = []
+        for i in xrange(0, count):
+            result = yield SquarePipeline(i)
+            results.append(result)
+
+        result = yield Sum(*results)
+        with pipeline.InOrder():
+            yield UpdateDashboard()
+            yield EmailTeam()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;conclusion:6bc50abb61474260c1188e91459be69a&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;This article describes how to coordinate pipeline tasks using fan-in, fan-out
+and sequencing. The next article we will discuss Pipeline API internals.&lt;/p&gt;
+
+&lt;p&gt;Full source code of both Fan-In and Fan-Out follows.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        stage = FanOutFanInPipeline(10)
+        stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;Squaring: %s&#39; % number)
+        return number * number
+
+
+class Sum(pipeline.Pipeline):
+
+    def run(self, *args):
+        value = sum(list(args))
+        logging.info(&#39;Sum: %s&#39;, value)
+        return value
+
+
+class FanOutFanInPipeline(pipeline.Pipeline):
+
+    def run(self, count):
+        results = []
+        for i in xrange(0, count):
+            result = yield SquarePipeline(i)
+            results.append(result)
+
+        yield Sum(*results)
+
+
+routes = [
+    webapp2.Route(&#39;/pipeline-test/&#39;, handler=&#39;main.RunPipelineHandler&#39;)
+]
+
+APP = webapp2.WSGIApplication(routes)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>App Engine Pipelines API - Part 2: Connecting Pipelines</title>

@@ -6,7 +6,6 @@ tags:
   - "pipelines"
 series:
   - "Pipelines API"
-draft: true
 ---
 
 [Last time]({{< ref "2015-05-12-app-engine-pipelines-part-two-connecting-pipelines.md" >}}),
@@ -111,8 +110,7 @@ class FanOutFanInPipeline(pipeline.Pipeline):
 ## Conclusion
 
 This article describes how to coordinate pipeline tasks using fan-in, fan-out
-and sequencing. The next article we will discuss how the MapReduce and Pipelines
-APIs are related.
+and sequencing. The next article we will discuss Pipeline API internals.
 
 Full source code of both Fan-In and Fan-Out follows.
 

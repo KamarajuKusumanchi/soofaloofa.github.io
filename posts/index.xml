@@ -5,7 +5,122 @@
     <link>http://sookocheff.com/posts/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Tue, 19 May 2015 05:57:19 CST</lastBuildDate>
+    <lastBuildDate>Wed, 27 May 2015 05:57:19 CST</lastBuildDate>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 4: Pipeline Internals</title>
+      <link>http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/</link>
+      <pubDate>Wed, 27 May 2015 05:57:19 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/2015-05-12-app-engine-pipelines-part-two-connecting-pipelines/&#34;&gt;We&amp;rsquo;ve learned how to execute and chain together pipelines&lt;/a&gt;,
+now let&amp;rsquo;s take a look at how pipelines execute under the hood. If necessary,
+you can refer to the &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines&#34;&gt;source code of the pipelines
+project&lt;/a&gt; to
+clarify any details.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-pipeline-data-model:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;The Pipeline Data Model&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start with the pipeline data model. Note that each Kind defined by the
+pipelines API is prefixed by &lt;code&gt;_AE_Pipeline&lt;/code&gt;, making it easy to view individual
+pipeline details by viewing the datastore entity.&lt;/p&gt;
+
+&lt;h3 id=&#34;pipelinerecord:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;PipelineRecord&lt;/h3&gt;
+
+&lt;p&gt;Every pipeline is represented by a &lt;em&gt;PipelineRecord&lt;/em&gt; in the datastore. The
+PipelineRecord records the pipeline&amp;rsquo;s root identifier (if this pipeline is a
+child), any child pipelines spawned by this pipeline, the current status
+of the pipeline, and a few additional bookkeeping details.&lt;/p&gt;
+
+&lt;p&gt;At any point in time a Pipeline may be in one of four states: WAITING, RUN,
+DONE, and ABORTED.  WAITING implies that this pipeline has a barrier that
+must be satisfied before the pipeline can be RUN. RUN means that the pipeline
+has been started. DONE means that the pipeline is complete. ABORTED means
+that the pipeline has been manually aborted.&lt;/p&gt;
+
+&lt;h3 id=&#34;slotrecord:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;SlotRecord&lt;/h3&gt;
+
+&lt;p&gt;The output of a pipeline is represented as a &lt;em&gt;Slot&lt;/em&gt; stored in the datastore as a
+&lt;em&gt;SlotRecord&lt;/em&gt;. When a pipeline completes, it stores its output in the SlotRecord
+to be made available to further pipelines.&lt;/p&gt;
+
+&lt;h3 id=&#34;barrierrecord:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;BarrierRecord&lt;/h3&gt;
+
+&lt;p&gt;A &lt;em&gt;BarrierRecord&lt;/em&gt; represents the slots that must be filled before a pipeline can
+execute. The barrier tracks &lt;em&gt;blocking_slots&lt;/em&gt; that must be filled before the
+barrier can be lifted. Once the barrier is lifted a &lt;em&gt;target&lt;/em&gt; pipeline is
+notified and the target can transition to the RUN state.&lt;/p&gt;
+
+&lt;p&gt;Barriers that depend on a slot being filled are stored in the &lt;em&gt;BarrierIndex&lt;/em&gt;,
+which tracks barriers that are dependent on a slot. The purpose of the
+BarrierIndex is to force &lt;a href=&#34;https://cloud.google.com/datastore/docs/articles/balancing-strong-and-eventual-consistency-with-google-cloud-datastore/&#34;&gt;strong consistency&lt;/a&gt; when querying for a SlotRecord&amp;rsquo;s Barriers.&lt;/p&gt;
+
+&lt;h3 id=&#34;statusrecord:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;StatusRecord&lt;/h3&gt;
+
+&lt;p&gt;The &lt;em&gt;StatusRecord&lt;/em&gt; tracks the current status of a pipeline and facilitates the
+pipeline user interface. The StatusRecord is updated as the pipeline progresses
+to give a view of the current pipeline state. Not much more than that.&lt;/p&gt;
+
+&lt;h2 id=&#34;pipeline-execution:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;Pipeline Execution&lt;/h2&gt;
+
+&lt;p&gt;Having an understanding of the pipeline data model gives a rough idea of how
+pipelines are executed. Each stage of execution corresponds to a webapp2 handler
+that services the request and advances the state of the pipeline. The following
+diagram shows each of the pipeline stages during typical execution and the
+description that follows provides more detail on each stage.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-internals/pipeline-states.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-internals/pipeline-states.png&#34; alt=&#34;Pipeline States&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&#34;start:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;start()&lt;/h3&gt;
+
+&lt;p&gt;A pipeline is started by calling its &lt;code&gt;start()&lt;/code&gt; method. When calling &lt;code&gt;start()&lt;/code&gt; a
+&lt;em&gt;PipelineRecord&lt;/em&gt; is created and marked as a &lt;em&gt;RootPipeline&lt;/em&gt;, &lt;em&gt;SlotRecords&lt;/em&gt; are
+created for each of the pipelines outputs and marked as children of the
+pipeline, and &lt;em&gt;BarrierRecords&lt;/em&gt; are created corresponding to each of the output
+slots of the pipeline. Finally, a task is queued to the &lt;code&gt;/run&lt;/code&gt; handler to
+execute the pipeline.&lt;/p&gt;
+
+&lt;h3 id=&#34;run-handler:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;/run handler&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;/run&lt;/code&gt; handler transitions the pipeline from the WAITING state to the RUN
+state by setting a flag on the &lt;em&gt;PipelineRecord&lt;/em&gt;, the pipeline object instance is
+then reconstructed given the data from the request and the pipeline&amp;rsquo;s &lt;code&gt;run()&lt;/code&gt;
+method is called. When the &lt;code&gt;run()&lt;/code&gt; method is complete, any outputs are used to
+fill &lt;em&gt;SlotRecords&lt;/em&gt; and yielded to the parent pipeline when necessary.  Finally,
+any child pipelines and their dependent slots and barriers are created and
+marked as children of the parent pipeline. Calls to the &lt;code&gt;/fanout&lt;/code&gt;
+handler are made to queue tasks to start any child pipelines.&lt;/p&gt;
+
+&lt;h3 id=&#34;fanout-handler:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;/fanout handler&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;/fanout&lt;/code&gt; handler loads all child pipelines given a parent pipeline and queues
+a task to the &lt;code&gt;/run&lt;/code&gt; handler for each of them.&lt;/p&gt;
+
+&lt;h3 id=&#34;output-handler:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;/output handler&lt;/h3&gt;
+
+&lt;p&gt;Whenever a slot is filled a task is queued to the &lt;code&gt;/output&lt;/code&gt; handler to notify any
+barriers to a pipeline&amp;rsquo;s execution that they can be removed. If a pipeline has
+all its barriers to completing removed, a task is queued to the &lt;code&gt;/finalize&lt;/code&gt; handler
+to mark our pipeline as complete. The &lt;code&gt;/output&lt;/code&gt; handler queues tasks to the
+&lt;code&gt;/run&lt;/code&gt; method for any pipelines that have their barriers to starting removed.&lt;/p&gt;
+
+&lt;h3 id=&#34;finalized-handler:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;/finalized handler&lt;/h3&gt;
+
+&lt;p&gt;When the &lt;code&gt;/finalized&lt;/code&gt; handler is called, the pipeline is marked as complete and
+our pipeline&amp;rsquo;s &lt;code&gt;finalized()&lt;/code&gt; method is called.&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusion:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;Understanding the Pipeline data model and run-time can help you to visualize and
+debug any pipeline problems. Stay tuned for the next article covering
+asynchronous pipelines.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>App Engine Pipelines API - Part 3: Fan In, Fan Out, Sequencing</title>
@@ -2222,65 +2337,6 @@ esac
 hold the package to install and the variable &lt;code&gt;target&lt;/code&gt; will hold the target to
 install the package to. You can use this as a template for processing any set of
 arguments and options to your scripts.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Managing App Engine Dependencies Using pip</title>
-      <link>http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip/</link>
-      <pubDate>Tue, 30 Dec 2014 20:35:48 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip/</guid>
-      <description>&lt;p&gt;One unfortunate difficulty when working with App Engine is managing your local
-dependencies. You don&amp;rsquo;t have access to your Python environment so all libraries
-you wish to use must be &lt;em&gt;vendored&lt;/em&gt; with your installation. That is, you need to
-copy all of your library code into a local folder to ship along with your app.&lt;/p&gt;
-
-&lt;p&gt;This usually doesn&amp;rsquo;t cause any problems but difficulties start to crop up when
-you manage multiple dependencies that rely on each other. For example, the
-official &lt;a href=&#34;https://github.com/elasticsearch/elasticsearch-py&#34;&gt;elasticsearch
-client&lt;/a&gt; requires
-&lt;a href=&#34;https://github.com/shazow/urllib3&#34;&gt;urllib3&lt;/a&gt; between version &lt;code&gt;1.8&lt;/code&gt; and &lt;code&gt;2.0&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Traditionally, &lt;a href=&#34;https://pip.pypa.io/en/latest/&#34;&gt;pip&lt;/a&gt; is used to install these
-dependencies on your behalf. The command &lt;code&gt;pip install elasticsearch&lt;/code&gt; will
-automatically fetch the urllib3 dependency for you and install it to your local
-Python environment. By adding the &lt;code&gt;-t&lt;/code&gt; flag you can provide a destination folder
-to install your libraries. As an example, we can install the elasticsearch
-and urllib3 libraries to the folder &lt;code&gt;src/lib&lt;/code&gt; with the following command.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;pip install elasticsearch -t src/lib
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This works great for App Engine which requires the source of your libraries to
-be shipped with your application. Unfortunately, it starts to break down when
-you need to upgrade your dependencies. Installing with the &lt;code&gt;-t&lt;/code&gt; flag does not
-overwrite the contents of the existing folder so running the same command again
-results in an error.&lt;/p&gt;
-
-&lt;p&gt;A solution to this can be found with some basic shell scripting. The first portion of our script installs the requested package and it&amp;rsquo;s
-dependencies to a temporary directory and removes any extra files that we don&amp;rsquo;t
-need.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;pip install elasticsearch -t $TEMP_DIRECTORY
-rm -r $TEMP_DIRECTORY/*.egg-info &amp;gt;/dev/null 2&amp;gt;&amp;amp;1
-rm -r $TEMP_DIRECTORY/*.dist-info &amp;gt;/dev/null 2&amp;gt;&amp;amp;1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The next step is to remove the specific libraries being installed from our App
-Engine library directory and copy the contents of our temporary directory in their place.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;TARGET=src/lib
-for i in $(ls $TEMP_DIRECTORY); do
-  rm -r $TARGET/$i &amp;gt;/dev/null 2&amp;gt;&amp;amp;1  # remove existing module
-  cp -R $TEMP_DIRECTORY/$i $TARGET  # copy the replacement in
-done
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This code can be used as a starting point to write a more user friendly and
-robust script. Although this does not truly solve the problem of dependency
-management with App Engine it does provide a way to seamlessly vendor Python
-libraries and all of their dependencies with your application.&lt;/p&gt;
 </description>
     </item>
     

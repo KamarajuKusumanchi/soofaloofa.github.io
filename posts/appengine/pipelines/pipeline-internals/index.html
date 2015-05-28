@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<title>App Engine Pipelines API - Part 4: Pipeline Internals : sookocheff.com</title>
+
+<meta charset="utf-8">
+<meta http-equiv="content-type", content="text/html; charset=utf-8">
+<meta name="viewport", content="width=device-width, initial-scale=1.0">
+
+<link rel="canonical" href="http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/">
+
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/styles/default.min.css">
+
+<link rel="stylesheet" href="/css/vendor/bootstrap.min.css">
+<link rel="stylesheet" href="/css/vendor/monokai_sublime.css">
+<link rel="stylesheet" href="/css/style.css">
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-20611089-6', 'sookocheff.com');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand">Kevin Sookocheff</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="">
+          <a href="/posts/">Blog</a>
+        </li>
+        <li class="dropdown">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+            Subscribe <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="http://eepurl.com/KJE01">email</a></li>
+            <li><a href="http://sookocheff.com/index.xml">RSS</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="container page-container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <section class="page">
+        <article class="post">
+          <h1>App Engine Pipelines API - Part 4: Pipeline Internals</h1>
+          <p>
+            <small class="text-muted">
+              Posted on Wednesday, May 27, 2015 · <a href="http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/#disqus_thread">0 Comments</a>
+            </small>
+          </p>
+
+          <div class=".post-content">
+            
+
+<p><a href="http://sookocheff.com/posts/2015-05-12-app-engine-pipelines-part-two-connecting-pipelines/">We&rsquo;ve learned how to execute and chain together pipelines</a>,
+now let&rsquo;s take a look at how pipelines execute under the hood. If necessary,
+you can refer to the <a href="https://github.com/GoogleCloudPlatform/appengine-pipelines">source code of the pipelines
+project</a> to
+clarify any details.</p>
+
+<h2 id="the-pipeline-data-model:b0f788db0cc3986803d61b920ecd3adf">The Pipeline Data Model</h2>
+
+<p>Let&rsquo;s start with the pipeline data model. Note that each Kind defined by the
+pipelines API is prefixed by <code>_AE_Pipeline</code>, making it easy to view individual
+pipeline details by viewing the datastore entity.</p>
+
+<h3 id="pipelinerecord:b0f788db0cc3986803d61b920ecd3adf">PipelineRecord</h3>
+
+<p>Every pipeline is represented by a <em>PipelineRecord</em> in the datastore. The
+PipelineRecord records the pipeline&rsquo;s root identifier (if this pipeline is a
+child), any child pipelines spawned by this pipeline, the current status
+of the pipeline, and a few additional bookkeeping details.</p>
+
+<p>At any point in time a Pipeline may be in one of four states: WAITING, RUN,
+DONE, and ABORTED.  WAITING implies that this pipeline has a barrier that
+must be satisfied before the pipeline can be RUN. RUN means that the pipeline
+has been started. DONE means that the pipeline is complete. ABORTED means
+that the pipeline has been manually aborted.</p>
+
+<h3 id="slotrecord:b0f788db0cc3986803d61b920ecd3adf">SlotRecord</h3>
+
+<p>The output of a pipeline is represented as a <em>Slot</em> stored in the datastore as a
+<em>SlotRecord</em>. When a pipeline completes, it stores its output in the SlotRecord
+to be made available to further pipelines.</p>
+
+<h3 id="barrierrecord:b0f788db0cc3986803d61b920ecd3adf">BarrierRecord</h3>
+
+<p>A <em>BarrierRecord</em> represents the slots that must be filled before a pipeline can
+execute. The barrier tracks <em>blocking_slots</em> that must be filled before the
+barrier can be lifted. Once the barrier is lifted a <em>target</em> pipeline is
+notified and the target can transition to the RUN state.</p>
+
+<p>Barriers that depend on a slot being filled are stored in the <em>BarrierIndex</em>,
+which tracks barriers that are dependent on a slot. The purpose of the
+BarrierIndex is to force <a href="https://cloud.google.com/datastore/docs/articles/balancing-strong-and-eventual-consistency-with-google-cloud-datastore/">strong consistency</a> when querying for a SlotRecord&rsquo;s Barriers.</p>
+
+<h3 id="statusrecord:b0f788db0cc3986803d61b920ecd3adf">StatusRecord</h3>
+
+<p>The <em>StatusRecord</em> tracks the current status of a pipeline and facilitates the
+pipeline user interface. The StatusRecord is updated as the pipeline progresses
+to give a view of the current pipeline state. Not much more than that.</p>
+
+<h2 id="pipeline-execution:b0f788db0cc3986803d61b920ecd3adf">Pipeline Execution</h2>
+
+<p>Having an understanding of the pipeline data model gives a rough idea of how
+pipelines are executed. Each stage of execution corresponds to a webapp2 handler
+that services the request and advances the state of the pipeline. The following
+diagram shows each of the pipeline stages during typical execution and the
+description that follows provides more detail on each stage.</p>
+
+<p><a class="thumbnail" href="/img/appengine/pipelines/pipeline-internals/pipeline-states.png">
+  <img src="/img/appengine/pipelines/pipeline-internals/pipeline-states.png" alt="Pipeline States">
+</a>
+</p>
+
+<h3 id="start:b0f788db0cc3986803d61b920ecd3adf">start()</h3>
+
+<p>A pipeline is started by calling its <code>start()</code> method. When calling <code>start()</code> a
+<em>PipelineRecord</em> is created and marked as a <em>RootPipeline</em>, <em>SlotRecords</em> are
+created for each of the pipelines outputs and marked as children of the
+pipeline, and <em>BarrierRecords</em> are created corresponding to each of the output
+slots of the pipeline. Finally, a task is queued to the <code>/run</code> handler to
+execute the pipeline.</p>
+
+<h3 id="run-handler:b0f788db0cc3986803d61b920ecd3adf">/run handler</h3>
+
+<p>The <code>/run</code> handler transitions the pipeline from the WAITING state to the RUN
+state by setting a flag on the <em>PipelineRecord</em>, the pipeline object instance is
+then reconstructed given the data from the request and the pipeline&rsquo;s <code>run()</code>
+method is called. When the <code>run()</code> method is complete, any outputs are used to
+fill <em>SlotRecords</em> and yielded to the parent pipeline when necessary.  Finally,
+any child pipelines and their dependent slots and barriers are created and
+marked as children of the parent pipeline. Calls to the <code>/fanout</code>
+handler are made to queue tasks to start any child pipelines.</p>
+
+<h3 id="fanout-handler:b0f788db0cc3986803d61b920ecd3adf">/fanout handler</h3>
+
+<p>The <code>/fanout</code> handler loads all child pipelines given a parent pipeline and queues
+a task to the <code>/run</code> handler for each of them.</p>
+
+<h3 id="output-handler:b0f788db0cc3986803d61b920ecd3adf">/output handler</h3>
+
+<p>Whenever a slot is filled a task is queued to the <code>/output</code> handler to notify any
+barriers to a pipeline&rsquo;s execution that they can be removed. If a pipeline has
+all its barriers to completing removed, a task is queued to the <code>/finalize</code> handler
+to mark our pipeline as complete. The <code>/output</code> handler queues tasks to the
+<code>/run</code> method for any pipelines that have their barriers to starting removed.</p>
+
+<h3 id="finalized-handler:b0f788db0cc3986803d61b920ecd3adf">/finalized handler</h3>
+
+<p>When the <code>/finalized</code> handler is called, the pipeline is marked as complete and
+our pipeline&rsquo;s <code>finalized()</code> method is called.</p>
+
+<h2 id="conclusion:b0f788db0cc3986803d61b920ecd3adf">Conclusion</h2>
+
+<p>Understanding the Pipeline data model and run-time can help you to visualize and
+debug any pipeline problems. Stay tuned for the next article covering
+asynchronous pipelines.</p>
+ 
+          </div>
+
+          <hr>
+            <ul class="list-inline">
+  <li>Share this post:</li>
+  <li>
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2fappengine%2fpipelines%2fpipeline-internals%2f&text=App%20Engine%20Pipelines%20API%20-%20Part%204%3a%20Pipeline%20Internals&via=soofaloofa">
+      <i class="fa fa-twitter fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2fappengine%2fpipelines%2fpipeline-internals%2f">
+      <i class="fa fa-facebook fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2fappengine%2fpipelines%2fpipeline-internals%2f">
+      <i class="fa fa-google-plus fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2fappengine%2fpipelines%2fpipeline-internals%2f">
+      <i class="fa fa-linkedin fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2fappengine%2fpipelines%2fpipeline-internals%2f">
+      <i class="fa fa-envelope fa-lg"></i>
+    </a>
+  </li>
+</ul>
+
+          <hr>
+
+          <div class="blurb">
+            <div class="row">
+              <div class="col-md-10 col-md-offset-1">
+                <h4 class="text-center">About Kevin Sookocheff</h4>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 col-md-offset-1">
+                <p>
+                  <img class="img-circle center-block" src="/img/profile.png">
+                </p>
+              </div>
+              <div class="col-md-6">
+                <p>
+                  I am a Software Developer. I work at <a
+  href="http://www.vendasta.com">VendAsta</a> with a bunch of great people. I
+run a business as <a href="http://redfinchsoftware.com">Red Finch Software</a>.
+You can find me online as <a
+href="https://twitter.com/soofaloofa">soofaloofa</a>. I love to teach, learn,
+speak, and write about business and software. 
+
+                  <ul class="list-inline">
+                    <li>On the web:</li>
+                    <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+                    <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+                    <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+                    <li><a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square fa-lg"></i></a></li>
+                    <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+                    <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+                  </ul>
+                </p>
+              </div>
+            </div>
+          </div>
+          <hr>
+
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+     
+    var disqus_shortname = 'kevinsookocheff'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        </article>
+      </section>
+    </div>
+  </div>
+</div>
+
+<footer>
+ <div class="footer-above text-center">
+   <div class="container">
+     <div class="row">
+       <div class="footer-col col-md-3">
+         <h3>App Engine</h3>
+         <ul class="list-unstyled">
+           <li><a href="/series/mapreduce-api/">MapReduce API</a></li>
+           <li><a href="/series/pipelines-api/">Pipelines API</a></li>
+           <li><a href="/series/cloud-endpoints/">Cloud Endpoints</a></li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>APIs</h3>
+         <ul class="list-unstyled">
+           <li>
+             <a href="/posts/2014-03-11-on-choosing-a-hypermedia-format/">On Choosing a Hypermedia Format</a>
+           </li>
+           <li>
+             <a href="/posts/2014-03-27-when-to-use-http-put-and-http-post/">When to use HTTP PUT</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Random</h3>
+         <ul class="list-unstyled">
+           <li>
+           <a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/"> Unity3d on the Mac App Store</a>
+           </li>
+           <li>
+             <a href="http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/">Saving Canvas Data to an Image</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Social</h3>
+         <ul class="list-unstyled">
+           <li><a href="http://www.twitter.com/soofaloofa">Twitter</a></li>
+           <li><a href="http://www.facebook.com/kevin.sookocheff">Facebook</a></li>
+           <li><a href="http://www.linkedin.com/in/kevinsookocheff">LinkedIn</a></li>
+           <li><a href="https://plus.google.com/+KevinSookocheff">Google+</a></li>
+           <li><a href="https://github.com/soofaloofa">Github</a></li>
+         </ul>
+       </div>
+     </div>
+   </div>
+ </div>
+ <div class="footer-below text-center">
+     <div class="container">
+         <div class="row">
+             <div class="col-lg-12">
+                 &copy; Kevin Sookocheff · <a href="#">Top</a>
+             </div>
+         </div>
+     </div>
+ </div>
+</footer>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/highlight.min.js"></script>
+<script src="/js/vendor/retina.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+ 
+var disqus_shortname = 'kevinsookocheff'; 
+
+ 
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+</body>
+</html>
+

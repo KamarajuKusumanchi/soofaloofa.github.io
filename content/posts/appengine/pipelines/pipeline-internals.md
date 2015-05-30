@@ -9,7 +9,7 @@ series:
 ---
 
 [We've learned how to execute and chain together pipelines]({{< ref
-"2015-05-12-app-engine-pipelines-part-two-connecting-pipelines.md" >}}),
+"connecting-pipelines.md" >}}),
 now let's take a look at how pipelines execute under the hood. If necessary,
 you can refer to the [source code of the pipelines
 project](https://github.com/GoogleCloudPlatform/appengine-pipelines) to

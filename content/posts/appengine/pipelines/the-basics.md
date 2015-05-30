@@ -6,6 +6,8 @@ tags:
   - "pipelines"
 series:
   - "Pipelines API"
+aliases:
+  - /posts/2015-05-05-app-engine-pipelines-part-one-the-basics/
 ---
 
 The [Pipelines API](https://github.com/GoogleCloudPlatform/appengine-pipelines)

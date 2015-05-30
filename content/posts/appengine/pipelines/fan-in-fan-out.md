@@ -6,9 +6,11 @@ tags:
   - "pipelines"
 series:
   - "Pipelines API"
+aliases:
+  - /posts/2015-05-19-app-engine-pipelines-part-three-fan-in-fan-out/
 ---
 
-[Last time]({{< ref "2015-05-12-app-engine-pipelines-part-two-connecting-pipelines.md" >}}),
+[Last time]({{< ref "connecting-pipelines.md" >}}),
 we studied how to connect two pipelines together. In this post, we expand on
 this topic, exploring how to fan-out to do multiple tasks in parallel, fan-in
 to combine multiple tasks into one, and how to do sequential work.

@@ -6,9 +6,11 @@ tags:
   - "pipelines"
 series:
   - "Pipelines API"
+aliases:
+  - /posts/2015-05-12-app-engine-pipelines-part-two-connecting-pipelines/
 ---
 
-[Last time]({{< ref "2015-05-05-app-engine-pipelines-part-one-the-basics.md" >}}), 
+[Last time]({{< ref "the-basics.md" >}}), 
 we discussed basic pipeline instantiation and execution. This time, we will
 cover sequential pipelines, answering the question "How do I connect the output
 of one pipeline with the input of another pipeline"?
@@ -17,7 +19,7 @@ of one pipeline with the input of another pipeline"?
 
 To begin, let's review a basic pipeline that squares its input. If any of this
 does not make sense refer to the [first part of this tutorial]({{< ref
-"2015-05-05-app-engine-pipelines-part-one-the-basics.md" >}}).
+"the-basics.md" >}}).
 
 ```python
 import logging

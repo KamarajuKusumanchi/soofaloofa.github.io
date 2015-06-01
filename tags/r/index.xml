@@ -9,10 +9,10 @@
     
     <item>
       <title>Deploying R Studio on Compute Engine</title>
-      <link>http://sookocheff.com/posts/2015-03-30-deploying-r-studio-to-compute-engine/</link>
+      <link>http://sookocheff.com/posts/r/deploying-r-studio-to-compute-engine/</link>
       <pubDate>Mon, 23 Mar 2015 15:32:37 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2015-03-30-deploying-r-studio-to-compute-engine/</guid>
+      <guid>http://sookocheff.com/posts/r/deploying-r-studio-to-compute-engine/</guid>
       <description>
 
 &lt;p&gt;Sometimes you have a data analysis problem that is just too big for your desktop
@@ -31,7 +31,7 @@ instance, install R Studio on it and access R Studio from the remote interface.&
 with billing enabled and have installed the &lt;a href=&#34;https://cloud.google.com/sdk/&#34;&gt;Google Cloud
 SDK&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;deploying-a-compute-engine-instance:fe69c3491bab8cb03451503db88c7996&#34;&gt;Deploying a Compute Engine Instance&lt;/h2&gt;
+&lt;h2 id=&#34;deploying-a-compute-engine-instance:a84679a16a118ba5a9c46f36f1d63ec8&#34;&gt;Deploying a Compute Engine Instance&lt;/h2&gt;
 
 &lt;p&gt;The first step is to deploy your Compute Engine instance. The &lt;code&gt;gcloud compute&lt;/code&gt;
 command allows you to create instances. The only required parameter to create an
@@ -50,7 +50,13 @@ parameter. For example.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute instances create r-studio --zone us-central1-a
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;installing-r-studio:fe69c3491bab8cb03451503db88c7996&#34;&gt;Installing R Studio&lt;/h2&gt;
+&lt;p&gt;You will also have to open the Compute Engine firewall to allow port 8787 for R
+Studio.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcutil addfirewall allow-r-studio --allowed=tcp:8787
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;installing-r-studio:a84679a16a118ba5a9c46f36f1d63ec8&#34;&gt;Installing R Studio&lt;/h2&gt;
 
 &lt;p&gt;Once we have our Compute Engine instance set up, we log in to the machine using ssh.&lt;/p&gt;
 

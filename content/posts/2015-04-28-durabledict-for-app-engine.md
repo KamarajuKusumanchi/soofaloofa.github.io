@@ -9,7 +9,7 @@ tags:
 
 ## tldr;
 
-[DatastoreDict](https://github.com/vendasta/datastoredict).
+[DatastoreDict](https://github.com/soofaloofa/datastoredict).
 
 ## What's a durabledict?
 

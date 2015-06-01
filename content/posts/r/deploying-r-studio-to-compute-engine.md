@@ -5,6 +5,8 @@ tags:
   - "compute engine"
   - "r"
   - "r studio"
+aliases:
+  - /posts/2015-03-30-deploying-r-studio-to-compute-engine/
 ---
 
 Sometimes you have a data analysis problem that is just too big for your desktop
@@ -42,6 +44,13 @@ parameter. For example.
 
 ```bash
 gcloud compute instances create r-studio --zone us-central1-a
+```
+
+You will also have to open the Compute Engine firewall to allow port 8787 for R
+Studio.
+
+```bash
+gcutil addfirewall allow-r-studio --allowed=tcp:8787
 ```
 
 ## Installing R Studio

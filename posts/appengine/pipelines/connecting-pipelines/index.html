@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 
-<title>Custom Posterous Subdomains with CPanel : sookocheff.com</title>
+<title>App Engine Pipelines API - Part 2: Connecting Pipelines : sookocheff.com</title>
 
 <meta charset="utf-8">
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://localhost:1313/posts/2011-03-23-custom-posterous-subdomains-with-cpanel/">
+<link rel="canonical" href="http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -55,7 +55,7 @@
             Subscribe <b class="caret"></b>
           </a>
           <ul class="dropdown-menu">
-            <li><a href="http://eepurl.com/KJE01">email</a></li>
+            <li><a href="http://eepurl.com/KJE01">Email</a></li>
             <li><a href="http://sookocheff.com/index.xml">RSS</a></li>
           </ul>
         </li>
@@ -70,30 +70,121 @@
     <div class="col-md-8 col-md-offset-2">
       <section class="page">
         <article class="post">
-          <h1>Custom Posterous Subdomains with CPanel</h1>
+          <h1>App Engine Pipelines API - Part 2: Connecting Pipelines</h1>
           <p>
             <small class="text-muted">
-              Posted on Wednesday, March 23, 2011 · <a href="http://localhost:1313/posts/2011-03-23-custom-posterous-subdomains-with-cpanel//#disqus_thread">0 Comments</a>
+              Posted on Tuesday, May 12, 2015 · <a href="http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/#disqus_thread">0 Comments</a>
             </small>
           </p>
 
           <div class=".post-content">
-            <p>I recently started using Posterous and will be converting my WordPress blog to the service.  One thing I wanted was a custom subdomain (i.e., blog.kevinsookocheff.com); I couldn’t easily find clear instructions for  subdomains (just for domains) so I thought I’d share how I did it from a basic cPanel hosting environment.</p>
+            <p><a href="http://sookocheff.com/posts/appengine/pipelines/the-basics/">Last time</a>,
+we discussed basic pipeline instantiation and execution. This time, we will
+cover sequential pipelines, answering the question &ldquo;How do I connect the output
+of one pipeline with the input of another pipeline&rdquo;?</p>
 
-<ol>
-<li>Login to your cPanel account.</li>
-<li>Under the Domains heading, select Simple DNS Zone Editor.</li>
-<li>Select your domain from the drop-down list.</li>
-<li>Under Add a CNAME Record fill in the following (using blog here as your subdomain).
+<p>To begin, let&rsquo;s review a basic pipeline that squares its input. If any of this
+does not make sense refer to the <a href="http://sookocheff.com/posts/appengine/pipelines/the-basics/">first part of this tutorial</a>.</p>
 
-<ol>
-<li>Name: blog</li>
-<li>CNAME: posterous.com</li>
-</ol></li>
-<li>Click the button to Add CNAME Record.</li>
-</ol>
+<pre><code class="language-python">import logging
+import webapp2
+import pipeline
 
-<p>You will have to wait a few hours for the change to propagate.  Then navigate to yoursubdomain.domain.com.  You will end up at a posterous.com 404 page.  This is because Posterous does not know to link your subdomain to your Posterous yet. Head over to posterous.com and log in.  From here click on your site settings link and enter yoursubdomain.domain.com as the custom domain for you Posterous.</p>
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        stage = SquarePipeline(10)
+        stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        return number * number
+
+    def finalized(self):
+        logging.info('All done! Square is %s', self.outputs.default.value)
+</code></pre>
+
+<p>The first step in passing data between two pipelines is updating our pipeline to
+use the generator interface. The generator interface uses the <code>yield</code> keyword as
+a means of connecting pipelines together. For this contrived example, let&rsquo;s
+create a <em>parent</em> pipeline that executes <code>SquarePipeline</code> twice in succession.</p>
+
+<pre><code class="language-python">class TwiceSquaredPipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        first_square = yield SquarePipeline(number)
+        second_square = yield SquarePipeline(first_square)
+</code></pre>
+
+<p>What now? We need a way to access the value stored in <code>second_square</code>. When
+execution hits a <code>yield</code> statement a task is started to run the pipeline and a
+<code>PipelineFuture</code> is returned. The <code>PipelineFuture</code> will have a value <em>after</em> the
+task has finished executing but not immediately. So how do we access the value?
+With a <em>child</em> pipeline that can read the result. In this example, we simply log
+the value of the computation.</p>
+
+<pre><code class="language-python">class TwiceSquaredPipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        first_square = yield SquarePipeline(number)
+        second_square = yield SquarePipeline(first_square)
+        yield LogResult(second_square)
+
+class LogResult(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info('All done! Value is %s', number)
+</code></pre>
+
+<p>The rule of thumb here is that <em>anything you instantiate your pipeline with (and
+subsequently pass to the <code>run</code> method) is accessible within your
+pipeline</em>. These are called <em>immediate values</em> and you can treat them as regular
+Python values. When this code is executed, each pipeline started by a <code>yield</code>
+call is a separate App Engine Task that executes in the Task Queue. The Pipeline
+runtime coordinates running these tasks and shares the results of execution
+between tasks, allowing you to safely connect pipelines together.</p>
+
+<p>Full source code for this example follows.</p>
+
+<pre><code class="language-python">import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        stage = TwiceSquaredPipeline(10)
+        stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        return number * number
+
+
+class TwiceSquaredPipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        first_square = yield SquarePipeline(number)
+        second_square = yield SquarePipeline(first_square)
+        yield LogResult(second_square)
+
+
+class LogResult(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info('All done! Value is %s', number)
+
+
+routes = [
+    webapp2.Route('/pipeline-test/', handler='main.RunPipelineHandler')
+]
+
+APP = webapp2.WSGIApplication(routes)
+</code></pre>
  
           </div>
 
@@ -101,31 +192,59 @@
             <ul class="list-inline">
   <li>Share this post:</li>
   <li>
-    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2flocalhost%3a1313%2fposts%2f2011-03-23-custom-posterous-subdomains-with-cpanel%2f&text=Custom%20Posterous%20Subdomains%20with%20CPanel&via=soofaloofa">
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2fappengine%2fpipelines%2fconnecting-pipelines%2f&text=App%20Engine%20Pipelines%20API%20-%20Part%202%3a%20Connecting%20Pipelines&via=soofaloofa">
       <i class="fa fa-twitter fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fposts%2f2011-03-23-custom-posterous-subdomains-with-cpanel%2f">
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2fappengine%2fpipelines%2fconnecting-pipelines%2f">
       <i class="fa fa-facebook fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://plus.google.com/share?url=http%3a%2f%2flocalhost%3a1313%2fposts%2f2011-03-23-custom-posterous-subdomains-with-cpanel%2f">
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2fappengine%2fpipelines%2fconnecting-pipelines%2f">
       <i class="fa fa-google-plus fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2flocalhost%3a1313%2fposts%2f2011-03-23-custom-posterous-subdomains-with-cpanel%2f">
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2fappengine%2fpipelines%2fconnecting-pipelines%2f">
       <i class="fa fa-linkedin fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2flocalhost%3a1313%2fposts%2f2011-03-23-custom-posterous-subdomains-with-cpanel%2f">
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2fappengine%2fpipelines%2fconnecting-pipelines%2f">
       <i class="fa fa-envelope fa-lg"></i>
     </a>
   </li>
 </ul>
+
+          <hr>
+
+          <div class="donation">
+            <p>Think this post was worth a dollar? If so, I'd love to have it. Support this site quickly and easily using the Paypal button below.</p>
+
+            <div class="row">
+              <div class="col-md-10 col-md-offset-5">
+                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="44DHX3GQMER48">
+<table>
+<tr><td><input type="hidden" name="on0" value="Amount of Support:">Amount of Support:</td></tr><tr><td><select name="os0">
+	<option value="Hat Tip">Hat Tip $1.00 CAD</option>
+	<option value="Coffee">Coffee $5.00 CAD</option>
+	<option value="Beer">Beer $10.00 CAD</option>
+	<option value="Lunch">Lunch $50.00 CAD</option>
+	<option value="Dinner">Dinner $100.00 CAD</option>
+</select> </td></tr>
+</table>
+<input type="hidden" name="currency_code" value="CAD">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+</form>
+
+              </div>
+            </div>
+          </div>
 
           <hr>
 
@@ -149,14 +268,13 @@
 run a business as <a href="http://redfinchsoftware.com">Red Finch Software</a>.
 You can find me online as <a
 href="https://twitter.com/soofaloofa">soofaloofa</a>. I love to teach, learn,
-speak and write about business and software.
+speak, and write about business and software. 
 
                   <ul class="list-inline">
                     <li>On the web:</li>
                     <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
                     <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
                     <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
-                    <li><a href="https://plus.google.com/+KevinSookocheff"><i class="fa fa-google-plus-square fa-lg"></i></a></li>
                     <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
                     <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
                   </ul>
@@ -195,6 +313,7 @@ speak and write about business and software.
          <h3>App Engine</h3>
          <ul class="list-unstyled">
            <li><a href="/series/mapreduce-api/">MapReduce API</a></li>
+           <li><a href="/series/pipelines-api/">Pipelines API</a></li>
            <li><a href="/series/cloud-endpoints/">Cloud Endpoints</a></li>
          </ul>
        </div>
@@ -264,9 +383,6 @@ s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
 (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
 }());
 </script>
-<script>document.write('<script src="http://'
-        + (location.host || 'localhost').split(':')[0]
-		+ ':1313/livereload.js?mindelay=10"></'
-        + 'script>')</script></body>
+</body>
 </html>
 

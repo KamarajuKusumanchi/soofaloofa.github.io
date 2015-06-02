@@ -78,7 +78,7 @@
               Posted on Tuesday, June 2, 2015 · <a href="http://sookocheff.com/posts/appengine/pipelines/asynchronous-pipelines/#disqus_thread">0 Comments</a>
             </small>
             <p>
-              This article will cover fully asynchronous pipelines. The term &lsquo;asynchronous&rsquo; is misleading here — all piplines are asynchronous in the sense that yielding a pipeline is a non-blocking operation. An asynchronous refers to a pipeline that remains in a RUN state until outside action is taken, for example, a button is clicked or a task is executed. Marking a pipeline as an asynchronous pipeline is as simple as setting the async class property to True.
+              View all articles in the Pipeline API Series. This article will cover fully asynchronous pipelines. The term &lsquo;asynchronous&rsquo; is misleading here — all piplines are asynchronous in the sense that yielding a pipeline is a non-blocking operation. An asynchronous refers to a pipeline that remains in a RUN state until outside action is taken, for example, a button is clicked or a task is executed. Marking a pipeline as an asynchronous pipeline is as simple as setting the async class property to True.
             </p>
             
             <p class="text-center">
@@ -94,7 +94,7 @@
               Posted on Wednesday, May 27, 2015 · <a href="http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/#disqus_thread">0 Comments</a>
             </small>
             <p>
-              We&rsquo;ve learned how to execute and chain together pipelines, now let&rsquo;s take a look at how pipelines execute under the hood. If necessary, you can refer to the source code of the pipelines project to clarify any details. The Pipeline Data Model Let&rsquo;s start with the pipeline data model. Note that each Kind defined by the pipelines API is prefixed by _AE_Pipeline, making it easy to view individual pipeline details by viewing the datastore entity.
+              View all articles in the Pipeline API Series. We&rsquo;ve learned how to execute and chain together pipelines, now let&rsquo;s take a look at how pipelines execute under the hood. If necessary, you can refer to the source code of the pipelines project to clarify any details. The Pipeline Data Model Let&rsquo;s start with the pipeline data model. Note that each Kind defined by the pipelines API is prefixed by _AE_Pipeline, making it easy to view individual pipeline details by viewing the datastore entity.
             </p>
             
             <p class="text-center">
@@ -110,7 +110,11 @@
               Posted on Tuesday, May 19, 2015 · <a href="http://sookocheff.com/posts/appengine/pipelines/fan-in-fan-out/#disqus_thread">0 Comments</a>
             </small>
             <p>
-              <p><a href="http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/">Last time</a>,
+              <ul>
+<li><a href="http://sookocheff.com/series/pipelines-api/">View all articles in the Pipeline API Series</a>.</li>
+</ul>
+
+<p><a href="http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/">Last time</a>,
 we studied how to connect two pipelines together. In this post, we expand on
 this topic, exploring how to fan-out to do multiple tasks in parallel, fan-in
 to combine multiple tasks into one, and how to do sequential work.</p>
@@ -130,7 +134,11 @@ to combine multiple tasks into one, and how to do sequential work.</p>
               Posted on Tuesday, May 12, 2015 · <a href="http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/#disqus_thread">0 Comments</a>
             </small>
             <p>
-              <p><a href="http://sookocheff.com/posts/appengine/pipelines/the-basics/">Last time</a>,
+              <ul>
+<li><a href="http://sookocheff.com/series/pipelines-api/">View all articles in the Pipeline API Series</a>.</li>
+</ul>
+
+<p><a href="http://sookocheff.com/posts/appengine/pipelines/the-basics/">Last time</a>,
 we discussed basic pipeline instantiation and execution. This time, we will
 cover sequential pipelines, answering the question &ldquo;How do I connect the output
 of one pipeline with the input of another pipeline&rdquo;?</p>
@@ -150,7 +158,7 @@ of one pipeline with the input of another pipeline&rdquo;?</p>
               Posted on Tuesday, May 5, 2015 · <a href="http://sookocheff.com/posts/appengine/pipelines/the-basics/#disqus_thread">0 Comments</a>
             </small>
             <p>
-              The Pipelines API is a general purpose workflow engine for App Engine applications. With the Pipelines API we can connect together complex workflows into a coherent run time backed by the Datastore. This article provides a basic overview of the Pipelines API and how it can be used for abritrary computational workflows. In the most basic sense a Pipeline is an object that takes input, performs some logic or computation on that input, and produces output.
+              View all articles in the Pipeline API Series. The Pipelines API is a general purpose workflow engine for App Engine applications. With the Pipelines API we can connect together complex workflows into a coherent run time backed by the Datastore. This article provides a basic overview of the Pipelines API and how it can be used for abritrary computational workflows. In the most basic sense a Pipeline is an object that takes input, performs some logic or computation on that input, and produces output.
             </p>
             
             <p class="text-center">

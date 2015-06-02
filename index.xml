@@ -15,6 +15,10 @@
       <guid>http://sookocheff.com/posts/appengine/pipelines/asynchronous-pipelines/</guid>
       <description>
 
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
 &lt;p&gt;This article will cover fully asynchronous pipelines. The term &amp;lsquo;asynchronous&amp;rsquo; is
 misleading here — all piplines are asynchronous in the sense that yielding a
 pipeline is a non-blocking operation. An asynchronous refers to a
@@ -171,6 +175,10 @@ APP = webapp2.WSGIApplication(routes)
       <guid>http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/</guid>
       <description>
 
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
 &lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/&#34;&gt;We&amp;rsquo;ve learned how to execute and chain together pipelines&lt;/a&gt;,
 now let&amp;rsquo;s take a look at how pipelines execute under the hood. If necessary,
 you can refer to the &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines&#34;&gt;source code of the pipelines
@@ -285,6 +293,10 @@ asynchronous pipelines.&lt;/p&gt;
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/appengine/pipelines/fan-in-fan-out/</guid>
       <description>
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/&#34;&gt;Last time&lt;/a&gt;,
 we studied how to connect two pipelines together. In this post, we expand on
@@ -439,7 +451,11 @@ APP = webapp2.WSGIApplication(routes)
       <pubDate>Tue, 12 May 2015 05:57:19 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/</guid>
-      <description>&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/appengine/pipelines/the-basics/&#34;&gt;Last time&lt;/a&gt;,
+      <description>&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/appengine/pipelines/the-basics/&#34;&gt;Last time&lt;/a&gt;,
 we discussed basic pipeline instantiation and execution. This time, we will
 cover sequential pipelines, answering the question &amp;ldquo;How do I connect the output
 of one pipeline with the input of another pipeline&amp;rdquo;?&lt;/p&gt;
@@ -556,6 +572,10 @@ APP = webapp2.WSGIApplication(routes)
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
       <guid>http://sookocheff.com/posts/appengine/pipelines/the-basics/</guid>
       <description>
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;The &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines&#34;&gt;Pipelines API&lt;/a&gt;
 is a general purpose workflow engine for App Engine applications. With the

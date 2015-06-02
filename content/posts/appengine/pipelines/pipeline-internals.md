@@ -8,6 +8,8 @@ series:
   - "Pipelines API"
 ---
 
+* [View all articles in the Pipeline API Series](http://sookocheff.com/series/pipelines-api/).
+
 [We've learned how to execute and chain together pipelines]({{< ref
 "connecting-pipelines.md" >}}),
 now let's take a look at how pipelines execute under the hood. If necessary,

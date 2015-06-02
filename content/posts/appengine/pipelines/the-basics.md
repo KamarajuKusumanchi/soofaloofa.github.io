@@ -10,6 +10,8 @@ aliases:
   - /posts/2015-05-05-app-engine-pipelines-part-one-the-basics/
 ---
 
+* [View all articles in the Pipeline API Series](http://sookocheff.com/series/pipelines-api/).
+
 The [Pipelines API](https://github.com/GoogleCloudPlatform/appengine-pipelines)
 is a general purpose workflow engine for App Engine applications. With the
 Pipelines API we can connect together complex workflows into a coherent run time

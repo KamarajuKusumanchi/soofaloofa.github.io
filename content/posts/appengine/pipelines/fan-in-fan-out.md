@@ -10,6 +10,8 @@ aliases:
   - /posts/2015-05-19-app-engine-pipelines-part-three-fan-in-fan-out/
 ---
 
+* [View all articles in the Pipeline API Series](http://sookocheff.com/series/pipelines-api/).
+
 [Last time]({{< ref "connecting-pipelines.md" >}}),
 we studied how to connect two pipelines together. In this post, we expand on
 this topic, exploring how to fan-out to do multiple tasks in parallel, fan-in

@@ -10,6 +10,8 @@ aliases:
   - /posts/2015-05-12-app-engine-pipelines-part-two-connecting-pipelines/
 ---
 
+* [View all articles in the Pipeline API Series](http://sookocheff.com/series/pipelines-api/).
+
 [Last time]({{< ref "the-basics.md" >}}), 
 we discussed basic pipeline instantiation and execution. This time, we will
 cover sequential pipelines, answering the question "How do I connect the output

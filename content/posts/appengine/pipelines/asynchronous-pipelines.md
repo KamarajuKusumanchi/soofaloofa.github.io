@@ -8,6 +8,8 @@ series:
   - "Pipelines API"
 ---
 
+* [View all articles in the Pipeline API Series](http://sookocheff.com/series/pipelines-api/).
+
 This article will cover fully asynchronous pipelines. The term 'asynchronous' is
 misleading here — all piplines are asynchronous in the sense that yielding a
 pipeline is a non-blocking operation. An asynchronous refers to a

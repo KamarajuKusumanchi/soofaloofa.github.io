@@ -9,15 +9,15 @@
     
     <item>
       <title>How to monitor a RAID array in Ubuntu server</title>
-      <link>http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server/</link>
+      <link>http://sookocheff.com/posts/linux/how-to-monitor-a-raid-array-in-ubuntu-server/</link>
       <pubDate>Fri, 28 May 2010 02:15:45 UTC</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2010-05-28-how-to-monitor-a-raid-array-in-ubuntu-server/</guid>
+      <guid>http://sookocheff.com/posts/linux/how-to-monitor-a-raid-array-in-ubuntu-server/</guid>
       <description>
 
 &lt;p&gt;I’ve been searching for a way to reliably monitor a RAID array.  I found a few resources and decided to compile them in one post.  If you are running Ubuntu Server skip to the bottom for some good news.&lt;/p&gt;
 
-&lt;h2 id=&#34;proc-mdstat:5018c82c1075980f621cdf11bc91c9a4&#34;&gt;/proc/mdstat&lt;/h2&gt;
+&lt;h2 id=&#34;proc-mdstat:561442c5805fcd4b89f8d059d9c475f8&#34;&gt;/proc/mdstat&lt;/h2&gt;
 
 &lt;p&gt;The first resource I found is from the &lt;a href=&#34;https://raid.wiki.kernel.org/index.php/Detecting,_querying_and_testing#Monitoring_RAID_arrays:/etc/cron.d&#34;&gt;Linux RAID wiki&lt;/a&gt;.&lt;/p&gt;
 
@@ -40,7 +40,7 @@ md0 : active raid1 sdb5[1] sda5[0]&lt;br /&gt;
 
 &lt;p&gt;Given this information you could write a script that polls /proc/mdstat searching for character sequence [UU] and then schedule this via cron. That seemed like a good solution, but I had also heard about mdadm and wanted to investigate it too.&lt;/p&gt;
 
-&lt;h2 id=&#34;mdadm:5018c82c1075980f621cdf11bc91c9a4&#34;&gt;mdadm&lt;/h2&gt;
+&lt;h2 id=&#34;mdadm:561442c5805fcd4b89f8d059d9c475f8&#34;&gt;mdadm&lt;/h2&gt;
 
 &lt;p&gt;Also from the &lt;a href=&#34;https://raid.wiki.kernel.org/index.php/Detecting,_querying_and_testing#Monitoring_RAID_arrays:/etc/cron.d&#34;&gt;Linux RAID wiki&lt;/a&gt;.&lt;/p&gt;
 
@@ -60,7 +60,7 @@ md0 : active raid1 sdb5[1] sda5[0]&lt;br /&gt;
 &lt;p&gt;Finally, the –program or –alert parameters specify the program to be run whenever an event is detected.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h2 id=&#34;ubuntu-server:5018c82c1075980f621cdf11bc91c9a4&#34;&gt;ubuntu server&lt;/h2&gt;
+&lt;h2 id=&#34;ubuntu-server:561442c5805fcd4b89f8d059d9c475f8&#34;&gt;ubuntu server&lt;/h2&gt;
 
 &lt;p&gt;This was all great but now my dilemma was in deciding how to put this information to use.  I searched some more and came across the following from &lt;a href=&#34;http://serverfault.com/questions/49939/daemon-to-verify-linux-md-raid&#34;&gt;ServerFault&lt;/a&gt;.&lt;/p&gt;
 

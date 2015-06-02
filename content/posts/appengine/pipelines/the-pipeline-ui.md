@@ -1,11 +1,12 @@
 ---
-title: "App Engine Pipelines API - Part 5: Asynchronous Pipelines" 
+title: "App Engine Pipelines API - Part 6: The Pipeline UI" 
 date: 2015-06-02T04:45:56-06:00
 tags: 
   - "appengine"
   - "pipelines"
 series:
   - "Pipelines API"
+draft: "true"
 ---
 
 This article will cover fully asynchronous pipelines. The term 'asynchronous' is

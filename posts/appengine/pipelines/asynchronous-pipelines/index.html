@@ -8,7 +8,7 @@
 <meta http-equiv="content-type", content="text/html; charset=utf-8">
 <meta name="viewport", content="width=device-width, initial-scale=1.0">
 
-<link rel="canonical" href="http://localhost:1313/posts/appengine/pipelines/asynchronous-pipelines/">
+<link rel="canonical" href="http://sookocheff.com/posts/appengine/pipelines/asynchronous-pipelines/">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
@@ -73,7 +73,7 @@
           <h1>App Engine Pipelines API - Part 5: Asynchronous Pipelines</h1>
           <p>
             <small class="text-muted">
-              Posted on Tuesday, June 2, 2015 · <a href="http://localhost:1313/posts/appengine/pipelines/asynchronous-pipelines/#disqus_thread">0 Comments</a>
+              Posted on Tuesday, June 2, 2015 · <a href="http://sookocheff.com/posts/appengine/pipelines/asynchronous-pipelines/#disqus_thread">0 Comments</a>
             </small>
           </p>
 
@@ -81,10 +81,10 @@
             
 
 <p>This article will cover fully asynchronous pipelines. The term &lsquo;asynchronous&rsquo; is
-misleading here — all piplines are asynchronous — yielding a pipeline is a
-non-blocking operation. An asynchronous actually refers to a pipeline that
-remains in a RUN state until outside action is taken, for example, a button is clicked
-or a task is executed.</p>
+misleading here — all piplines are asynchronous in the sense that yielding a
+pipeline is a non-blocking operation. An asynchronous refers to a
+pipeline that remains in a RUN state until outside action is taken, for example,
+a button is clicked or a task is executed.</p>
 
 <p>Marking a pipeline as an asynchronous pipeline is as simple as setting the
 <code>async</code> class property to True.</p>
@@ -94,8 +94,12 @@ or a task is executed.</p>
 </code></pre>
 
 <p>Once this pipeline starts, it will remain in the RUN state until the pipeline is
-transitioned to another state. You transition a pipeline to another state using
-the <code>callback</code> method.</p>
+transitioned to another state. You transition a pipeline to another state by
+calling the <code>complete</code> method, using a callback. <code>complete()</code> is a
+method only available to asynchronous pipelines. Calling complete will fill the
+pipelines output slots and, if all slots have been filled, mark the pipeline
+complete. Any barriers related to the slots being filled are notified as
+described in <a href="http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/">the previous article</a>.</p>
 
 <pre><code class="language-python">class AsyncPipeline(pipeline.Pipeline):
     async = True
@@ -109,7 +113,7 @@ the <code>callback</code> method.</p>
 <p>The pipeline API provides convenience methods for calling the callback method.
 <code>get_callback_url</code> returns a URL that, when accessed, passes any query
 parameters to the callback method. For example, to generate a URL to our
-pipeline with choice parameter we can call get_callback_url as follows:</p>
+pipeline with a <code>choice</code> parameter we can call get_callback_url as follows:</p>
 
 <pre><code class="language-python">url = get_callback_url(choice='approve')
 </code></pre>
@@ -119,7 +123,8 @@ pipeline with choice parameter we can call get_callback_url as follows:</p>
 <pre><code class="language-python">/_ah/pipeline/callback?choice=approve&amp;pipeline_id=fd789852183b4310b5f1353205a967fe
 </code></pre>
 
-<p>Accessing this URL will pass the parameter to our callback function.</p>
+<p>Accessing this URL will pass the <code>choice</code> parameter to the callback function of
+the pipeline with pipeline_id <code>fd789852183b4310b5f1353205a967fe</code>.</p>
 
 <pre><code class="language-python">class AsyncPipeline(pipeline.Pipeline):
     async = True
@@ -137,7 +142,7 @@ pipeline with choice parameter we can call get_callback_url as follows:</p>
 
 <p>Running the pipeline above will log the Callback URL to the console. By visiting
 that URL, the <code>callback</code> method will execute, completing your pipeline. You can
-refer to <a href="https://github.com/GoogleCloudPlatform/appengine-pipelines/blob/master/python/src/pipeline/common.py">EmailToContinue</a> Pipeline in common pipelines for a more robust example.</p>
+refer to the <a href="https://github.com/GoogleCloudPlatform/appengine-pipelines/blob/master/python/src/pipeline/common.py">EmailToContinue</a> Pipeline for a more robust example.</p>
 
 <h2 id="callback-tasks:74bf5c045d8c3cbfb500a70528c1dea1">Callback Tasks</h2>
 
@@ -147,22 +152,22 @@ that will execute our pipeline. In the following example, a task is created to
 trigger in the future, adding an artificial delay to our pipeline.</p>
 
 <pre><code class="language-python">class DelayPipeline(pipeline.Pipeline):
-  async = True
+    async = True
 
-  def __init__(self, seconds):
-    pipeline.Pipeline.__init__(self, seconds=seconds)
+    def __init__(self, seconds):
+        super(DelayPipeline, self).__init__(seconds=seconds)
 
-  def run(self, seconds=None):
-    task = self.get_callback_task(
-        countdown=seconds,
-        name='ae-pipeline-delay-' + self.pipeline_id)
-    try:
-      task.add(self.queue_name)
-    except (taskqueue.TombstonedTaskError, taskqueue.TaskAlreadyExistsError):
-      pass
+    def run(self, seconds=None):
+        task = self.get_callback_task(
+            countdown=seconds,
+            name='ae-pipeline-delay-' + self.pipeline_id)
+        try:
+            task.add(self.queue_name)
+        except (taskqueue.TombstonedTaskError, taskqueue.TaskAlreadyExistsError):
+            pass
 
-  def callback(self):
-    self.complete(self.kwargs['seconds'])
+    def callback(self):
+        self.complete(self.kwargs['seconds'])
 </code></pre>
 
 <p>Note that the task is queued using the pipeline_id in the task name. This helps
@@ -227,27 +232,27 @@ APP = webapp2.WSGIApplication(routes)
             <ul class="list-inline">
   <li>Share this post:</li>
   <li>
-    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2flocalhost%3a1313%2fposts%2fappengine%2fpipelines%2fasynchronous-pipelines%2f&text=App%20Engine%20Pipelines%20API%20-%20Part%205%3a%20Asynchronous%20Pipelines&via=soofaloofa">
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fposts%2fappengine%2fpipelines%2fasynchronous-pipelines%2f&text=App%20Engine%20Pipelines%20API%20-%20Part%205%3a%20Asynchronous%20Pipelines&via=soofaloofa">
       <i class="fa fa-twitter fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fposts%2fappengine%2fpipelines%2fasynchronous-pipelines%2f">
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fposts%2fappengine%2fpipelines%2fasynchronous-pipelines%2f">
       <i class="fa fa-facebook fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="https://plus.google.com/share?url=http%3a%2f%2flocalhost%3a1313%2fposts%2fappengine%2fpipelines%2fasynchronous-pipelines%2f">
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fposts%2fappengine%2fpipelines%2fasynchronous-pipelines%2f">
       <i class="fa fa-google-plus fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2flocalhost%3a1313%2fposts%2fappengine%2fpipelines%2fasynchronous-pipelines%2f">
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fposts%2fappengine%2fpipelines%2fasynchronous-pipelines%2f">
       <i class="fa fa-linkedin fa-lg"></i>
     </a>
   </li>
   <li>
-    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2flocalhost%3a1313%2fposts%2fappengine%2fpipelines%2fasynchronous-pipelines%2f">
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fposts%2fappengine%2fpipelines%2fasynchronous-pipelines%2f">
       <i class="fa fa-envelope fa-lg"></i>
     </a>
   </li>
@@ -418,9 +423,6 @@ s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
 (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
 }());
 </script>
-<script>document.write('<script src="http://'
-        + (location.host || 'localhost').split(':')[0]
-		+ ':1313/livereload.js?mindelay=10"></'
-        + 'script>')</script></body>
+</body>
 </html>
 

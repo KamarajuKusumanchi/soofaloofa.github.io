@@ -5,7 +5,163 @@
     <link>http://sookocheff.com/tags/pipelines/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Wed, 27 May 2015 05:57:19 CST</lastBuildDate>
+    <lastBuildDate>Tue, 02 Jun 2015 04:45:56 CST</lastBuildDate>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 5: Asynchronous Pipelines</title>
+      <link>http://sookocheff.com/posts/appengine/pipelines/asynchronous-pipelines/</link>
+      <pubDate>Tue, 02 Jun 2015 04:45:56 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/appengine/pipelines/asynchronous-pipelines/</guid>
+      <description>
+
+&lt;p&gt;This article will cover fully asynchronous pipelines. The term &amp;lsquo;asynchronous&amp;rsquo; is
+misleading here — all piplines are asynchronous in the sense that yielding a
+pipeline is a non-blocking operation. An asynchronous refers to a
+pipeline that remains in a RUN state until outside action is taken, for example,
+a button is clicked or a task is executed.&lt;/p&gt;
+
+&lt;p&gt;Marking a pipeline as an asynchronous pipeline is as simple as setting the
+&lt;code&gt;async&lt;/code&gt; class property to True.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class AsyncPipeline(pipeline.Pipeline):
+    async = True
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once this pipeline starts, it will remain in the RUN state until the pipeline is
+transitioned to another state. You transition a pipeline to another state by
+calling the &lt;code&gt;complete&lt;/code&gt; method, using a callback. &lt;code&gt;complete()&lt;/code&gt; is a
+method only available to asynchronous pipelines. Calling complete will fill the
+pipelines output slots and, if all slots have been filled, mark the pipeline
+complete. Any barriers related to the slots being filled are notified as
+described in &lt;a href=&#34;http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/&#34;&gt;the previous article&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class AsyncPipeline(pipeline.Pipeline):
+    async = True
+
+    def callback(self):
+        self.complete()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;callback-urls:74bf5c045d8c3cbfb500a70528c1dea1&#34;&gt;Callback URLs&lt;/h2&gt;
+
+&lt;p&gt;The pipeline API provides convenience methods for calling the callback method.
+&lt;code&gt;get_callback_url&lt;/code&gt; returns a URL that, when accessed, passes any query
+parameters to the callback method. For example, to generate a URL to our
+pipeline with a &lt;code&gt;choice&lt;/code&gt; parameter we can call get_callback_url as follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;url = get_callback_url(choice=&#39;approve&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will generate a URL of the form:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;/_ah/pipeline/callback?choice=approve&amp;amp;pipeline_id=fd789852183b4310b5f1353205a967fe
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Accessing this URL will pass the &lt;code&gt;choice&lt;/code&gt; parameter to the callback function of
+the pipeline with pipeline_id &lt;code&gt;fd789852183b4310b5f1353205a967fe&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class AsyncPipeline(pipeline.Pipeline):
+    async = True
+    public_callbacks = True
+
+    def run(self):
+        url = self.get_callback_url(choice=&#39;approve&#39;)
+        logging.info(&#39;Callback URL: %s&#39; % url)
+
+    def callback(self, choice):
+        if choice == &#39;approve&#39;:
+            logging.info(&#39;Pipeline Complete&#39;)
+            self.complete()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running the pipeline above will log the Callback URL to the console. By visiting
+that URL, the &lt;code&gt;callback&lt;/code&gt; method will execute, completing your pipeline. You can
+refer to the &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines/blob/master/python/src/pipeline/common.py&#34;&gt;EmailToContinue&lt;/a&gt; Pipeline for a more robust example.&lt;/p&gt;
+
+&lt;h2 id=&#34;callback-tasks:74bf5c045d8c3cbfb500a70528c1dea1&#34;&gt;Callback Tasks&lt;/h2&gt;
+
+&lt;p&gt;The second way to execute a callback method is via a callback task. The
+Pipelines API provides another convenience method to generate a callback task
+that will execute our pipeline. In the following example, a task is created to
+trigger in the future, adding an artificial delay to our pipeline.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class DelayPipeline(pipeline.Pipeline):
+    async = True
+
+    def __init__(self, seconds):
+        super(DelayPipeline, self).__init__(seconds=seconds)
+
+    def run(self, seconds=None):
+        task = self.get_callback_task(
+            countdown=seconds,
+            name=&#39;ae-pipeline-delay-&#39; + self.pipeline_id)
+        try:
+            task.add(self.queue_name)
+        except (taskqueue.TombstonedTaskError, taskqueue.TaskAlreadyExistsError):
+            pass
+
+    def callback(self):
+        self.complete(self.kwargs[&#39;seconds&#39;])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Note that the task is queued using the pipeline_id in the task name. This helps
+ensure our run method is idempotent. Full source code for an asynchronous
+pipeline follows. This pipeline will delay for 10 seconds, and then log a
+callback_url to the console. Visiting the callback URL will complete the
+pipeline.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+from google.appengine.api import taskqueue
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        pipeline = DelayPipeline(10)
+        pipeline.start()
+
+
+class DelayPipeline(pipeline.Pipeline):
+    async = True
+
+    def __init__(self, seconds):
+        pipeline.Pipeline.__init__(self, seconds=seconds)
+
+    def run(self, seconds=None):
+        task = self.get_callback_task(
+            countdown=seconds,
+            name=&#39;ae-pipeline-delay-&#39; + self.pipeline_id)
+        try:
+            task.add(self.queue_name)
+        except (taskqueue.TombstonedTaskError,
+                taskqueue.TaskAlreadyExistsError):
+            pass
+
+    def callback(self):
+        AsyncPipeline().start()
+
+
+class AsyncPipeline(pipeline.Pipeline):
+    async = True
+    public_callbacks = True
+
+    def run(self):
+        url = self.get_callback_url(choice=&#39;approve&#39;)
+        logging.info(&#39;Callback URL: %s&#39; % url)
+
+    def callback(self, choice):
+        if choice == &#39;approve&#39;:
+            self.complete()
+
+
+routes = [webapp2.Route(&#39;/pipeline-test/&#39;, handler=&#39;main.RunPipelineHandler&#39;)]
+
+APP = webapp2.WSGIApplication(routes)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>App Engine Pipelines API - Part 4: Pipeline Internals</title>

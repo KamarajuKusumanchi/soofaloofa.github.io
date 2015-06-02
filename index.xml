@@ -5,7 +5,163 @@
     <link>http://sookocheff.com/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Wed, 27 May 2015 05:57:19 CST</lastBuildDate>
+    <lastBuildDate>Tue, 02 Jun 2015 04:45:56 CST</lastBuildDate>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 5: Asynchronous Pipelines</title>
+      <link>http://sookocheff.com/posts/appengine/pipelines/asynchronous-pipelines/</link>
+      <pubDate>Tue, 02 Jun 2015 04:45:56 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/appengine/pipelines/asynchronous-pipelines/</guid>
+      <description>
+
+&lt;p&gt;This article will cover fully asynchronous pipelines. The term &amp;lsquo;asynchronous&amp;rsquo; is
+misleading here — all piplines are asynchronous in the sense that yielding a
+pipeline is a non-blocking operation. An asynchronous refers to a
+pipeline that remains in a RUN state until outside action is taken, for example,
+a button is clicked or a task is executed.&lt;/p&gt;
+
+&lt;p&gt;Marking a pipeline as an asynchronous pipeline is as simple as setting the
+&lt;code&gt;async&lt;/code&gt; class property to True.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class AsyncPipeline(pipeline.Pipeline):
+    async = True
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once this pipeline starts, it will remain in the RUN state until the pipeline is
+transitioned to another state. You transition a pipeline to another state by
+calling the &lt;code&gt;complete&lt;/code&gt; method, using a callback. &lt;code&gt;complete()&lt;/code&gt; is a
+method only available to asynchronous pipelines. Calling complete will fill the
+pipelines output slots and, if all slots have been filled, mark the pipeline
+complete. Any barriers related to the slots being filled are notified as
+described in &lt;a href=&#34;http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/&#34;&gt;the previous article&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class AsyncPipeline(pipeline.Pipeline):
+    async = True
+
+    def callback(self):
+        self.complete()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;callback-urls:74bf5c045d8c3cbfb500a70528c1dea1&#34;&gt;Callback URLs&lt;/h2&gt;
+
+&lt;p&gt;The pipeline API provides convenience methods for calling the callback method.
+&lt;code&gt;get_callback_url&lt;/code&gt; returns a URL that, when accessed, passes any query
+parameters to the callback method. For example, to generate a URL to our
+pipeline with a &lt;code&gt;choice&lt;/code&gt; parameter we can call get_callback_url as follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;url = get_callback_url(choice=&#39;approve&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will generate a URL of the form:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;/_ah/pipeline/callback?choice=approve&amp;amp;pipeline_id=fd789852183b4310b5f1353205a967fe
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Accessing this URL will pass the &lt;code&gt;choice&lt;/code&gt; parameter to the callback function of
+the pipeline with pipeline_id &lt;code&gt;fd789852183b4310b5f1353205a967fe&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class AsyncPipeline(pipeline.Pipeline):
+    async = True
+    public_callbacks = True
+
+    def run(self):
+        url = self.get_callback_url(choice=&#39;approve&#39;)
+        logging.info(&#39;Callback URL: %s&#39; % url)
+
+    def callback(self, choice):
+        if choice == &#39;approve&#39;:
+            logging.info(&#39;Pipeline Complete&#39;)
+            self.complete()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running the pipeline above will log the Callback URL to the console. By visiting
+that URL, the &lt;code&gt;callback&lt;/code&gt; method will execute, completing your pipeline. You can
+refer to the &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines/blob/master/python/src/pipeline/common.py&#34;&gt;EmailToContinue&lt;/a&gt; Pipeline for a more robust example.&lt;/p&gt;
+
+&lt;h2 id=&#34;callback-tasks:74bf5c045d8c3cbfb500a70528c1dea1&#34;&gt;Callback Tasks&lt;/h2&gt;
+
+&lt;p&gt;The second way to execute a callback method is via a callback task. The
+Pipelines API provides another convenience method to generate a callback task
+that will execute our pipeline. In the following example, a task is created to
+trigger in the future, adding an artificial delay to our pipeline.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class DelayPipeline(pipeline.Pipeline):
+    async = True
+
+    def __init__(self, seconds):
+        super(DelayPipeline, self).__init__(seconds=seconds)
+
+    def run(self, seconds=None):
+        task = self.get_callback_task(
+            countdown=seconds,
+            name=&#39;ae-pipeline-delay-&#39; + self.pipeline_id)
+        try:
+            task.add(self.queue_name)
+        except (taskqueue.TombstonedTaskError, taskqueue.TaskAlreadyExistsError):
+            pass
+
+    def callback(self):
+        self.complete(self.kwargs[&#39;seconds&#39;])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Note that the task is queued using the pipeline_id in the task name. This helps
+ensure our run method is idempotent. Full source code for an asynchronous
+pipeline follows. This pipeline will delay for 10 seconds, and then log a
+callback_url to the console. Visiting the callback URL will complete the
+pipeline.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+from google.appengine.api import taskqueue
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        pipeline = DelayPipeline(10)
+        pipeline.start()
+
+
+class DelayPipeline(pipeline.Pipeline):
+    async = True
+
+    def __init__(self, seconds):
+        pipeline.Pipeline.__init__(self, seconds=seconds)
+
+    def run(self, seconds=None):
+        task = self.get_callback_task(
+            countdown=seconds,
+            name=&#39;ae-pipeline-delay-&#39; + self.pipeline_id)
+        try:
+            task.add(self.queue_name)
+        except (taskqueue.TombstonedTaskError,
+                taskqueue.TaskAlreadyExistsError):
+            pass
+
+    def callback(self):
+        AsyncPipeline().start()
+
+
+class AsyncPipeline(pipeline.Pipeline):
+    async = True
+    public_callbacks = True
+
+    def run(self):
+        url = self.get_callback_url(choice=&#39;approve&#39;)
+        logging.info(&#39;Callback URL: %s&#39; % url)
+
+    def callback(self, choice):
+        if choice == &#39;approve&#39;:
+            self.complete()
+
+
+routes = [webapp2.Route(&#39;/pipeline-test/&#39;, handler=&#39;main.RunPipelineHandler&#39;)]
+
+APP = webapp2.WSGIApplication(routes)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>App Engine Pipelines API - Part 4: Pipeline Internals</title>
@@ -2111,238 +2267,6 @@ class Log2Elasticsearch(pipeline.Pipeline):
             shards=16
         )
 &lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Parsing bash script options with getopts</title>
-      <link>http://sookocheff.com/posts/2015-01-04-parsing-bash-script-arguments-with-shopts/</link>
-      <pubDate>Sun, 04 Jan 2015 12:31:51 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2015-01-04-parsing-bash-script-arguments-with-shopts/</guid>
-      <description>
-
-&lt;p&gt;A common task in shell scripting is to parse command line arguments to your
-script. Bash provides the &lt;code&gt;getopts&lt;/code&gt; built-in function to do just that. This
-tutorial explains how to use the &lt;code&gt;getopts&lt;/code&gt; built-in function to parse arguments and options to a bash script.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;getopts&lt;/code&gt; function takes three parameters. The first is a specification of
-which options are valid, listed as a sequence of letters. For example, the
-string &lt;code&gt;&#39;ht&#39;&lt;/code&gt; signifies that the options &lt;code&gt;-h&lt;/code&gt; and &lt;code&gt;-t&lt;/code&gt; are valid.&lt;/p&gt;
-
-&lt;p&gt;The second argument to &lt;code&gt;getopts&lt;/code&gt; is a variable that will be populated with the
-option or argument to be processed next. In the following loop, &lt;code&gt;opt&lt;/code&gt; will hold
-the value of the current option that has been parsed by &lt;code&gt;getopts&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;while getopts &amp;quot;:ht&amp;quot; opt; do
-  case ${opt} in
-    h ) # process option a
-      ;;
-    t ) # process option l
-      ;;
-    \? ) echo &amp;quot;Usage: cmd [-h] [-t]
-      ;;
-  esac
-done
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This example shows a few additional features of &lt;code&gt;getopts&lt;/code&gt;. First, if an invalid
-option is provided, the option variable is assigned the value &lt;code&gt;?&lt;/code&gt;. You can catch
-this case and provide an appropriate usage message to the user. Second, this
-behaviour is only true when you prepend the list of valid options with &lt;code&gt;:&lt;/code&gt; to
-disable the default error handling of invalid options. It is recommended to
-always disable the default error handling in your scripts.&lt;/p&gt;
-
-&lt;p&gt;The third argument to &lt;code&gt;getopts&lt;/code&gt; is the list of arguments and options to be
-processed. When not provided, this defaults to the arguments and options
-provided to the application (&lt;code&gt;$@&lt;/code&gt;). You can provide this third argument to use
-&lt;code&gt;getopts&lt;/code&gt; to parse any list of arguments and options you provide.&lt;/p&gt;
-
-&lt;h2 id=&#34;shifting-processed-options:12703913772a307ca27d6fbba691325e&#34;&gt;Shifting processed options&lt;/h2&gt;
-
-&lt;p&gt;The variable &lt;code&gt;OPTIND&lt;/code&gt; holds the number of options parsed by the last call to
-&lt;code&gt;getopts&lt;/code&gt;. It is common practice to call the &lt;code&gt;shift&lt;/code&gt; command at the end of your
-processing loop to remove options that have already been handled from &lt;code&gt;$@&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;shift $((OPTIND -1))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;parsing-options-with-arguments:12703913772a307ca27d6fbba691325e&#34;&gt;Parsing options with arguments&lt;/h2&gt;
-
-&lt;p&gt;Options that themselves have arguments are signified with a &lt;code&gt;:&lt;/code&gt;. The argument to
-an option is placed in the variable &lt;code&gt;OPTARG&lt;/code&gt;. In the following example, the
-option &lt;code&gt;t&lt;/code&gt; takes an argument. When the argument is provided, we copy its value
-to the variable &lt;code&gt;target&lt;/code&gt;. If no argument is provided &lt;code&gt;getopts&lt;/code&gt; will set &lt;code&gt;opt&lt;/code&gt; to
-&lt;code&gt;:&lt;/code&gt;. We can recognize this error condition by catching the &lt;code&gt;:&lt;/code&gt; case and printing
-an appropriate error message.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;while getopts &amp;quot;:t:&amp;quot; opt; do
-  case ${opt} in 
-    t )
-      target=$OPTARG
-      ;;
-    \? )
-      echo &amp;quot;Invalid option: $OPTARG&amp;quot; 1&amp;gt;&amp;amp;2
-      ;;
-    : )
-      echo &amp;quot;Invalid option: $OPTARG requires an argument&amp;quot; 1&amp;gt;&amp;amp;2
-      ;;
-  esac
-done
-shift $((OPTIND -1))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;an-extended-example-parsing-nested-arguments-and-options:12703913772a307ca27d6fbba691325e&#34;&gt;An extended example &amp;ndash; parsing nested arguments and options&lt;/h2&gt;
-
-&lt;p&gt;Let&amp;rsquo;s walk through an extended example of processing a command that takes
-options, has a sub-command, and whose sub-command takes an additional option
-that has an argument. This is a mouthful so let&amp;rsquo;s break it down using an
-example. Let&amp;rsquo;s say we are writing our own version of the &lt;a href=&#34;https://pip.pypa.io/en/latest/&#34;&gt;&lt;code&gt;pip&lt;/code&gt;
-command&lt;/a&gt;. In this version you can call &lt;code&gt;pip&lt;/code&gt;
-with the &lt;code&gt;-h&lt;/code&gt; option to display a help message.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; pip -h
-Usage: 
-    pip -h                      Display this help message.
-    pip install                 Install a Python package.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We can use &lt;code&gt;getopts&lt;/code&gt; to parse the &lt;code&gt;-h&lt;/code&gt; option with the following &lt;code&gt;while&lt;/code&gt; loop.
-In it we catch invalid options with &lt;code&gt;\?&lt;/code&gt; and &lt;code&gt;shift&lt;/code&gt; all arguments that have
-been processed with &lt;code&gt;shift $((OPTIND -1))&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;while getopts &amp;quot;:h&amp;quot; opt; do
-  case ${opt} in
-    h )
-      echo &amp;quot;Usage:&amp;quot;
-      echo &amp;quot;    pip -h                      Display this help message.&amp;quot;
-      echo &amp;quot;    pip install                 Install a Python package.&amp;quot;
-      exit 0
-      ;;
-    \? )
-      echo &amp;quot;Invalid Option: -$OPTARG&amp;quot; 1&amp;gt;&amp;amp;2
-      exit 1
-      ;;
-  esac
-done
-shift $((OPTIND -1))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now let&amp;rsquo;s add the sub-command &lt;code&gt;install&lt;/code&gt; to our script.  &lt;code&gt;install&lt;/code&gt; takes as an
-argument the Python package to install.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; pip install urllib3
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;install&lt;/code&gt; also takes an option, &lt;code&gt;-t&lt;/code&gt;. &lt;code&gt;-t&lt;/code&gt; takes as an argument the location to
-install the package to relative to the current directory.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; pip install urllib3 -t ./src/lib
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;To process this line we must find the sub-command to execute. This value is the
-first argument to our script.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;subcommand=$1
-shift # Remove `pip` from the argument list
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now we can process the sub-command &lt;code&gt;install&lt;/code&gt;. In our example, the option &lt;code&gt;-t&lt;/code&gt; is
-actually an option that follows the package argument so we begin by removing
-&lt;code&gt;install&lt;/code&gt; from the argument list and processing the remainder of the line.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;case &amp;quot;$subcommand&amp;quot; in
-  install)
-    package=$1
-    shift # Remove `install` from the argument list
-    ;;
-esac
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;After shifting the argument list we can process the remaining arguments as if
-they are of the form &lt;code&gt;package -t src/lib&lt;/code&gt;. The &lt;code&gt;-t&lt;/code&gt; option takes an argument
-itself. This argument will be stored in the variable &lt;code&gt;OPTARG&lt;/code&gt; and we save it to
-the variable &lt;code&gt;target&lt;/code&gt; for further work.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;case &amp;quot;$subcommand&amp;quot; in
-  install)
-    package=$1
-    shift # Remove `install` from the argument list
-
-  while getopts &amp;quot;:t:&amp;quot; opt; do
-    case ${opt} in
-      t )
-        target=$OPTARG
-        ;;
-      \? )
-        echo &amp;quot;Invalid Option: -$OPTARG&amp;quot; 1&amp;gt;&amp;amp;2
-        exit 1
-        ;;
-      : )
-        echo &amp;quot;Invalid Option: -$OPTARG requires an argument&amp;quot; 1&amp;gt;&amp;amp;2
-        exit 1
-        ;;
-    esac
-  done
-  shift $((OPTIND -1))
-  ;;
-esac
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Putting this all together, we end up with the following script that parses
-arguments to our version of &lt;code&gt;pip&lt;/code&gt; and its sub-command &lt;code&gt;install&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;package=&amp;quot;&amp;quot;  # Default to empty package
-target=&amp;quot;&amp;quot;  # Default to empty target
-
-# Parse options to the `pip` command
-while getopts &amp;quot;:h&amp;quot; opt; do
-  case ${opt} in
-    h )
-      echo &amp;quot;Usage:&amp;quot;
-      echo &amp;quot;    pip -h                      Display this help message.&amp;quot;
-      echo &amp;quot;    pip install &amp;lt;package&amp;gt;       Install &amp;lt;package&amp;gt;.&amp;quot;
-      exit 0
-      ;;
-   \? )
-     echo &amp;quot;Invalid Option: -$OPTARG&amp;quot; 1&amp;gt;&amp;amp;2
-     exit 1
-     ;;
-  esac
-done
-shift $((OPTIND -1))
-
-subcommand=$1; shift  # Remove &#39;pip&#39; from the argument list
-case &amp;quot;$subcommand&amp;quot; in
-  # Parse options to the install sub command
-  install)
-    package=$1; shift  # Remove &#39;install&#39; from the argument list
-
-    # Process package options
-    while getopts &amp;quot;:t:&amp;quot; opt; do
-      case ${opt} in
-        t )
-          target=$OPTARG
-          ;;
-        \? )
-          echo &amp;quot;Invalid Option: -$OPTARG&amp;quot; 1&amp;gt;&amp;amp;2
-          exit 1
-          ;;
-        : )
-          echo &amp;quot;Invalid Option: -$OPTARG requires an argument&amp;quot; 1&amp;gt;&amp;amp;2
-          exit 1
-          ;;
-      esac
-    done
-    shift $((OPTIND -1))
-    ;;
-esac
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;After processing the above sequence of commands, the variable &lt;code&gt;package&lt;/code&gt; will
-hold the package to install and the variable &lt;code&gt;target&lt;/code&gt; will hold the target to
-install the package to. You can use this as a template for processing any set of
-arguments and options to your scripts.&lt;/p&gt;
 </description>
     </item>
     

@@ -73,6 +73,22 @@
         
         
           <article>
+            <h2><a href="http://sookocheff.com/posts/appengine/pipelines/asynchronous-pipelines/">App Engine Pipelines API - Part 5: Asynchronous Pipelines</a></h2>
+            <small class="text-muted">
+              Posted on Tuesday, June 2, 2015 · <a href="http://sookocheff.com/posts/appengine/pipelines/asynchronous-pipelines/#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              This article will cover fully asynchronous pipelines. The term &lsquo;asynchronous&rsquo; is misleading here — all piplines are asynchronous in the sense that yielding a pipeline is a non-blocking operation. An asynchronous refers to a pipeline that remains in a RUN state until outside action is taken, for example, a button is clicked or a task is executed. Marking a pipeline as an asynchronous pipeline is as simple as setting the async class property to True.
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/appengine/pipelines/asynchronous-pipelines/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
             <h2><a href="http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/">App Engine Pipelines API - Part 4: Pipeline Internals</a></h2>
             <small class="text-muted">
               Posted on Wednesday, May 27, 2015 · <a href="http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/#disqus_thread">0 Comments</a>
@@ -423,22 +439,6 @@ queue by implementing the <code>InputReader</code> interface.</p>
             
             <p class="text-center">
               <a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/"><button type="button" class="btn btn-primary">Read More</button></a>
-            </p>
-            
-            <hr>
-          </article>
-        
-          <article>
-            <h2><a href="http://sookocheff.com/posts/2014-11-18-installing-mysql-python-on-yosemite/">Installing MySQL-Python on OS X Yosemite</a></h2>
-            <small class="text-muted">
-              Posted on Tuesday, November 18, 2014 · <a href="http://sookocheff.com/posts/2014-11-18-installing-mysql-python-on-yosemite/#disqus_thread">0 Comments</a>
-            </small>
-            <p>
-              Installing the MySQL-Python package requires a few steps. In an effort to aid future Internet travellers, this post will document how to install the MySQL-Python package on OS X Yosemite. First, install MariaDB, the drop-in replacement for MySQL. I chose MacPorts for this task, though Homebrew would work just fine. Second, update your PATH to include the mariadb executables. Third, install the Python MySQL connector. sudo port install mariadb PATH=/opt/local/lib/mariadb/bin:$PATH pip install MySQL-Python That&rsquo;s it!
-            </p>
-            
-            <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-11-18-installing-mysql-python-on-yosemite/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
             
             <hr>

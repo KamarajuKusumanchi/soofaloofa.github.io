@@ -1,18 +1,17 @@
 ---
 title: "App Engine Pipelines API - Part 6: The Pipeline UI" 
-date: 2015-06-09T06:09:56-06:00
+date: 2015-06-09T20:43:56-06:00
 tags: 
   - "appengine"
   - "pipelines"
 series:
   - "Pipelines API"
-draft: "true"
 ---
 
 * [View all articles in the Pipeline API Series](http://sookocheff.com/series/pipelines-api/).
 
 This article will serve as a reminder of the Pipeline UI as much for the writer
-as for the reader. The Pipeline UI requires the MapMeduce library to also be
+as for the reader. The Pipeline UI requires the MapMeduce library to be
 installed. If you are not familiar with MapReduce please refer to the [MapReduce
 API Series of articles](http://sookocheff.com/series/mapreduce-api/).
 
@@ -55,7 +54,7 @@ pipelines status using this UI.
 
 If you know a pipeline's root identifier you can jump directly to the status
 page. This page presents you with a UI displaying the status of a pipeline and
-any of a pipeline's children.
+any of the pipeline's children.
 
 {{% img "appengine/pipelines/pipeline-ui/pipeline-status.png" "Pipeline Status" %}}
 

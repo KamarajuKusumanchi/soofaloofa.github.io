@@ -1103,27 +1103,19 @@ class CountCharacters(webapp2.RequestHandler):
     
     <item>
       <title>App Engine MapReduce API - Part 2: Running a MapReduce Job Using mapreduce.yaml</title>
-      <link>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/</link>
+      <link>http://sookocheff.com/posts/appengine/mapreduce/mapreduce-yaml/</link>
       <pubDate>Tue, 22 Apr 2014 06:48:36 UTC</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/</guid>
+      <guid>http://sookocheff.com/posts/appengine/mapreduce/mapreduce-yaml/</guid>
       <description>
 
-&lt;h2 id=&#34;mapreduce-api-series:62102699eed8b8c281da9eed3873c1d3&#34;&gt;MapReduce API Series&lt;/h2&gt;
-
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/&#34;&gt;Part 6: Writing a Custom Input Reader&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/&#34;&gt;Part 7: Writing a Custom Output Writer&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/mapreduce-api/&#34;&gt;View all articles in the MapReduce API Series&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Last time&lt;/a&gt; we looked at an overview of how MapReduce works. In this article we&amp;rsquo;ll be getting our hands dirty writing some code to handle the Map Stage. If you&amp;rsquo;ll recall, the Map Stage is composed of two separate components: an InputReader and a &lt;code&gt;map&lt;/code&gt; function. We&amp;rsquo;ll look at each of these in turn.&lt;/p&gt;
 
-&lt;h2 id=&#34;getting-started-installation:62102699eed8b8c281da9eed3873c1d3&#34;&gt;Getting Started: Installation&lt;/h2&gt;
+&lt;h2 id=&#34;getting-started-installation:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;Getting Started: Installation&lt;/h2&gt;
 
 &lt;p&gt;First, let&amp;rsquo;s install the MapReduce API for Python. The API is constantly changing so the best way to install the latest version is to checkout the code directly from the &lt;a href=&#34;https://code.google.com/p/appengine-mapreduce/&#34;&gt;SVN repository&lt;/a&gt;.&lt;/p&gt;
 
@@ -1162,7 +1154,7 @@ handlers:
     direction: desc
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;running-your-first-mapreduce-job:62102699eed8b8c281da9eed3873c1d3&#34;&gt;Running Your First MapReduce Job&lt;/h2&gt;
+&lt;h2 id=&#34;running-your-first-mapreduce-job:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;Running Your First MapReduce Job&lt;/h2&gt;
 
 &lt;p&gt;The easiest way to get started with MapReduce is to use the &lt;code&gt;mapreduce.yaml&lt;/code&gt; file. This file allows you define a &lt;code&gt;mapper&lt;/code&gt; function that will be executed for each entity passed to it. Let&amp;rsquo;s go straight to an example and  create a &lt;code&gt;mapreduce.yaml&lt;/code&gt; file (in your applications root directory) that will iterate over all entities of a certain Kind and put them to the datastore (updating their timestamp).&lt;/p&gt;
 
@@ -1211,7 +1203,7 @@ handlers:
 
 &lt;p&gt;We&amp;rsquo;ve ran our first MapReduce job!&lt;/p&gt;
 
-&lt;h2 id=&#34;the-mutationpool:62102699eed8b8c281da9eed3873c1d3&#34;&gt;The MutationPool&lt;/h2&gt;
+&lt;h2 id=&#34;the-mutationpool:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;The MutationPool&lt;/h2&gt;
 
 &lt;p&gt;In our &lt;code&gt;touch&lt;/code&gt; function we put our entity to the datastore once for each entity. This is wasteful when the datastore allows putting multiple items at a time. To take advantage of this feature the MapReduce library offers a MutationPool that collects datastore operations to be performed in batches.&lt;/p&gt;
 
@@ -1230,7 +1222,7 @@ def touch(entity):
 
 &lt;p&gt;The source code for MapReduce operations can be found in the &lt;code&gt;mapreduce.operation&lt;/code&gt; module.  The &lt;code&gt;mapreduce.operation.db&lt;/code&gt; module currently supports two operations via the MutationPool &lt;code&gt;Put&lt;/code&gt; and &lt;code&gt;Delete&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;counters:62102699eed8b8c281da9eed3873c1d3&#34;&gt;Counters&lt;/h2&gt;
+&lt;h2 id=&#34;counters:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;Counters&lt;/h2&gt;
 
 &lt;p&gt;The MapReduce library also provides counters that can be incremented when a condition is met. In our example we can count the number of entities that were touched by incrementing a counter.&lt;/p&gt;
 
@@ -1250,7 +1242,7 @@ def touch(entity):
 &lt;img src=&#34;http://sookocheff.com/img/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/increment-counter.png&#34; alt=&#34;Incrementing a custom counter&#34;&gt;
 &lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;passing-parameters-to-the-map-function:62102699eed8b8c281da9eed3873c1d3&#34;&gt;Passing Parameters to the Map Function&lt;/h2&gt;
+&lt;h2 id=&#34;passing-parameters-to-the-map-function:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;Passing Parameters to the Map Function&lt;/h2&gt;
 
 &lt;p&gt;We can pass additional parameters to our map function by specifying them in &lt;code&gt;mapreduce.yaml&lt;/code&gt;. Parameters are passed to both our InputReader and to our map handler function. In our example, we listed &lt;code&gt;entity_kind&lt;/code&gt; and this parameter was expected by our InputReader and used to specify the datastore Kind processed by our InputReader. On the MapReduce status page (&lt;code&gt;/mapreduce&lt;/code&gt;) we can type in a new value for this parameter to specify a different Kind before running the job.&lt;/p&gt;
 
@@ -1291,7 +1283,7 @@ def touch(entity):
 
 &lt;p&gt;Now our map function will operate on entities that have been updated previous to our &lt;code&gt;if_older_than&lt;/code&gt; parameter.&lt;/p&gt;
 
-&lt;h2 id=&#34;parameter-validation:62102699eed8b8c281da9eed3873c1d3&#34;&gt;Parameter Validation&lt;/h2&gt;
+&lt;h2 id=&#34;parameter-validation:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;Parameter Validation&lt;/h2&gt;
 
 &lt;p&gt;The MapReduce library also provides a method to do parameter validation. In our previous example we passed a date to our map function as a string. We can use a validator to validate that parameter and modify it as necessary. To use a validator function, specify it in &lt;code&gt;mapreduce.yaml&lt;/code&gt; as &lt;code&gt;params_validator&lt;/code&gt;.&lt;/p&gt;
 
@@ -1325,7 +1317,7 @@ def touch(entity):
 
 &lt;p&gt;If parameter validation fails the MapReduce job is not started and no entities are passed from our InputReader to the map function.&lt;/p&gt;
 
-&lt;h2 id=&#34;callbacks:62102699eed8b8c281da9eed3873c1d3&#34;&gt;Callbacks&lt;/h2&gt;
+&lt;h2 id=&#34;callbacks:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;Callbacks&lt;/h2&gt;
 
 &lt;p&gt;The MapReduce library allows you to specify a callback function that is called after the MapReduce completes. This can be used for logging purposes or to trigger a specific event in code. The callback is specified in your &lt;code&gt;mapreduce.yaml&lt;/code&gt; file as &lt;code&gt;done_callback&lt;/code&gt; and points to a user specified function. This is a parameter of the MapReduce itself and not the map function &amp;ndash; note the independent entry in &lt;code&gt;mapreduce.yaml&lt;/code&gt;.&lt;/p&gt;
 
@@ -1365,7 +1357,7 @@ class DoneTouch(webapp2.RequestHandler):
         logging.info(spec)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;additional-input-readers:62102699eed8b8c281da9eed3873c1d3&#34;&gt;Additional Input Readers&lt;/h2&gt;
+&lt;h2 id=&#34;additional-input-readers:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;Additional Input Readers&lt;/h2&gt;
 
 &lt;p&gt;In addition to the DatastoreInputReader the library includes readers for the
 Blobstore, Files and Google Cloud Storage Buckets. The documentation for these
@@ -1378,7 +1370,7 @@ source&lt;/a&gt;.
 This should give you enough information to get started with the InputReader of
 your choice.&lt;/p&gt;
 
-&lt;h3 id=&#34;input-reader-reference:62102699eed8b8c281da9eed3873c1d3&#34;&gt;Input Reader Reference&lt;/h3&gt;
+&lt;h3 id=&#34;input-reader-reference:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;Input Reader Reference&lt;/h3&gt;
 
 &lt;p&gt;As a reference here is a list of InputReaders and their parameters. All
 InputReaders support the &lt;code&gt;namespace&lt;/code&gt; parameter for specifying the namespaces to
@@ -1389,7 +1381,7 @@ iterate over. If no namespace is given then all namespaces are used&lt;/p&gt;
   &lt;dd&gt;The list of namespaces that will be searched.&lt;/dd&gt;
 &lt;/dl&gt;
 
-&lt;h4 id=&#34;blobstorelineinputreader:62102699eed8b8c281da9eed3873c1d3&#34;&gt;BlobstoreLineInputReader&lt;/h4&gt;
+&lt;h4 id=&#34;blobstorelineinputreader:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;BlobstoreLineInputReader&lt;/h4&gt;
 
 &lt;p&gt;Input reader for a newline delimited blob in Blobstore.&lt;/p&gt;
 
@@ -1403,7 +1395,7 @@ iterate over. If no namespace is given then all namespaces are used&lt;/p&gt;
   &lt;dd&gt;The last line number position to read.&lt;/dd&gt;
 &lt;/dl&gt;
 
-&lt;h4 id=&#34;blobstorezipinputreader:62102699eed8b8c281da9eed3873c1d3&#34;&gt;BlobstoreZipInputReader&lt;/h4&gt;
+&lt;h4 id=&#34;blobstorezipinputreader:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;BlobstoreZipInputReader&lt;/h4&gt;
 
 &lt;p&gt;Input reader for files from a zip archive stored in the Blobstore. Iterates over all compressed files in a zipfile in Blobstore.&lt;/p&gt;
 
@@ -1417,7 +1409,7 @@ iterate over. If no namespace is given then all namespaces are used&lt;/p&gt;
   &lt;dd&gt;The index of the last file that will not be read.&lt;/dd&gt;
 &lt;/dl&gt;
 
-&lt;h4 id=&#34;blobstoreziplineinputreader:62102699eed8b8c281da9eed3873c1d3&#34;&gt;BlobstoreZipLineInputReader&lt;/h4&gt;
+&lt;h4 id=&#34;blobstoreziplineinputreader:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;BlobstoreZipLineInputReader&lt;/h4&gt;
 
 &lt;p&gt;Input reader for files from a zip archive stored in the Blobstore. Iterates over all compressed files in a zipfile in Blobstore. Each compressed file is expected to be a newline delimited file.&lt;/p&gt;
 
@@ -1433,7 +1425,7 @@ iterate over. If no namespace is given then all namespaces are used&lt;/p&gt;
   &lt;dd&gt;The by offset with `BLOB_KEY.zip[start_file_index]` to start reading.&lt;/dd&gt;
 &lt;/dl&gt;
 
-&lt;h4 id=&#34;datastoreinputreader:62102699eed8b8c281da9eed3873c1d3&#34;&gt;DatastoreInputReader&lt;/h4&gt;
+&lt;h4 id=&#34;datastoreinputreader:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;DatastoreInputReader&lt;/h4&gt;
 
 &lt;p&gt;Iterates over a Model and yields model instances. Supports both db.model and ndb.model.&lt;/p&gt;
 
@@ -1450,7 +1442,7 @@ iterate over. If no namespace is given then all namespaces are used&lt;/p&gt;
   &lt;dd&gt;Any filters to apply to the datastore query.&lt;/dd&gt;
 &lt;/dl&gt;
 
-&lt;h4 id=&#34;datastorekeyinputreader:62102699eed8b8c281da9eed3873c1d3&#34;&gt;DatastoreKeyInputReader&lt;/h4&gt;
+&lt;h4 id=&#34;datastorekeyinputreader:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;DatastoreKeyInputReader&lt;/h4&gt;
 
 &lt;p&gt;Iterate over an entity kind and yields datastore.Key.&lt;/p&gt;
 
@@ -1467,7 +1459,7 @@ iterate over. If no namespace is given then all namespaces are used&lt;/p&gt;
   &lt;dd&gt;Any filters to apply to the datastore query.&lt;/dd&gt;
 &lt;/dl&gt;
 
-&lt;h4 id=&#34;fileinputreader:62102699eed8b8c281da9eed3873c1d3&#34;&gt;FileInputReader&lt;/h4&gt;
+&lt;h4 id=&#34;fileinputreader:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;FileInputReader&lt;/h4&gt;
 
 &lt;p&gt;Iterate over Google Cloud Storage files using the &lt;a href=&#34;https://developers.google.com/appengine/docs/python/googlestorage/&#34;&gt;Files API&lt;/a&gt;.&lt;/p&gt;
 
@@ -1481,7 +1473,7 @@ iterate over. If no namespace is given then all namespaces are used&lt;/p&gt;
   the zip.&lt;/dd&gt;
 &lt;/dl&gt;
 
-&lt;h4 id=&#34;loginputreader:62102699eed8b8c281da9eed3873c1d3&#34;&gt;LogInputReader&lt;/h4&gt;
+&lt;h4 id=&#34;loginputreader:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;LogInputReader&lt;/h4&gt;
 
 &lt;p&gt;Input reader for a time range of logs via the &lt;a href=&#34;https://developers.google.com/appengine/docs/python/logs/&#34;&gt;Logs API&lt;/a&gt;.&lt;/p&gt;
 
@@ -1502,7 +1494,7 @@ iterate over. If no namespace is given then all namespaces are used&lt;/p&gt;
   &lt;dd&gt;A list of tuples containing a module and version id whose logs should be read. This can not be used with version_ids.&lt;/dd&gt;
 &lt;/dl&gt;
 
-&lt;h4 id=&#34;namespaceinputreader:62102699eed8b8c281da9eed3873c1d3&#34;&gt;NamespaceInputReader&lt;/h4&gt;
+&lt;h4 id=&#34;namespaceinputreader:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;NamespaceInputReader&lt;/h4&gt;
 
 &lt;p&gt;An input reader to iterate over namespaces. This reader yields namespace names as string.&lt;/p&gt;
 
@@ -1513,7 +1505,7 @@ iterate over. If no namespace is given then all namespaces are used&lt;/p&gt;
   &lt;dd&gt;The number of namespaces to read with each batch.&lt;/dd&gt;
 &lt;/dl&gt;
 
-&lt;h4 id=&#34;randomstringinputreader:62102699eed8b8c281da9eed3873c1d3&#34;&gt;RandomStringInputReader&lt;/h4&gt;
+&lt;h4 id=&#34;randomstringinputreader:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;RandomStringInputReader&lt;/h4&gt;
 
 &lt;p&gt;Yields random strings as output. Useful to populate output with testing entries.&lt;/p&gt;
 
@@ -1524,7 +1516,7 @@ iterate over. If no namespace is given then all namespaces are used&lt;/p&gt;
   &lt;dd&gt;The length of the generated strings.&lt;/dd&gt;
 &lt;/dl&gt;
 
-&lt;h4 id=&#34;rawdatastoreinputreader:62102699eed8b8c281da9eed3873c1d3&#34;&gt;RawDatastoreInputReader&lt;/h4&gt;
+&lt;h4 id=&#34;rawdatastoreinputreader:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;RawDatastoreInputReader&lt;/h4&gt;
 
 &lt;p&gt;Exactly the same as DatastoreInputReader but yields a datastore.Entity.&lt;/p&gt;
 
@@ -1541,7 +1533,7 @@ iterate over. If no namespace is given then all namespaces are used&lt;/p&gt;
   &lt;dd&gt;Any filters to apply to the datastore query.&lt;/dd&gt;
 &lt;/dl&gt;
 
-&lt;h4 id=&#34;recordsreader:62102699eed8b8c281da9eed3873c1d3&#34;&gt;RecordsReader&lt;/h4&gt;
+&lt;h4 id=&#34;recordsreader:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;RecordsReader&lt;/h4&gt;
 
 &lt;p&gt;Reads a list of Files API files in records format.&lt;/p&gt;
 
@@ -1550,7 +1542,7 @@ iterate over. If no namespace is given then all namespaces are used&lt;/p&gt;
   &lt;dd&gt;A comma separated string of files to read from.&lt;/dd&gt;
 &lt;/dl&gt;
 
-&lt;h2 id=&#34;conclusions:62102699eed8b8c281da9eed3873c1d3&#34;&gt;Conclusions&lt;/h2&gt;
+&lt;h2 id=&#34;conclusions:11532bf22b4c3a1b434582ced3840dc7&#34;&gt;Conclusions&lt;/h2&gt;
 
 &lt;p&gt;Defining a MapReduce job via &lt;code&gt;mapreduce.yaml&lt;/code&gt; provides a convenient way to
 iterate over large datasets and run a function on each unit of work.
@@ -1565,22 +1557,14 @@ using MapReduce Pipelines to programmatically control your API.&lt;/p&gt;
     
     <item>
       <title>App Engine MapReduce API - Part 1: The Basics</title>
-      <link>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/</link>
+      <link>http://sookocheff.com/posts/appengine/mapreduce/the-basics/</link>
       <pubDate>Tue, 15 Apr 2014 12:09:36 UTC</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/</guid>
+      <guid>http://sookocheff.com/posts/appengine/mapreduce/the-basics/</guid>
       <description>
 
-&lt;h2 id=&#34;mapreduce-api-series:54d8a613c12c57201264032edc68384d&#34;&gt;MapReduce API Series&lt;/h2&gt;
-
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/&#34;&gt;Part 6: Writing a Custom Input Reader&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/&#34;&gt;Part 7: Writing a Custom Output Writer&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/mapreduce-api/&#34;&gt;View all articles in the MapReduce API Series&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;The first arcticle in this series provides an overview of the &lt;a href=&#34;https://developers.google.com/appengine/docs/python/dataprocessing/&#34;&gt;App Engine MapReduce
@@ -1588,12 +1572,12 @@ API&lt;/a&gt;. We
 will give a basic overview of what MapReduce is and how it is used to do
 parallel and distributed processing of large datasets.&lt;/p&gt;
 
-&lt;h2 id=&#34;the-map-and-reduce-functions:54d8a613c12c57201264032edc68384d&#34;&gt;The Map and Reduce Functions&lt;/h2&gt;
+&lt;h2 id=&#34;the-map-and-reduce-functions:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;The Map and Reduce Functions&lt;/h2&gt;
 
 &lt;p&gt;MapReduce is based on the &lt;code&gt;map&lt;/code&gt; and &lt;code&gt;reduce&lt;/code&gt; functions that are commonly used in
 lazily-evaluated functional programming languages. Let&amp;rsquo;s look at &lt;code&gt;map&lt;/code&gt; first.&lt;/p&gt;
 
-&lt;h3 id=&#34;map:54d8a613c12c57201264032edc68384d&#34;&gt;map&lt;/h3&gt;
+&lt;h3 id=&#34;map:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;map&lt;/h3&gt;
 
 &lt;p&gt;A &lt;code&gt;map&lt;/code&gt; function is a way to apply a transformation to every element in a list.
 Using Clojure as the example functional language we can use the &lt;code&gt;map&lt;/code&gt; function
@@ -1610,7 +1594,7 @@ it to the map function.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;=&amp;gt; (map fn [1 2 3 4 5])
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;reduce:54d8a613c12c57201264032edc68384d&#34;&gt;reduce&lt;/h3&gt;
+&lt;h3 id=&#34;reduce:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;reduce&lt;/h3&gt;
 
 &lt;p&gt;Reduce applying a function &lt;code&gt;fn&lt;/code&gt; of two arguments to a sequence of parameters.
 Each iteration of the function call uses the value of the previous call as an
@@ -1630,7 +1614,7 @@ evaluated &amp;ndash; meaning that each operation can be performed only when it 
 needed. With MapReduce, lazy evaluation allows you to work with large datasets
 by processing data only when needed.&lt;/p&gt;
 
-&lt;h2 id=&#34;mapreduce-stages:54d8a613c12c57201264032edc68384d&#34;&gt;MapReduce Stages&lt;/h2&gt;
+&lt;h2 id=&#34;mapreduce-stages:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;MapReduce Stages&lt;/h2&gt;
 
 &lt;p&gt;The App Engine MapReduce API provides a method for operating over large datasets
 via a parallel and distributed system of lazy evaluation. In contrast to the
@@ -1641,7 +1625,7 @@ of values depending on the job requirements.&lt;/p&gt;
 begins and any intermediate data is stored in temporary storage between the
 stages. MapReduce has three stages: map, shuffle and reduce.&lt;/p&gt;
 
-&lt;h3 id=&#34;map-1:54d8a613c12c57201264032edc68384d&#34;&gt;Map&lt;/h3&gt;
+&lt;h3 id=&#34;map-1:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Map&lt;/h3&gt;
 
 &lt;p&gt;The map stage has two components &amp;ndash; an &lt;em&gt;InputReader&lt;/em&gt; and a &lt;em&gt;map&lt;/em&gt; function. The
 InputReader&amp;rsquo;s job is to deliver data one record at a time to the &lt;em&gt;map&lt;/em&gt; function.
@@ -1689,7 +1673,7 @@ forage 1
 quinoa 1
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;shuffle:54d8a613c12c57201264032edc68384d&#34;&gt;Shuffle&lt;/h3&gt;
+&lt;h3 id=&#34;shuffle:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Shuffle&lt;/h3&gt;
 
 &lt;p&gt;The shuffle stage is done in two steps. First, the data emitted by the map stage
 is sorted. Entries with the same key are grouped together.&lt;/p&gt;
@@ -1720,7 +1704,7 @@ values are stored in temporary storage for processing by the next stage.&lt;/p&g
 (typewriter, [1])
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;reduce-1:54d8a613c12c57201264032edc68384d&#34;&gt;Reduce&lt;/h3&gt;
+&lt;h3 id=&#34;reduce-1:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Reduce&lt;/h3&gt;
 
 &lt;p&gt;The reduce stage has two components &amp;ndash; a &lt;em&gt;reduce&lt;/em&gt; function and an
 &lt;em&gt;OutputWriter&lt;/em&gt;. The reduce function is called for each unique key in the
@@ -1749,13 +1733,13 @@ look like this.&lt;/p&gt;
 
 &lt;p&gt;This output is passed to the &lt;em&gt;OutputWriter&lt;/em&gt; which writes the data to permanent storage.&lt;/p&gt;
 
-&lt;h2 id=&#34;the-benefits-of-mapreduce:54d8a613c12c57201264032edc68384d&#34;&gt;The Benefits of MapReduce&lt;/h2&gt;
+&lt;h2 id=&#34;the-benefits-of-mapreduce:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;The Benefits of MapReduce&lt;/h2&gt;
 
 &lt;p&gt;MapReduce performs parallel and distributed operations by partitioning the data
 to be processed both spatially and temporally. The spatial partitioning is done
 via &lt;em&gt;sharding&lt;/em&gt; while the temporal partitioning is done via &lt;em&gt;slicing&lt;/em&gt;.&lt;/p&gt;
 
-&lt;h3 id=&#34;sharding-parallel-processing:54d8a613c12c57201264032edc68384d&#34;&gt;Sharding: Parallel Processing&lt;/h3&gt;
+&lt;h3 id=&#34;sharding-parallel-processing:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Sharding: Parallel Processing&lt;/h3&gt;
 
 &lt;p&gt;The input data is divided into multiple smaller datasets called &lt;em&gt;shards&lt;/em&gt;. Each
 of these shards are processed in parallel. A shard is processed by an individual
@@ -1764,7 +1748,7 @@ reserved for this shard. Likewise for the reduce function.&lt;/p&gt;
 
 &lt;p&gt;The benefit of sharding is that each shard can be processed in parallel.&lt;/p&gt;
 
-&lt;h3 id=&#34;slicing-fault-tolerance:54d8a613c12c57201264032edc68384d&#34;&gt;Slicing: Fault Tolerance&lt;/h3&gt;
+&lt;h3 id=&#34;slicing-fault-tolerance:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Slicing: Fault Tolerance&lt;/h3&gt;
 
 &lt;p&gt;The data in a shard is processed sequentially. Each shard is assigned a task and
 that task iterates over all data in the shard using an App Engine Task Queue.
@@ -1776,7 +1760,7 @@ and the process repeats until all data in the shard has been processed.&lt;/p&gt
 a slice, that particular slice can be run again without affecting the processing
 of previous or subsequent slices.&lt;/p&gt;
 
-&lt;h2 id=&#34;conclusions:54d8a613c12c57201264032edc68384d&#34;&gt;Conclusions&lt;/h2&gt;
+&lt;h2 id=&#34;conclusions:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Conclusions&lt;/h2&gt;
 
 &lt;p&gt;MapReduce provides a convenient programming model for operating on large
 datasets. In our next article we look at how to use the Python MapReduce API for

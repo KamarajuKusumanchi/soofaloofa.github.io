@@ -5,7 +5,101 @@
     <link>http://sookocheff.com/series/pipelines-api/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Tue, 02 Jun 2015 04:45:56 CST</lastBuildDate>
+    <lastBuildDate>Tue, 09 Jun 2015 20:43:56 CST</lastBuildDate>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 6: The Pipeline UI</title>
+      <link>http://sookocheff.com/posts/appengine/pipelines/pipeline-ui/</link>
+      <pubDate>Tue, 09 Jun 2015 20:43:56 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/appengine/pipelines/pipeline-ui/</guid>
+      <description>
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This article will serve as a reminder of the Pipeline UI as much for the writer
+as for the reader. The Pipeline UI requires the MapMeduce library to be
+installed. If you are not familiar with MapReduce please refer to the &lt;a href=&#34;http://sookocheff.com/series/mapreduce-api/&#34;&gt;MapReduce
+API Series of articles&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Once MapReduce is installed you will need to add a few indices to &lt;code&gt;index.yaml&lt;/code&gt;
+to properly query for pipeline records for display in the UI.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;indexes:
+- kind: _AE_Pipeline_Record
+  properties: 
+    - name: is_root_pipeline 
+    - name: start_time 
+      direction: desc
+
+- kind: _AE_Pipeline_Record
+  properties: 
+    - name: class_path 
+    - name: is_root_pipeline 
+    - name: start_time
+      direction: desc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;list-root-pipelines:7ab75bf11afccfc89345fe106e22b8e1&#34;&gt;List Root Pipelines&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;/mapreduce/pipeline/list
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This URL will list all root pipelines in the system, ordered by their starting
+time. You can filter pipelines by their class path and check on an individual
+pipelines status using this UI.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/root-pipelines.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/root-pipelines.png&#34; alt=&#34;List Root Pipelines&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;pipeline-status:7ab75bf11afccfc89345fe106e22b8e1&#34;&gt;Pipeline Status&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;/mapreduce/pipeline/status?root=7ba9b9b2b2e24787b3b4c11079178cb6
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you know a pipeline&amp;rsquo;s root identifier you can jump directly to the status
+page. This page presents you with a UI displaying the status of a pipeline and
+any of the pipeline&amp;rsquo;s children.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/pipeline-status.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/pipeline-status.png&#34; alt=&#34;Pipeline Status&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;list-mapreduce-pipelines:7ab75bf11afccfc89345fe106e22b8e1&#34;&gt;List MapReduce Pipelines&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;/mapreduce/status
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If your pipeline is a MapReduce job, it will have an entry on the MapReduce
+status page. You can navigate to individual jobs to check their sharding and
+processing status or cleanup a job by removing datastore entries for the
+pipeline.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/mapreduce-list.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/mapreduce-list.png&#34; alt=&#34;MapReduce List&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;mapreduce-status:7ab75bf11afccfc89345fe106e22b8e1&#34;&gt;MapReduce Status&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;/mapreduce/detail?mapreduce_id=1574647046653BE202D4D
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you know a mapreduce job&amp;rsquo;s identifier you can jump directly to the status
+page. This page will show any counters you have defined and show how the
+processing of each shard of data.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/mapreduce-status.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/mapreduce-status.png&#34; alt=&#34;MapReduce Status&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>App Engine Pipelines API - Part 5: Asynchronous Pipelines</title>

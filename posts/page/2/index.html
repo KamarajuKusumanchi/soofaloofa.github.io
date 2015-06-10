@@ -73,6 +73,38 @@
         
         
           <article>
+            <h2><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">App Engine MapReduce API - Part 6: Writing a Custom Input Reader</a></h2>
+            <small class="text-muted">
+              Posted on Thursday, December 4, 2014 · <a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              <h2 id="mapreduce-api-series:8a4ce915aba4ff843eb6b0f21aab7dc8">MapReduce API Series</h2>
+
+<ul>
+<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
+<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
+<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">Part 6: Writing a Custom Input Reader</a></li>
+<li><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">Part 7: Writing a Custom Output Writer</a></li>
+</ul>
+
+<p>One of the great things about the MapReduce library is the abilitiy to write a
+cutom InputReader to process data from any data source. In this post we will
+explore how to write an InputReader the leases tasks from an AppEngine pull
+queue by implementing the <code>InputReader</code> interface.</p>
+
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
             <h2><a href="http://sookocheff.com/posts/2014-11-18-installing-mysql-python-on-yosemite/">Installing MySQL-Python on OS X Yosemite</a></h2>
             <small class="text-muted">
               Posted on Tuesday, November 18, 2014 · <a href="http://sookocheff.com/posts/2014-11-18-installing-mysql-python-on-yosemite/#disqus_thread">0 Comments</a>
@@ -457,37 +489,6 @@ how.</p>
             
             <p class="text-center">
               <a href="http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put/"><button type="button" class="btn btn-primary">Read More</button></a>
-            </p>
-            
-            <hr>
-          </article>
-        
-          <article>
-            <h2><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">App Engine MapReduce API - Part 5: Using Combiners to Reduce Data Throughput</a></h2>
-            <small class="text-muted">
-              Posted on Tuesday, May 20, 2014 · <a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/#disqus_thread">0 Comments</a>
-            </small>
-            <p>
-              <h2 id="mapreduce-api-series:0c5a7b6bb7a566ac635a554a6adae451">MapReduce API Series</h2>
-
-<ul>
-<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
-<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
-<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
-<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
-<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
-<li><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">Part 6: Writing a Custom Input Reader</a></li>
-<li><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">Part 7: Writing a Custom Output Writer</a></li>
-</ul>
-
-<p>So far we&rsquo;ve looked at using MapReduce pipelines to perform calculations over
-large data sets and combined multiple pipelines in succession. In this article
-we will look at how to reduce the amount of data transfer by using a combiner.</p>
-
-            </p>
-            
-            <p class="text-center">
-              <a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
             
             <hr>

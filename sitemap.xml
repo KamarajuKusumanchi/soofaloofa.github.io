@@ -3,8 +3,18 @@
   
   <url>
     <loc>http://sookocheff.com/</loc>
-    <lastmod>2015-06-09T20:43:56-06:00</lastmod>
+    <lastmod>2015-06-16T21:19:26-06:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://sookocheff.com/posts/appengine/introducing-cloudpypi/</loc>
+    <lastmod>2015-06-16T21:19:26-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://sookocheff.com/projects/cloudpypi/</loc>
+    <lastmod>2015-06-16T21:19:26-06:00</lastmod>
   </url>
   
   <url>

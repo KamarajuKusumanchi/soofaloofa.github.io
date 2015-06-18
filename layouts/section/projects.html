@@ -1,0 +1,24 @@
+{{ template "partials/header.html" . }}
+{{ template "partials/navbar.html" . }}
+
+<div class="container page-container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <section class="page">
+        <h1>{{ .Title }}</h1>
+        <hr />
+        {{ range .Data.Pages }}
+          <h2>{{ .Title }}</h2>
+          <article>
+            <p>
+              {{ .Content }} 
+            </p>
+          </article>
+          <hr />
+        {{ end }}
+      </section>
+    </div>
+  </div>
+</div>
+
+{{ template "partials/footer.html" . }}

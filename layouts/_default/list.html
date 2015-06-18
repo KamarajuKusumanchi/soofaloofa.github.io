@@ -6,6 +6,7 @@
     <div class="col-md-8 col-md-offset-2">
       <section class="page">
         <h1>{{ .Title }}</h1>
+        <hr />
         {{ $paginator := .Paginate (.Data.Pages) }}
         {{ range $paginator.Pages }}
           <article>

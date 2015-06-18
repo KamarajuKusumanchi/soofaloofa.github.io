@@ -1,6 +1,6 @@
 ---
 title: "CloudPyPI" 
-date: 2015-06-16T21:19:26-06:00
+date: 2015-06-18T07:19:26-06:00
 tags: 
   - "cloudpypi"
   - "projects"

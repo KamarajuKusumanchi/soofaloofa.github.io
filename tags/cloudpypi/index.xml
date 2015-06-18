@@ -5,20 +5,7 @@
     <link>http://sookocheff.com/tags/cloudpypi/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Tue, 16 Jun 2015 21:19:26 CST</lastBuildDate>
-    
-    <item>
-      <title>CloudPyPI</title>
-      <link>http://sookocheff.com/projects/cloudpypi/</link>
-      <pubDate>Tue, 16 Jun 2015 21:19:26 CST</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/projects/cloudpypi/</guid>
-      <description>&lt;p&gt;A PyPI compatible server for hosting your private eggs and wheels, CloudPyPI
-runs on Google App Engine and provides basic user authentication.&lt;/p&gt;
-
-&lt;p&gt;&lt;a class=&#34;btn btn-default&#34; href=&#34;https://github.com/vendasta/cloudpypi&#34; role=&#34;button&#34;&gt;CloudPyPI on Github&lt;/a&gt;&lt;/p&gt;
-</description>
-    </item>
+    <lastBuildDate>Thu, 18 Jun 2015 07:19:26 CST</lastBuildDate>
     
     <item>
       <title>Introducing CloudPyPI</title>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<title>Automatically Resizing a Compute Engine Disk : sookocheff.com</title>
+
+<meta charset="utf-8">
+<meta http-equiv="content-type", content="text/html; charset=utf-8">
+<meta name="viewport", content="width=device-width, initial-scale=1.0">
+
+<link rel="canonical" href="http://sookocheff.com/post/2014-11-11-automatically-resizing-a-compute-engine-disk/">
+
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/styles/default.min.css">
+
+<link rel="stylesheet" href="/css/vendor/bootstrap.min.css">
+<link rel="stylesheet" href="/css/vendor/monokai_sublime.css">
+<link rel="stylesheet" href="/css/style.css">
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-20611089-6', 'sookocheff.com');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand">Kevin Sookocheff</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/projects/">Projects</a>
+        </li>
+        <li class="">
+          <a href="/posts/">Blog</a>
+        </li>
+        <li class="dropdown">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+            Subscribe <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="http://eepurl.com/KJE01">Email</a></li>
+            <li><a href="http://sookocheff.com/index.xml">RSS</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="container page-container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <section class="page">
+        <article class="post">
+          <h1>Automatically Resizing a Compute Engine Disk</h1>
+          <p>
+            <small class="text-muted">
+              Posted on Tuesday, November 11, 2014 · <a href="http://sookocheff.com/post/2014-11-11-automatically-resizing-a-compute-engine-disk/#disqus_thread">0 Comments</a>
+            </small>
+          </p>
+
+          <div class=".post-content">
+            <p>A recurring issue when working with <a href="https://cloud.google.com/compute/">Compute
+Engine</a> is that newly created Instances have
+only 10GB of free space available. To take advantage of the full disk size you
+need to manually partition and resize it. This article shows one method of
+accomplishing this task.</p>
+
+<p>To correctly partition the disk we need to find the start sector. We can find this using <code>fdisk</code> with the <code>-l</code>
+option to list the full disk output.</p>
+
+<pre><code class="language-bash">&gt; sudo fdisk -l
+
+Disk /dev/sda: 10.7 GB, 10737418240 bytes
+4 heads, 32 sectors/track, 163840 cylinders, total 20971520 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+Disk identifier: 0x0009c3f5
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1   *        4096    20971519    10483712   83  Linux
+</code></pre>
+
+<p>Only one disk exists and its size is 10.7 GB. We need to resize this disk
+ourselves to make it fully useable. The last line of the <code>fdisk</code> output lists the start
+sector. We can extract it using a combination of <code>grep</code> and <code>awk</code>.</p>
+
+<pre><code class="language-bash"># fisk -l: get the full disk output
+# grep ^/dev/sda1: filter the line for the boot disk
+# awk -F&quot; &quot; '{ print $3 }': get the third token where the separator is space
+start_sector=$(sudo fdisk -l | grep ^/dev/sda1 |  awk -F&quot; &quot;  '{ print $3 }')
+</code></pre>
+
+<p>Now that we have the start sector we can run through the sequence of commands
+required for <code>fdisk</code> to create a new partition of the full disk size.</p>
+
+<pre><code class="language-bash">cat &lt;&lt;EOF | sudo fdisk -c -u /dev/sda
+d
+n
+p
+1
+$start_sector
+
+w
+EOF
+</code></pre>
+
+<p>The <code>-c</code> and <code>-u</code> option make <code>fdisk</code> behave the same on both CentOS and Debian.
+<code>d</code> deletes the first (default) partition. <code>n</code> creates a new partition. <code>p</code>
+selects the new partition as a primary. <code>1</code> is the partition number.
+<code>$start_sector</code> is the value we extracted from <code>fdisk -l</code>. The blank line
+specifies the default end sector. Finally, <code>w</code> writes our changes.</p>
+
+<p>We need to reboot our machine for these changes to take effect.</p>
+
+<pre><code class="language-bash">sudo reboot
+</code></pre>
+
+<p>Once our machine comes back to life we need to resize our disk to the full
+partition size. This is done withe the <code>resize2fs</code> command.</p>
+
+<pre><code class="language-bash">resize2fs /dev/sda1
+</code></pre>
+
+<p>Putting this all together, we can write a script that will automatically resize
+a Compute Engine disk. Using this as a startup script will make any Compute
+Engine instance you create have a fully sized disk available for use.</p>
+
+<pre><code class="language-bash">STARTUP_VERSION=1
+PARTITION_MARK=/var/startup.partition.$STARTUP_VERSION
+RESIZE_MARK=/var/startup.resize.$STARTUP_VERSION
+
+# Repartition the disk to full size
+function partition() {
+  start_sector=$(sudo fdisk -l | grep ^/dev/sda1 |  awk -F&quot; &quot;  '{ print $3 }')
+
+  cat &lt;&lt;EOF | sudo fdisk -c -u /dev/sda
+d
+n
+p
+1
+$start_sector
+
+w
+EOF
+
+  # We've made the changes to the partition table, they haven't taken effect; we need to reboot.
+  touch $PARTITION_MARK
+
+  sudo reboot
+  exit
+}
+
+# Resize the filesystem
+function resize() {
+  resize2fs /dev/sda1
+  touch $RESIZE_MARK
+}
+
+if [ ! -f $PARTITION_MARK ]; then
+  partition
+fi
+
+if [ ! -f $RESIZE_MARK ]; then
+  resize
+fi
+</code></pre>
+ 
+          </div>
+
+          <hr>
+            <ul class="list-inline">
+  <li>Share this post:</li>
+  <li>
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fpost%2f2014-11-11-automatically-resizing-a-compute-engine-disk%2f&text=Automatically%20Resizing%20a%20Compute%20Engine%20Disk&via=soofaloofa">
+      <i class="fa fa-twitter fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fpost%2f2014-11-11-automatically-resizing-a-compute-engine-disk%2f">
+      <i class="fa fa-facebook fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fpost%2f2014-11-11-automatically-resizing-a-compute-engine-disk%2f">
+      <i class="fa fa-google-plus fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fpost%2f2014-11-11-automatically-resizing-a-compute-engine-disk%2f">
+      <i class="fa fa-linkedin fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fpost%2f2014-11-11-automatically-resizing-a-compute-engine-disk%2f">
+      <i class="fa fa-envelope fa-lg"></i>
+    </a>
+  </li>
+</ul>
+
+          <hr>
+
+          <div class="donation">
+            <p>Think this post was worth a dollar? If so, I'd love to have it. Support this site quickly and easily using the Paypal button below.</p>
+
+            <div class="row">
+              <div class="col-md-10 col-md-offset-5">
+                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="44DHX3GQMER48">
+<table>
+<tr><td><input type="hidden" name="on0" value="Amount of Support:">Amount of Support:</td></tr><tr><td><select name="os0">
+	<option value="Hat Tip">Hat Tip $1.00 CAD</option>
+	<option value="Coffee">Coffee $5.00 CAD</option>
+	<option value="Beer">Beer $10.00 CAD</option>
+	<option value="Lunch">Lunch $50.00 CAD</option>
+	<option value="Dinner">Dinner $100.00 CAD</option>
+</select> </td></tr>
+</table>
+<input type="hidden" name="currency_code" value="CAD">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+</form>
+
+              </div>
+            </div>
+          </div>
+
+          <hr>
+
+          <div class="blurb">
+            <div class="row">
+              <div class="col-md-10 col-md-offset-1">
+                <h4 class="text-center">About Kevin Sookocheff</h4>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 col-md-offset-1">
+                <p>
+                  <img class="img-circle center-block" src="/img/profile.png">
+                </p>
+              </div>
+              <div class="col-md-6">
+                <p>
+                  I am a Software Developer. I work at <a
+  href="http://www.vendasta.com">VendAsta</a> with a bunch of great people. I
+run a business as <a href="http://redfinchsoftware.com">Red Finch Software</a>.
+You can find me online as <a
+href="https://twitter.com/soofaloofa">soofaloofa</a>. I love to teach, learn,
+speak, and write about business and software. 
+
+                  <ul class="list-inline">
+                    <li>On the web:</li>
+                    <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+                    <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+                    <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+                    <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+                    <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+                  </ul>
+                </p>
+              </div>
+            </div>
+          </div>
+          <hr>
+
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+     
+    var disqus_shortname = 'kevinsookocheff'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        </article>
+      </section>
+    </div>
+  </div>
+</div>
+
+<footer>
+ <div class="footer-above text-center">
+   <div class="container">
+     <div class="row">
+       <div class="footer-col col-md-3">
+         <h3>App Engine</h3>
+         <ul class="list-unstyled">
+           <li><a href="/series/mapreduce-api/">MapReduce API</a></li>
+           <li><a href="/series/pipelines-api/">Pipelines API</a></li>
+           <li><a href="/series/cloud-endpoints/">Cloud Endpoints</a></li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>APIs</h3>
+         <ul class="list-unstyled">
+           <li>
+             <a href="/posts/2014-03-11-on-choosing-a-hypermedia-format/">On Choosing a Hypermedia Format</a>
+           </li>
+           <li>
+             <a href="/posts/2014-03-27-when-to-use-http-put-and-http-post/">When to use HTTP PUT</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Random</h3>
+         <ul class="list-unstyled">
+           <li>
+           <a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/"> Unity3d on the Mac App Store</a>
+           </li>
+           <li>
+             <a href="http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/">Saving Canvas Data to an Image</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Social</h3>
+         <ul class="list-unstyled">
+           <li><a href="http://www.twitter.com/soofaloofa">Twitter</a></li>
+           <li><a href="http://www.facebook.com/kevin.sookocheff">Facebook</a></li>
+           <li><a href="http://www.linkedin.com/in/kevinsookocheff">LinkedIn</a></li>
+           <li><a href="https://plus.google.com/+KevinSookocheff">Google+</a></li>
+           <li><a href="https://github.com/soofaloofa">Github</a></li>
+         </ul>
+       </div>
+     </div>
+   </div>
+ </div>
+ <div class="footer-below text-center">
+     <div class="container">
+         <div class="row">
+             <div class="col-lg-12">
+                 &copy; Kevin Sookocheff · <a href="#">Top</a>
+             </div>
+         </div>
+     </div>
+ </div>
+</footer>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/highlight.min.js"></script>
+<script src="/js/vendor/retina.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+ 
+var disqus_shortname = 'kevinsookocheff'; 
+
+ 
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+</body>
+</html>
+

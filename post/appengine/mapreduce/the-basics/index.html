@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<title>App Engine MapReduce API - Part 1: The Basics : sookocheff.com</title>
+
+<meta charset="utf-8">
+<meta http-equiv="content-type", content="text/html; charset=utf-8">
+<meta name="viewport", content="width=device-width, initial-scale=1.0">
+
+<link rel="canonical" href="http://sookocheff.com/post/appengine/mapreduce/the-basics/">
+
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/styles/default.min.css">
+
+<link rel="stylesheet" href="/css/vendor/bootstrap.min.css">
+<link rel="stylesheet" href="/css/vendor/monokai_sublime.css">
+<link rel="stylesheet" href="/css/style.css">
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-20611089-6', 'sookocheff.com');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand">Kevin Sookocheff</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/projects/">Projects</a>
+        </li>
+        <li class="">
+          <a href="/posts/">Blog</a>
+        </li>
+        <li class="dropdown">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+            Subscribe <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="http://eepurl.com/KJE01">Email</a></li>
+            <li><a href="http://sookocheff.com/index.xml">RSS</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="container page-container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <section class="page">
+        <article class="post">
+          <h1>App Engine MapReduce API - Part 1: The Basics</h1>
+          <p>
+            <small class="text-muted">
+              Posted on Tuesday, April 15, 2014 · <a href="http://sookocheff.com/post/appengine/mapreduce/the-basics/#disqus_thread">0 Comments</a>
+            </small>
+          </p>
+
+          <div class=".post-content">
+            
+
+<ul>
+<li><a href="http://sookocheff.com/series/mapreduce-api/">View all articles in the MapReduce API Series</a>.</li>
+</ul>
+
+<p>The first arcticle in this series provides an overview of the <a href="https://developers.google.com/appengine/docs/python/dataprocessing/">App Engine MapReduce
+API</a>. We
+will give a basic overview of what MapReduce is and how it is used to do
+parallel and distributed processing of large datasets.</p>
+
+<h2 id="the-map-and-reduce-functions:dd1501e70e3c5b7c7f6f0783a2583eda">The Map and Reduce Functions</h2>
+
+<p>MapReduce is based on the <code>map</code> and <code>reduce</code> functions that are commonly used in
+lazily-evaluated functional programming languages. Let&rsquo;s look at <code>map</code> first.</p>
+
+<h3 id="map:dd1501e70e3c5b7c7f6f0783a2583eda">map</h3>
+
+<p>A <code>map</code> function is a way to apply a transformation to every element in a list.
+Using Clojure as the example functional language we can use the <code>map</code> function
+to increment every number in a list by <code>1</code>.</p>
+
+<pre><code>=&gt; (map inc [1 2 3 4 5])
+(2 3 4 5 6)
+</code></pre>
+
+<p>In this example <code>inc</code> is the increment function where <code>inc(x) = x+1</code>. More
+generally, you can apply any function <code>fn</code> to all elements of a list by passing
+it to the map function.</p>
+
+<pre><code>=&gt; (map fn [1 2 3 4 5])
+</code></pre>
+
+<h3 id="reduce:dd1501e70e3c5b7c7f6f0783a2583eda">reduce</h3>
+
+<p>Reduce applying a function <code>fn</code> of two arguments to a sequence of parameters.
+Each iteration of the function call uses the value of the previous call as an
+input parameter of the function. In this example we start with a base value of 0
+and iteratively add to that base value to sum a list of numbers.</p>
+
+<pre><code>=&gt; (reduce + 0 [1 2 3 4 5])
+=&gt; (reduce + 1 [2 3 4 5])
+=&gt; (reduce + 3 [3 4 5])
+=&gt; (reduce + 6 [4 5])
+=&gt; (reduce + 10 [5])
+15
+</code></pre>
+
+<p>An interesting feature of both map and reduce is that they can be lazily
+evaluated &ndash; meaning that each operation can be performed only when it is
+needed. With MapReduce, lazy evaluation allows you to work with large datasets
+by processing data only when needed.</p>
+
+<h2 id="mapreduce-stages:dd1501e70e3c5b7c7f6f0783a2583eda">MapReduce Stages</h2>
+
+<p>The App Engine MapReduce API provides a method for operating over large datasets
+via a parallel and distributed system of lazy evaluation. In contrast to the
+<code>map</code> and <code>reduce</code> functions a MapReduce job may output a single value or a list
+of values depending on the job requirements.</p>
+
+<p>A MapReduce job is made up of stages. Each stage completes before the next stage
+begins and any intermediate data is stored in temporary storage between the
+stages. MapReduce has three stages: map, shuffle and reduce.</p>
+
+<h3 id="map-1:dd1501e70e3c5b7c7f6f0783a2583eda">Map</h3>
+
+<p>The map stage has two components &ndash; an <em>InputReader</em> and a <em>map</em> function. The
+InputReader&rsquo;s job is to deliver data one record at a time to the <em>map</em> function.
+The <em>map</em> function is applied to each record individually and a key-value pair
+is emitted. The data emitted by the <em>map</em> function is stored in temporary
+storage for processing by the next stage.</p>
+
+<p>The prototypical MapReduce example counts the number of each words in a set of
+documents. For example, assume the input is a document database containing a
+document id and the text of that document.</p>
+
+<pre><code>14877 DIY Pinterest narwhal forage typewriter, quinoa Odd Future. Fap hashtag 
+88390 chillwave, paleo post-ironic squid fanny pack yr PBR&amp;B High Life. Put a bird on it
+73205 gastropub leggings ennui PBR&amp;B. Vice Pinterest 8-bit chambray. Dreamcatcher
+95782 letterpress 3 wolf moon, mustache craft beer Pitchfork yr trust fund Tonx 77865 collie lassie
+75093 Portland skateboard bespoke kitsch. Seitan irony mustache messenger bag,
+24798 skateboard hashtag pickled tote bag try-hard meggings actually Vice quinoa
+13334 plaid. Biodiesel Echo Park fashion axe direct trade, forage Neutra try-hard
+</code></pre>
+
+<p>Using the App Engine MapReduce API we can define a map function to output a
+key-value pair for each occurrence of a word in the document.</p>
+
+<pre><code class="language-python">def map(document):
+    &quot;&quot;&quot;
+	Count the occurrence of each word in a document.
+    &quot;&quot;&quot;
+    for word in document:
+    	yield (word.lower(), 1)
+</code></pre>
+
+<p>Our output would record each time a word was encountered within a document.</p>
+
+<pre><code>diy 1
+pinterest 1
+narwhal 1
+forage 1
+typewriter 1
+quinoa 1
+odd 1
+future 1
+... more records ...
+pinterest 1
+forage 1
+quinoa 1
+</code></pre>
+
+<h3 id="shuffle:dd1501e70e3c5b7c7f6f0783a2583eda">Shuffle</h3>
+
+<p>The shuffle stage is done in two steps. First, the data emitted by the map stage
+is sorted. Entries with the same key are grouped together.</p>
+
+<pre><code>(diy, 1)
+(forage, 1)
+(forage, 1)
+(future, 1)
+(narwhal, 1)
+(odd, 1)
+(pinterest, 1)
+(pinterest, 1)
+(quinoa, 1)
+(quinoa, 1)
+(typewriter, 1)
+</code></pre>
+
+<p>Second, entries for each key are condensed into a single list of values. These
+values are stored in temporary storage for processing by the next stage.</p>
+
+<pre><code>(diy, [1])
+(forage, [1, 1])
+(future, [1])
+(narwhal, [1])
+(odd, [1])
+(pinterest, [1, 1])
+(quinoa, [1, 1])
+(typewriter, [1])
+</code></pre>
+
+<h3 id="reduce-1:dd1501e70e3c5b7c7f6f0783a2583eda">Reduce</h3>
+
+<p>The reduce stage has two components &ndash; a <em>reduce</em> function and an
+<em>OutputWriter</em>. The reduce function is called for each unique key in the
+shuffled temporary data. The <em>reduce</em> function emits a final value based on its
+input. To count the number of occurrences of a word our reduce function will
+look like this.</p>
+
+<pre><code class="language-python">def reduce(key, values):
+   &quot;&quot;&quot;
+	Sum the list of values.
+    &quot;&quot;&quot;
+    yield (key, sum(values))
+</code></pre>
+
+<p>Applying this reducing function to our data would give the following output.</p>
+
+<pre><code>(diy, 1)
+(forage, 2)
+(future, 1)
+(narwhal, 1)
+(odd, 1)
+(pinterest, 2)
+(quinoa, 2)
+(typewriter, 1)
+</code></pre>
+
+<p>This output is passed to the <em>OutputWriter</em> which writes the data to permanent storage.</p>
+
+<h2 id="the-benefits-of-mapreduce:dd1501e70e3c5b7c7f6f0783a2583eda">The Benefits of MapReduce</h2>
+
+<p>MapReduce performs parallel and distributed operations by partitioning the data
+to be processed both spatially and temporally. The spatial partitioning is done
+via <em>sharding</em> while the temporal partitioning is done via <em>slicing</em>.</p>
+
+<h3 id="sharding-parallel-processing:dd1501e70e3c5b7c7f6f0783a2583eda">Sharding: Parallel Processing</h3>
+
+<p>The input data is divided into multiple smaller datasets called <em>shards</em>. Each
+of these shards are processed in parallel. A shard is processed by an individual
+instance of the map function with its own input reader that feeds it data
+reserved for this shard. Likewise for the reduce function.</p>
+
+<p>The benefit of sharding is that each shard can be processed in parallel.</p>
+
+<h3 id="slicing-fault-tolerance:dd1501e70e3c5b7c7f6f0783a2583eda">Slicing: Fault Tolerance</h3>
+
+<p>The data in a shard is processed sequentially. Each shard is assigned a task and
+that task iterates over all data in the shard using an App Engine Task Queue.
+When a task is run it iterates over as much data from the shard as it can in 15
+seconds (configurable). After this time period expires a new slice is created
+and the process repeats until all data in the shard has been processed.</p>
+
+<p>The benefit of slicing is fault tolerance. If an error occurs during the run of
+a slice, that particular slice can be run again without affecting the processing
+of previous or subsequent slices.</p>
+
+<h2 id="conclusions:dd1501e70e3c5b7c7f6f0783a2583eda">Conclusions</h2>
+
+<p>MapReduce provides a convenient programming model for operating on large
+datasets. In our next article we look at how to use the Python MapReduce API for
+App Engine to process entities from the datastore.</p>
+ 
+          </div>
+
+          <hr>
+            <ul class="list-inline">
+  <li>Share this post:</li>
+  <li>
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fpost%2fappengine%2fmapreduce%2fthe-basics%2f&text=App%20Engine%20MapReduce%20API%20-%20Part%201%3a%20The%20Basics&via=soofaloofa">
+      <i class="fa fa-twitter fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fpost%2fappengine%2fmapreduce%2fthe-basics%2f">
+      <i class="fa fa-facebook fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fpost%2fappengine%2fmapreduce%2fthe-basics%2f">
+      <i class="fa fa-google-plus fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fpost%2fappengine%2fmapreduce%2fthe-basics%2f">
+      <i class="fa fa-linkedin fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fpost%2fappengine%2fmapreduce%2fthe-basics%2f">
+      <i class="fa fa-envelope fa-lg"></i>
+    </a>
+  </li>
+</ul>
+
+          <hr>
+
+          <div class="donation">
+            <p>Think this post was worth a dollar? If so, I'd love to have it. Support this site quickly and easily using the Paypal button below.</p>
+
+            <div class="row">
+              <div class="col-md-10 col-md-offset-5">
+                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="44DHX3GQMER48">
+<table>
+<tr><td><input type="hidden" name="on0" value="Amount of Support:">Amount of Support:</td></tr><tr><td><select name="os0">
+	<option value="Hat Tip">Hat Tip $1.00 CAD</option>
+	<option value="Coffee">Coffee $5.00 CAD</option>
+	<option value="Beer">Beer $10.00 CAD</option>
+	<option value="Lunch">Lunch $50.00 CAD</option>
+	<option value="Dinner">Dinner $100.00 CAD</option>
+</select> </td></tr>
+</table>
+<input type="hidden" name="currency_code" value="CAD">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+</form>
+
+              </div>
+            </div>
+          </div>
+
+          <hr>
+
+          <div class="blurb">
+            <div class="row">
+              <div class="col-md-10 col-md-offset-1">
+                <h4 class="text-center">About Kevin Sookocheff</h4>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 col-md-offset-1">
+                <p>
+                  <img class="img-circle center-block" src="/img/profile.png">
+                </p>
+              </div>
+              <div class="col-md-6">
+                <p>
+                  I am a Software Developer. I work at <a
+  href="http://www.vendasta.com">VendAsta</a> with a bunch of great people. I
+run a business as <a href="http://redfinchsoftware.com">Red Finch Software</a>.
+You can find me online as <a
+href="https://twitter.com/soofaloofa">soofaloofa</a>. I love to teach, learn,
+speak, and write about business and software. 
+
+                  <ul class="list-inline">
+                    <li>On the web:</li>
+                    <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+                    <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+                    <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+                    <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+                    <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+                  </ul>
+                </p>
+              </div>
+            </div>
+          </div>
+          <hr>
+
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+     
+    var disqus_shortname = 'kevinsookocheff'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        </article>
+      </section>
+    </div>
+  </div>
+</div>
+
+<footer>
+ <div class="footer-above text-center">
+   <div class="container">
+     <div class="row">
+       <div class="footer-col col-md-3">
+         <h3>App Engine</h3>
+         <ul class="list-unstyled">
+           <li><a href="/series/mapreduce-api/">MapReduce API</a></li>
+           <li><a href="/series/pipelines-api/">Pipelines API</a></li>
+           <li><a href="/series/cloud-endpoints/">Cloud Endpoints</a></li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>APIs</h3>
+         <ul class="list-unstyled">
+           <li>
+             <a href="/posts/2014-03-11-on-choosing-a-hypermedia-format/">On Choosing a Hypermedia Format</a>
+           </li>
+           <li>
+             <a href="/posts/2014-03-27-when-to-use-http-put-and-http-post/">When to use HTTP PUT</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Random</h3>
+         <ul class="list-unstyled">
+           <li>
+           <a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/"> Unity3d on the Mac App Store</a>
+           </li>
+           <li>
+             <a href="http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/">Saving Canvas Data to an Image</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Social</h3>
+         <ul class="list-unstyled">
+           <li><a href="http://www.twitter.com/soofaloofa">Twitter</a></li>
+           <li><a href="http://www.facebook.com/kevin.sookocheff">Facebook</a></li>
+           <li><a href="http://www.linkedin.com/in/kevinsookocheff">LinkedIn</a></li>
+           <li><a href="https://plus.google.com/+KevinSookocheff">Google+</a></li>
+           <li><a href="https://github.com/soofaloofa">Github</a></li>
+         </ul>
+       </div>
+     </div>
+   </div>
+ </div>
+ <div class="footer-below text-center">
+     <div class="container">
+         <div class="row">
+             <div class="col-lg-12">
+                 &copy; Kevin Sookocheff · <a href="#">Top</a>
+             </div>
+         </div>
+     </div>
+ </div>
+</footer>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/highlight.min.js"></script>
+<script src="/js/vendor/retina.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+ 
+var disqus_shortname = 'kevinsookocheff'; 
+
+ 
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+</body>
+</html>
+

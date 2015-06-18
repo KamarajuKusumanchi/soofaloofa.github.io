@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Sookocheff</title>
-    <link>http://sookocheff.com/posts/</link>
+    <link>http://localhost:1313/posts/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Tue, 16 Jun 2015 21:19:26 CST</lastBuildDate>
     
     <item>
       <title>Introducing CloudPyPI</title>
-      <link>http://sookocheff.com/posts/appengine/introducing-cloudpypi/</link>
+      <link>http://localhost:1313/posts/appengine/introducing-cloudpypi/</link>
       <pubDate>Tue, 16 Jun 2015 21:19:26 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/appengine/introducing-cloudpypi/</guid>
+      <guid>http://localhost:1313/posts/appengine/introducing-cloudpypi/</guid>
       <description>&lt;p&gt;A common problem with Python development for large-scale teams is sharing
 internal libraries. At Vendasta we&amp;rsquo;ve been solving this problem using a private
 PyPI installation running on Google App Engine with Python eggs and wheels being
@@ -33,10 +33,10 @@ feature requests are always welcome.&lt;/p&gt;
     
     <item>
       <title>App Engine Pipelines API - Part 6: The Pipeline UI</title>
-      <link>http://sookocheff.com/posts/appengine/pipelines/pipeline-ui/</link>
+      <link>http://localhost:1313/posts/appengine/pipelines/pipeline-ui/</link>
       <pubDate>Tue, 09 Jun 2015 20:43:56 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/appengine/pipelines/pipeline-ui/</guid>
+      <guid>http://localhost:1313/posts/appengine/pipelines/pipeline-ui/</guid>
       <description>
 
 &lt;ul&gt;
@@ -75,8 +75,8 @@ to properly query for pipeline records for display in the UI.&lt;/p&gt;
 time. You can filter pipelines by their class path and check on an individual
 pipelines status using this UI.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/root-pipelines.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/root-pipelines.png&#34; alt=&#34;List Root Pipelines&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://localhost:1313/img/appengine/pipelines/pipeline-ui/root-pipelines.png&#34;&gt;
+  &lt;img src=&#34;http://localhost:1313/img/appengine/pipelines/pipeline-ui/root-pipelines.png&#34; alt=&#34;List Root Pipelines&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 
@@ -89,8 +89,8 @@ pipelines status using this UI.&lt;/p&gt;
 page. This page presents you with a UI displaying the status of a pipeline and
 any of the pipeline&amp;rsquo;s children.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/pipeline-status.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/pipeline-status.png&#34; alt=&#34;Pipeline Status&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://localhost:1313/img/appengine/pipelines/pipeline-ui/pipeline-status.png&#34;&gt;
+  &lt;img src=&#34;http://localhost:1313/img/appengine/pipelines/pipeline-ui/pipeline-status.png&#34; alt=&#34;Pipeline Status&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 
@@ -104,8 +104,8 @@ status page. You can navigate to individual jobs to check their sharding and
 processing status or cleanup a job by removing datastore entries for the
 pipeline.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/mapreduce-list.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/mapreduce-list.png&#34; alt=&#34;MapReduce List&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://localhost:1313/img/appengine/pipelines/pipeline-ui/mapreduce-list.png&#34;&gt;
+  &lt;img src=&#34;http://localhost:1313/img/appengine/pipelines/pipeline-ui/mapreduce-list.png&#34; alt=&#34;MapReduce List&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 
@@ -118,8 +118,8 @@ pipeline.&lt;/p&gt;
 page. This page will show any counters you have defined and show how the
 processing of each shard of data.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/mapreduce-status.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/mapreduce-status.png&#34; alt=&#34;MapReduce Status&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://localhost:1313/img/appengine/pipelines/pipeline-ui/mapreduce-status.png&#34;&gt;
+  &lt;img src=&#34;http://localhost:1313/img/appengine/pipelines/pipeline-ui/mapreduce-status.png&#34; alt=&#34;MapReduce Status&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 </description>
@@ -127,10 +127,10 @@ processing of each shard of data.&lt;/p&gt;
     
     <item>
       <title>App Engine Pipelines API - Part 5: Asynchronous Pipelines</title>
-      <link>http://sookocheff.com/posts/appengine/pipelines/asynchronous-pipelines/</link>
+      <link>http://localhost:1313/posts/appengine/pipelines/asynchronous-pipelines/</link>
       <pubDate>Tue, 02 Jun 2015 04:45:56 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/appengine/pipelines/asynchronous-pipelines/</guid>
+      <guid>http://localhost:1313/posts/appengine/pipelines/asynchronous-pipelines/</guid>
       <description>
 
 &lt;ul&gt;
@@ -156,7 +156,7 @@ calling the &lt;code&gt;complete&lt;/code&gt; method, using a callback. &lt;code
 method only available to asynchronous pipelines. Calling complete will fill the
 pipelines output slots and, if all slots have been filled, mark the pipeline
 complete. Any barriers related to the slots being filled are notified as
-described in &lt;a href=&#34;http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/&#34;&gt;the previous article&lt;/a&gt;.&lt;/p&gt;
+described in &lt;a href=&#34;http://localhost:1313/posts/appengine/pipelines/pipeline-internals/&#34;&gt;the previous article&lt;/a&gt;.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class AsyncPipeline(pipeline.Pipeline):
     async = True
@@ -287,17 +287,17 @@ APP = webapp2.WSGIApplication(routes)
     
     <item>
       <title>App Engine Pipelines API - Part 4: Pipeline Internals</title>
-      <link>http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/</link>
+      <link>http://localhost:1313/posts/appengine/pipelines/pipeline-internals/</link>
       <pubDate>Wed, 27 May 2015 05:57:19 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/</guid>
+      <guid>http://localhost:1313/posts/appengine/pipelines/pipeline-internals/</guid>
       <description>
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/&#34;&gt;We&amp;rsquo;ve learned how to execute and chain together pipelines&lt;/a&gt;,
+&lt;p&gt;&lt;a href=&#34;http://localhost:1313/posts/appengine/pipelines/connecting-pipelines/&#34;&gt;We&amp;rsquo;ve learned how to execute and chain together pipelines&lt;/a&gt;,
 now let&amp;rsquo;s take a look at how pipelines execute under the hood. If necessary,
 you can refer to the &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines&#34;&gt;source code of the pipelines
 project&lt;/a&gt; to
@@ -353,8 +353,8 @@ that services the request and advances the state of the pipeline. The following
 diagram shows each of the pipeline stages during typical execution and the
 description that follows provides more detail on each stage.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-internals/pipeline-states.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-internals/pipeline-states.png&#34; alt=&#34;Pipeline States&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://localhost:1313/img/appengine/pipelines/pipeline-internals/pipeline-states.png&#34;&gt;
+  &lt;img src=&#34;http://localhost:1313/img/appengine/pipelines/pipeline-internals/pipeline-states.png&#34; alt=&#34;Pipeline States&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 
@@ -406,17 +406,17 @@ asynchronous pipelines.&lt;/p&gt;
     
     <item>
       <title>App Engine Pipelines API - Part 3: Fan In, Fan Out, Sequencing</title>
-      <link>http://sookocheff.com/posts/appengine/pipelines/fan-in-fan-out/</link>
+      <link>http://localhost:1313/posts/appengine/pipelines/fan-in-fan-out/</link>
       <pubDate>Tue, 19 May 2015 05:57:19 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/appengine/pipelines/fan-in-fan-out/</guid>
+      <guid>http://localhost:1313/posts/appengine/pipelines/fan-in-fan-out/</guid>
       <description>
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/&#34;&gt;Last time&lt;/a&gt;,
+&lt;p&gt;&lt;a href=&#34;http://localhost:1313/posts/appengine/pipelines/connecting-pipelines/&#34;&gt;Last time&lt;/a&gt;,
 we studied how to connect two pipelines together. In this post, we expand on
 this topic, exploring how to fan-out to do multiple tasks in parallel, fan-in
 to combine multiple tasks into one, and how to do sequential work.&lt;/p&gt;
@@ -565,21 +565,21 @@ APP = webapp2.WSGIApplication(routes)
     
     <item>
       <title>App Engine Pipelines API - Part 2: Connecting Pipelines</title>
-      <link>http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/</link>
+      <link>http://localhost:1313/posts/appengine/pipelines/connecting-pipelines/</link>
       <pubDate>Tue, 12 May 2015 05:57:19 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/</guid>
+      <guid>http://localhost:1313/posts/appengine/pipelines/connecting-pipelines/</guid>
       <description>&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/appengine/pipelines/the-basics/&#34;&gt;Last time&lt;/a&gt;,
+&lt;p&gt;&lt;a href=&#34;http://localhost:1313/posts/appengine/pipelines/the-basics/&#34;&gt;Last time&lt;/a&gt;,
 we discussed basic pipeline instantiation and execution. This time, we will
 cover sequential pipelines, answering the question &amp;ldquo;How do I connect the output
 of one pipeline with the input of another pipeline&amp;rdquo;?&lt;/p&gt;
 
 &lt;p&gt;To begin, let&amp;rsquo;s review a basic pipeline that squares its input. If any of this
-does not make sense refer to the &lt;a href=&#34;http://sookocheff.com/posts/appengine/pipelines/the-basics/&#34;&gt;first part of this tutorial&lt;/a&gt;.&lt;/p&gt;
+does not make sense refer to the &lt;a href=&#34;http://localhost:1313/posts/appengine/pipelines/the-basics/&#34;&gt;first part of this tutorial&lt;/a&gt;.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
 import webapp2
@@ -685,10 +685,10 @@ APP = webapp2.WSGIApplication(routes)
     
     <item>
       <title>App Engine Pipelines API - Part 1: The Basics</title>
-      <link>http://sookocheff.com/posts/appengine/pipelines/the-basics/</link>
+      <link>http://localhost:1313/posts/appengine/pipelines/the-basics/</link>
       <pubDate>Tue, 05 May 2015 05:57:19 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/appengine/pipelines/the-basics/</guid>
+      <guid>http://localhost:1313/posts/appengine/pipelines/the-basics/</guid>
       <description>
 
 &lt;ul&gt;
@@ -963,10 +963,10 @@ APP = webapp2.WSGIApplication(routes)
     
     <item>
       <title>Durabledict for App Engine</title>
-      <link>http://sookocheff.com/posts/2015-04-28-durabledict-for-app-engine/</link>
+      <link>http://localhost:1313/posts/2015-04-28-durabledict-for-app-engine/</link>
       <pubDate>Wed, 29 Apr 2015 06:19:23 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2015-04-28-durabledict-for-app-engine/</guid>
+      <guid>http://localhost:1313/posts/2015-04-28-durabledict-for-app-engine/</guid>
       <description>
 
 &lt;h2 id=&#34;tldr:46a321b74ae6cefada7eb3c5a5d8c50f&#34;&gt;tldr;&lt;/h2&gt;
@@ -1207,10 +1207,10 @@ We use an additional model to provide the strong read consistency.&lt;/p&gt;
     
     <item>
       <title>Continuous Delivery Distilled</title>
-      <link>http://sookocheff.com/posts/2015-04-23-continuous-delivery-distilled/</link>
+      <link>http://localhost:1313/posts/2015-04-23-continuous-delivery-distilled/</link>
       <pubDate>Thu, 23 Apr 2015 08:32:37 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2015-04-23-continuous-delivery-distilled/</guid>
+      <guid>http://localhost:1313/posts/2015-04-23-continuous-delivery-distilled/</guid>
       <description>
 
 &lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/-B0ZEHmBCH8&#34; frameborder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;
@@ -1385,8 +1385,8 @@ take place to push the development code up to the test branch (and staging
 environment) and the test code up to the master branch (and production
 environment).&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png&#34; alt=&#34;Traditional Release Structure&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png&#34;&gt;
+  &lt;img src=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png&#34; alt=&#34;Traditional Release Structure&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 
@@ -1402,8 +1402,8 @@ branch, and begins work on the bug. Once he is confident that the bug has been
 fixed he goes over the changes with QA and merges the bug into the develop
 branch where it waits for the weekly deployment to test.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png&#34; alt=&#34;Merging to Develop&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png&#34;&gt;
+  &lt;img src=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png&#34; alt=&#34;Merging to Develop&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 
@@ -1412,8 +1412,8 @@ develop, where it waits once again for the weekly deployment to test. Test now
 has two issues that have been committed to development that will be released to
 the test environment in one week.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png&#34; alt=&#34;Second Merge to Develop&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png&#34;&gt;
+  &lt;img src=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png&#34; alt=&#34;Second Merge to Develop&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 
@@ -1421,8 +1421,8 @@ the test environment in one week.&lt;/p&gt;
 develop. By the time the weekly deployment to the testing environment comes
 around we end up with 13 disparate issues being pushed to the test environment.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png&#34; alt=&#34;Group of Merges to Develop&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png&#34;&gt;
+  &lt;img src=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png&#34; alt=&#34;Group of Merges to Develop&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 
@@ -1431,8 +1431,8 @@ the week that this release is held in the test environment for staging. After
 one week has passed, the test branch is merged with the master branch and a
 deployment to production is done.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png&#34; alt=&#34;Group of Merges to Develop&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png&#34;&gt;
+  &lt;img src=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png&#34; alt=&#34;Group of Merges to Develop&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 
@@ -1512,8 +1512,8 @@ fully understanding the intricacies and risks involved with the chage.
 Ultimately, the team decides they can&amp;rsquo;t go forward and all 13 change sets are
 rolled back until they can properly fix the problem.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/weekly-regression.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/weekly-regression.png&#34; alt=&#34;Regression in Weekly Release&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/weekly-regression.png&#34;&gt;
+  &lt;img src=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/weekly-regression.png&#34; alt=&#34;Regression in Weekly Release&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 
@@ -1528,8 +1528,8 @@ integrity of her changes and for verifying that her work was done correctly. She
 is able to work in concert with QA to test the issue and does not simply push
 her issue &amp;lsquo;over the wall&amp;rsquo; for someone else to test and deploy.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/continuous-regression.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/continuous-regression.png&#34; alt=&#34;Regression With Continuous Delivery&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/continuous-regression.png&#34;&gt;
+  &lt;img src=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/continuous-regression.png&#34; alt=&#34;Regression With Continuous Delivery&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 
@@ -1567,16 +1567,16 @@ in, we route the request to both the old and new code and can measure &amp;ndash
 production &amp;ndash; the performance of the new code. We can easily see if our proposed
 refactoring has measurable performance improvements in a real-world setting.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/parallel-code.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/parallel-code.png&#34; alt=&#34;Parallel Code&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/parallel-code.png&#34;&gt;
+  &lt;img src=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/parallel-code.png&#34; alt=&#34;Parallel Code&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 
 &lt;p&gt;For example, by extracting performance measurements over each iteration of the
 code we visually compare the effect of a code change.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/performance-comparison.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/performance-comparison.png&#34; alt=&#34;Performance Comparison&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/performance-comparison.png&#34;&gt;
+  &lt;img src=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/performance-comparison.png&#34; alt=&#34;Performance Comparison&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 
@@ -1588,8 +1588,8 @@ acceptable error range the new code is ready to go live. We also have the
 ability to use production data to inform our unit tests and guard against future
 regressions.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/accuracy-comparison.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/accuracy-comparison.png&#34; alt=&#34;Accuracy Comparison&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/accuracy-comparison.png&#34;&gt;
+  &lt;img src=&#34;http://localhost:1313/img/2015-04-23-continuous-delivery-distilled/accuracy-comparison.png&#34; alt=&#34;Accuracy Comparison&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 
@@ -1607,10 +1607,10 @@ faster than ever before.&lt;/p&gt;
     
     <item>
       <title>Creating a BigQuery Table using the Java Client Library</title>
-      <link>http://sookocheff.com/posts/2015-03-23-creating-a-big-query-table-java-api/</link>
+      <link>http://localhost:1313/posts/2015-03-23-creating-a-big-query-table-java-api/</link>
       <pubDate>Mon, 23 Mar 2015 15:32:37 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2015-03-23-creating-a-big-query-table-java-api/</guid>
+      <guid>http://localhost:1313/posts/2015-03-23-creating-a-big-query-table-java-api/</guid>
       <description>&lt;p&gt;I haven&amp;rsquo;t been able to find great documentation on creating a BigQuery
 TableSchema using the Java Client Library. This blog post hopes to rectify that
 :).&lt;/p&gt;
@@ -1718,10 +1718,10 @@ client.tables().insert(ref.getProjectId(), ref.getDatasetId(), content).execute(
     
     <item>
       <title>Deploying R Studio on Compute Engine</title>
-      <link>http://sookocheff.com/posts/r/deploying-r-studio-to-compute-engine/</link>
+      <link>http://localhost:1313/posts/r/deploying-r-studio-to-compute-engine/</link>
       <pubDate>Mon, 23 Mar 2015 15:32:37 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/r/deploying-r-studio-to-compute-engine/</guid>
+      <guid>http://localhost:1313/posts/r/deploying-r-studio-to-compute-engine/</guid>
       <description>
 
 &lt;p&gt;Sometimes you have a data analysis problem that is just too big for your desktop
@@ -1814,10 +1814,10 @@ the R Studio that just weren&amp;rsquo;t possible on a laptop.&lt;/p&gt;
     
     <item>
       <title>Keeping App Engine Search Documents and Datastore Entities In Sync</title>
-      <link>http://sookocheff.com/posts/2015-02-23-syncing-search-documents-with-datastore-entities/</link>
+      <link>http://localhost:1313/posts/2015-02-23-syncing-search-documents-with-datastore-entities/</link>
       <pubDate>Mon, 23 Feb 2015 08:20:37 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2015-02-23-syncing-search-documents-with-datastore-entities/</guid>
+      <guid>http://localhost:1313/posts/2015-02-23-syncing-search-documents-with-datastore-entities/</guid>
       <description>
 
 &lt;p&gt;At Vendasta the App Engine Datastore serves as the single point of truth for
@@ -1965,8 +1965,8 @@ read problem arises when the second task to update the search document reads old
 data from the Datastore that may not have been fully replicated throughout the
 Datastore.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34; alt=&#34;Syncing Search Documents&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://localhost:1313/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34;&gt;
+  &lt;img src=&#34;http://localhost:1313/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34; alt=&#34;Syncing Search Documents&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 
@@ -2066,10 +2066,10 @@ in your system.&lt;/p&gt;
     
     <item>
       <title>Halting Python unittest Execution on First Error</title>
-      <link>http://sookocheff.com/posts/2015-02-12-halting-unittest-execution-at-first-error/</link>
+      <link>http://localhost:1313/posts/2015-02-12-halting-unittest-execution-at-first-error/</link>
       <pubDate>Thu, 12 Feb 2015 06:20:37 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2015-02-12-halting-unittest-execution-at-first-error/</guid>
+      <guid>http://localhost:1313/posts/2015-02-12-halting-unittest-execution-at-first-error/</guid>
       <description>&lt;p&gt;We all know the importance of unit tests. Especially in a dynamic language like
 Python. Occasionally you have a set of unit tests that are failing in a
 cascading fashion where the first error case causes subsequent tests to fail
@@ -2095,10 +2095,10 @@ fixing subsequent tests.&lt;/p&gt;
     
     <item>
       <title>Create a Google Cloud Dataflow Project with Gradle</title>
-      <link>http://sookocheff.com/posts/2015-02-11-cloud-dataflow-with-gradle/</link>
+      <link>http://localhost:1313/posts/2015-02-11-cloud-dataflow-with-gradle/</link>
       <pubDate>Wed, 11 Feb 2015 06:20:37 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2015-02-11-cloud-dataflow-with-gradle/</guid>
+      <guid>http://localhost:1313/posts/2015-02-11-cloud-dataflow-with-gradle/</guid>
       <description>&lt;p&gt;I&amp;rsquo;ve been experimenting with the &lt;a href=&#34;https://cloud.google.com/dataflow/&#34;&gt;Google Cloud
 Dataflow&lt;/a&gt; &lt;a href=&#34;https://github.com/GoogleCloudPlatform/DataflowJavaSDK&#34;&gt;Java
 SDK&lt;/a&gt; for running managed
@@ -2163,10 +2163,10 @@ run.mustRunAfter &#39;resources&#39;
     
     <item>
       <title>A pypiserver Deployment Script</title>
-      <link>http://sookocheff.com/posts/2015-02-01-a-pypiserver-deployment-script/</link>
+      <link>http://localhost:1313/posts/2015-02-01-a-pypiserver-deployment-script/</link>
       <pubDate>Sun, 01 Feb 2015 14:53:37 CST</pubDate>
       <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2015-02-01-a-pypiserver-deployment-script/</guid>
+      <guid>http://localhost:1313/posts/2015-02-01-a-pypiserver-deployment-script/</guid>
       <description>&lt;p&gt;At Vendasta we&amp;rsquo;ve been slowly adopting pypi and pip for our internal code
 libraries and the time has come to deploy our own private pypi server. After
 evaluating a few options I settled on the simplistic

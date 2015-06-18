@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<title>Converting an ndb model to a BigQuery schema : sookocheff.com</title>
+
+<meta charset="utf-8">
+<meta http-equiv="content-type", content="text/html; charset=utf-8">
+<meta name="viewport", content="width=device-width, initial-scale=1.0">
+
+<link rel="canonical" href="http://sookocheff.com/post/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/">
+
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/styles/default.min.css">
+
+<link rel="stylesheet" href="/css/vendor/bootstrap.min.css">
+<link rel="stylesheet" href="/css/vendor/monokai_sublime.css">
+<link rel="stylesheet" href="/css/style.css">
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-20611089-6', 'sookocheff.com');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand">Kevin Sookocheff</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/projects/">Projects</a>
+        </li>
+        <li class="">
+          <a href="/posts/">Blog</a>
+        </li>
+        <li class="dropdown">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+            Subscribe <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="http://eepurl.com/KJE01">Email</a></li>
+            <li><a href="http://sookocheff.com/index.xml">RSS</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="container page-container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <section class="page">
+        <article class="post">
+          <h1>Converting an ndb model to a BigQuery schema</h1>
+          <p>
+            <small class="text-muted">
+              Posted on Thursday, August 14, 2014 · <a href="http://sookocheff.com/post/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/#disqus_thread">0 Comments</a>
+            </small>
+          </p>
+
+          <div class=".post-content">
+            
+
+<p>I have been working on the problem of recording changes to an ndb model. One way to accomplish this is to stream data changes to a BigQuery table corresponding to the ndb model. It would be great to do this in a generic way which gives us the problem of generating a BigQuery table given an ndb model. This article will describe one solution to this problem.</p>
+
+<h2 id="accessing-the-properties-of-an-ndb-class:8ea270a790f9e4ece9bbdae40a8382a6">Accessing the properties of an ndb class</h2>
+
+<p>The first step in the process is to find all the properties of the class via the
+ndb <code>_properties</code> accessor. By iterating over this field we can find all of the
+properties on the class and their ndb types.</p>
+
+<pre><code class="language-python">def tablify(ndb_model):
+    &quot;&quot;&quot;
+    Convert ndb_model into a BigQuery table schema.
+    &quot;&quot;&quot;
+    for name, ndb_type in ndb_model.__class__._properties.iteritmes():
+       print name, ndb_type
+</code></pre>
+
+<h2 id="converting-properties-to-bigquery-schema-types:8ea270a790f9e4ece9bbdae40a8382a6">Converting properties to BigQuery schema types</h2>
+
+<p>Now that we have the set of properties on the class we can map from the type of
+each property to a BigQuery type. Here is a helper function that provides a
+simple mapping.</p>
+
+<pre><code class="language-python">def ndb_type_to_bigquery_type(_type):
+    &quot;&quot;&quot;
+    Convert a python type to a bigquery type.
+    &quot;&quot;&quot;
+    if isinstance(_type, ndb.IntegerProperty):
+        return &quot;INTEGER&quot;
+    elif isinstance(_type, ndb.FloatProperty):
+        return &quot;FLOAT&quot;
+    elif isinstance(_type, ndb.BooleanProperty):
+        return &quot;BOOLEAN&quot;
+    elif type(_type) in [ndb.StringProperty, ndb.TextProperty, ndb.ComputedProperty]:
+        return &quot;STRING&quot;
+    elif type(_type) in [ndb.DateTimeProperty, ndb.DateProperty, ndb.TimeProperty]:
+        return &quot;TIMESTAMP&quot;
+</code></pre>
+
+<p>The last task is to format everything as a <a href="https://developers.google.com/bigquery/docs/reference/v2/tables">BigQuery table
+resource</a>. This
+involves adding some boiler-plate around each field in our BigQuery schema and
+fleshing out the structure of the JSON.</p>
+
+<pre><code class="language-python">
+from google.appengine.ext import ndb
+
+SUPPORTED_TYPES = [ndb.IntegerProperty,
+                   ndb.FloatProperty,
+                   ndb.BooleanProperty,
+                   ndb.StringProperty,
+                   ndb.TextProperty,
+                   ndb.DateTimeProperty,
+                   ndb.DateProperty,
+                   ndb.TimeProperty,
+                   ndb.ComputedProperty]
+
+
+def ndb_type_to_bigquery_type(_type):
+    &quot;&quot;&quot;
+    Convert a python type to a bigquery type.
+    &quot;&quot;&quot;
+    if isinstance(_type, ndb.IntegerProperty):
+        return &quot;INTEGER&quot;
+    elif isinstance(_type, ndb.FloatProperty):
+        return &quot;FLOAT&quot;
+    elif isinstance(_type, ndb.BooleanProperty):
+        return &quot;BOOLEAN&quot;
+    elif type(_type) in [ndb.StringProperty, ndb.TextProperty, ndb.ComputedProperty]:
+        return &quot;STRING&quot;
+    elif type(_type) in [ndb.DateTimeProperty, ndb.DateProperty, ndb.TimeProperty]:
+        return &quot;TIMESTAMP&quot;
+
+
+def ndb_property_to_bigquery_field(name, ndb_type):
+    &quot;&quot;&quot;
+    Convert from ndb property to a BigQuery schema table field.
+    &quot;&quot;&quot;
+    if type(ndb_type) not in SUPPORTED_TYPES:
+        raise ValueError('Unsupported object property')
+
+    field = {
+        &quot;description&quot;: name,
+        &quot;name&quot;: name,
+        &quot;type&quot;: ndb_type_to_bigquery_type(ndb_type)
+    }
+
+    if ndb_type._repeated:
+        field['mode'] = 'REPEATED'
+
+    return field
+
+
+def tablify_schema(obj):
+    &quot;&quot;&quot;
+    Convert ndb_model into a BigQuery table schema.
+    &quot;&quot;&quot;
+    table_schema = {'fields': []}
+    
+    for name, ndb_type in obj.__class__._properties.iteritems():
+        table_schema['fields'].append(ndb_property_to_bigquery_field(name, ndb_type))
+
+    return table_schema
+
+
+def tablify(obj, project_id, dataset_id, table_id):
+    &quot;&quot;&quot;
+    Return a BigQuery table resource representing an ndb object.
+    &quot;&quot;&quot;
+    return {
+        &quot;kind&quot;: &quot;bigquery#table&quot;,
+        &quot;id&quot;: table_id,
+        &quot;tableReference&quot;: {
+            &quot;projectId&quot;: project_id,
+            &quot;datasetId&quot;: dataset_id,
+            &quot;tableId&quot;: table_id
+        },
+        &quot;description&quot;: &quot;Table Resource&quot;,
+        &quot;schema&quot;: tablify_schema(obj)
+    }
+</code></pre>
+
+<h2 id="creating-the-new-table-on-bigquery:8ea270a790f9e4ece9bbdae40a8382a6">Creating the new table on BigQuery.</h2>
+
+<p>Now that we have a BigQuery schema we can create the table in BigQuery using the BigQuery api client.</p>
+
+<pre><code class="language-python">from oauth2client.appengine import AppAssertionCredentials
+from apiclient.discovery import build
+
+credentials = AppAssertionCredentials(scope='https://www.googleapis.com/auth/bigquery')
+http = credentials.authorize(httplib2.Http())
+big_query_service = build('bigquery', 'v2', http=http)
+        
+table_resource = tablify(ndb_model, project_id, dataset_id, table_id)
+                response = big_query_service.tables().insert(projectId=project_id,
+                                                             datasetId=dataset_id,
+                                                             body=table_resource).execute()
+</code></pre>
+
+<p>And that&rsquo;s it. This article outlined a quick method of generating a BigQuery
+table scheme from an ndb model. If you found this useful let me know in the
+comments.</p>
+ 
+          </div>
+
+          <hr>
+            <ul class="list-inline">
+  <li>Share this post:</li>
+  <li>
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2fsookocheff.com%2fpost%2f2014-08-14-converting-an-ndb-model-to-a-bigquery-schema%2f&text=Converting%20an%20ndb%20model%20to%20a%20BigQuery%20schema&via=soofaloofa">
+      <i class="fa fa-twitter fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2fsookocheff.com%2fpost%2f2014-08-14-converting-an-ndb-model-to-a-bigquery-schema%2f">
+      <i class="fa fa-facebook fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://plus.google.com/share?url=http%3a%2f%2fsookocheff.com%2fpost%2f2014-08-14-converting-an-ndb-model-to-a-bigquery-schema%2f">
+      <i class="fa fa-google-plus fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fsookocheff.com%2fpost%2f2014-08-14-converting-an-ndb-model-to-a-bigquery-schema%2f">
+      <i class="fa fa-linkedin fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2fsookocheff.com%2fpost%2f2014-08-14-converting-an-ndb-model-to-a-bigquery-schema%2f">
+      <i class="fa fa-envelope fa-lg"></i>
+    </a>
+  </li>
+</ul>
+
+          <hr>
+
+          <div class="donation">
+            <p>Think this post was worth a dollar? If so, I'd love to have it. Support this site quickly and easily using the Paypal button below.</p>
+
+            <div class="row">
+              <div class="col-md-10 col-md-offset-5">
+                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="44DHX3GQMER48">
+<table>
+<tr><td><input type="hidden" name="on0" value="Amount of Support:">Amount of Support:</td></tr><tr><td><select name="os0">
+	<option value="Hat Tip">Hat Tip $1.00 CAD</option>
+	<option value="Coffee">Coffee $5.00 CAD</option>
+	<option value="Beer">Beer $10.00 CAD</option>
+	<option value="Lunch">Lunch $50.00 CAD</option>
+	<option value="Dinner">Dinner $100.00 CAD</option>
+</select> </td></tr>
+</table>
+<input type="hidden" name="currency_code" value="CAD">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+</form>
+
+              </div>
+            </div>
+          </div>
+
+          <hr>
+
+          <div class="blurb">
+            <div class="row">
+              <div class="col-md-10 col-md-offset-1">
+                <h4 class="text-center">About Kevin Sookocheff</h4>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 col-md-offset-1">
+                <p>
+                  <img class="img-circle center-block" src="/img/profile.png">
+                </p>
+              </div>
+              <div class="col-md-6">
+                <p>
+                  I am a Software Developer. I work at <a
+  href="http://www.vendasta.com">VendAsta</a> with a bunch of great people. I
+run a business as <a href="http://redfinchsoftware.com">Red Finch Software</a>.
+You can find me online as <a
+href="https://twitter.com/soofaloofa">soofaloofa</a>. I love to teach, learn,
+speak, and write about business and software. 
+
+                  <ul class="list-inline">
+                    <li>On the web:</li>
+                    <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+                    <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+                    <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+                    <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+                    <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+                  </ul>
+                </p>
+              </div>
+            </div>
+          </div>
+          <hr>
+
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+     
+    var disqus_shortname = 'kevinsookocheff'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        </article>
+      </section>
+    </div>
+  </div>
+</div>
+
+<footer>
+ <div class="footer-above text-center">
+   <div class="container">
+     <div class="row">
+       <div class="footer-col col-md-3">
+         <h3>App Engine</h3>
+         <ul class="list-unstyled">
+           <li><a href="/series/mapreduce-api/">MapReduce API</a></li>
+           <li><a href="/series/pipelines-api/">Pipelines API</a></li>
+           <li><a href="/series/cloud-endpoints/">Cloud Endpoints</a></li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>APIs</h3>
+         <ul class="list-unstyled">
+           <li>
+             <a href="/posts/2014-03-11-on-choosing-a-hypermedia-format/">On Choosing a Hypermedia Format</a>
+           </li>
+           <li>
+             <a href="/posts/2014-03-27-when-to-use-http-put-and-http-post/">When to use HTTP PUT</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Random</h3>
+         <ul class="list-unstyled">
+           <li>
+           <a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/"> Unity3d on the Mac App Store</a>
+           </li>
+           <li>
+             <a href="http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/">Saving Canvas Data to an Image</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Social</h3>
+         <ul class="list-unstyled">
+           <li><a href="http://www.twitter.com/soofaloofa">Twitter</a></li>
+           <li><a href="http://www.facebook.com/kevin.sookocheff">Facebook</a></li>
+           <li><a href="http://www.linkedin.com/in/kevinsookocheff">LinkedIn</a></li>
+           <li><a href="https://plus.google.com/+KevinSookocheff">Google+</a></li>
+           <li><a href="https://github.com/soofaloofa">Github</a></li>
+         </ul>
+       </div>
+     </div>
+   </div>
+ </div>
+ <div class="footer-below text-center">
+     <div class="container">
+         <div class="row">
+             <div class="col-lg-12">
+                 &copy; Kevin Sookocheff · <a href="#">Top</a>
+             </div>
+         </div>
+     </div>
+ </div>
+</footer>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/highlight.min.js"></script>
+<script src="/js/vendor/retina.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+ 
+var disqus_shortname = 'kevinsookocheff'; 
+
+ 
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+</body>
+</html>
+

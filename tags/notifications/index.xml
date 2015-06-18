@@ -7,48 +7,5 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Fri, 06 May 2011 10:10:10 UTC</lastBuildDate>
     
-    <item>
-      <title>How to Display HTML5 Notifications</title>
-      <link>http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications/</link>
-      <pubDate>Fri, 06 May 2011 10:10:10 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications/</guid>
-      <description>&lt;p&gt;Chrome recently introduced support for HTML Notifications.&lt;/p&gt;
-
-&lt;p&gt;Following the brief tutorial at &lt;a href=&#34;http://www.html5rocks.com/tutorials/notifications/quick/&#34;&gt;HTML5 Rocks&lt;/a&gt; I was able to implement this in a matter of minutes and I couldn’t be happier with the results.&lt;/p&gt;
-
-&lt;p&gt;The first step towards implementation is to check if the Notifications API is implemented by the browser. We do this by checking for the existence of the webkitNotifications object.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// check for notifications support
-if (!window.webkitNotifications) {
-    alert(&#39;Your browser does not support the Notifications API&#39;);
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;As a means of preventing unwanted notifications we request permission from the user before displaying anything. The method &lt;code&gt;webkitNotifications.checkPermission()&lt;/code&gt; will return zero if permission has previously been granted. If it returns non-zero we can request permission with the method &lt;code&gt;webkitNotifications.requestPermission()&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// request permission to use notifications
-  if (window.webkitNotifications) {
-    if (window.webkitNotifications.checkPermission() &amp;gt; 0) {
-            window.webkitNotifications.requestPermission();
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now that we have requested permission we can display our notification. We use the function &lt;code&gt;webkitNotifications.createNotification()&lt;/code&gt; to create a Notification object. This function takes three parameters: an icon to display, a title and text. We then call the &lt;code&gt;show()&lt;/code&gt; method on our Notification object to display our notification.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// display a notification
-if (window.webkitNotifications &amp;amp;&amp;amp; window.webkitNotifications.checkPermission() == 0) {
-    window.webkitNotifications.createNotification(
-        &#39;apple-touch-icon.png&#39;,
-        &#39;Awesome!&#39;,
-        &amp;quot;You&#39;ve completed a Pomodoro!&amp;quot;).show();
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The Notifications specification is currently in Draft format and has been submitted to the HTML working group for standardization. You can see the current spec through the &lt;a href=&#34;http://www.chromium.org/developers/design-documents/desktop-notifications/api-specification&#34;&gt;Chromium documentation&lt;/a&gt;.&lt;/p&gt;
-</description>
-    </item>
-    
   </channel>
 </rss>

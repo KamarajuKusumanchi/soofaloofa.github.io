@@ -7,5 +7,531 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Tue, 22 Jul 2014 06:29:56 UTC</lastBuildDate>
     
+    <item>
+      <title>Generating a C# client for an App Engine Cloud Endpoints API</title>
+      <link>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/</link>
+      <pubDate>Tue, 22 Jul 2014 06:29:56 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/</guid>
+      <description>&lt;p&gt;The Cloud Endpoints API comes packaged with endpointscfg.py to generate client
+libraries in JavaScript, Objective-C (for iOS) and Java (for Android). You can
+also generate a few additional client libraries using the &lt;a href=&#34;https://code.google.com/p/google-apis-client-generator/&#34;&gt;Google APIs client
+generator&lt;/a&gt;. This
+article will show you how to use the generator to create a C# client library.&lt;/p&gt;
+
+&lt;p&gt;The client generator is a Python application you can install with &lt;code&gt;pip&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;pip install google-apis-client-generator
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The client generator works by taking an API discovery document, parsing it into
+an object model, and then using a language template to transform the object
+model to running code.&lt;/p&gt;
+
+&lt;p&gt;To run the generator you will need the discovery document for your API. You can
+find this document from the root API discovery URL. First, download the root API
+discovery document using &lt;a href=&#34;https://github.com/jakubroztocil/httpie&#34;&gt;httpie&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http --download https://example.appspot.com/_ah/api/discovery/v1/apis
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;items&amp;quot;: [
+    {
+        &amp;quot;description&amp;quot;: &amp;quot;Example Api&amp;quot;,
+        &amp;quot;discoveryLink&amp;quot;: &amp;quot;./apis/example/v1/rest&amp;quot;,
+        &amp;quot;discoveryRestUrl&amp;quot;: &amp;quot;https://example.appspot.com/_ah/api/discovery/v1/apis/example/v1/rest&amp;quot;,
+        &amp;quot;icons&amp;quot;: {
+            &amp;quot;x16&amp;quot;: &amp;quot;http://www.google.com/images/icons/product/search-16.gif&amp;quot;,
+            &amp;quot;x32&amp;quot;: &amp;quot;http://www.google.com/images/icons/product/search-32.gif&amp;quot;
+        },
+        &amp;quot;id&amp;quot;: &amp;quot;example:v1&amp;quot;,
+        &amp;quot;kind&amp;quot;: &amp;quot;discovery#directoryItem&amp;quot;,
+        &amp;quot;name&amp;quot;: &amp;quot;example&amp;quot;,
+        &amp;quot;preferred&amp;quot;: true,
+        &amp;quot;version&amp;quot;: &amp;quot;v1&amp;quot;
+    }
+]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The root discovery document will have an &lt;code&gt;items&lt;/code&gt; member listing the available
+APIs and a &lt;code&gt;discoveryLink&lt;/code&gt; for each API. The &lt;code&gt;discoveryLink&lt;/code&gt; provides the schema
+for the API. We can download this schema and use it as input to the client
+generator.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http --download https://example.appspot.com/_ah/api/discovery/v1/apis/example/v1/rest
+
+generate_library --input=rest.json --language=csharp --output_dir=tmp/csharp
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Your C# client library is now ready to use. As of this writing you can generate
+client libraries in C++, C#, Dart, GWT, Java, PHP and Python.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Using Basic Authentication with Google Cloud Endpoints</title>
+      <link>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/</link>
+      <pubDate>Wed, 16 Jul 2014 01:02:25 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/</guid>
+      <description>
+
+&lt;p&gt;Cloud Endpoints provides strong integration with OAuth 2.0. If you can use this
+integration &amp;ndash; do it. However, some legacy systems require supporting
+alternative authentication mechanisms. This article will show you how to secure
+an API endpoint using Basic Authentication. You can use this as a starting point
+for whatever authentication method you choose.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-basic-endpoint:58b506e9a5ea3303ef0bbba294ff978e&#34;&gt;A basic endpoint&lt;/h2&gt;
+
+&lt;p&gt;As a starting point let&amp;rsquo;s define a basic endpoint that will return a
+hypothetical UserMessage defining a User resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+class UsersApi(remote.Service):
+
+    @endpoints.method(message_types.VoidMessage,
+                      UserMessage,
+                      http_method=&#39;GET&#39;,
+                      path=&#39;user&#39;,
+                      name=&#39;user.auth&#39;)
+    def user_auth(self, request):
+        ## Return a UserMessage
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let&amp;rsquo;s build up a UserMessage based on the credentials set in the HTTP
+Authorization header. We can access the HTTP headers of the request through the
+&lt;a href=&#34;https://developers.google.com/appengine/docs/python/tools/protorpc/remote/httprequeststateclass&#34;&gt;HTTPRequestState&lt;/a&gt;
+using the instance variable &lt;code&gt;request_state&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+class UsersApi(remote.Service):
+
+    @endpoints.method(message_types.VoidMessage,
+                      UserMessage,
+                      http_method=&#39;GET&#39;,
+                      path=&#39;user&#39;,
+                      name=&#39;user.auth&#39;)
+    def user_auth(self, request):
+        basic_auth = self.request_state.headers.get(&#39;authorization&#39;)
+        print basic_auth
+        ## Return a UserMessage
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can test this endpoint using &lt;a href=&#34;https://github.com/jakubroztocil/httpie&#34;&gt;httpie&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;http -a username:password GET :8888/_ah/api/users/v1/user
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Examing the logs will show that we receive the HTTP Authorization header in its
+base64 encoded form.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The header can be decoded with the &lt;code&gt;base64&lt;/code&gt; module.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;basic_auth = self.request_state.headers.get(&#39;authorization&#39;)
+auth_type, credentials = basic_auth.split(&#39; &#39;)
+print base64.b64decode(credentials)  # prints username:password
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Using the username and password we can check the datastore for a User model with
+the same credentials and return a &lt;code&gt;UserMessage&lt;/code&gt; based on the model .&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+class UsersApi(remote.Service):
+
+    @endpoints.method(message_types.VoidMessage,
+                      UserMessage,
+                      http_method=&#39;GET&#39;,
+                      path=&#39;user&#39;,
+                      name=&#39;user.auth&#39;)
+    def user_auth(self, request):
+        basic_auth = self.request_state.headers.get(&#39;authorization&#39;)
+        auth_type, credentials = basic_auth.split(&#39; &#39;)
+        username, password = base64.b64decode(credentials).split(&#39;:&#39;)
+        user = User.get_by_username(username)
+        if user and user.verify_password(password):
+            return user.to_message()
+        else:
+            raise endpoints.UnauthorizedException
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This should serve as a starting point for anyone wishing to use Basic
+Authentication with Google Cloud Endpoints. If you&amp;rsquo;ve read this far, why not
+subscribe to this blog through &lt;a href=&#34;http://kevinsookocheff.us3.list-manage2.com/subscribe?u=8b57d632b8677f07ca57dc9cb&amp;amp;id=ec7ddaa3ba&#34;&gt;email&lt;/a&gt; or &lt;a href=&#34;http://sookocheff.com/index.xml&#34;&gt;RSS&lt;/a&gt;?&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Unit Testing Cloud Endpoints</title>
+      <link>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints/</link>
+      <pubDate>Thu, 10 Jul 2014 14:32:15 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints/</guid>
+      <description>
+
+&lt;p&gt;Writing unit tests for App Engine Cloud Endpoints is a fairly straight forward
+process. Unfortunately it is not well documented and a few gotchas exist. This
+article provides a template you can use to unit test Cloud Endpoints including
+full source code for a working example.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-model:dec1a5006ed54c46077ff2a4372aca9b&#34;&gt;The Model&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s use a simple User model as the resource being exposed by our API. This
+model has two properties &amp;ndash; a username and an email address. The class also
+provides &lt;code&gt;to_message&lt;/code&gt; function that converts the model to a ProtoRPC Message for
+transmission by the Cloud Endpoints API.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class User(ndb.Model):
+    &amp;quot;&amp;quot;&amp;quot;
+    A basic user model.
+    &amp;quot;&amp;quot;&amp;quot;
+    username = ndb.StringProperty(required=True)
+    email = ndb.StringProperty(required=True)
+
+    def to_message(self):
+        &amp;quot;&amp;quot;&amp;quot;
+        Convert the model to a ProtoRPC messsage.
+        &amp;quot;&amp;quot;&amp;quot;
+        return UserMessage(id=self.key.id(),
+                           username=self.username,
+                           email=self.email)
+
+
+class UserMessage(messages.Message):
+    &amp;quot;&amp;quot;&amp;quot;
+    A message representing a User model.
+    &amp;quot;&amp;quot;&amp;quot;
+    id = messages.IntegerField(1)
+    username = messages.StringField(2)
+    email = messages.StringField(3)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;the-api:dec1a5006ed54c46077ff2a4372aca9b&#34;&gt;The API&lt;/h2&gt;
+
+&lt;p&gt;To keep things simple the API for this resource provides a single &lt;code&gt;GET&lt;/code&gt; endpoint
+that returns a &lt;code&gt;UserMessage&lt;/code&gt; based on a &lt;code&gt;User&lt;/code&gt; in the datastore. We parameterize
+our endpoint with an &lt;code&gt;ID_RESOURCE&lt;/code&gt; that takes an &lt;code&gt;IntegerField&lt;/code&gt; holding the id
+of the User resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,
+                                          id=messages.IntegerField(1, 
+                                                                   variant=messages.Variant.INT32, 
+                                                                   required=True))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The API itself has one method, &lt;code&gt;users_get&lt;/code&gt;, that returns a user given an id or
+&lt;code&gt;404&lt;/code&gt; if no user with the specified id exists.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+class UsersApi(remote.Service):
+
+    @endpoints.method(ID_RESOURCE,
+                      UserMessage,
+                      http_method=&#39;GET&#39;,
+                      path=&#39;users/{id}&#39;,
+                      name=&#39;users.get&#39;)
+    def users_get(self, request):
+        entity = User.get_by_id(request.id)
+        if not entity:
+            message = &#39;No user with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
+            raise endpoints.NotFoundException(message)
+
+        return entity.to_message()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;the-tests:dec1a5006ed54c46077ff2a4372aca9b&#34;&gt;The Tests&lt;/h2&gt;
+
+&lt;p&gt;The setup for our tests is similar to many App Engine test cases. We set our
+environment and initialize any test stubs we may need.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class GaeTestCase(unittest.TestCase):
+    &amp;quot;&amp;quot;&amp;quot;
+    API unit tests.
+    &amp;quot;&amp;quot;&amp;quot;
+
+    def setUp(self):
+        super(GaeTestCase, self).setUp()
+        tb = testbed.Testbed()
+        tb.setup_env(current_version_id=&#39;testbed.version&#39;)  # Required for the endpoints API
+        tb.activate()
+        tb.init_all_stubs()
+        self.api = UsersApi()  # Set our API under test
+        self.testbed = tb
+
+    def tearDown(self):
+        self.testbed.deactivate()
+        super(GaeTestCase, self).tearDown()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The actual tests call the endpoints method directly. Endpoint methods that
+are set to receive a &lt;code&gt;ResourceContainer&lt;/code&gt; expect a &lt;code&gt;CombinedContainer&lt;/code&gt; as the
+parameter to the function. The &lt;code&gt;ResourceContainer&lt;/code&gt; class has a property called
+&lt;code&gt;combined_message_class&lt;/code&gt; that returns a &lt;code&gt;CombinedContainer&lt;/code&gt; class that can be
+instantiated and passed to our endpoint. We instantiate our container with the
+identifier we expect for our User resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def test_get_returns_entity(self):
+    user = User(username=&#39;soofaloofa&#39;, email=&#39;soofaloofa@example.com&#39;)
+    user.put()
+
+    container = ID_RESOURCE.combined_message_class(id=user.key.id())
+    response = self.api.users_get(container)
+    self.assertEquals(response.username, &#39;soofaloofa&#39;)
+    self.assertEquals(response.email, &#39;soofaloofa@example.com&#39;)
+    self.assertEquals(response.id, user.key.id())
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can also add a test for the &lt;code&gt;404&lt;/code&gt; condition by calling &lt;code&gt;assertRaises&lt;/code&gt; on our
+endpoint with an identifier that does not correspond to a User resource.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def test_get_returns_404_if_no_entity(self):
+    container = ID_RESOURCE.combined_message_class(id=1)
+    self.assertRaises(endpoints.NotFoundException, self.api.users_get, container)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Full source code follows.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import unittest
+import endpoints
+
+from protorpc import remote
+from protorpc import messages
+from protorpc import message_types
+from google.appengine.ext import testbed
+from google.appengine.ext import ndb
+
+
+class User(ndb.Model):
+    &amp;quot;&amp;quot;&amp;quot;
+    A basic user model.
+    &amp;quot;&amp;quot;&amp;quot;
+    username = ndb.StringProperty(required=True)
+    email = ndb.StringProperty(required=True)
+
+    def to_message(self):
+        &amp;quot;&amp;quot;&amp;quot;
+        Convert the model to a ProtoRPC messsage.
+        &amp;quot;&amp;quot;&amp;quot;
+        return UserMessage(id=self.key.id(),
+                           username=self.username,
+                           email=self.email)
+
+
+class UserMessage(messages.Message):
+    &amp;quot;&amp;quot;&amp;quot;
+    A message representing a User model.
+    &amp;quot;&amp;quot;&amp;quot;
+    id = messages.IntegerField(1)
+    username = messages.StringField(2)
+    email = messages.StringField(3)
+
+ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,
+                                          id=messages.IntegerField(1, variant=messages.Variant.INT32, required=True))
+
+
+@endpoints.api(name=&#39;users&#39;, version=&#39;v1&#39;, description=&#39;Users Api&#39;)
+class UsersApi(remote.Service):
+
+    @endpoints.method(ID_RESOURCE,
+                      UserMessage,
+                      http_method=&#39;GET&#39;,
+                      path=&#39;users/{id}&#39;,
+                      name=&#39;users.get&#39;)
+    def users_get(self, request):
+        entity = User.get_by_id(request.id)
+        if not entity:
+            message = &#39;No user with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
+            print message
+            raise endpoints.NotFoundException(message)
+
+        return entity.to_message()
+
+
+class GaeTestCase(unittest.TestCase):
+    &amp;quot;&amp;quot;&amp;quot;
+    API unit tests.
+    &amp;quot;&amp;quot;&amp;quot;
+
+    def setUp(self):
+        super(GaeTestCase, self).setUp()
+        tb = testbed.Testbed()
+        tb.setup_env(current_version_id=&#39;testbed.version&#39;)
+        tb.activate()
+        tb.init_all_stubs()
+        self.api = UsersApi()
+        self.testbed = tb
+
+    def tearDown(self):
+        self.testbed.deactivate()
+        super(GaeTestCase, self).tearDown()
+
+    def test_get_returns_entity(self):
+        user = User(username=&#39;soofaloofa&#39;, email=&#39;soofaloofa@example.com&#39;)
+        user.put()
+
+        container = ID_RESOURCE.combined_message_class(id=user.key.id())
+        response = self.api.users_get(container)
+        self.assertEquals(response.username, &#39;soofaloofa&#39;)
+        self.assertEquals(response.email, &#39;soofaloofa@example.com&#39;)
+        self.assertEquals(response.id, user.key.id())
+
+    def test_get_returns_404_if_no_entity(self):
+        container = ID_RESOURCE.combined_message_class(id=1)
+        self.assertRaises(endpoints.NotFoundException, self.api.users_get, container)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Creating RESTful APIs with App Engine Cloud Endpoints</title>
+      <link>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints/</link>
+      <pubDate>Wed, 02 Jul 2014 06:14:23 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://developers.google.com/appengine/docs/python/endpoints/&#34;&gt;App Engine Cloud
+Endpoints&lt;/a&gt; is a
+great way to quickly and easily create JSON API endpoints. What&amp;rsquo;s not clear is
+how to structure your &lt;code&gt;Message&lt;/code&gt; code to support a RESTful
+create-read-update-delete (CRUD) API. This article will show the basic CRUD
+operations for one Resource. The results can easily be adapted to support a full
+REST API.&lt;/p&gt;
+
+&lt;p&gt;To support this discussion let&amp;rsquo;s use a concrete resource for our API &amp;ndash; a &lt;code&gt;User&lt;/code&gt;
+resource. We can give our &lt;code&gt;User&lt;/code&gt; model a few simple attributes.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-07-02-creating-restful-apis-with-app-engine-cloud-endpoints/user-model.png&#34; alt=&#34;User Model&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;A CRUD API for this resource would support a URL structure and HTTP verbs
+for each operation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Create a new user
+HTTP POST /users/
+
+# Read a user by id
+HTTP GET /users/{id}
+
+# Update a user by id
+HTTP PUT /users/{id}
+
+# Delete a user by id
+HTTP DELETE /users/{id}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Given this model we can define a basic Cloud Endpoints message representing a &lt;code&gt;User&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class UserMessage(messages.Message):
+    id = messages.StringField(1)
+    email = messages.StringField(2)
+    username = messages.StringField(3)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we can write the &lt;strong&gt;C&lt;/strong&gt; (create) portion of the CRUD API using HTTP POST
+and a &lt;code&gt;ResourceContainer&lt;/code&gt; to hold the message we wish to submit to the API.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;POST_RESOURCE = endpoints.ResourceContainer(UserMessage)
+
+...
+
+@endpoints.method(POST_RESOURCE,
+                  UserMessage,
+                  path=&#39;/users&#39;,
+                  http_method=&#39;POST&#39;,
+                  name=&#39;users.create&#39;)
+def create(self, request):
+    user = User(username=request.username, email=request.email)
+    user.put()
+    return user.to_message()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Similarly we can define the &lt;strong&gt;R&lt;/strong&gt; (read) portion of the API using an HTTP GET
+method. To parameterize our cloud endpoint we need to add the parameter to our
+&lt;code&gt;ResourceContainer&lt;/code&gt;. I&amp;rsquo;ll call it &lt;code&gt;id&lt;/code&gt; here. The actual message type is
+&lt;code&gt;VoidMessage&lt;/code&gt; because we are not passing any information in our request to the
+API endpoint other than the &lt;code&gt;id&lt;/code&gt; parameter.&lt;/p&gt;
+
+&lt;p&gt;The response retrieves the entity from the datastore and returns it as a
+message.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ID_RESOURCE = endpoints.ResourceContainer(message_types.VoidMessage,
+                                          id=messages.StringField(1,
+                                                                  variant=messages.Variant.STRING,
+                                                                  required=True))
+
+...
+
+@endpoints.method(ID_RESOURCE,
+                  UserMessage,
+                  http_method=&#39;GET&#39;,
+                  path=&#39;users/{id}&#39;,
+                  name=&#39;users.read&#39;)
+def read(self, request):
+    entity = User.get_by_id(request.id)
+    if not entity:
+        message = &#39;No User with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
+        raise endpoints.NotFoundException(message)
+
+    return entity.to_message()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;strong&gt;U&lt;/strong&gt; (update) operation uses a similar parameterized &lt;code&gt;ResourceContainer&lt;/code&gt; to
+access a User given an id. We augment this request with the &lt;code&gt;UserMessage&lt;/code&gt; which
+defines the content of the body of the message. The endpoint takes the content
+of the message and updates the entity with that content.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;PUT_RESOURCE = endpoints.ResourceContainer(UserMessage,
+                                           id=messages.StringField(1,
+                                                                   variant=messages.Variant.STRING,
+                                                                   required=True))
+
+...
+
+@endpoints.method(PUT_RESOURCE,
+                  UserMessage,
+                  http_method=&#39;PUT&#39;,
+                  path=&#39;users/{id}&#39;,
+                  name=&#39;users.update&#39;)
+def update(self, request):
+    entity = User.update_from_message(request.id, request)
+    if not entity:
+        message = &#39;No User with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
+        raise endpoints.NotFoundException(message)
+
+    return entity.to_message()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Lastly, the &lt;strong&gt;D&lt;/strong&gt; (delete) endpoint takes an identifier which we have previously
+defined as &lt;code&gt;ID_RESOURCE&lt;/code&gt;. The endpoint deletes the entity referred to by that
+identifier and returns a &lt;code&gt;VoidMessage&lt;/code&gt; which is converted to an &lt;code&gt;HTTP 204 No
+Content&lt;/code&gt; response by the cloud endpoints API.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@endpoints.method(ID_RESOURCE,
+                  message_types.VoidMessage,
+                  http_method=&#39;DELETE&#39;,
+                  path=&#39;users/{id}&#39;,
+                  name=&#39;users.delete&#39;)
+def delete(self, request):
+    entity = User.get_by_id(request.id)
+    if not entity:
+        message = &#39;No User with the id &amp;quot;%s&amp;quot; exists.&#39; % request.id
+        raise endpoints.NotFoundException(message)
+
+    entity.key.delete()
+    return message_types.VoidMessage()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This basic pattern can be used with any resource that your API wishes to
+support and gives a basic pattern with which to build out your full API.&lt;/p&gt;
+
+&lt;p&gt;If you have any questions please send me an email or let me know in the
+comments!&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

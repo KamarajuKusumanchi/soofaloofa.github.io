@@ -7,5 +7,464 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Mon, 23 Mar 2015 15:32:37 CST</lastBuildDate>
     
+    <item>
+      <title>Deploying R Studio on Compute Engine</title>
+      <link>http://sookocheff.com/posts/r/deploying-r-studio-to-compute-engine/</link>
+      <pubDate>Mon, 23 Mar 2015 15:32:37 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/r/deploying-r-studio-to-compute-engine/</guid>
+      <description>
+
+&lt;p&gt;Sometimes you have a data analysis problem that is just too big for your desktop
+or laptop. The limiting factor here is generally RAM. Thankfully, services like
+Google Compute Engine allow you to lease servers with up to 208GB of RAM, large
+enough for a wide variety of intensive tasks. An ancillary benefit of using a
+service like Compute Engine is that it allows you to easily load your data from
+a Cloud Storage Bucket, meaning you don&amp;rsquo;t need to keep a copy of the large
+dataset locally at all times.&lt;/p&gt;
+
+&lt;p&gt;R Studio has a remote mode allowing you to install it on a server with access
+through a remote interface. This tutorial details how to start a Compute Engine
+instance, install R Studio on it and access R Studio from the remote interface.&lt;/p&gt;
+
+&lt;p&gt;The rest of this tutorial assumes that you have a Google Cloud Platform account
+with billing enabled and have installed the &lt;a href=&#34;https://cloud.google.com/sdk/&#34;&gt;Google Cloud
+SDK&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;deploying-a-compute-engine-instance:a84679a16a118ba5a9c46f36f1d63ec8&#34;&gt;Deploying a Compute Engine Instance&lt;/h2&gt;
+
+&lt;p&gt;The first step is to deploy your Compute Engine instance. The &lt;code&gt;gcloud compute&lt;/code&gt;
+command allows you to create instances. The only required parameter to create an
+instance is the instance name. We will call our instance &lt;code&gt;r-studio&lt;/code&gt; but you can
+choose any name you like. R Studio Server is typically built on Ubuntu so it is
+safest to use the Ubuntu distribution for your server.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute instances create r-studio
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You will be prompted to choose a
+&lt;a href=&#34;https://cloud.google.com/compute/docs/zones&#34;&gt;Zone&lt;/a&gt;. Just choose a zone close to
+you. You can also specify the zone when creating the instance using the &lt;code&gt;--zone&lt;/code&gt;
+parameter. For example.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute instances create r-studio --zone us-central1-a
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You will also have to open the Compute Engine firewall to allow port 8787 for R
+Studio.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcutil addfirewall allow-r-studio --allowed=tcp:8787
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;installing-r-studio:a84679a16a118ba5a9c46f36f1d63ec8&#34;&gt;Installing R Studio&lt;/h2&gt;
+
+&lt;p&gt;Once we have our Compute Engine instance set up, we log in to the machine using ssh.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute ssh r-studio --zone us-central1-a
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now that we are logged in to the Compute Engine instance, it&amp;rsquo;s time to install
+R by first updating the Debian apt-get repository and then installing R.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo apt-get update
+sudo apt-get install r-base r-base-dev
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;R Studio currently requries OpenSSL version 0.9.8. We need to install this
+separately and then install install R Studio&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;wget http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl0.9.8_0.9.8o-4squeeze14_amd64.deb
+sudo dpkg -i libssl0.9.8_0.9.8o-4squeeze14_amd64.deb
+sudo apt-get install gdebi-core
+wget http://download2.rstudio.org/rstudio-server-0.98.1103-amd64.deb
+sudo gdebi rstudio-server-0.98.1103-amd64.deb
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You should be up and running with R Studio on your compute engine instance. To
+verify, navigate to the IP address of your Compute Engine instance on port 8787
+(the default R Studio port).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http://&amp;lt;ipaddress&amp;gt;:8787
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;R Studio only permits access to users of the system, we can add a user with
+standard Linux tools like adduser. For example, to create a new user named
+rstudio and specify the password you could execute the following commands.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo adduser rstudio
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You will be prompted to enter a password for the user and confirm the users name
+and phone number.&lt;/p&gt;
+
+&lt;p&gt;Afterwards, logging in with the user you created will present a web UI of the
+familiar R Studio. You can now perform analysis on those larger data sets using
+the R Studio that just weren&amp;rsquo;t possible on a laptop.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Automatically Resizing a Compute Engine Disk</title>
+      <link>http://sookocheff.com/posts/2014-11-11-automatically-resizing-a-compute-engine-disk/</link>
+      <pubDate>Tue, 11 Nov 2014 19:21:45 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-11-11-automatically-resizing-a-compute-engine-disk/</guid>
+      <description>&lt;p&gt;A recurring issue when working with &lt;a href=&#34;https://cloud.google.com/compute/&#34;&gt;Compute
+Engine&lt;/a&gt; is that newly created Instances have
+only 10GB of free space available. To take advantage of the full disk size you
+need to manually partition and resize it. This article shows one method of
+accomplishing this task.&lt;/p&gt;
+
+&lt;p&gt;To correctly partition the disk we need to find the start sector. We can find this using &lt;code&gt;fdisk&lt;/code&gt; with the &lt;code&gt;-l&lt;/code&gt;
+option to list the full disk output.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; sudo fdisk -l
+
+Disk /dev/sda: 10.7 GB, 10737418240 bytes
+4 heads, 32 sectors/track, 163840 cylinders, total 20971520 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+Disk identifier: 0x0009c3f5
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1   *        4096    20971519    10483712   83  Linux
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Only one disk exists and its size is 10.7 GB. We need to resize this disk
+ourselves to make it fully useable. The last line of the &lt;code&gt;fdisk&lt;/code&gt; output lists the start
+sector. We can extract it using a combination of &lt;code&gt;grep&lt;/code&gt; and &lt;code&gt;awk&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# fisk -l: get the full disk output
+# grep ^/dev/sda1: filter the line for the boot disk
+# awk -F&amp;quot; &amp;quot; &#39;{ print $3 }&#39;: get the third token where the separator is space
+start_sector=$(sudo fdisk -l | grep ^/dev/sda1 |  awk -F&amp;quot; &amp;quot;  &#39;{ print $3 }&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now that we have the start sector we can run through the sequence of commands
+required for &lt;code&gt;fdisk&lt;/code&gt; to create a new partition of the full disk size.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;cat &amp;lt;&amp;lt;EOF | sudo fdisk -c -u /dev/sda
+d
+n
+p
+1
+$start_sector
+
+w
+EOF
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;-c&lt;/code&gt; and &lt;code&gt;-u&lt;/code&gt; option make &lt;code&gt;fdisk&lt;/code&gt; behave the same on both CentOS and Debian.
+&lt;code&gt;d&lt;/code&gt; deletes the first (default) partition. &lt;code&gt;n&lt;/code&gt; creates a new partition. &lt;code&gt;p&lt;/code&gt;
+selects the new partition as a primary. &lt;code&gt;1&lt;/code&gt; is the partition number.
+&lt;code&gt;$start_sector&lt;/code&gt; is the value we extracted from &lt;code&gt;fdisk -l&lt;/code&gt;. The blank line
+specifies the default end sector. Finally, &lt;code&gt;w&lt;/code&gt; writes our changes.&lt;/p&gt;
+
+&lt;p&gt;We need to reboot our machine for these changes to take effect.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo reboot
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once our machine comes back to life we need to resize our disk to the full
+partition size. This is done withe the &lt;code&gt;resize2fs&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;resize2fs /dev/sda1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Putting this all together, we can write a script that will automatically resize
+a Compute Engine disk. Using this as a startup script will make any Compute
+Engine instance you create have a fully sized disk available for use.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;STARTUP_VERSION=1
+PARTITION_MARK=/var/startup.partition.$STARTUP_VERSION
+RESIZE_MARK=/var/startup.resize.$STARTUP_VERSION
+
+# Repartition the disk to full size
+function partition() {
+  start_sector=$(sudo fdisk -l | grep ^/dev/sda1 |  awk -F&amp;quot; &amp;quot;  &#39;{ print $3 }&#39;)
+
+  cat &amp;lt;&amp;lt;EOF | sudo fdisk -c -u /dev/sda
+d
+n
+p
+1
+$start_sector
+
+w
+EOF
+
+  # We&#39;ve made the changes to the partition table, they haven&#39;t taken effect; we need to reboot.
+  touch $PARTITION_MARK
+
+  sudo reboot
+  exit
+}
+
+# Resize the filesystem
+function resize() {
+  resize2fs /dev/sda1
+  touch $RESIZE_MARK
+}
+
+if [ ! -f $PARTITION_MARK ]; then
+  partition
+fi
+
+if [ ! -f $RESIZE_MARK ]; then
+  resize
+fi
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>A Guided Tour of Google Compute Engine</title>
+      <link>http://sookocheff.com/posts/2014-11-05-a-guided-tour-of-compute-engine/</link>
+      <pubDate>Wed, 05 Nov 2014 04:45:05 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-11-05-a-guided-tour-of-compute-engine/</guid>
+      <description>
+
+&lt;h2 id=&#34;overview:d7a4cf20ba6fc9a7008ea6a4fe87eb88&#34;&gt;Overview&lt;/h2&gt;
+
+&lt;p&gt;The Google &lt;a href=&#34;https://www.youtube.com/watch?v=43gvHZyPRVk&#34;&gt;Compute Engine core
+concepts video&lt;/a&gt; provides a great
+overview of the technology. Please take a moment to watch it. As the video
+shows, Compute Engine is defined by Resources, and each of these Resources is
+available through the Compute Engine API. You can access this API through the
+Google API Explorer or by installing the &lt;a href=&#34;https://cloud.google.com/sdk/&#34;&gt;gcloud sdk&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;key-resources:d7a4cf20ba6fc9a7008ea6a4fe87eb88&#34;&gt;Key Resources&lt;/h2&gt;
+
+&lt;p&gt;There are few basic resources required to get up and running with any virtual
+machine running on Compute Engine. These are Images, Instances and
+Disks.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/ImagesInstancesDisks.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/ImagesInstancesDisks.png&#34; alt=&#34;Images, Instances and Disks&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&#34;images:d7a4cf20ba6fc9a7008ea6a4fe87eb88&#34;&gt;Images&lt;/h3&gt;
+
+&lt;p&gt;An Image contains a boot loader, an operating system and a root file system that
+are necessary for starting up an instance.  For all intents and purposes, you
+can think of the Image as the OS that you are running.&lt;/p&gt;
+
+&lt;h3 id=&#34;disks:d7a4cf20ba6fc9a7008ea6a4fe87eb88&#34;&gt;Disks&lt;/h3&gt;
+
+&lt;p&gt;The Disk acts as a filesystem. They operate as physical disks attached to your
+virtual machine but are more analogous to a network attached file system. As an
+example, we can separate a disk from a virtual machine and reattach it to
+another virtual machine.&lt;/p&gt;
+
+&lt;h3 id=&#34;instances:d7a4cf20ba6fc9a7008ea6a4fe87eb88&#34;&gt;Instances&lt;/h3&gt;
+
+&lt;p&gt;An Instance encapsulates the concept of a virtual machine. The virtual machine
+runs the OS and root filesystem defined by the image you choose at create time.&lt;/p&gt;
+
+&lt;h2 id=&#34;instance-groups:d7a4cf20ba6fc9a7008ea6a4fe87eb88&#34;&gt;Instance Groups&lt;/h2&gt;
+
+&lt;p&gt;The Key Resources show how a single virtual machine as viewed through the lens of
+the Compute Engine ecosystem.&lt;/p&gt;
+
+&lt;p&gt;A single virtual machine is great, but modern web services usually require
+multiple machines working in concert to provide a scalable and fault tolerant
+system. Compute Engine offers the abstraction of &lt;code&gt;Instance Groups&lt;/code&gt; to represent
+a group of virtual machines.&lt;/p&gt;
+
+&lt;p&gt;Instance Groups allow you to collectively manage a set of virtual machines and
+attach services to that group of machines. A service is a simple label attached
+to the group that advertises this group of virtual machines as providing the
+same backend web service.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroup.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroup.png&#34; alt=&#34;Instance Groups&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;instance-group-manager:d7a4cf20ba6fc9a7008ea6a4fe87eb88&#34;&gt;Instance Group Manager&lt;/h2&gt;
+
+&lt;p&gt;Instance Groups operate over a set of virtual machines. To add a virtual machine
+to an Instance Group you first spin up your virtual machine and then call the
+Instance Group API to tell Compute Engine that this Instance is now part of an
+Instance Group.&lt;/p&gt;
+
+&lt;p&gt;The Instance Group Manager automates how virtual machines are added to the
+Instance Group. There are a few caveats. First, instances in a managed Instance
+Group must be homogenous.  That means they must all be created using the same
+base image, disk and machine type. To facilitate this homogeneity the Instance
+Group Manager operates over an Instance abstraction called an Instance Template.&lt;/p&gt;
+
+&lt;h3 id=&#34;instance-templates:d7a4cf20ba6fc9a7008ea6a4fe87eb88&#34;&gt;Instance Templates&lt;/h3&gt;
+
+&lt;p&gt;Instance templates are configuration files that define the settings of an
+Instance (and by extension of an Image and Disk). Instance templates can define
+some or all of the configuration options. For example, the OS, the RAM, or the
+hard drive size. Instance templates separate the configuration of your virtual
+machine from the creation and running of the virtual machine.&lt;/p&gt;
+
+&lt;p&gt;When creating a new managed Instance Group you specify the Instance Template to
+use for the Group. You also tell the Instance Group Manager the size of your
+Instance Group. The Instance Group Manager will create that number of instances
+and assign them to your managed group. You can then resize your Group with one
+command and those Instances will be brought to life and join your Instance
+Group. If any Instances are destroyed or deleted the manager will bring them
+back to life for you.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroupManager.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/InstanceGroupManager.png&#34; alt=&#34;Instance Group Manager.&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;regions-zones:d7a4cf20ba6fc9a7008ea6a4fe87eb88&#34;&gt;Regions &amp;amp; Zones&lt;/h2&gt;
+
+&lt;p&gt;Compute Engine allows you to specify the region and zone where your virtual
+machine exists. This gives you control over where your data is stored and used.&lt;/p&gt;
+
+&lt;p&gt;Regions are broad categories such as central US or eastern Asia. Zones are
+subdivisions within a region such as zone &lt;code&gt;a&lt;/code&gt; or zone &lt;code&gt;b&lt;/code&gt;. The way to reference
+a zone is as &lt;code&gt;&amp;lt;region&amp;gt;-&amp;lt;zone&amp;gt;&lt;/code&gt;. For example &lt;code&gt;&amp;lt;us-central1-a&amp;gt;&lt;/code&gt; has the region
+us-central1 and the zone &lt;code&gt;a&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;To build a fault tolerant system ideally you want to have your Instances spread
+out over multiple zones. To distribute your system globally you can spread your
+instances across multiple regions. In the following example, we have two
+separate Managed Instance Groups in two different zones.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/RegionsAndZones.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/RegionsAndZones.png&#34; alt=&#34;Instance Group Manager&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;load-balancing:d7a4cf20ba6fc9a7008ea6a4fe87eb88&#34;&gt;Load Balancing&lt;/h2&gt;
+
+&lt;p&gt;Now we have a group of virtual machines running the same hardware that can be
+easily resized with the Instance Group Manager. The question now is how do we
+address these machines?  This is where a load balancer comes into play. There
+are a lot of moving parts in the load balancer. Thankfully they all perform very
+particular tasks and once you set it up you don&amp;rsquo;t have to worry about it
+anymore.&lt;/p&gt;
+
+&lt;h3 id=&#34;the-backend-service:d7a4cf20ba6fc9a7008ea6a4fe87eb88&#34;&gt;The Backend Service&lt;/h3&gt;
+
+&lt;p&gt;To use HTTP load balancing we need to declare our instance groups as backend
+services. This is a simple label attached to the group. In effect we are telling
+Compute Engine which groups are related to one another.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/BackendServices.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/BackendServices.png&#34; alt=&#34;Backend Services&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&#34;url-maps:d7a4cf20ba6fc9a7008ea6a4fe87eb88&#34;&gt;URL Maps&lt;/h3&gt;
+
+&lt;p&gt;URL maps define what URL requests to send to what backend service. For example ,
+we can route requests to the url &lt;code&gt;/static&lt;/code&gt; to a different backend service
+than requests to the url &lt;code&gt;/&lt;/code&gt;. In this example we have a URL Map that routes
+requests with the pattern &lt;code&gt;/static&lt;/code&gt; and &lt;code&gt;/images&lt;/code&gt; to the &lt;code&gt;static&lt;/code&gt; Backend
+Service. Any other requests are routed to the &lt;code&gt;web&lt;/code&gt; service.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/UrlMap.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/UrlMap.png&#34; alt=&#34;Url Map&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&#34;target-http-proxy:d7a4cf20ba6fc9a7008ea6a4fe87eb88&#34;&gt;Target HTTP Proxy&lt;/h3&gt;
+
+&lt;p&gt;The Target HTTP Proxy is a simple proxy that receives requests and routes them
+to the URL Maps.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/TargetHttpProxy.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/TargetHttpProxy.png&#34; alt=&#34;Target HTTP Proxy&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&#34;global-forwarding-rule:d7a4cf20ba6fc9a7008ea6a4fe87eb88&#34;&gt;Global Forwarding Rule&lt;/h3&gt;
+
+&lt;p&gt;The global forwarding rule provides an external IP address that we can use to
+address our instances. This IP address routes to the target HTTP proxy which
+ultimately directs our traffic to the proper Backend Service through the URL Map.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/GlobalForwardingRule.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/GlobalForwardingRule.png&#34; alt=&#34;Global Forwarding Rule&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusion:d7a4cf20ba6fc9a7008ea6a4fe87eb88&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;That completes our guided tour of Compute Engine. Given this foundation you
+should have a solid base with which to navigate the documentation and explore
+the API.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Packaging a Compute Engine Virtual Machine Image</title>
+      <link>http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm/</link>
+      <pubDate>Tue, 28 Oct 2014 06:03:42 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm/</guid>
+      <description>
+
+&lt;p&gt;Google Compute Engine allows you to make custom images from a running virtual
+machine. The documentation provides a sufficient example but is a little bit
+scattered. This article collects and presents all the steps necessary to create
+your own Compute Engine images that you can use as a base for virtual machines.&lt;/p&gt;
+
+&lt;h2 id=&#34;1-create-a-packaged-image:7c1a20e3ad95d33d23baf45a9137ebbb&#34;&gt;1. Create a Packaged Image&lt;/h2&gt;
+
+&lt;p&gt;Once your have booted your instanced and ssh&amp;rsquo;d in you can create your image
+using the &lt;code&gt;gcimagebundle&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo gcimagebundle -d &amp;lt;boot-device&amp;gt; -o &amp;lt;output-directory&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The boot device is &lt;code&gt;/dev/sda&lt;/code&gt; so a complete example might look like this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo gcimagebundle -d /dev/sda -o /tmp
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;2-upload-to-cloud-storage:7c1a20e3ad95d33d23baf45a9137ebbb&#34;&gt;2. Upload to Cloud Storage&lt;/h2&gt;
+
+&lt;p&gt;Once you have a Compute Engine image you need to upload it to Cloud Storage by
+logging into your gcloud account and copying your file to a Cloud Storage
+bucket. Thankfully, Compute Engine installs the necessary gcloud and gsutil
+executables in the base virtual machines.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# login to your gcloud account
+gcloud auth login
+
+# make a bucket for compute engine images
+gsutil mb gs://&amp;lt;bucket-name&amp;gt;
+
+# copy your image to the bucket
+gsutil cp /tmp/&amp;lt;image-name&amp;gt;.image.tar.gz gs://&amp;lt;bucket-name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;3-create-a-compute-engine-image:7c1a20e3ad95d33d23baf45a9137ebbb&#34;&gt;3. Create a Compute Engine Image&lt;/h2&gt;
+
+&lt;p&gt;We don&amp;rsquo;t need our virtual machine any more. You can exit the machine and head
+back to your console. From your console you can create a compute engine image
+using &lt;code&gt;gcloud compute&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute images create &amp;lt;image-name&amp;gt; --source-uri gs://&amp;lt;bucket-name&amp;gt;/&amp;lt;image-name&amp;gt;.image.tar.gz
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;4-use-your-image-to-create-a-compute-engine-instance:7c1a20e3ad95d33d23baf45a9137ebbb&#34;&gt;4. Use your Image to Create a Compute Engine Instance&lt;/h2&gt;
+
+&lt;p&gt;Finally, now that we have a predefined image, you can create a compute engine
+instance using your image name.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute instances create --image &amp;lt;image-name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Your images offer the same functionality as the Google provided versions. You
+can mark them as &lt;code&gt;DEPRECATED&lt;/code&gt;, &lt;code&gt;OBSOLETE&lt;/code&gt; or &lt;code&gt;DELETED&lt;/code&gt; to manage your
+deployment.&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

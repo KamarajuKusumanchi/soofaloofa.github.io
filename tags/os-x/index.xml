@@ -7,5 +7,30 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Wed, 07 May 2014 10:26:45 UTC</lastBuildDate>
     
+    <item>
+      <title>Installing lxml on OS X Mavericks</title>
+      <link>http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks/</link>
+      <pubDate>Wed, 07 May 2014 10:26:45 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks/</guid>
+      <description>&lt;p&gt;I recently tried installing lxml for use within an App Engine project on OS X
+Mavericks only to be hit with an error message from &lt;code&gt;clang&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;clang: error: unknown argument: &#39;-mno-fused-madd&#39; [-Wunused-command-line-argument-hard-error-in-future]
+
+clang: note: this will be a hard error (cannot be downgraded to a warning) in the future
+
+error: command &#39;cc&#39; failed with exit status 1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;clang&lt;/code&gt; compiler distributed with version 5.1 of Xcode tightened up some
+restrictions and turned compiler warnings into hard errors. To disable this you need to
+add a specific flag to ingore these warnings when installing affected packages.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future pip install lxml
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

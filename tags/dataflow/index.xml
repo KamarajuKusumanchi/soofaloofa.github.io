@@ -7,5 +7,73 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Wed, 11 Feb 2015 06:20:37 CST</lastBuildDate>
     
+    <item>
+      <title>Create a Google Cloud Dataflow Project with Gradle</title>
+      <link>http://sookocheff.com/posts/2015-02-11-cloud-dataflow-with-gradle/</link>
+      <pubDate>Wed, 11 Feb 2015 06:20:37 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2015-02-11-cloud-dataflow-with-gradle/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve been experimenting with the &lt;a href=&#34;https://cloud.google.com/dataflow/&#34;&gt;Google Cloud
+Dataflow&lt;/a&gt; &lt;a href=&#34;https://github.com/GoogleCloudPlatform/DataflowJavaSDK&#34;&gt;Java
+SDK&lt;/a&gt; for running managed
+data processing pipelines. One of the first tasks is getting a build environment
+up and running. For this I chose Gradle.&lt;/p&gt;
+
+&lt;p&gt;We start by declaring this a java application and listing the configuration
+variables that declare the source compatibility level (which for now must be
+1.7) and the main class to be executed by the &lt;code&gt;run&lt;/code&gt; task to be defined later.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;apply plugin: &#39;java&#39;
+apply plugin: &#39;application&#39;
+
+sourceCompatibility = &#39;1.7&#39;
+
+mainClassName = &#39;com.sookocheff.dataflow.Main&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We then declare the mavenCentral repository where the dependencies are located
+and the basic dependencies for a Cloud Dataflow application.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile &#39;com.google.guava:guava:18.0&#39;
+    compile &#39;com.google.cloud.dataflow:google-cloud-dataflow-java-sdk-all:0.3.150109&#39;
+    
+    testCompile &#39;junit:junit:4.11&#39;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Last, we create our run task that will launch the Cloud Dataflow application.
+The Cloud Dataflow runtime expects the folder &lt;code&gt;resources/main&lt;/code&gt; to exist in your
+build. If you are not actually shipping any resources with your application you
+will need to tell Gradle to create the correct directory. We also pass any
+parameters to our main class using the -P flag.  These two steps are
+encapsulated below.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;task resources {
+    def resourcesDir = new File(&#39;build/resources/main&#39;)
+    resourcesDir.mkdirs()
+}
+
+run {
+    if (project.hasProperty(&#39;args&#39;)) {
+        args project.args.split(&#39;\\s&#39;)
+    }
+}
+
+run.mustRunAfter &#39;resources&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You should now be able to launch your Cloud Dataflow application using the
+&lt;code&gt;gradle run&lt;/code&gt; task, passing your project identifiers as parameters. For example,&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;gradle run -Pargs=&amp;quot;--project=&amp;lt;your-project&amp;gt; --runner=BlockingDataflowPipelineRunner --stagingLocation=gs://&amp;lt;staging-location&amp;gt;&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

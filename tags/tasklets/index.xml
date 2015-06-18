@@ -7,5 +7,128 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Sat, 27 Sep 2014 15:25:29 UTC</lastBuildDate>
     
+    <item>
+      <title>Composing Asynchronous Functions With Tasklets</title>
+      <link>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/</link>
+      <pubDate>Sat, 27 Sep 2014 15:25:29 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/</guid>
+      <description>
+
+&lt;p&gt;Asynchronous functions can provide a boon to application performance by allowing time consuming functions to operate in parallel and without blocking the main execution thread. This article explains how to use the Tasklet API to compose and execute asynchronous functions in Google App Engine.&lt;/p&gt;
+
+&lt;h2 id=&#34;ndb-future:6fb5794bdb1524859157ecc223808a6d&#34;&gt;ndb.Future&lt;/h2&gt;
+
+&lt;p&gt;A &lt;a href=&#34;https://developers.google.com/appengine/docs/python/ndb/futureclass&#34;&gt;Future&lt;/a&gt; is a class representing an asynchronous I/O operation. &lt;code&gt;ndb&lt;/code&gt; provides asynchronous versions of datastore operations that will return a future instead of immediately returning data.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;future = User.get_by_id_async(uid)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;When a Future is first created it has no data while the I/O operation is running. By calling &lt;code&gt;get_result()&lt;/code&gt; on the Future the application will stop execution of the current thread until the data is available from the I/O operation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;future = User.get_by_id_async(uid)
+user = future.get_result()  # Return the data, blocking execution until the data is ready.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The above code is equivalent to calling the non-asynchronous &lt;code&gt;ndb.get&lt;/code&gt; function.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;user = User.get_by_id(uid)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Using futures in this way allows you to run multiple I/O operations in parallel.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# Run two asynchronous operations in parallel
+user_future = User.get_by_id_async(uid)
+accounts_future = Account.query(Account.user_id==uid).fetch_async()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;ndb-tasklet:6fb5794bdb1524859157ecc223808a6d&#34;&gt;ndb.tasklet&lt;/h2&gt;
+
+&lt;p&gt;Tasklets allow you to create your own asynchronous functions that return a Future. The application can call &lt;code&gt;get_result()&lt;/code&gt; on that Future to return the data.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;tasklet_future = my_tasklet()  # A tasklet
+result = tasklet_future.get_result()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can use Tasklets to create fine grained asynchronous functions, in some cases simplifying how a method is programmed.&lt;/p&gt;
+
+&lt;p&gt;When AppEngine encounters a tasklet function the Tasklet framework inserts the tasklet into an event loop. The event loop will cycle through all tasklets and execute them until a &lt;code&gt;yield&lt;/code&gt; statement is reached within the tasklet. The &lt;code&gt;yield&lt;/code&gt; statement is where you put the asynchronous work so that the framework can execute your &lt;code&gt;yield&lt;/code&gt; statement (asynchronously) and then move on to another tasklet to resume execution until its &lt;code&gt;yield&lt;/code&gt; statement is reached. In this way all of the &lt;code&gt;yield&lt;/code&gt; statements are done asynchronously. For even more performance, NDB implements a batch job framework that will bundle up multiple requests in a single batch RPC to the server.&lt;/p&gt;
+
+&lt;p&gt;As a simple example, we can use a tasklet to define an asynchronous query and return the result.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@ndb.tasklet
+def query_tasklet():
+    result = yield Model.query().fetch_async()
+    raise ndb.Return(result)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The line &lt;code&gt;result = yield Model.query().fetch_async()&lt;/code&gt; will alert the tasklet framework that this is an asynchronous line of code and that the framework can wait here and execute other code while the asynchronous line completes. To force the asynchronous code to complete you call &lt;code&gt;get_result()&lt;/code&gt; on the return value of the tasklet function.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;future = query_tasklet()
+future.get_result()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So how do we use this in our code? There are three distinct cases.&lt;/p&gt;
+
+&lt;h2 id=&#34;case-1-processing-an-asynchronous-result:6fb5794bdb1524859157ecc223808a6d&#34;&gt;Case 1: Processing an asynchronous result&lt;/h2&gt;
+
+&lt;p&gt;Suppose that you have an asynchronous function that returns a Future and you want to do some processing on the result before returning from your function. In that case you may have code like this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def process_a_query():
+	future = Model.query().fetch_async()
+	return process_result(future.get_result())
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To turn this into an asynchronous tasklet function you can add the tasklet decorator and yield your asynchronous fetch.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@ndb.tasklet
+def process_a_query():
+	result = yield Model.query().fetch_async()
+	raise ndb.Return(process_result(result))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now your function &lt;code&gt;process_a_query&lt;/code&gt; can be called asynchronously.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;future = process_a_query()
+# ...
+future.get_result()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;case-2-composing-two-asynchronous-functions:6fb5794bdb1524859157ecc223808a6d&#34;&gt;Case 2: Composing two asynchronous functions&lt;/h2&gt;
+
+&lt;p&gt;In this case, suppose you have two asynchronous functions that depend on each other and you want to combine them with the tasklet framework.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def multiple_query():
+	future_a = ModelA.query().fetch_async()
+	a = future_a.get_result()
+	future_b = ModelB.query(ModelB.id==a).fetch_async()
+	return future_b
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The above code becomes simpler with tasklets.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@ndb.tasklet
+def multiple_query():
+    a = yield ModelA.query().fetch_async()
+    b = yield ModelB.query(ModelB.id==a).fetch_async()
+    raise ndb.Return(b)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;case-3-parallel-computation:6fb5794bdb1524859157ecc223808a6d&#34;&gt;Case 3: Parallel Computation&lt;/h2&gt;
+
+&lt;p&gt;The last case to discuss is parallel computation. In this scenario you have two independent asynchronous functions that you want to run in parallel.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;@ndb.tasklet
+def parallel_query():
+	  a, b = yield ModelA.query().fetch_async(), yield ModelB.query().fetch_async()
+	  raise ndb.Return((a,b))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;summary:6fb5794bdb1524859157ecc223808a6d&#34;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;In all of these cases we show how to combine and compose asynchronous functions using the tasklet framework. This allows you to define your own asynchronous functions that are can be used just like the ndb asynchronous functions.&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

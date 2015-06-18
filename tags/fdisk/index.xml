@@ -7,5 +7,38 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Mon, 03 Nov 2014 05:49:31 UTC</lastBuildDate>
     
+    <item>
+      <title>Extracting the Start Sector of a Disk with fdisk</title>
+      <link>http://sookocheff.com/posts/2014-11-03-extracting-the-start-sector-with-fdisk/</link>
+      <pubDate>Mon, 03 Nov 2014 05:49:31 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-11-03-extracting-the-start-sector-with-fdisk/</guid>
+      <description>&lt;p&gt;fdisk is a wonderful little utility for managing partitions. I recently had to
+script a series of fdisk commands for resizing a partition and needed to extract
+the start sector from the existing disk to do so. I ended up using this
+combination of &lt;code&gt;grep&lt;/code&gt; and &lt;code&gt;awk&lt;/code&gt; to do the job.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;start_sector=$(sudo fdisk -l | grep ^/dev/sda1 |  awk -F&amp;quot; &amp;quot;  &#39;{ print $3 }&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This line executes &lt;code&gt;fdisk&lt;/code&gt; with the &lt;code&gt;-l&lt;/code&gt; option to list the current disks. Then
+runs &lt;code&gt;grep&lt;/code&gt; to find the current boot disk. Finally, &lt;code&gt;awk&lt;/code&gt; retrieves the
+third token of the string where the token seperator is empty space.&lt;/p&gt;
+
+&lt;p&gt;Having the start sector I was able to script the fdisk sequence by piping the
+necessary sequence of resize commands into fdisk.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;  cat &amp;lt;&amp;lt;EOF | sudo fdisk -c -u /dev/sda
+d
+n
+p
+1
+$start_sector
+
+w
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

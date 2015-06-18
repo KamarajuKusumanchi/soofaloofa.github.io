@@ -7,5 +7,935 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Tue, 09 Jun 2015 20:43:56 CST</lastBuildDate>
     
+    <item>
+      <title>App Engine Pipelines API - Part 6: The Pipeline UI</title>
+      <link>http://sookocheff.com/posts/appengine/pipelines/pipeline-ui/</link>
+      <pubDate>Tue, 09 Jun 2015 20:43:56 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/appengine/pipelines/pipeline-ui/</guid>
+      <description>
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This article will serve as a reminder of the Pipeline UI as much for the writer
+as for the reader. The Pipeline UI requires the MapMeduce library to be
+installed. If you are not familiar with MapReduce please refer to the &lt;a href=&#34;http://sookocheff.com/series/mapreduce-api/&#34;&gt;MapReduce
+API Series of articles&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Once MapReduce is installed you will need to add a few indices to &lt;code&gt;index.yaml&lt;/code&gt;
+to properly query for pipeline records for display in the UI.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;indexes:
+- kind: _AE_Pipeline_Record
+  properties: 
+    - name: is_root_pipeline 
+    - name: start_time 
+      direction: desc
+
+- kind: _AE_Pipeline_Record
+  properties: 
+    - name: class_path 
+    - name: is_root_pipeline 
+    - name: start_time
+      direction: desc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;list-root-pipelines:7ab75bf11afccfc89345fe106e22b8e1&#34;&gt;List Root Pipelines&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;/mapreduce/pipeline/list
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This URL will list all root pipelines in the system, ordered by their starting
+time. You can filter pipelines by their class path and check on an individual
+pipelines status using this UI.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/root-pipelines.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/root-pipelines.png&#34; alt=&#34;List Root Pipelines&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;pipeline-status:7ab75bf11afccfc89345fe106e22b8e1&#34;&gt;Pipeline Status&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;/mapreduce/pipeline/status?root=7ba9b9b2b2e24787b3b4c11079178cb6
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you know a pipeline&amp;rsquo;s root identifier you can jump directly to the status
+page. This page presents you with a UI displaying the status of a pipeline and
+any of the pipeline&amp;rsquo;s children.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/pipeline-status.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/pipeline-status.png&#34; alt=&#34;Pipeline Status&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;list-mapreduce-pipelines:7ab75bf11afccfc89345fe106e22b8e1&#34;&gt;List MapReduce Pipelines&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;/mapreduce/status
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If your pipeline is a MapReduce job, it will have an entry on the MapReduce
+status page. You can navigate to individual jobs to check their sharding and
+processing status or cleanup a job by removing datastore entries for the
+pipeline.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/mapreduce-list.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/mapreduce-list.png&#34; alt=&#34;MapReduce List&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;mapreduce-status:7ab75bf11afccfc89345fe106e22b8e1&#34;&gt;MapReduce Status&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;/mapreduce/detail?mapreduce_id=1574647046653BE202D4D
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you know a mapreduce job&amp;rsquo;s identifier you can jump directly to the status
+page. This page will show any counters you have defined and show how the
+processing of each shard of data.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/mapreduce-status.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/mapreduce-status.png&#34; alt=&#34;MapReduce Status&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 5: Asynchronous Pipelines</title>
+      <link>http://sookocheff.com/posts/appengine/pipelines/asynchronous-pipelines/</link>
+      <pubDate>Tue, 02 Jun 2015 04:45:56 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/appengine/pipelines/asynchronous-pipelines/</guid>
+      <description>
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This article will cover fully asynchronous pipelines. The term &amp;lsquo;asynchronous&amp;rsquo; is
+misleading here — all piplines are asynchronous in the sense that yielding a
+pipeline is a non-blocking operation. An asynchronous refers to a
+pipeline that remains in a RUN state until outside action is taken, for example,
+a button is clicked or a task is executed.&lt;/p&gt;
+
+&lt;p&gt;Marking a pipeline as an asynchronous pipeline is as simple as setting the
+&lt;code&gt;async&lt;/code&gt; class property to True.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class AsyncPipeline(pipeline.Pipeline):
+    async = True
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once this pipeline starts, it will remain in the RUN state until the pipeline is
+transitioned to another state. You transition a pipeline to another state by
+calling the &lt;code&gt;complete&lt;/code&gt; method, using a callback. &lt;code&gt;complete()&lt;/code&gt; is a
+method only available to asynchronous pipelines. Calling complete will fill the
+pipelines output slots and, if all slots have been filled, mark the pipeline
+complete. Any barriers related to the slots being filled are notified as
+described in &lt;a href=&#34;http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/&#34;&gt;the previous article&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class AsyncPipeline(pipeline.Pipeline):
+    async = True
+
+    def callback(self):
+        self.complete()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;callback-urls:74bf5c045d8c3cbfb500a70528c1dea1&#34;&gt;Callback URLs&lt;/h2&gt;
+
+&lt;p&gt;The pipeline API provides convenience methods for calling the callback method.
+&lt;code&gt;get_callback_url&lt;/code&gt; returns a URL that, when accessed, passes any query
+parameters to the callback method. For example, to generate a URL to our
+pipeline with a &lt;code&gt;choice&lt;/code&gt; parameter we can call get_callback_url as follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;url = get_callback_url(choice=&#39;approve&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will generate a URL of the form:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;/_ah/pipeline/callback?choice=approve&amp;amp;pipeline_id=fd789852183b4310b5f1353205a967fe
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Accessing this URL will pass the &lt;code&gt;choice&lt;/code&gt; parameter to the callback function of
+the pipeline with pipeline_id &lt;code&gt;fd789852183b4310b5f1353205a967fe&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class AsyncPipeline(pipeline.Pipeline):
+    async = True
+    public_callbacks = True
+
+    def run(self):
+        url = self.get_callback_url(choice=&#39;approve&#39;)
+        logging.info(&#39;Callback URL: %s&#39; % url)
+
+    def callback(self, choice):
+        if choice == &#39;approve&#39;:
+            logging.info(&#39;Pipeline Complete&#39;)
+            self.complete()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running the pipeline above will log the Callback URL to the console. By visiting
+that URL, the &lt;code&gt;callback&lt;/code&gt; method will execute, completing your pipeline. You can
+refer to the &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines/blob/master/python/src/pipeline/common.py&#34;&gt;EmailToContinue&lt;/a&gt; Pipeline for a more robust example.&lt;/p&gt;
+
+&lt;h2 id=&#34;callback-tasks:74bf5c045d8c3cbfb500a70528c1dea1&#34;&gt;Callback Tasks&lt;/h2&gt;
+
+&lt;p&gt;The second way to execute a callback method is via a callback task. The
+Pipelines API provides another convenience method to generate a callback task
+that will execute our pipeline. In the following example, a task is created to
+trigger in the future, adding an artificial delay to our pipeline.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class DelayPipeline(pipeline.Pipeline):
+    async = True
+
+    def __init__(self, seconds):
+        super(DelayPipeline, self).__init__(seconds=seconds)
+
+    def run(self, seconds=None):
+        task = self.get_callback_task(
+            countdown=seconds,
+            name=&#39;ae-pipeline-delay-&#39; + self.pipeline_id)
+        try:
+            task.add(self.queue_name)
+        except (taskqueue.TombstonedTaskError, taskqueue.TaskAlreadyExistsError):
+            pass
+
+    def callback(self):
+        self.complete(self.kwargs[&#39;seconds&#39;])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Note that the task is queued using the pipeline_id in the task name. This helps
+ensure our run method is idempotent. Full source code for an asynchronous
+pipeline follows. This pipeline will delay for 10 seconds, and then log a
+callback_url to the console. Visiting the callback URL will complete the
+pipeline.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+from google.appengine.api import taskqueue
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        pipeline = DelayPipeline(10)
+        pipeline.start()
+
+
+class DelayPipeline(pipeline.Pipeline):
+    async = True
+
+    def __init__(self, seconds):
+        pipeline.Pipeline.__init__(self, seconds=seconds)
+
+    def run(self, seconds=None):
+        task = self.get_callback_task(
+            countdown=seconds,
+            name=&#39;ae-pipeline-delay-&#39; + self.pipeline_id)
+        try:
+            task.add(self.queue_name)
+        except (taskqueue.TombstonedTaskError,
+                taskqueue.TaskAlreadyExistsError):
+            pass
+
+    def callback(self):
+        AsyncPipeline().start()
+
+
+class AsyncPipeline(pipeline.Pipeline):
+    async = True
+    public_callbacks = True
+
+    def run(self):
+        url = self.get_callback_url(choice=&#39;approve&#39;)
+        logging.info(&#39;Callback URL: %s&#39; % url)
+
+    def callback(self, choice):
+        if choice == &#39;approve&#39;:
+            self.complete()
+
+
+routes = [webapp2.Route(&#39;/pipeline-test/&#39;, handler=&#39;main.RunPipelineHandler&#39;)]
+
+APP = webapp2.WSGIApplication(routes)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 4: Pipeline Internals</title>
+      <link>http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/</link>
+      <pubDate>Wed, 27 May 2015 05:57:19 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/</guid>
+      <description>
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/&#34;&gt;We&amp;rsquo;ve learned how to execute and chain together pipelines&lt;/a&gt;,
+now let&amp;rsquo;s take a look at how pipelines execute under the hood. If necessary,
+you can refer to the &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines&#34;&gt;source code of the pipelines
+project&lt;/a&gt; to
+clarify any details.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-pipeline-data-model:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;The Pipeline Data Model&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start with the pipeline data model. Note that each Kind defined by the
+pipelines API is prefixed by &lt;code&gt;_AE_Pipeline&lt;/code&gt;, making it easy to view individual
+pipeline details by viewing the datastore entity.&lt;/p&gt;
+
+&lt;h3 id=&#34;pipelinerecord:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;PipelineRecord&lt;/h3&gt;
+
+&lt;p&gt;Every pipeline is represented by a &lt;em&gt;PipelineRecord&lt;/em&gt; in the datastore. The
+PipelineRecord records the pipeline&amp;rsquo;s root identifier (if this pipeline is a
+child), any child pipelines spawned by this pipeline, the current status
+of the pipeline, and a few additional bookkeeping details.&lt;/p&gt;
+
+&lt;p&gt;At any point in time a Pipeline may be in one of four states: WAITING, RUN,
+DONE, and ABORTED.  WAITING implies that this pipeline has a barrier that
+must be satisfied before the pipeline can be RUN. RUN means that the pipeline
+has been started. DONE means that the pipeline is complete. ABORTED means
+that the pipeline has been manually aborted.&lt;/p&gt;
+
+&lt;h3 id=&#34;slotrecord:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;SlotRecord&lt;/h3&gt;
+
+&lt;p&gt;The output of a pipeline is represented as a &lt;em&gt;Slot&lt;/em&gt; stored in the datastore as a
+&lt;em&gt;SlotRecord&lt;/em&gt;. When a pipeline completes, it stores its output in the SlotRecord
+to be made available to further pipelines.&lt;/p&gt;
+
+&lt;h3 id=&#34;barrierrecord:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;BarrierRecord&lt;/h3&gt;
+
+&lt;p&gt;A &lt;em&gt;BarrierRecord&lt;/em&gt; represents the slots that must be filled before a pipeline can
+execute. The barrier tracks &lt;em&gt;blocking_slots&lt;/em&gt; that must be filled before the
+barrier can be lifted. Once the barrier is lifted a &lt;em&gt;target&lt;/em&gt; pipeline is
+notified and the target can transition to the RUN state.&lt;/p&gt;
+
+&lt;p&gt;Barriers that depend on a slot being filled are stored in the &lt;em&gt;BarrierIndex&lt;/em&gt;,
+which tracks barriers that are dependent on a slot. The purpose of the
+BarrierIndex is to force &lt;a href=&#34;https://cloud.google.com/datastore/docs/articles/balancing-strong-and-eventual-consistency-with-google-cloud-datastore/&#34;&gt;strong consistency&lt;/a&gt; when querying for a SlotRecord&amp;rsquo;s Barriers.&lt;/p&gt;
+
+&lt;h3 id=&#34;statusrecord:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;StatusRecord&lt;/h3&gt;
+
+&lt;p&gt;The &lt;em&gt;StatusRecord&lt;/em&gt; tracks the current status of a pipeline and facilitates the
+pipeline user interface. The StatusRecord is updated as the pipeline progresses
+to give a view of the current pipeline state. Not much more than that.&lt;/p&gt;
+
+&lt;h2 id=&#34;pipeline-execution:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;Pipeline Execution&lt;/h2&gt;
+
+&lt;p&gt;Having an understanding of the pipeline data model gives a rough idea of how
+pipelines are executed. Each stage of execution corresponds to a webapp2 handler
+that services the request and advances the state of the pipeline. The following
+diagram shows each of the pipeline stages during typical execution and the
+description that follows provides more detail on each stage.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-internals/pipeline-states.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-internals/pipeline-states.png&#34; alt=&#34;Pipeline States&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&#34;start:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;start()&lt;/h3&gt;
+
+&lt;p&gt;A pipeline is started by calling its &lt;code&gt;start()&lt;/code&gt; method. When calling &lt;code&gt;start()&lt;/code&gt; a
+&lt;em&gt;PipelineRecord&lt;/em&gt; is created and marked as a &lt;em&gt;RootPipeline&lt;/em&gt;, &lt;em&gt;SlotRecords&lt;/em&gt; are
+created for each of the pipelines outputs and marked as children of the
+pipeline, and &lt;em&gt;BarrierRecords&lt;/em&gt; are created corresponding to each of the output
+slots of the pipeline. Finally, a task is queued to the &lt;code&gt;/run&lt;/code&gt; handler to
+execute the pipeline.&lt;/p&gt;
+
+&lt;h3 id=&#34;run-handler:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;/run handler&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;/run&lt;/code&gt; handler transitions the pipeline from the WAITING state to the RUN
+state by setting a flag on the &lt;em&gt;PipelineRecord&lt;/em&gt;, the pipeline object instance is
+then reconstructed given the data from the request and the pipeline&amp;rsquo;s &lt;code&gt;run()&lt;/code&gt;
+method is called. When the &lt;code&gt;run()&lt;/code&gt; method is complete, any outputs are used to
+fill &lt;em&gt;SlotRecords&lt;/em&gt; and yielded to the parent pipeline when necessary.  Finally,
+any child pipelines and their dependent slots and barriers are created and
+marked as children of the parent pipeline. Calls to the &lt;code&gt;/fanout&lt;/code&gt;
+handler are made to queue tasks to start any child pipelines.&lt;/p&gt;
+
+&lt;h3 id=&#34;fanout-handler:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;/fanout handler&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;/fanout&lt;/code&gt; handler loads all child pipelines given a parent pipeline and queues
+a task to the &lt;code&gt;/run&lt;/code&gt; handler for each of them.&lt;/p&gt;
+
+&lt;h3 id=&#34;output-handler:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;/output handler&lt;/h3&gt;
+
+&lt;p&gt;Whenever a slot is filled a task is queued to the &lt;code&gt;/output&lt;/code&gt; handler to notify any
+barriers to a pipeline&amp;rsquo;s execution that they can be removed. If a pipeline has
+all its barriers to completing removed, a task is queued to the &lt;code&gt;/finalize&lt;/code&gt; handler
+to mark our pipeline as complete. The &lt;code&gt;/output&lt;/code&gt; handler queues tasks to the
+&lt;code&gt;/run&lt;/code&gt; method for any pipelines that have their barriers to starting removed.&lt;/p&gt;
+
+&lt;h3 id=&#34;finalized-handler:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;/finalized handler&lt;/h3&gt;
+
+&lt;p&gt;When the &lt;code&gt;/finalized&lt;/code&gt; handler is called, the pipeline is marked as complete and
+our pipeline&amp;rsquo;s &lt;code&gt;finalized()&lt;/code&gt; method is called.&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusion:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;Understanding the Pipeline data model and run-time can help you to visualize and
+debug any pipeline problems. Stay tuned for the next article covering
+asynchronous pipelines.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 3: Fan In, Fan Out, Sequencing</title>
+      <link>http://sookocheff.com/posts/appengine/pipelines/fan-in-fan-out/</link>
+      <pubDate>Tue, 19 May 2015 05:57:19 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/appengine/pipelines/fan-in-fan-out/</guid>
+      <description>
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/&#34;&gt;Last time&lt;/a&gt;,
+we studied how to connect two pipelines together. In this post, we expand on
+this topic, exploring how to fan-out to do multiple tasks in parallel, fan-in
+to combine multiple tasks into one, and how to do sequential work.&lt;/p&gt;
+
+&lt;h2 id=&#34;fan-out:077d7e8a485e72c5c014b45abe98e05c&#34;&gt;Fan-Out&lt;/h2&gt;
+
+&lt;p&gt;Fan-Out refers to spreading a task to multiple destinations in parallel. Using
+the Pipelines API, fan-out can be achieved elegantly by yielding a new pipeline
+for every task you wish to execute. Each of these pipelines is exeucted
+immediately via a Task in the App Engine Task Queue. Fan-out parallelizes
+implicitly when additional App Engine instances are started to handle the
+increased number of requests arriving in the Task Queue. You can moderate the
+amount of fan-out by changing the processing rate on the task queue that
+executes your pipelines.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;Squaring: %s&#39;, number)
+        return number * number
+
+
+class FanOutPipeline(pipeline.Pipeline):
+
+    def run(self, count):
+        for i in xrange(0, count):
+            yield SquarePipeline(i)
+        # All children run immediately
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;fan-in:077d7e8a485e72c5c014b45abe98e05c&#34;&gt;Fan-In&lt;/h2&gt;
+
+&lt;p&gt;Fan-In implies waiting for a collection of related tasks to complete before
+continuing processing. The example can be extended by summing the list of
+squared values — when we call &lt;code&gt;yield Sum(*results)&lt;/code&gt; the pipeline run-time will
+wait until all results are ready before executing Sum. Internally, a &lt;em&gt;barrier&lt;/em&gt;
+record is created that blocks execution of Sum and tracks the dependencies
+required to lift the barrier. Once all dependencies have been satisfied the
+barrier is lifted and Sum can execute.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;Squaring: %s&#39; % number)
+        return number * number
+
+
+class Sum(pipeline.Pipeline):
+
+    def run(self, *args):
+        value = sum(list(args))
+        logging.info(&#39;Sum: %s&#39;, value)
+        return value
+
+
+class FanInPipeline(pipeline.Pipeline):
+
+    def run(self, count):
+        results = []
+        for i in xrange(0, count):
+            result = yield SquarePipeline(i)
+            results.append(result)
+
+        # Waits until all SquarePipeline results are complete
+        yield Sum(*results)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;sequencing:077d7e8a485e72c5c014b45abe98e05c&#34;&gt;Sequencing&lt;/h2&gt;
+
+&lt;p&gt;A common workflow is running pipelines in a predefined sequence. The Pipelines
+API provides context managers that will force execution ordering using the
+&lt;code&gt;with&lt;/code&gt; keyword. This is useful for Pipelines with no output that you wish to
+execute in a specific order — we cannot wait for the output and so no barrier
+must be satisfied, but we still want to enforce an execution order. In the
+following example, we extend the FanOutFanInPipeline to update an HTML
+dashboard with our results and, once that is complete, send out an e-mail to the
+development team. This example is taken from the excellent &lt;a href=&#34;https://www.youtube.com/watch?v=Rsfy_TYA2ZY&#34;&gt;Pipelines API
+introductory video&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class FanOutFanInPipeline(pipeline.Pipeline):
+
+    def run(self, count):
+        results = []
+        for i in xrange(0, count):
+            result = yield SquarePipeline(i)
+            results.append(result)
+
+        result = yield Sum(*results)
+        with pipeline.InOrder():
+            yield UpdateDashboard()
+            yield EmailTeam()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;conclusion:077d7e8a485e72c5c014b45abe98e05c&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;This article describes how to coordinate pipeline tasks using fan-in, fan-out
+and sequencing. The next article we will discuss Pipeline API internals.&lt;/p&gt;
+
+&lt;p&gt;Full source code of both Fan-In and Fan-Out follows.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        stage = FanOutFanInPipeline(10)
+        stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;Squaring: %s&#39; % number)
+        return number * number
+
+
+class Sum(pipeline.Pipeline):
+
+    def run(self, *args):
+        value = sum(list(args))
+        logging.info(&#39;Sum: %s&#39;, value)
+        return value
+
+
+class FanOutFanInPipeline(pipeline.Pipeline):
+
+    def run(self, count):
+        results = []
+        for i in xrange(0, count):
+            result = yield SquarePipeline(i)
+            results.append(result)
+
+        yield Sum(*results)
+
+
+routes = [
+    webapp2.Route(&#39;/pipeline-test/&#39;, handler=&#39;main.RunPipelineHandler&#39;)
+]
+
+APP = webapp2.WSGIApplication(routes)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 2: Connecting Pipelines</title>
+      <link>http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/</link>
+      <pubDate>Tue, 12 May 2015 05:57:19 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/posts/appengine/pipelines/the-basics/&#34;&gt;Last time&lt;/a&gt;,
+we discussed basic pipeline instantiation and execution. This time, we will
+cover sequential pipelines, answering the question &amp;ldquo;How do I connect the output
+of one pipeline with the input of another pipeline&amp;rdquo;?&lt;/p&gt;
+
+&lt;p&gt;To begin, let&amp;rsquo;s review a basic pipeline that squares its input. If any of this
+does not make sense refer to the &lt;a href=&#34;http://sookocheff.com/posts/appengine/pipelines/the-basics/&#34;&gt;first part of this tutorial&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        stage = SquarePipeline(10)
+        stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        return number * number
+
+    def finalized(self):
+        logging.info(&#39;All done! Square is %s&#39;, self.outputs.default.value)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The first step in passing data between two pipelines is updating our pipeline to
+use the generator interface. The generator interface uses the &lt;code&gt;yield&lt;/code&gt; keyword as
+a means of connecting pipelines together. For this contrived example, let&amp;rsquo;s
+create a &lt;em&gt;parent&lt;/em&gt; pipeline that executes &lt;code&gt;SquarePipeline&lt;/code&gt; twice in succession.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class TwiceSquaredPipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        first_square = yield SquarePipeline(number)
+        second_square = yield SquarePipeline(first_square)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;What now? We need a way to access the value stored in &lt;code&gt;second_square&lt;/code&gt;. When
+execution hits a &lt;code&gt;yield&lt;/code&gt; statement a task is started to run the pipeline and a
+&lt;code&gt;PipelineFuture&lt;/code&gt; is returned. The &lt;code&gt;PipelineFuture&lt;/code&gt; will have a value &lt;em&gt;after&lt;/em&gt; the
+task has finished executing but not immediately. So how do we access the value?
+With a &lt;em&gt;child&lt;/em&gt; pipeline that can read the result. In this example, we simply log
+the value of the computation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class TwiceSquaredPipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        first_square = yield SquarePipeline(number)
+        second_square = yield SquarePipeline(first_square)
+        yield LogResult(second_square)
+
+class LogResult(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;All done! Value is %s&#39;, number)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The rule of thumb here is that &lt;em&gt;anything you instantiate your pipeline with (and
+subsequently pass to the &lt;code&gt;run&lt;/code&gt; method) is accessible within your
+pipeline&lt;/em&gt;. These are called &lt;em&gt;immediate values&lt;/em&gt; and you can treat them as regular
+Python values. When this code is executed, each pipeline started by a &lt;code&gt;yield&lt;/code&gt;
+call is a separate App Engine Task that executes in the Task Queue. The Pipeline
+runtime coordinates running these tasks and shares the results of execution
+between tasks, allowing you to safely connect pipelines together.&lt;/p&gt;
+
+&lt;p&gt;Full source code for this example follows.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        stage = TwiceSquaredPipeline(10)
+        stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        return number * number
+
+
+class TwiceSquaredPipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        first_square = yield SquarePipeline(number)
+        second_square = yield SquarePipeline(first_square)
+        yield LogResult(second_square)
+
+
+class LogResult(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;All done! Value is %s&#39;, number)
+
+
+routes = [
+    webapp2.Route(&#39;/pipeline-test/&#39;, handler=&#39;main.RunPipelineHandler&#39;)
+]
+
+APP = webapp2.WSGIApplication(routes)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 1: The Basics</title>
+      <link>http://sookocheff.com/posts/appengine/pipelines/the-basics/</link>
+      <pubDate>Tue, 05 May 2015 05:57:19 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/appengine/pipelines/the-basics/</guid>
+      <description>
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines&#34;&gt;Pipelines API&lt;/a&gt;
+is a general purpose workflow engine for App Engine applications. With the
+Pipelines API we can connect together complex workflows into a coherent run time
+backed by the Datastore. This article provides a basic overview of the Pipelines
+API and how it can be used for abritrary computational workflows.&lt;/p&gt;
+
+&lt;p&gt;In the most basic sense a Pipeline is an object that takes input, performs some
+logic or computation on that input, and produces output. Pipelines can take two
+general forms &amp;ndash; synchronous or asynchronous. Synchronous pipelines act as basic
+functions that must complete during a single request. Asynchronous pipelines
+spawn child pipelines and connect them together into a workflow by passing input
+and output parameters around.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;A word of warning.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Pipelines must be idempotent and it is up to the developer to ensure that they
+are &amp;ndash; this is not enforced by the run-time. A pipeline may fail and be retried
+and it is important that running the same pipeline with the same set of inputs
+will product the same results.&lt;/p&gt;
+
+&lt;h2 id=&#34;getting-started:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Getting Started&lt;/h2&gt;
+
+&lt;p&gt;The first step is to grab the latest version of the Pipelines API (and its
+        dependencies) using pip. The following assumes you install third party
+App Engine dependencies in the lib directory relative to where pip is being run.
+You can also grab the source code from
+&lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;pip install GoogleAppEnginePipeline -t lib/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Pipeline requests need to be handled by the Pipeline application. We set that up
+by adding a handler to &lt;code&gt;app.yaml&lt;/code&gt;. Since these are internal application requrest
+we can secure them using the &lt;code&gt;login: admin&lt;/code&gt; directive.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;handlers:
+- url: /_ah/pipeline.*
+  script: pipeline.handlers._APP
+  login: admin
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;basic-synchronous-pipelines:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Basic Synchronous Pipelines&lt;/h2&gt;
+
+&lt;p&gt;A synchronous pipeline runs within the bounds of a single App Engine request.
+Once the request has been made the pipeline starts and pipeline processing
+happens automatically. We can set up this pipeline by defining a handler
+responsible for starting the pipeline. For now, create a default handler that
+will receive a request at the URL of your choosing.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        logging.info(&#39;Launch pipeline&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A request processed by this handler will kick off our Pipeline. To define a
+pipeline we inherit from the Pipeline object and the method &lt;code&gt;run&lt;/code&gt;. The pipeline
+is launched via the &lt;code&gt;start&lt;/code&gt; method. The code below instantiates a custom
+pipeline and launches it. Accessing the URL for the RunPipelineHandler will
+print the message &amp;lsquo;Do something here&amp;rsquo; to the logs.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        logging.info(&#39;Launch pipeline&#39;)
+        pipeline = MyPipeline()
+        pipeline.start()
+
+
+class MyPipeline(pipeline.Pipeline):
+    def run(self, *args, **kwargs):
+        logging.info(&#39;Do something here.&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can update our pipeline to do a simple operation, like squaring a number.
+You&amp;rsquo;ll notice in the code that follows that the arguments passed when
+initializing the pipeline are accessible as parameters to the &lt;code&gt;run&lt;/code&gt; method
+within the pipeline.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+    def run(self, number):
+        return number * number
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running this pipeline will show that the pipeline executes correctly. But where
+does our return value go? How can we access the output of &lt;code&gt;SquarePipeline&lt;/code&gt;?&lt;/p&gt;
+
+&lt;h2 id=&#34;accessing-pipeline-output:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Accessing Pipeline Output&lt;/h2&gt;
+
+&lt;p&gt;You&amp;rsquo;ll notice that in &lt;code&gt;SquarePipeline&lt;/code&gt; we are returning a value directly but
+we never actually access it. Pipeline output can only ever be accessed after the
+pipeline has finished executing. We can check for the end of pipeline execution
+using the &lt;code&gt;has_finalized&lt;/code&gt; property. This property will be set to &lt;code&gt;True&lt;/code&gt; when all
+stages of a pipeline have finished executing. At this point in time our output
+will be available as a value on the Pipeline object. Let&amp;rsquo;s see what happens when
+we try to check if our pipeline has finalized. To do this we need to store the
+pipeline_id generated from our start method and check the &lt;code&gt;has_finalized&lt;/code&gt;
+property.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+        pipeline_id = square_stage.pipeline_id
+
+        stage = SquarePipeline.from_id(pipeline_id)
+        if stage.has_finalized:
+            logging.info(&#39;Finalized&#39;)
+        else:
+            logging.info(&#39;Not finalized&#39;)
+
+
+class SquarePipeline(pipeline.Pipeline):
+    def run(self, number):
+        return number * number
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running the preceding code we see that our pipeline is not finalized. What
+happened here? The pipeline is executed as an ayschronous task after it has been
+started and may or may not complete by the time we check that it has finalized.
+The pipeline itself is a future whose value has not materialized. Any output
+from a pipeline is not actually available until all child pipeline tasks are
+executed. So how do we get the final value of the SquarePipeline?&lt;/p&gt;
+
+&lt;h2 id=&#34;finalized:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Finalized&lt;/h2&gt;
+
+&lt;p&gt;The finalized method is called by the pipeline API once a Pipeline has completed
+its work (by filling all of is slots &amp;ndash; to be described later). By overriding
+the &lt;code&gt;finalized&lt;/code&gt; method we can see the result of our pipeline and do further
+processing on that result if necessary. By default our output is set to
+&lt;code&gt;self.outputs.default.value&lt;/code&gt;. As an example, executing the following code will
+log the message &amp;ldquo;All done! Square is 100&amp;rdquo;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+    def run(self, number):
+        return number * number
+
+    def finalized(self):
+        logging.info(&#39;All done! Square is %s&#39;, self.outputs.default.value)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We will see in a later article how to connect the output of one pipeline with
+another.&lt;/p&gt;
+
+&lt;h2 id=&#34;named-outputs:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Named outputs&lt;/h2&gt;
+
+&lt;p&gt;Pipelines also allow you to explicitly name outputs, this is useful in the case
+where you have more than one output to return or as a means of passing data
+between one pipeline execution and the next. When using named outputs, instead
+of returning a value from the &lt;code&gt;run&lt;/code&gt; method we fill a pipeline slot with our
+value. To use named outputs we define an &lt;code&gt;output_names&lt;/code&gt; class variable listing
+the names of our outputs. By calling &lt;code&gt;self.fill&lt;/code&gt; on our named output we store
+the return value of our pipeline for later access in the &lt;code&gt;run&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    output_names = [&#39;square&#39;]
+
+    def run(self, number):
+        self.fill(self.outputs.square, number * number)
+
+    def finalized(self):
+        logging.info(&#39;All done! Square is %s&#39;, self.outputs.square.value)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;testing-a-pipeline:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Testing a pipeline&lt;/h2&gt;
+
+&lt;p&gt;Sometimes our pipelines call out over the wire or perform expensive data
+operations. The Pipeline API provides a convenient way to test pipelines. By
+calling &lt;code&gt;start_test&lt;/code&gt; instead of &lt;code&gt;start&lt;/code&gt;. In our example we verify the
+expected output of our squaring pipeline by calling &lt;code&gt;start_test&lt;/code&gt;. The final
+value of our pipeline is available immediately.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start_test()
+        assert stage.outputs.square.value == 100
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If we need to mock out any behaviour from our &lt;code&gt;run&lt;/code&gt; method, we can supply a
+&lt;code&gt;run_test&lt;/code&gt; method that is executed whenever we run our pipeline with
+&lt;code&gt;start_test&lt;/code&gt;. Within this method we can mock out or adjust the behaviour of the
+pipeline to work under test.&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusion:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;This article gives a basic outline of how to start and execute pipelines. Full
+source code for the final example is listed below. In the next article we will
+see how to pass the output of one pipeline to another and understand how parent
+and child pipelines interact.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    output_names = [&#39;square&#39;]
+
+    def run(self, number):
+        self.fill(self.outputs.square, number * number)
+
+    def finalized(self):
+        logging.info(&#39;All done! Square is %s&#39;, self.outputs.square.value)
+
+routes = [
+    webapp2.Route(&#39;/pipeline-test/&#39;, handler=&#39;main.RunPipelineHandler&#39;)
+]
+
+APP = webapp2.WSGIApplication(routes)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

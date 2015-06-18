@@ -7,5 +7,247 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Fri, 23 Jan 2015 06:15:07 UTC</lastBuildDate>
     
+    <item>
+      <title>Querying App Engine Logs with Elasticsearch</title>
+      <link>http://sookocheff.com/posts/2015-01-23-querying-app-engine-logs-with-elasticsearch/</link>
+      <pubDate>Fri, 23 Jan 2015 06:15:07 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2015-01-23-querying-app-engine-logs-with-elasticsearch/</guid>
+      <description>
+
+&lt;p&gt;From a DevOps perspective having a historical record of application logs can aid
+immensely in tracking down bugs, responding to customer questions, or finding
+out when and why that critical piece of data was updated to the wrong value. One
+of the biggest grievances with the built-in log handling of Google App Engine is
+that historical logs are only available for the previous three days. We wanted
+to do a little bit better and have logs available for a 30 day time period. This
+article outlines a method we&amp;rsquo;ve developed for pushing App Engine logs to an
+elasticsearch cluster.&lt;/p&gt;
+
+&lt;p&gt;A side benefit of this approach is that if you have multiple App Engine
+projects, all of their logs can be searched at the same time. This provides an
+immediate benefit when tracking down systems integration problems or parsing API
+traffic between applications.&lt;/p&gt;
+
+&lt;p&gt;The solution we chose for this problem revolves around the MapReduce API. If you
+need a refresher on this API please check out my &lt;a href=&#34;http://sookocheff.com/series/mapreduce-api/&#34;&gt;MapReduce tutorial
+series&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;overview:910e0d5fe0b44f1ddf1d486376d42c6d&#34;&gt;Overview&lt;/h2&gt;
+
+&lt;p&gt;The gist of this solution is to run a MapReduce job that reads data from the
+&lt;a href=&#34;https://cloud.google.com/appengine/docs/python/logs/&#34;&gt;App Engine Logs API&lt;/a&gt; using the &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-mapreduce/blob/master/python/src/mapreduce/input_readers.py#L1952&#34;&gt;LogInputReader&lt;/a&gt;,
+converts the data to a JSON format for ingestion into elasticsearch, and finally
+write the parsed data to the elasticsearch cluster using a &lt;a href=&#34;http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/&#34;&gt;custom MapReduce
+OutputWriter&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;We execute this MapReduce job on a timer using cron to push logs to
+elasticsearch on a specific schedule. In our case, we run this job every 15
+minutes to provide a relatively recent view of current operational data.&lt;/p&gt;
+
+&lt;p&gt;The following diagram presents the architecture of our solution.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-01-23-querying-app-engine-logs-with-elasticsearch/elasticsearch-sequence-diagram.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-01-23-querying-app-engine-logs-with-elasticsearch/elasticsearch-sequence-diagram.png&#34; alt=&#34;Architecture for Logging to elasticsearch&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;example:910e0d5fe0b44f1ddf1d486376d42c6d&#34;&gt;Example&lt;/h2&gt;
+
+&lt;p&gt;The majority of the solution is contained in a MapperPipeline. The following
+code illustrates how to setup the MapperPipeline. What&amp;rsquo;s remaining is to write a
+&lt;a href=&#34;http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/&#34;&gt;custom MapReduce OutputWriter&lt;/a&gt; that pushes data to
+elasticsearch and a function that converts a RequestLog object to JSON suitable
+for elasticsearch.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class CronHandler(webapp2.RequestHandler):
+
+    def get(self):
+        run()
+
+
+def run():
+    start_time, end_time = get_time_range()
+    logging.debug(&#39;Dumping logs for date range (%s, %s).&#39;, start_time, end_time)
+
+    start_time = float(start_time.strftime(&#39;%s.%f&#39;))
+    end_time = float(end_time.strftime(&#39;%s.%f&#39;))
+
+    p = Log2ElasticSearch(start_time, end_time)
+    p.start()
+
+
+class Log2Elasticsearch(pipeline.Pipeline):
+
+    def run(self, start_time, end_time, module_name, module_versions):
+        &amp;quot;&amp;quot;&amp;quot;
+        Args:
+            module_versions: A list of tuples of the form (module, version), that
+                indicate that the logs for the given module/version combination should be
+                fetched.  Duplicate tuples will be ignored.
+        &amp;quot;&amp;quot;&amp;quot;
+        yield mapreduce_pipeline.MapperPipeline(
+            &amp;quot;vlogs-elasticsearch-injestion&amp;quot;,
+            handler_spec=&amp;quot;log2json&amp;quot;,
+            input_reader_spec=&amp;quot;mapreduce.input_readers.LogInputReader&amp;quot;,
+            output_writer_spec=&amp;quot;mapreduce.output_writers.ElasticSearchOutputWriter&amp;quot;,
+            params={
+                &amp;quot;input_reader&amp;quot;: {
+                    &amp;quot;start_time&amp;quot;: start_time,
+                    &amp;quot;end_time&amp;quot;: end_time,
+                    &amp;quot;include_app_logs&amp;quot;: True,
+                },
+            },
+            shards=16
+        )
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine MapReduce API - Part 7: Writing a Custom Output Writer</title>
+      <link>http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/</link>
+      <pubDate>Mon, 22 Dec 2014 07:07:35 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/</guid>
+      <description>
+
+&lt;h2 id=&#34;mapreduce-api-series:5ca834111719e09d1ef6cc6ef5cbc0cd&#34;&gt;MapReduce API Series&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/&#34;&gt;Part 1: The Basics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/&#34;&gt;Part 2: Running a MapReduce Job Using mapreduce.yaml&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/&#34;&gt;Part 3: Programmatic MapReduce using Pipelines&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/&#34;&gt;Part 4: Combining Sequential MapReduce Jobs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/&#34;&gt;Part 5: Using Combiners to Reduce Data Throughput&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/&#34;&gt;Part 6: Writing a Custom Input Reader&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/&#34;&gt;Part 7: Writing a Custom Output Writer&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The MapReduce library supports a number of default output writers. You can also
+write your own that implements the output writer interface. This article
+examines how to write a custom output writer that pushes data from the App
+Engine datastore to an elasticsearch cluster. A similar pattern can be followed
+to push the output from your MapReduce job to any number of places.&lt;/p&gt;
+
+&lt;p&gt;An output writer must implement the abstract interface defined by the MapReduce
+library. You can find the interface
+&lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-mapreduce/blob/a1844a2652d51c3bef4448c9265c7c5790c9e476/python/src/mapreduce/output_writers.py#L95&#34;&gt;here&lt;/a&gt;.
+It may be a good idea to keep a reference to that interface available while
+reading this article.&lt;/p&gt;
+
+&lt;p&gt;The most important methods of the interface are &lt;code&gt;create&lt;/code&gt; and &lt;code&gt;write&lt;/code&gt;.  &lt;code&gt;create&lt;/code&gt;
+is used to create a new OutputWriter that will handle writing for a single
+shard. Our elasiticsearch OutputWriter takes parameters specifying the
+elasticsearch index to write to and the document type. We take advantage of a
+helper function provided by the library (&lt;code&gt;_get_params&lt;/code&gt;) to get the parameters of
+a MapReduce job given the MapReduce specification.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from mapreduce.output_writers import OutputWriter, _get_params
+
+class ElasticSearchOutputWriter(OutputWriter):
+
+    def __init__(self, default_index_name=None, default_doc_type=None):
+        super(ElasticSearchOutputWriter, self).__init__()
+        self.default_index_name = default_index_name
+        self.default_doc_type = default_doc_type
+        
+    @classmethod
+    def create(cls, mr_spec, shard_number, shard_attempt, _writer_state=None):
+        params = _get_params(mr_spec)
+        return cls(default_index_name=params.get(&#39;default_index_name&#39;,
+                   default_doc_type=params.get(&#39;default_doc_type&#39;))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now that we can create an instance of our OutputWriter we can implement the
+&lt;code&gt;write&lt;/code&gt; method to write data to elasticsearch. We use a MutationPool for this
+(the MutationPool itself will be discussed shortly). The MutationPool is
+attached to the current execution context of this MapReduce job. Every MapReduce
+job has it&amp;rsquo;s own persistent context that can store information required for the
+current execution of the job. This allows multiple OutputWriter shards to write
+into the MutationPool and have the MutationPool write data out to its final
+destination.&lt;/p&gt;
+
+&lt;p&gt;In this piece of code we check if we have a MutationPool associated with our
+context and create a new MutationPool if we don&amp;rsquo;t.  Once we&amp;rsquo;ve retrieved or
+created the MutationPool we add the output operation to the pool.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from mapreduce import context
+
+def write(self, data):
+   ctx = context.get()
+   es_pool = ctx.get_pool(&#39;elasticsearch_pool&#39;)
+   if not es_pool:
+       es_pool = _ElasticSearchPool(ctx=ctx,
+                                    default_index_name=default_index_name,
+                                    default_doc_type=default_doc_type)
+       ctx.register_pool(&#39;elasticsearch_pool&#39;, es_pool)
+
+   es_pool.append(data)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;These two methods provide the basis of our OutputWriter, implementing the
+&lt;code&gt;to_json&lt;/code&gt;, &lt;code&gt;from_json&lt;/code&gt; and &lt;code&gt;finalize&lt;/code&gt; methods is left up to the reader.
+&lt;code&gt;finalize&lt;/code&gt; does not need any functionality but you may want to log a message
+upon completion.&lt;/p&gt;
+
+&lt;p&gt;Now on to the MutationPool. The MutationPool acts as a buffered writer of data
+changes. It acts as an abstraction that collects any sequence of operations that
+are to be performed together. After &lt;code&gt;x&lt;/code&gt; number of operations have been collected
+we operate on them all at once.  Mutation pools are strictly a performance
+improvement but they can quickly become essential when processing large amounts
+of data. For example, rather than writing to the datastore after each map
+operation with &lt;code&gt;ndb.put&lt;/code&gt; we can collect a sequence of writes and put them all at
+once with &lt;code&gt;ndb.put_multi&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;For an &lt;code&gt;elasticsearch&lt;/code&gt; OutputWriter our mutation pool will collect and buffer
+indexing tasks and perform them all during a single &lt;a href=&#34;http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/bulk.html&#34;&gt;streaming
+bulk&lt;/a&gt;
+operation. Within our OutputWriter we collect our sequence of operations in a
+private list variable &lt;code&gt;_actions&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class _ElasticSearchPool(context.Pool):
+    def __init__(self, ctx=None, default_index_name=None, default_doc_type=None):
+        self._actions = []
+        self._size = 0
+        self._ctx = ctx
+        self.default_index_name = default_index_name
+        self.default_doc_type = default_doc_type
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We then implement the &lt;code&gt;append&lt;/code&gt; method to add an action to the current
+MutationPool. In this example we simply add the action to our list. If our list
+is greater than &lt;code&gt;200&lt;/code&gt; elements we flush our MutationPool.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def append(self, action):
+    self._actions.append(action)
+    self._size += 1
+    if self._size &amp;gt; 200:
+        self.flush()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally, to flush the MutationPool we write all the data collected so far to
+elasticsearch and clear our list of actions.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def flush(self):
+   es_client = elasticsearch(hosts=[&amp;quot;127.0.0.1&amp;quot;])  # instantiate elasticsearch client
+   if self._actions:
+       results = helpers.streaming_bulk(es_client,
+                                                                   self._actions,
+                                                                   chunk_size=200)
+    self._actions = []
+    self._size = 0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, as long as the map function of our MapReduce job outputs operations in a
+format recognizeable by elasticsearch the OutputWriter will collect those
+operations into a MutationPool and periodically flush the results to our
+elasticsearch cluster.&lt;/p&gt;
+
+&lt;p&gt;You can use this code as the basis for writing OutputWriters for almost any
+custom destination.&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

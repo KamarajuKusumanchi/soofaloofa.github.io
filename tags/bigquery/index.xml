@@ -7,5 +7,348 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Mon, 23 Mar 2015 15:32:37 CST</lastBuildDate>
     
+    <item>
+      <title>Creating a BigQuery Table using the Java Client Library</title>
+      <link>http://sookocheff.com/posts/2015-03-23-creating-a-big-query-table-java-api/</link>
+      <pubDate>Mon, 23 Mar 2015 15:32:37 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2015-03-23-creating-a-big-query-table-java-api/</guid>
+      <description>&lt;p&gt;I haven&amp;rsquo;t been able to find great documentation on creating a BigQuery
+TableSchema using the Java Client Library. This blog post hopes to rectify that
+:).&lt;/p&gt;
+
+&lt;p&gt;You can use the &lt;a href=&#34;https://github.com/GoogleCloudPlatform/bigquery-samples-java&#34;&gt;BigQuery sample
+code&lt;/a&gt; for an idea
+of how to create a client connection to BigQuery. Assuming you have the
+connection set up you can start by creating a new &lt;code&gt;TableSchema&lt;/code&gt;. The
+&lt;code&gt;TableSchema&lt;/code&gt; provides a method for setting the list of fields that make up the
+columns of your BigQuery Table. Those columns are defined as an Array of
+&lt;code&gt;TableFieldSchema&lt;/code&gt; objects.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;ArrayList&amp;lt;TableFieldSchema&amp;gt; fieldSchema = new ArrayList&amp;lt;TableFieldSchema&amp;gt;();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For simple types you can populate your columns with the correct type and mode
+according to the &lt;a href=&#34;https://cloud.google.com/bigquery/docs/reference/v2/tables#resource&#34;&gt;BigQuery API
+documentation&lt;/a&gt;.
+For example, to create a STRING field that is NULLABLE you can use the
+following.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;fieldSchema.add(new TableFieldSchema().setName(&amp;quot;username&amp;quot;).setType(&amp;quot;STRING&amp;quot;).setMode(&amp;quot;NULLABLE&amp;quot;));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And for repeated fields you can use the REPEATED mode.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;fieldSchema.add(new TableFieldSchema().setName(&amp;quot;email&amp;quot;).setType(&amp;quot;STRING&amp;quot;).setMode(&amp;quot;REPEATED&amp;quot;));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To create nested records you specify the parent as a RECORD mode and then call
+&lt;code&gt;setFields&lt;/code&gt; for each column of nested data you want to insert. The columns of a
+nested type are the same format as for the parent &amp;ndash; a list of TableFieldSchema
+objects.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;fieldSchema.add(
+  new TableFieldSchema().setName(&amp;quot;location&amp;quot;).setType(&amp;quot;RECORD&amp;quot;).setFields(
+    new ArrayList&amp;lt;TableFieldSchema&amp;gt;() {
+      {
+        add(new TableFieldSchema().setName(&amp;quot;city&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
+        add(new TableFieldSchema().setName(&amp;quot;address&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
+        add(new TableFieldSchema().setName(&amp;quot;zipcode&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
+      }
+    }
+  )
+);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The last step is to set the entire schema as the fields of our table schema.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;TableSchema schema = new TableSchema();
+schema.setFields(fieldSchema);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then we set a &lt;code&gt;TableReference&lt;/code&gt; that holds the current project id, dataset id and
+table id. We use this &lt;code&gt;TableReference&lt;/code&gt; to create our &lt;code&gt;Table&lt;/code&gt; using the &lt;code&gt;TableSchema&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;TableReference ref = new TableReference();
+ref.setProjectId(PROJECT_ID);
+ref.setDatasetId(&amp;quot;pubsub&amp;quot;);
+ref.setTableId(&amp;quot;review_test&amp;quot;);
+
+Table content = new Table();
+content.setTableReference(ref);
+content.setSchema(schema);
+
+client.tables().insert(ref.getProjectId(), ref.getDatasetId(), content).execute();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Putting this all together gives you a working sample of creating a BigQuery Table using the Java Client Library.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;public static void main(String[] args) throws IOException, InterruptedException {
+  Bigquery client = createAuthorizedClient(); // As per the BQ sample code
+  
+  ArrayList&amp;lt;TableFieldSchema&amp;gt; fieldSchema = new ArrayList&amp;lt;TableFieldSchema&amp;gt;();
+  
+  fieldSchema.add(new TableFieldSchema().setName(&amp;quot;username&amp;quot;).setType(&amp;quot;STRING&amp;quot;).setMode(&amp;quot;NULLABLE&amp;quot;));
+  fieldSchema.add(new TableFieldSchema().setName(&amp;quot;email&amp;quot;).setType(&amp;quot;STRING&amp;quot;).setMode(&amp;quot;REPEATED&amp;quot;));
+  fieldSchema.add(
+    new TableFieldSchema().setName(&amp;quot;location&amp;quot;).setType(&amp;quot;RECORD&amp;quot;).setFields(
+      new ArrayList&amp;lt;TableFieldSchema&amp;gt;() {
+        {
+          add(new TableFieldSchema().setName(&amp;quot;city&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
+          add(new TableFieldSchema().setName(&amp;quot;address&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
+          add(new TableFieldSchema().setName(&amp;quot;zipcode&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
+        }
+  }));
+  
+  TableSchema schema = new TableSchema();
+  schema.setFields(fieldSchema);
+  
+  TableReference ref = new TableReference();
+  ref.setProjectId(&amp;quot;&amp;lt;YOUR_PROJECT_ID&amp;gt;&amp;quot;);
+  ref.setDatasetId(&amp;quot;&amp;lt;YOUR_DATASET_ID&amp;gt;&amp;quot;);
+  ref.setTableId(&amp;quot;&amp;lt;YOUR_TABLE_ID&amp;gt;&amp;quot;);
+  
+  Table content = new Table();
+  content.setTableReference(ref);
+  content.setSchema(schema);
+  
+  client.tables().insert(ref.getProjectId(), ref.getDatasetId(), content).execute();
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Converting an ndb model to a BigQuery schema</title>
+      <link>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/</link>
+      <pubDate>Thu, 14 Aug 2014 17:58:03 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/</guid>
+      <description>
+
+&lt;p&gt;I have been working on the problem of recording changes to an ndb model. One way to accomplish this is to stream data changes to a BigQuery table corresponding to the ndb model. It would be great to do this in a generic way which gives us the problem of generating a BigQuery table given an ndb model. This article will describe one solution to this problem.&lt;/p&gt;
+
+&lt;h2 id=&#34;accessing-the-properties-of-an-ndb-class:8ea270a790f9e4ece9bbdae40a8382a6&#34;&gt;Accessing the properties of an ndb class&lt;/h2&gt;
+
+&lt;p&gt;The first step in the process is to find all the properties of the class via the
+ndb &lt;code&gt;_properties&lt;/code&gt; accessor. By iterating over this field we can find all of the
+properties on the class and their ndb types.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def tablify(ndb_model):
+    &amp;quot;&amp;quot;&amp;quot;
+    Convert ndb_model into a BigQuery table schema.
+    &amp;quot;&amp;quot;&amp;quot;
+    for name, ndb_type in ndb_model.__class__._properties.iteritmes():
+       print name, ndb_type
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;converting-properties-to-bigquery-schema-types:8ea270a790f9e4ece9bbdae40a8382a6&#34;&gt;Converting properties to BigQuery schema types&lt;/h2&gt;
+
+&lt;p&gt;Now that we have the set of properties on the class we can map from the type of
+each property to a BigQuery type. Here is a helper function that provides a
+simple mapping.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def ndb_type_to_bigquery_type(_type):
+    &amp;quot;&amp;quot;&amp;quot;
+    Convert a python type to a bigquery type.
+    &amp;quot;&amp;quot;&amp;quot;
+    if isinstance(_type, ndb.IntegerProperty):
+        return &amp;quot;INTEGER&amp;quot;
+    elif isinstance(_type, ndb.FloatProperty):
+        return &amp;quot;FLOAT&amp;quot;
+    elif isinstance(_type, ndb.BooleanProperty):
+        return &amp;quot;BOOLEAN&amp;quot;
+    elif type(_type) in [ndb.StringProperty, ndb.TextProperty, ndb.ComputedProperty]:
+        return &amp;quot;STRING&amp;quot;
+    elif type(_type) in [ndb.DateTimeProperty, ndb.DateProperty, ndb.TimeProperty]:
+        return &amp;quot;TIMESTAMP&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The last task is to format everything as a &lt;a href=&#34;https://developers.google.com/bigquery/docs/reference/v2/tables&#34;&gt;BigQuery table
+resource&lt;/a&gt;. This
+involves adding some boiler-plate around each field in our BigQuery schema and
+fleshing out the structure of the JSON.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;
+from google.appengine.ext import ndb
+
+SUPPORTED_TYPES = [ndb.IntegerProperty,
+                   ndb.FloatProperty,
+                   ndb.BooleanProperty,
+                   ndb.StringProperty,
+                   ndb.TextProperty,
+                   ndb.DateTimeProperty,
+                   ndb.DateProperty,
+                   ndb.TimeProperty,
+                   ndb.ComputedProperty]
+
+
+def ndb_type_to_bigquery_type(_type):
+    &amp;quot;&amp;quot;&amp;quot;
+    Convert a python type to a bigquery type.
+    &amp;quot;&amp;quot;&amp;quot;
+    if isinstance(_type, ndb.IntegerProperty):
+        return &amp;quot;INTEGER&amp;quot;
+    elif isinstance(_type, ndb.FloatProperty):
+        return &amp;quot;FLOAT&amp;quot;
+    elif isinstance(_type, ndb.BooleanProperty):
+        return &amp;quot;BOOLEAN&amp;quot;
+    elif type(_type) in [ndb.StringProperty, ndb.TextProperty, ndb.ComputedProperty]:
+        return &amp;quot;STRING&amp;quot;
+    elif type(_type) in [ndb.DateTimeProperty, ndb.DateProperty, ndb.TimeProperty]:
+        return &amp;quot;TIMESTAMP&amp;quot;
+
+
+def ndb_property_to_bigquery_field(name, ndb_type):
+    &amp;quot;&amp;quot;&amp;quot;
+    Convert from ndb property to a BigQuery schema table field.
+    &amp;quot;&amp;quot;&amp;quot;
+    if type(ndb_type) not in SUPPORTED_TYPES:
+        raise ValueError(&#39;Unsupported object property&#39;)
+
+    field = {
+        &amp;quot;description&amp;quot;: name,
+        &amp;quot;name&amp;quot;: name,
+        &amp;quot;type&amp;quot;: ndb_type_to_bigquery_type(ndb_type)
+    }
+
+    if ndb_type._repeated:
+        field[&#39;mode&#39;] = &#39;REPEATED&#39;
+
+    return field
+
+
+def tablify_schema(obj):
+    &amp;quot;&amp;quot;&amp;quot;
+    Convert ndb_model into a BigQuery table schema.
+    &amp;quot;&amp;quot;&amp;quot;
+    table_schema = {&#39;fields&#39;: []}
+    
+    for name, ndb_type in obj.__class__._properties.iteritems():
+        table_schema[&#39;fields&#39;].append(ndb_property_to_bigquery_field(name, ndb_type))
+
+    return table_schema
+
+
+def tablify(obj, project_id, dataset_id, table_id):
+    &amp;quot;&amp;quot;&amp;quot;
+    Return a BigQuery table resource representing an ndb object.
+    &amp;quot;&amp;quot;&amp;quot;
+    return {
+        &amp;quot;kind&amp;quot;: &amp;quot;bigquery#table&amp;quot;,
+        &amp;quot;id&amp;quot;: table_id,
+        &amp;quot;tableReference&amp;quot;: {
+            &amp;quot;projectId&amp;quot;: project_id,
+            &amp;quot;datasetId&amp;quot;: dataset_id,
+            &amp;quot;tableId&amp;quot;: table_id
+        },
+        &amp;quot;description&amp;quot;: &amp;quot;Table Resource&amp;quot;,
+        &amp;quot;schema&amp;quot;: tablify_schema(obj)
+    }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;creating-the-new-table-on-bigquery:8ea270a790f9e4ece9bbdae40a8382a6&#34;&gt;Creating the new table on BigQuery.&lt;/h2&gt;
+
+&lt;p&gt;Now that we have a BigQuery schema we can create the table in BigQuery using the BigQuery api client.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from oauth2client.appengine import AppAssertionCredentials
+from apiclient.discovery import build
+
+credentials = AppAssertionCredentials(scope=&#39;https://www.googleapis.com/auth/bigquery&#39;)
+http = credentials.authorize(httplib2.Http())
+big_query_service = build(&#39;bigquery&#39;, &#39;v2&#39;, http=http)
+        
+table_resource = tablify(ndb_model, project_id, dataset_id, table_id)
+                response = big_query_service.tables().insert(projectId=project_id,
+                                                             datasetId=dataset_id,
+                                                             body=table_resource).execute()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And that&amp;rsquo;s it. This article outlined a quick method of generating a BigQuery
+table scheme from an ndb model. If you found this useful let me know in the
+comments.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Restoring an App Engine backup into a Big Query table</title>
+      <link>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup/</link>
+      <pubDate>Mon, 04 Aug 2014 21:18:13 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup/</guid>
+      <description>
+
+&lt;p&gt;An unfortunate DevOps task for any team running App Engine is restoring data
+from backups. One way to do this is by accessing the Google Cloud Storage URL
+for a given App Engine backup and importing that backup into BigQuery. This
+article will show you to get the Cloud Storage URL for an App Engine backup and
+manually perform that import.&lt;/p&gt;
+
+&lt;h2 id=&#34;getting-the-cloud-storage-url:fa0cf78d240508d5fee9738fef21ecf6&#34;&gt;Getting the Cloud Storage URL&lt;/h2&gt;
+
+&lt;p&gt;The first thing you need to do is access the cloud storage URL for a given App
+Engine backup. First, log in to the Google Developer Console and navigate to
+your backup. The filename of the backup will be a long sequence of characters
+followed by the name of your model. The file extension will be &lt;code&gt;.backup_info&lt;/code&gt;.
+As an example, this is the filename of backup for an Account model used in one
+of our projects.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Right click on your backup and copy the URL to your clipboard. The URL will be
+of the form below. The name of your cloud storage bucket and the identifier for
+you app have been highlighted below. Replace these with appropriate values for
+your project.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;https://console.developers.google.com/m/cloudstorage/b/**bucket**/o/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To get the cloud storage URL in the format expected by a BigQuery import remove
+everything up to the bucket name.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;**bucket**/o/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now remove the &lt;code&gt;o&lt;/code&gt; between the bucket name and your app identifier.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;**bucket**/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally, append &lt;code&gt;gs://&lt;/code&gt; to the file to arrive at your final Google Cloud Storage
+URL.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gs://**bucket**/**appid**/2014/06/19/backup-20140619-070000/AccountModel/agpzfnZiYy1wcm9kckILEhxfQUVfRGF0YXN0b3JlQWRtaW5fT3BlcmF0aW9uGLa6psgBDAsSFl9BRV9CYWNrdXBfSW5mb3JtYXRpb24YAQw.AccountModel.backup_info 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The next step is to import the backup into BigQuery. To do this, navigate to
+your project and create a new table in your desired dataset.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/create-new-table.png&#34; alt=&#34;Create new table.&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;In the &lt;code&gt;Choose destination&lt;/code&gt; tab pick a name for your new table. In my case I&amp;rsquo;ll
+name the table with the date of my backup for reference.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/choose-destination.png&#34; alt=&#34;Choose destination&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Next, choose App Engine Datastore Backup as the source format and paste the
+Cloud Storage URL you arrived at above in the appropriate field.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-08-04-restoring-an-app-engine-backup/select-data.png&#34; alt=&#34;Select Data Source&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;You can choose the defaults for the next tabs and, finally, import your App
+Engine backup into BigQuery and watch it being fully restored.&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

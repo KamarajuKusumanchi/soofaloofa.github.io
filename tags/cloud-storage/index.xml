@@ -7,5 +7,40 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Tue, 27 Jan 2015 06:07:12 CST</lastBuildDate>
     
+    <item>
+      <title>Downloading files from Google Cloud Storage with webapp2</title>
+      <link>http://sookocheff.com/posts/2015-01-27-webapp2-download-handler/</link>
+      <pubDate>Tue, 27 Jan 2015 06:07:12 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2015-01-27-webapp2-download-handler/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve been working on a simple App Engine application that offers upload and
+download functionality to and from Google Cloud Storage. When it came time to
+actually download the content I needed to write a webapp2 &lt;code&gt;RequestHandler&lt;/code&gt; that
+will retrieve the file from Cloud Storage and return it to the client.&lt;/p&gt;
+
+&lt;p&gt;The trick to this is to set the proper content type in your response header. In
+the example below I used the &lt;a href=&#34;https://cloud.google.com/appengine/docs/python/googlecloudstorageclient/&#34;&gt;Cloud Storage Client
+Library&lt;/a&gt;
+to open and read the file, then set the response appropriately.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import webapp2
+import cloudstorage
+
+class FileDownloadHandler(webapp2.RequestHandler):
+
+  def get(self, filename):
+    self.response.headers[&#39;Content-Type&#39;] = &#39;application/x-gzip&#39;
+    self.response.headers[&#39;Content-Disposition&#39;] = &#39;attachment; filename=%s&#39; % filename
+
+    filename = &#39;/bucket/&#39; + filename
+    gcs_file = cloudstorage.open(filename)
+    data = gcs_file.read()
+    gcs_file.close()
+
+    self.response.write(data)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

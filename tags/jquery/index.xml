@@ -7,5 +7,80 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Wed, 18 May 2011 15:16:17 UTC</lastBuildDate>
     
+    <item>
+      <title>Dissecting jQuery&#39;s Fade Animation</title>
+      <link>http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation/</link>
+      <pubDate>Wed, 18 May 2011 15:16:17 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation/</guid>
+      <description>&lt;p&gt;Fade animations are a standard tool in any jQuery developer’s toolbox. But how do they really work? Let’s create a small function that encapsulates solely the fade functionality and find out.&lt;/p&gt;
+
+&lt;p&gt;Let’s start with the jQuery &lt;code&gt;$&lt;/code&gt; idiom.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function $(id) {
+    var $ = document.getElementById(id);
+    return $;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This function takes an HTML id as a parameter and returns the element associated with this id. We can call this function with a string to return the particular element we need.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$(&#39;img&#39;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let’s add a function to our element.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function $(id) {
+    var $ = document.getElementById(id);
+
+    $.fade = function () {
+        // perform fade here
+    };
+
+    return $;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can call the function by appending &lt;code&gt;.fade&lt;/code&gt; to our element.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$(&#39;img&#39;).fade();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now let’s set up the rest of the function by adding a parameter for the length of the delay and storing a reference to &lt;code&gt;this&lt;/code&gt;. In our context &lt;code&gt;this&lt;/code&gt; refers to the element we are calling fade from. (For a detailed explanation of how &lt;code&gt;this&lt;/code&gt; is set see the &lt;a href=&#34;http://javascriptweblog.wordpress.com&#34;&gt;JavaScript, JavaScript&lt;/a&gt; article &lt;a href=&#34;http://javascriptweblog.wordpress.com/.../understanding-javascripts-this/&#34;&gt;here&lt;/a&gt;). Finally, we set the display style of our element to &lt;code&gt;block&lt;/code&gt; to ensure our animation is visible.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$.fade = function (delay) {
+    var _this = this;
+
+    _this.style.display = &#39;block&#39;;
+
+    // perform fade here
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We perform the fade by setting the opacity of our element. For this purpose let’s define a new function for setting the opacity of an element &lt;code&gt;elm&lt;/code&gt; to &lt;code&gt;v&lt;/code&gt;. We divide by 100 to define our fade in terms of a percentage.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var opacityTo = function (elm, v) {
+    elm.style.opacity = v/100;
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can add a call to this function to our fade method.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$.fade = function (delay) {
+    var _this = this;
+
+    _this.style.display = &#39;block&#39;;
+
+    // set the opacity to 50%
+    opacityTo(_this, 50);
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now the trick is to call this function to fade the element over a period of time. We do this by using the &lt;code&gt;setTimeout(callbk, delay)&lt;/code&gt; function to set the opacity to different values at particular moments in time. The method signature defines a callbk parameter as a function to call when delay time has passed. If we call this function 100 times throughout our animation we will have a smooth and fluid result.&lt;/p&gt;
+
+&lt;p&gt;First we set up the &lt;code&gt;for&lt;/code&gt; loop to iterate from 1 to 100 and then call an anonymous function sending the index of our loop as a parameter to the function. Our anonymous function then calls &lt;code&gt;setTimeout&lt;/code&gt; periodically (100 times in total).&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

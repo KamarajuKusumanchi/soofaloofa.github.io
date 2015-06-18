@@ -7,5 +7,17 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Thu, 09 Jun 2011 11:10:09 UTC</lastBuildDate>
     
+    <item>
+      <title>Date.now() in IE6</title>
+      <link>http://sookocheff.com/posts/2011-06-09-date-now-in-ie6/</link>
+      <pubDate>Thu, 09 Jun 2011 11:10:09 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2011-06-09-date-now-in-ie6/</guid>
+      <description>&lt;p&gt;I was fiddling with a JavaScript timer application and noticed a bug in IE6. I’m sure this is documented elsewhere but I couldn’t find anything with some quick searches; hence this post.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Date.now()&lt;/code&gt; is not supported by IE6. Use &lt;code&gt;new Date().getTime()&lt;/code&gt; instead.&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

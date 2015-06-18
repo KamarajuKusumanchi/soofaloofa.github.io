@@ -7,5 +7,420 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Wed, 27 Jul 2011 10:08:42 UTC</lastBuildDate>
     
+    <item>
+      <title>Saving canvas data to an image file with JavaScript and PHP</title>
+      <link>http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/</link>
+      <pubDate>Wed, 27 Jul 2011 10:08:42 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/</guid>
+      <description>
+
+&lt;p&gt;Saving HTML canvas element data to an image in a user friendly manner is a tricky problem. Let&amp;rsquo;s look at one way to solve it.&lt;/p&gt;
+
+&lt;h2 id=&#34;first-attempt:034a30c0bea8ad3377260c7a90d4653c&#34;&gt;First Attempt&lt;/h2&gt;
+
+&lt;p&gt;We could always open our canvas in a new browser tab (or window) with the &lt;code&gt;toDataURL&lt;/code&gt; JavaScript method.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;window.location.href = canvas.toDataURL(&amp;quot;image/png&amp;quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Unfortunately this requires the user to use the file menu or the right-click button to save the image from the newly opened browser tab. I wouldn’t call this user friendly.&lt;/p&gt;
+
+&lt;h2 id=&#34;second-attempt:034a30c0bea8ad3377260c7a90d4653c&#34;&gt;Second Attempt&lt;/h2&gt;
+
+&lt;p&gt;After some investigation I came across Nihilogic’s &lt;a href=&#34;http://www.nihilogic.dk/labs/canvas2image/&#34;&gt;&lt;code&gt;Canvas2Image&lt;/code&gt;&lt;/a&gt; JavaScript package. This package presents a Dialog Box to the user allowing them to save the image. This would solve my problem except the downloaded filename has the format 8iqALWM5.part . If my mom encountered a filename like that she wouldn’t know what to do with it. Still not user friendly.&lt;/p&gt;
+
+&lt;h2 id=&#34;final-attempt:034a30c0bea8ad3377260c7a90d4653c&#34;&gt;Final Attempt&lt;/h2&gt;
+
+&lt;p&gt;What to do? Enter PHP.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.permadi.com/blog/2010/10/html5-saving-canvas-image-data-using-php-and-ajax/&#34;&gt;Permadi&lt;/a&gt; presents a technique using PHP and AJAX that is exactly what I need. After some tweaking here’s what I came up with.&lt;/p&gt;
+
+&lt;h2 id=&#34;save-php:034a30c0bea8ad3377260c7a90d4653c&#34;&gt;save.php&lt;/h2&gt;
+
+&lt;p&gt;The first PHP file saves the passed in canvas data to the server at a random location determined by the md5(uniqid())  method.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$data = $_POST[&#39;data&#39;];
+$file = md5(uniqid()) . &#39;.png&#39;;
+
+// remove &amp;quot;data:image/png;base64,&amp;quot;
+$uri =  substr($data,strpos($data,&amp;quot;,&amp;quot;) 1);
+
+// save to file
+file_put_contents($file, base64_decode($uri));
+
+// return the filename
+echo json_encode($file);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We would call this via JQuery with the $.post method, filling the data parameter using the &lt;code&gt;toDataURL&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$.post(&amp;quot;save.php&amp;quot;, {data: canvas.toDataURL(&amp;quot;image/png&amp;quot;)})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;download-php:034a30c0bea8ad3377260c7a90d4653c&#34;&gt;download.php&lt;/h2&gt;
+
+&lt;p&gt;Now we can use PHP to force the download of the saved image data. You can read more about this in the &lt;a href=&#34;http://php.net/manual/en/function.readfile.php&#34;&gt;PHP Manual&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$file = trim($_GET[&#39;path&#39;]);
+
+// force user to download the image
+if (file_exists($file)) {
+    header(&#39;Content-Description: File Transfer&#39;);
+    header(&#39;Content-Type: image/png&#39;);
+    header(&#39;Content-Disposition: attachment; filename=&#39;.basename($file));
+    header(&#39;Content-Transfer-Encoding: binary&#39;);
+    header(&#39;Expires: 0&#39;);
+    header(&#39;Cache-Control: must-revalidate, post-check=0, pre-check=0&#39;);
+    header(&#39;Pragma: public&#39;);
+    header(&#39;Content-Length: &#39; . filesize($file));
+    ob_clean();
+    flush();
+    readfile($file);
+    exit;
+}
+else {
+    echo &amp;quot;$file not found&amp;quot;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can use the return value of our first AJAX request as input to &lt;code&gt;download.php&lt;/code&gt; to provide the filename.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$(&amp;quot;#save&amp;quot;).click(function () {
+    $.post(&amp;quot;save.php&amp;quot;, {data: G_cv.toDataURL(&amp;quot;image/png&amp;quot;)}, function (file) {
+        window.location.href =  &amp;quot;download.php?path=&amp;quot;  file});
+    });
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now when the &lt;code&gt;Save&lt;/code&gt; link is clicked a dialog box will be presented to the user asking them to save their image.&lt;/p&gt;
+
+&lt;p&gt;User friendly?&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Date.now() in IE6</title>
+      <link>http://sookocheff.com/posts/2011-06-09-date-now-in-ie6/</link>
+      <pubDate>Thu, 09 Jun 2011 11:10:09 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2011-06-09-date-now-in-ie6/</guid>
+      <description>&lt;p&gt;I was fiddling with a JavaScript timer application and noticed a bug in IE6. I’m sure this is documented elsewhere but I couldn’t find anything with some quick searches; hence this post.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Date.now()&lt;/code&gt; is not supported by IE6. Use &lt;code&gt;new Date().getTime()&lt;/code&gt; instead.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>The JavaScript click event and hidden input elements</title>
+      <link>http://sookocheff.com/posts/2011-06-02-the-javascript-click-event-and-hidden-input-elements/</link>
+      <pubDate>Thu, 02 Jun 2011 16:42:48 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2011-06-02-the-javascript-click-event-and-hidden-input-elements/</guid>
+      <description>&lt;p&gt;I was recently working with the HTML canvas element and wanted to attach an event to the canvas that would fire the click event of a file input element. I would then hide the input element so that the canvas element was the only way to browse for files.&lt;/p&gt;
+
+&lt;p&gt;My first attempt was simple enough.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;document.getElementById(&#39;canvas&#39;).onclick = function(e) {
+    document.getElementById(&#39;filepicker&#39;).click();
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now it’s time to hide the filepicker input element. Setting the elements style to display: none worked fine with Firefox but Chrome does not allow click events to be fired from hidden HTML elements. The solution is to use a bit of CSS to effectively hide the element. I came across this method over at &lt;a href=&#34;http://www.quirksmode.org/dom/inputfile.html&#34;&gt;quirksmode&lt;/a&gt; where they use it to style input boxes with CSS. I adapted it to my needs and came up with this solution.&lt;/p&gt;
+
+&lt;p&gt;With CSS we set the opacity to &lt;code&gt;0&lt;/code&gt; rendering the element invisible. The different declarations are for cross-browser compatibility.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.fakehidden {
+    -moz-opacity: 0;
+    filter:alpha(opacity: 0);
+    opacity: 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Setting the input elements class &lt;code&gt;tofakehidden&lt;/code&gt; effectively hides the element from the user yet click events can be fired as usual.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Dissecting jQuery&#39;s Fade Animation</title>
+      <link>http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation/</link>
+      <pubDate>Wed, 18 May 2011 15:16:17 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation/</guid>
+      <description>&lt;p&gt;Fade animations are a standard tool in any jQuery developer’s toolbox. But how do they really work? Let’s create a small function that encapsulates solely the fade functionality and find out.&lt;/p&gt;
+
+&lt;p&gt;Let’s start with the jQuery &lt;code&gt;$&lt;/code&gt; idiom.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function $(id) {
+    var $ = document.getElementById(id);
+    return $;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This function takes an HTML id as a parameter and returns the element associated with this id. We can call this function with a string to return the particular element we need.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$(&#39;img&#39;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let’s add a function to our element.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function $(id) {
+    var $ = document.getElementById(id);
+
+    $.fade = function () {
+        // perform fade here
+    };
+
+    return $;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can call the function by appending &lt;code&gt;.fade&lt;/code&gt; to our element.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$(&#39;img&#39;).fade();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now let’s set up the rest of the function by adding a parameter for the length of the delay and storing a reference to &lt;code&gt;this&lt;/code&gt;. In our context &lt;code&gt;this&lt;/code&gt; refers to the element we are calling fade from. (For a detailed explanation of how &lt;code&gt;this&lt;/code&gt; is set see the &lt;a href=&#34;http://javascriptweblog.wordpress.com&#34;&gt;JavaScript, JavaScript&lt;/a&gt; article &lt;a href=&#34;http://javascriptweblog.wordpress.com/.../understanding-javascripts-this/&#34;&gt;here&lt;/a&gt;). Finally, we set the display style of our element to &lt;code&gt;block&lt;/code&gt; to ensure our animation is visible.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$.fade = function (delay) {
+    var _this = this;
+
+    _this.style.display = &#39;block&#39;;
+
+    // perform fade here
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We perform the fade by setting the opacity of our element. For this purpose let’s define a new function for setting the opacity of an element &lt;code&gt;elm&lt;/code&gt; to &lt;code&gt;v&lt;/code&gt;. We divide by 100 to define our fade in terms of a percentage.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var opacityTo = function (elm, v) {
+    elm.style.opacity = v/100;
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can add a call to this function to our fade method.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$.fade = function (delay) {
+    var _this = this;
+
+    _this.style.display = &#39;block&#39;;
+
+    // set the opacity to 50%
+    opacityTo(_this, 50);
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now the trick is to call this function to fade the element over a period of time. We do this by using the &lt;code&gt;setTimeout(callbk, delay)&lt;/code&gt; function to set the opacity to different values at particular moments in time. The method signature defines a callbk parameter as a function to call when delay time has passed. If we call this function 100 times throughout our animation we will have a smooth and fluid result.&lt;/p&gt;
+
+&lt;p&gt;First we set up the &lt;code&gt;for&lt;/code&gt; loop to iterate from 1 to 100 and then call an anonymous function sending the index of our loop as a parameter to the function. Our anonymous function then calls &lt;code&gt;setTimeout&lt;/code&gt; periodically (100 times in total).&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>An Argument Against JavaScript Minification</title>
+      <link>http://sookocheff.com/posts/2011-05-10-an-argument-against-javascript-minification/</link>
+      <pubDate>Tue, 10 May 2011 15:11:09 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2011-05-10-an-argument-against-javascript-minification/</guid>
+      <description>&lt;p&gt;Developers learn by example. This is no secret. The first advice given to new developers is to read a lot of good source code and the best advice given to experienced developers is to read a lot of good source code. Canonical texts for many languages let the source code say far more than the text. I’m thinking of text’s like &lt;a href=&#34;http://cm.bell-labs.com/cm/cs/cbook/&#34;&gt;Kernighan &amp;amp; Ritchie&lt;/a&gt; and &lt;a href=&#34;http://mitpress.mit.edu/catalog/item/default.asp?ttype=2&amp;amp;tid=4825&#34;&gt;Friedman &amp;amp; Felleisen&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;When the world wide web was in its infancy view source was the best tool for wannabe webmasters learning their craft. Sure, bad designs and bad decisions propagated quickly. But good designs and good decisions propagated too. Those who really wanted to learn found best of breed web sites and quickly copied, edited and pasted their way to a beautiful site, learning much about web design in the process.&lt;/p&gt;
+
+&lt;p&gt;I would argue that JavaScript is still in its infancy. Developers are building complex web applications and in the process distilling years of hacking experience in to solid design. And we are hiding all this knowledge from the public for performance gains. The irony is that the JavaScript developers writing the best code are the JavaScript developers that minify. In effect we are hiding the best public source of information on JavaScript web development behind nebulous performance gains.&lt;/p&gt;
+
+&lt;p&gt;Is it worth it? Google serves billions of pages a day. Do you?&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How to Display HTML5 Notifications</title>
+      <link>http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications/</link>
+      <pubDate>Fri, 06 May 2011 10:10:10 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications/</guid>
+      <description>&lt;p&gt;Chrome recently introduced support for HTML Notifications.&lt;/p&gt;
+
+&lt;p&gt;Following the brief tutorial at &lt;a href=&#34;http://www.html5rocks.com/tutorials/notifications/quick/&#34;&gt;HTML5 Rocks&lt;/a&gt; I was able to implement this in a matter of minutes and I couldn’t be happier with the results.&lt;/p&gt;
+
+&lt;p&gt;The first step towards implementation is to check if the Notifications API is implemented by the browser. We do this by checking for the existence of the webkitNotifications object.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// check for notifications support
+if (!window.webkitNotifications) {
+    alert(&#39;Your browser does not support the Notifications API&#39;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As a means of preventing unwanted notifications we request permission from the user before displaying anything. The method &lt;code&gt;webkitNotifications.checkPermission()&lt;/code&gt; will return zero if permission has previously been granted. If it returns non-zero we can request permission with the method &lt;code&gt;webkitNotifications.requestPermission()&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// request permission to use notifications
+  if (window.webkitNotifications) {
+    if (window.webkitNotifications.checkPermission() &amp;gt; 0) {
+            window.webkitNotifications.requestPermission();
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now that we have requested permission we can display our notification. We use the function &lt;code&gt;webkitNotifications.createNotification()&lt;/code&gt; to create a Notification object. This function takes three parameters: an icon to display, a title and text. We then call the &lt;code&gt;show()&lt;/code&gt; method on our Notification object to display our notification.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// display a notification
+if (window.webkitNotifications &amp;amp;&amp;amp; window.webkitNotifications.checkPermission() == 0) {
+    window.webkitNotifications.createNotification(
+        &#39;apple-touch-icon.png&#39;,
+        &#39;Awesome!&#39;,
+        &amp;quot;You&#39;ve completed a Pomodoro!&amp;quot;).show();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The Notifications specification is currently in Draft format and has been submitted to the HTML working group for standardization. You can see the current spec through the &lt;a href=&#34;http://www.chromium.org/developers/design-documents/desktop-notifications/api-specification&#34;&gt;Chromium documentation&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Constants in JavaScript</title>
+      <link>http://sookocheff.com/posts/2011-04-20-constants-in-javascript/</link>
+      <pubDate>Wed, 20 Apr 2011 14:11:28 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2011-04-20-constants-in-javascript/</guid>
+      <description>&lt;p&gt;How are constants declared in JavaScript?&lt;/p&gt;
+
+&lt;p&gt;You could use the const keyword like so.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;const pi = 3.14;
+document.writeln(&amp;quot;pi is roughly&amp;quot;   pi   &amp;quot;.&amp;quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;But watch out!  The MDN’s &lt;a href=&#34;https://developer.mozilla.org/en/JavaScript/Reference/Statements/const&#34;&gt;JavaScript Reference&lt;/a&gt; says that&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;const&lt;/code&gt; is a &lt;strong&gt;Mozilla-specific extension&lt;/strong&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Constants are actually not part of the JavaScript specification and we’ll have to roll our own solution.  We could use the &lt;a href=&#34;http://www.yuiblog.com/blog/2007/06/12/module-pattern/&#34;&gt;module  pattern&lt;/a&gt; and create accessor functions to our constant data like this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var CONSTANTS = (function() {
+  var private = {
+    &#39;PI&#39; : &#39;3.14&#39;,
+  };
+
+  return {
+    get: function(name) { return private[name]; }
+  };
+})();
+
+alert(&#39;PI: &#39;   CONSTANTS.get(&#39;PI&#39;));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This prevents write access to our data and allows read access through a bit of extra syntax.  Another method is to simply use a convention such as ALL CAPS to define constants. Most programmers know this convention and will respect it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var PI = 3.14;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The solution I use is to place all constants in an object literal.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var CONSTANTS = {
+  pi : 3.14
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This strikes me as a good compromise between the ALL CAPS convention and the over engineered module pattern solution.  What do you think?&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Understanding Closures in JavaScript</title>
+      <link>http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript/</link>
+      <pubDate>Wed, 19 Jan 2011 09:11:15 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript/</guid>
+      <description>
+
+&lt;p&gt;Closures are easy. There I said it. Invest a little bit of time, and you will say it too. Follow along with me as I attempt to explain what closures are and how they are used.&lt;/p&gt;
+
+&lt;h2 id=&#34;scope:acc53ffd153ac46f6b6f72fe8b5814e1&#34;&gt;Scope&lt;/h2&gt;
+
+&lt;p&gt;The first pre-requisite in fully understanding closures is JavaScript’s implementation of scope. JavaScript’s C-style syntax may lead you to believe that anything between the “curly braces” defines a block where variables defined within that block are private to that region of code. This is false. JavaScript does not define block scope. Any variables defined within a block are available outside that block. With one exception: functions. JavaScript has function scope where variables defined within a function are private to that function. This is very important.&lt;/p&gt;
+
+&lt;h3 id=&#34;summary:acc53ffd153ac46f6b6f72fe8b5814e1&#34;&gt;Summary&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;JavaScript has function scope.&lt;/li&gt;
+&lt;li&gt;All variables defined within a function are private to that function.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;inner-functions:acc53ffd153ac46f6b6f72fe8b5814e1&#34;&gt;Inner Functions&lt;/h2&gt;
+
+&lt;p&gt;Inner functions are functions defined within another function. It’s easier to demonstrate than to explain, so here goes.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var outer = function () {
+  var secrets = 3;
+  var inner = function () {
+    return secrets;
+  }        
+
+  return inner;
+}   
+
+output = outer();
+alert(output);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You will get a pop-up window showing that the variable secrets now holds a reference to the function inner.&lt;/p&gt;
+
+&lt;h3 id=&#34;summary-1:acc53ffd153ac46f6b6f72fe8b5814e1&#34;&gt;Summary&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Inner functions are defined within other functions (and this can nest arbitrarily).&lt;/li&gt;
+&lt;li&gt;Inner functions can be returned “fully formed” from outer functions.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;closures:acc53ffd153ac46f6b6f72fe8b5814e1&#34;&gt;Closures&lt;/h2&gt;
+
+&lt;p&gt;In one sentence, closure means that an inner function has access to the context of its outer function, even when the outer function no longer exists. OK. Let’s do that example one time more.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var outer = function () {
+  var secrets = 3;
+  var inner = function () {
+    return secrets;
+  }
+
+  return inner;
+}
+
+output = outer();
+alert(output());
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Notice the difference? This time we are executing the inner function through the statement output(). Now you will get a pop-up window showing that the variable secrets is still available to the inner function, even when the outer function no longer exists.&lt;/p&gt;
+
+&lt;p&gt;You’ve just created a closure!&lt;/p&gt;
+
+&lt;h3 id=&#34;summary-2:acc53ffd153ac46f6b6f72fe8b5814e1&#34;&gt;Summary&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Closures are easy.&lt;/li&gt;
+&lt;li&gt;You’ve just scratched the surface.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Now What?&lt;/p&gt;
+
+&lt;p&gt;I haven’t even begun to explain what is capable with closures. Not to mention a handful of caveats to watch out for. Hopefully you understand a bit more about closures and are now willing to dive deeper. Check out the following resources for much, much more:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.amazon.com/JavaScript-Good-Parts-Douglas-Crockford/dp/0596517742&#34;&gt;JavaScript: The Good Parts&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://jibbering.com/faq/notes/closures/&#34;&gt;JavaScript Closures&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.crockford.com/javascript/private.html&#34;&gt;Private Members in JavaScript&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>The future of mobile development</title>
+      <link>http://sookocheff.com/posts/2011-01-15-the-future-of-mobile-development/</link>
+      <pubDate>Sat, 15 Jan 2011 09:19:21 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/posts/2011-01-15-the-future-of-mobile-development/</guid>
+      <description>&lt;p&gt;The future of mobile development is cross-platform HTML5, JavaScript, and CSS3.  Let me explain. I’ve been working on a couple Windows Phone 7 applications to accompany my first release, &lt;a href=&#34;http://www.appsfuze.com/applications/windowsphone.photo/faceart,3617&#34;&gt;FaceArt&lt;/a&gt;, in the Marketplace. As I do more research and development with the mobile platform I keep looking for ways to increase the reach of my apps. The most obvious is to release Android and iOS versions but I have a few hurdles to clear first, the biggest being lack of time. I do all development as a moonlighting gig while I work full-time and I’m already struggling to find extra hours during the week to finish my first three applications for one platform. How am I going to write and maintain three separate codebases for each app for the major mobile platforms while still keeping my employer happy during the work week?  The solution is cross-platform libraries targeting mobile and web apps. &lt;a href=&#34;http://www.phonegap.com&#34;&gt;PhoneGap&lt;/a&gt;, &lt;a href=&#34;http://www.airplaysdk.com&#34;&gt;AirPlay&lt;/a&gt;, and &lt;a href=&#34;http://www.dragonfiresdk.com&#34;&gt;DragonFire SDK&lt;/a&gt; are a few notable products designed for just this problem.  The most notable, and most intriguing for me, is PhoneGap. I first noticed PhoneGap through an article on &lt;a href=&#34;http://arstechnica.com/apple/news/2010/11/introducing-the-ars-technica-reader-for-ipad.ars&#34;&gt;ArsTechnica&lt;/a&gt;. This open-source solution wraps apps designed with HTML5, JavaScript, and CSS in a container suitable for the respective app stores. Why is this exciting? You can design an application for the web and get the mobile app for free (or minimal) time investment.  This is as close to the write once, run anywhere ideal that we will get for mobile phones and as the tools improve the experience is only going to get better for developers.  I personally can’t wait to see what the future holds for this product. What do you think?&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

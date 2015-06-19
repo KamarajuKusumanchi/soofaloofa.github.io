@@ -46,14 +46,13 @@ pip install GoogleAppEnginePipeline -t lib/
 ```
 
 Pipeline requests need to be handled by the Pipeline application. We set that up
-by adding a handler to `app.yaml`. Since these are internal application requrest
-we can secure them using the `login: admin` directive.
+by adding a handler to `app.yaml`. The pipeline library itself will enforce the
+login access restrictions so we do not need to secure these handlers.
 
 ```yaml
 handlers:
 - url: /_ah/pipeline.*
   script: pipeline.handlers._APP
-  login: admin
 ```
 
 ## Basic Synchronous Pipelines

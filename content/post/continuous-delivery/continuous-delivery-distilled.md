@@ -60,7 +60,7 @@ and approved the change a release can go out. From a development standpoint it
 is important to understand that any code commit that passes testing may be
 released to customers at *any* point in time.
 
-{{% img_wikipedia "http://commons.wikimedia.org/wiki/File:Continuous_Delivery_process_diagram.png#/media/File:Continuous_Delivery_process_diagram.png" "http://upload.wikimedia.org/wikipedia/commons/7/74/Continuous_Delivery_process_diagram.png" "Continuous Delivery process diagram - Jez Humble" %}}
+{{% img_url "http://commons.wikimedia.org/wiki/File:Continuous_Delivery_process_diagram.png#/media/File:Continuous_Delivery_process_diagram.png" "http://upload.wikimedia.org/wikipedia/commons/7/74/Continuous_Delivery_process_diagram.png" "Continuous Delivery process diagram - Jez Humble" %}}
 
 ## Why Continuous Delivery?
 

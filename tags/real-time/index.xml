@@ -7,35 +7,5 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Tue, 19 Oct 2010 15:09:18 UTC</lastBuildDate>
     
-    <item>
-      <title>How to install the real-time kernel in Ubuntu</title>
-      <link>http://sookocheff.com/posts/2010-10-19-how-to-install-the-real-time-kernel-in-ubuntu/</link>
-      <pubDate>Tue, 19 Oct 2010 15:09:18 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2010-10-19-how-to-install-the-real-time-kernel-in-ubuntu/</guid>
-      <description>&lt;p&gt;To use Ubuntu as an audio production server you need the real-time kernel. This allows applications to have some guarantee of the maximum response time of any task. High priority tasks are given the CPU within a fixed minimum amount of time allowing for processor intensive tasks to actually be completed. Follow along to see how to install the real-time kernel yourself. A vanilla install of most Linux distributions does not enable the real-time kernel, but it is easy enough to install.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;sudo apt-get install linux-rt
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;to install it. Now, we have to change the boot loader (GRUB) to load the real-time kernel. Edit the file&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;sudo gedit /etc/default/grub
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;by commenting out the line&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;GRUB_HIDDEN_TIMEOUT=0
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;then update the GRUB configuration.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;sudo update-grub
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This will allow you to select which kernel to run at boot time so you can alternate between the real-time and vanilla kernels depending on your needs.&lt;/p&gt;
-</description>
-    </item>
-    
   </channel>
 </rss>

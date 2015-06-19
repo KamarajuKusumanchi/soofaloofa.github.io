@@ -7,29 +7,5 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Tue, 18 Nov 2014 11:15:23 UTC</lastBuildDate>
     
-    <item>
-      <title>Installing MySQL-Python on OS X Yosemite</title>
-      <link>http://sookocheff.com/posts/2014-11-18-installing-mysql-python-on-yosemite/</link>
-      <pubDate>Tue, 18 Nov 2014 11:15:23 UTC</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/posts/2014-11-18-installing-mysql-python-on-yosemite/</guid>
-      <description>&lt;p&gt;Installing the MySQL-Python package requires a few steps. In an effort to aid
-future Internet travellers, this post will document how to install the
-MySQL-Python package on OS X Yosemite.&lt;/p&gt;
-
-&lt;p&gt;First, install MariaDB, the drop-in replacement for MySQL. I chose MacPorts for
-this task, though Homebrew would work just fine. Second, update your PATH to
-include the mariadb executables. Third, install the Python MySQL connector.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo port install mariadb
-PATH=/opt/local/lib/mariadb/bin:$PATH
-pip install MySQL-Python
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;That&amp;rsquo;s it! You should be able to &lt;code&gt;import MySQLdb&lt;/code&gt; in your Python code and
-interact with your MariaDB database.&lt;/p&gt;
-</description>
-    </item>
-    
   </channel>
 </rss>

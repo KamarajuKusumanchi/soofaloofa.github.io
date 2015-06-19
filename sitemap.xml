@@ -23,422 +23,422 @@
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/appengine/introducing-cloudpypi/</loc>
+    <loc>http://sookocheff.com/post/python/introducing-cloudpypi/</loc>
     <lastmod>2015-06-16T21:19:26-06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/appengine/pipelines/pipeline-ui/</loc>
+    <loc>http://sookocheff.com/post/appengine/pipelines/pipeline-ui/</loc>
     <lastmod>2015-06-09T20:43:56-06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/appengine/pipelines/asynchronous-pipelines/</loc>
+    <loc>http://sookocheff.com/post/appengine/pipelines/asynchronous-pipelines/</loc>
     <lastmod>2015-06-02T04:45:56-06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/appengine/pipelines/pipeline-internals/</loc>
+    <loc>http://sookocheff.com/post/appengine/pipelines/pipeline-internals/</loc>
     <lastmod>2015-05-27T05:57:19-06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/appengine/pipelines/fan-in-fan-out/</loc>
+    <loc>http://sookocheff.com/post/appengine/pipelines/fan-in-fan-out/</loc>
     <lastmod>2015-05-19T05:57:19-06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/appengine/pipelines/connecting-pipelines/</loc>
+    <loc>http://sookocheff.com/post/appengine/pipelines/connecting-pipelines/</loc>
     <lastmod>2015-05-12T05:57:19-06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/appengine/pipelines/the-basics/</loc>
+    <loc>http://sookocheff.com/post/appengine/pipelines/the-basics/</loc>
     <lastmod>2015-05-05T05:57:19-06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2015-04-28-durabledict-for-app-engine/</loc>
+    <loc>http://sookocheff.com/post/appengine/durabledict-for-app-engine/</loc>
     <lastmod>2015-04-29T06:19:23-06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2015-04-23-continuous-delivery-distilled/</loc>
+    <loc>http://sookocheff.com/post/continuous-delivery/continuous-delivery-distilled/</loc>
     <lastmod>2015-04-23T08:32:37-06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2015-03-23-creating-a-big-query-table-java-api/</loc>
+    <loc>http://sookocheff.com/post/bigquery/creating-a-big-query-table-java-api/</loc>
     <lastmod>2015-03-23T15:32:37-06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/r/deploying-r-studio-to-compute-engine/</loc>
+    <loc>http://sookocheff.com/post/r/deploying-r-studio-to-compute-engine/</loc>
     <lastmod>2015-03-23T15:32:37-06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2015-02-23-syncing-search-documents-with-datastore-entities/</loc>
+    <loc>http://sookocheff.com/post/appengine/syncing-search-documents-with-datastore-entities/</loc>
     <lastmod>2015-02-23T08:20:37-06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2015-02-12-halting-unittest-execution-at-first-error/</loc>
+    <loc>http://sookocheff.com/post/python/halting-unittest-execution-at-first-error/</loc>
     <lastmod>2015-02-12T06:20:37-06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2015-02-11-cloud-dataflow-with-gradle/</loc>
+    <loc>http://sookocheff.com/post/dataflow/cloud-dataflow-with-gradle/</loc>
     <lastmod>2015-02-11T06:20:37-06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2015-02-01-a-pypiserver-deployment-script/</loc>
+    <loc>http://sookocheff.com/post/python/a-pypiserver-deployment-script/</loc>
     <lastmod>2015-02-01T14:53:37-06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2015-01-27-webapp2-download-handler/</loc>
+    <loc>http://sookocheff.com/post/appengine/webapp2-download-handler/</loc>
     <lastmod>2015-01-27T06:07:12-06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2015-01-23-querying-app-engine-logs-with-elasticsearch/</loc>
+    <loc>http://sookocheff.com/post/appengine/querying-app-engine-logs-with-elasticsearch/</loc>
     <lastmod>2015-01-23T06:15:07+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2015-01-04-parsing-bash-script-arguments-with-shopts/</loc>
+    <loc>http://sookocheff.com/post/bash/parsing-bash-script-arguments-with-shopts/</loc>
     <lastmod>2015-01-04T12:31:51+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-12-40-managing-app-engine-dependencies-with-pip/</loc>
+    <loc>http://sookocheff.com/post/appengine/managing-app-engine-dependencies-with-pip/</loc>
     <lastmod>2014-12-30T20:35:48+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/</loc>
+    <loc>http://sookocheff.com/post/appengine/mapreduce/writing-a-custom-output-writer/</loc>
     <lastmod>2014-12-22T07:07:35+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-12-11-bash-string-operators/</loc>
+    <loc>http://sookocheff.com/post/bash/bash-string-operators/</loc>
     <lastmod>2014-12-11T19:54:12+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/</loc>
+    <loc>http://sookocheff.com/post/appengine/mapreduce/writing-a-custom-input-reader/</loc>
     <lastmod>2014-12-04T22:54:12+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-11-18-installing-mysql-python-on-yosemite/</loc>
+    <loc>http://sookocheff.com/post/tools/installing-mysql-python-on-yosemite/</loc>
     <lastmod>2014-11-18T11:15:23+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-11-11-automatically-resizing-a-compute-engine-disk/</loc>
+    <loc>http://sookocheff.com/post/compute-engine/automatically-resizing-a-compute-engine-disk/</loc>
     <lastmod>2014-11-11T19:21:45+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-11-05-a-guided-tour-of-compute-engine/</loc>
+    <loc>http://sookocheff.com/post/compute-engine/a-guided-tour-of-compute-engine/</loc>
     <lastmod>2014-11-05T04:45:05+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-11-03-extracting-the-start-sector-with-fdisk/</loc>
+    <loc>http://sookocheff.com/post/linux/extracting-the-start-sector-with-fdisk/</loc>
     <lastmod>2014-11-03T05:49:31+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-10-28-packaging-a-compute-engine-vm/</loc>
+    <loc>http://sookocheff.com/post/compute-engine/packaging-a-compute-engine-vm/</loc>
     <lastmod>2014-10-28T06:03:42+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-10-20-prediction-api/</loc>
+    <loc>http://sookocheff.com/post/prediction-api/predicting-sentiment/</loc>
     <lastmod>2014-10-20T06:23:04+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-10-06-suggested-searches/</loc>
+    <loc>http://sookocheff.com/post/appengine/suggested-searches/</loc>
     <lastmod>2014-10-06T05:52:29+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-09-27-composing-asynchronous-functions-with-tasklets/</loc>
+    <loc>http://sookocheff.com/post/appengine/ndb/composing-asynchronous-functions-with-tasklets/</loc>
     <lastmod>2014-09-27T15:25:29+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-09-15-working-from-home-retrospective/</loc>
+    <loc>http://sookocheff.com/post/opinion/working-from-home-retrospective/</loc>
     <lastmod>2014-09-18T12:57:32+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-08-14-converting-an-ndb-model-to-a-bigquery-schema/</loc>
+    <loc>http://sookocheff.com/post/appengine/ndb/converting-an-ndb-model-to-a-bigquery-schema/</loc>
     <lastmod>2014-08-14T17:58:03+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-08-04-restoring-an-app-engine-backup/</loc>
+    <loc>http://sookocheff.com/post/appengine/restoring-an-app-engine-backup/</loc>
     <lastmod>2014-08-04T21:18:13+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-07-29-bypassing-ndb-hooks-with-the-raw-datastore-input-reader/</loc>
+    <loc>http://sookocheff.com/post/appengine/ndb/bypassing-ndb-hooks-with-the-raw-datastore-input-reader/</loc>
     <lastmod>2014-07-29T20:32:42+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-07-22-generating-a-c-sharp-client/</loc>
+    <loc>http://sookocheff.com/post/appengine/cloud-endpoints/generating-a-c-sharp-client/</loc>
     <lastmod>2014-07-22T06:29:56+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-07-16-using-basic-authentication-with-google-cloud-endpoints/</loc>
+    <loc>http://sookocheff.com/post/appengine/cloud-endpoints/using-basic-authentication-with-google-cloud-endpoints/</loc>
     <lastmod>2014-07-16T01:02:25+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-07-10-unit-testing-cloud-endpoints/</loc>
+    <loc>http://sookocheff.com/post/appengine/cloud-endpoints/unit-testing-cloud-endpoints/</loc>
     <lastmod>2014-07-10T14:32:15+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-07-02-creating-restful-apis-with-cloud-endpoints/</loc>
+    <loc>http://sookocheff.com/post/appengine/cloud-endpoints/creating-restful-apis-with-cloud-endpoints/</loc>
     <lastmod>2014-07-02T06:14:23+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-06-23-running-multiple-app-engine-modules-locally/</loc>
+    <loc>http://sookocheff.com/post/appengine/running-multiple-app-engine-modules-locally/</loc>
     <lastmod>2014-06-17T13:09:42+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-06-17-downloading-directories-of-code-from-github-using-the-github-api/</loc>
+    <loc>http://sookocheff.com/post/tools/downloading-directories-of-code-from-github-using-the-github-api/</loc>
     <lastmod>2014-06-17T06:14:23+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-05-28-how-to-bypass-the-auto-now-property-option-during-an-ndb-put/</loc>
+    <loc>http://sookocheff.com/post/appengine/ndb/how-to-bypass-the-auto-now-property-option-during-an-ndb-put/</loc>
     <lastmod>2014-05-28T05:55:48+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/</loc>
+    <loc>http://sookocheff.com/post/appengine/mapreduce/using-combiners-to-reduce-data-throughput/</loc>
     <lastmod>2014-05-20T08:54:12+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/</loc>
+    <loc>http://sookocheff.com/post/appengine/mapreduce/combining-sequential-mapreduce-jobs/</loc>
     <lastmod>2014-05-13T10:40:38+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-05-07-installing-lxml-on-os-x-mavericks/</loc>
+    <loc>http://sookocheff.com/post/python/installing-lxml-on-os-x-mavericks/</loc>
     <lastmod>2014-05-07T10:26:45+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/</loc>
+    <loc>http://sookocheff.com/post/appengine/mapreduce/programmatic-mapreduce/</loc>
     <lastmod>2014-04-28T21:51:22+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/appengine/mapreduce/mapreduce-yaml/</loc>
+    <loc>http://sookocheff.com/post/appengine/mapreduce/mapreduce-yaml/</loc>
     <lastmod>2014-04-22T06:48:36+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/appengine/mapreduce/the-basics/</loc>
+    <loc>http://sookocheff.com/post/appengine/mapreduce/the-basics/</loc>
     <lastmod>2014-04-15T12:09:36+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-04-08-understanding-json-patch/</loc>
+    <loc>http://sookocheff.com/post/api/understanding-json-patch/</loc>
     <lastmod>2014-04-08T16:12:14+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-04-01-how-to-version-a-rest-api/</loc>
+    <loc>http://sookocheff.com/post/api/how-to-version-a-rest-api/</loc>
     <lastmod>2014-04-01T14:16:18+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-03-27-when-to-use-http-put-and-http-post/</loc>
+    <loc>http://sookocheff.com/post/api/when-to-use-http-put-and-http-post/</loc>
     <lastmod>2014-03-27T07:23:34+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-03-25-stripe-checkout-opening-in-a-new-tab/</loc>
+    <loc>http://sookocheff.com/post/opinion/stripe-checkout-opening-in-a-new-tab/</loc>
     <lastmod>2014-03-25T07:23:45+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-03-19-how-rest-constraints-affect-api-design/</loc>
+    <loc>http://sookocheff.com/post/api/how-rest-constraints-affect-api-design/</loc>
     <lastmod>2014-03-19T14:11:48+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-03-11-on-choosing-a-hypermedia-format/</loc>
+    <loc>http://sookocheff.com/post/api/on-choosing-a-hypermedia-format/</loc>
     <lastmod>2014-03-11T15:15:15+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2014-01-04-three-questions-that-define-an-ideal-customer/</loc>
+    <loc>http://sookocheff.com/post/business/three-questions-that-define-an-ideal-customer/</loc>
     <lastmod>2014-01-04T10:07:45+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2013-12-19-how-to-get-accepted-to-a-business-plan-competition/</loc>
+    <loc>http://sookocheff.com/post/business/how-to-get-accepted-to-a-business-plan-competition/</loc>
     <lastmod>2013-12-19T09:09:09+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2013-06-04-install-npm-packages-with-a-chef-cookbook/</loc>
+    <loc>http://sookocheff.com/post/javascript/node/install-npm-packages-with-a-chef-cookbook/</loc>
     <lastmod>2013-06-06T08:45:51+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2013-05-16-why-photos-is-the-killer-feature-of-google-plus/</loc>
+    <loc>http://sookocheff.com/post/opinion/why-photos-is-the-killer-feature-of-google-plus/</loc>
     <lastmod>2013-05-16T16:17:18+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2013-04-30-apple-has-a-software-problem-why-ill-be-switching-to-android/</loc>
+    <loc>http://sookocheff.com/post/opinion/apple-has-a-software-problem-why-ill-be-switching-to-android/</loc>
     <lastmod>2013-04-30T22:10:18+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2013-04-19-creating-a-new-file-or-directoryin-vim-using-nerdtree/</loc>
+    <loc>http://sookocheff.com/post/vim/creating-a-new-file-or-directoryin-vim-using-nerdtree/</loc>
     <lastmod>2013-04-19T12:18:19+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/</loc>
+    <loc>http://sookocheff.com/post/unity/submitting-a-unity3d-game-to-the-mac-app-store/</loc>
     <lastmod>2013-04-09T14:43:12+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2013-01-22-copying-from-the-vim-to-the-os-x-mountain-lion-clipboard/</loc>
+    <loc>http://sookocheff.com/post/vim/copying-from-the-vim-to-the-os-x-mountain-lion-clipboard/</loc>
     <lastmod>2013-01-22T08:16:42+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2012-11-15-etcetera-plugin-live-alerts-prompts-loading-views-push-localization-and-more/</loc>
+    <loc>http://sookocheff.com/post/unity/etcetera-plugin-live-alerts-prompts-loading-views-push-localization-and-more/</loc>
     <lastmod>2012-11-15T13:14:15+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2012-10-08-using-unity3d-with-version-control/</loc>
+    <loc>http://sookocheff.com/post/unity/using-unity3d-with-version-control/</loc>
     <lastmod>2012-10-08T09:11:18+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/</loc>
+    <loc>http://sookocheff.com/post/javascript/saving-canvas-data-to-an-image-file-with-javascript-and-php/</loc>
     <lastmod>2011-07-27T10:08:42+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2011-06-28-using-leiningen-behind-a-windows-proxy/</loc>
+    <loc>http://sookocheff.com/post/clojure/using-leiningen-behind-a-windows-proxy/</loc>
     <lastmod>2011-06-28T11:15:08+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2011-06-09-date-now-in-ie6/</loc>
+    <loc>http://sookocheff.com/post/javascript/date-now-in-ie6/</loc>
     <lastmod>2011-06-09T11:10:09+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2011-06-02-the-javascript-click-event-and-hidden-input-elements/</loc>
+    <loc>http://sookocheff.com/post/javascript/the-javascript-click-event-and-hidden-input-elements/</loc>
     <lastmod>2011-06-02T16:42:48+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2011-05-18-dissecting-jquerys-fade-animation/</loc>
+    <loc>http://sookocheff.com/post/javascript/dissecting-jquerys-fade-animation/</loc>
     <lastmod>2011-05-18T15:16:17+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2011-05-10-an-argument-against-javascript-minification/</loc>
+    <loc>http://sookocheff.com/post/opinion/an-argument-against-javascript-minification/</loc>
     <lastmod>2011-05-10T15:11:09+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2011-05-06-how-to-display-html5-notifications/</loc>
+    <loc>http://sookocheff.com/post/javascript/how-to-display-html5-notifications/</loc>
     <lastmod>2011-05-06T10:10:10+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2011-04-23-book-review-start-small-stay-small/</loc>
+    <loc>http://sookocheff.com/post/books/book-review-start-small-stay-small/</loc>
     <lastmod>2011-04-23T12:31:47+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2011-04-20-constants-in-javascript/</loc>
+    <loc>http://sookocheff.com/post/javascript/constants-in-javascript/</loc>
     <lastmod>2011-04-20T14:11:28+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2011-01-19-understanding-closures-in-javascript/</loc>
+    <loc>http://sookocheff.com/post/javascript/understanding-closures-in-javascript/</loc>
     <lastmod>2011-01-19T09:11:15+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2011-01-18-safely-remove-the-header-from-the-wordpress-twentyten-theme/</loc>
+    <loc>http://sookocheff.com/post/tools/safely-remove-the-header-from-the-wordpress-twentyten-theme/</loc>
     <lastmod>2011-01-18T10:11:12+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2011-01-15-the-future-of-mobile-development/</loc>
+    <loc>http://sookocheff.com/post/mobile/the-future-of-mobile-development/</loc>
     <lastmod>2011-01-15T09:19:21+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2011-01-11-a-cheap-home-server/</loc>
+    <loc>http://sookocheff.com/post/linux/a-cheap-home-server/</loc>
     <lastmod>2011-01-11T06:55:12+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2011-01-06-and-the-winner-is-google-chrome/</loc>
+    <loc>http://sookocheff.com/post/opinion/and-the-winner-is-google-chrome/</loc>
     <lastmod>2011-01-06T15:23:34+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2010-10-19-how-to-install-the-real-time-kernel-in-ubuntu/</loc>
+    <loc>http://sookocheff.com/post/linux/how-to-install-the-real-time-kernel-in-ubuntu/</loc>
     <lastmod>2010-10-19T15:09:18+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2010-09-28-how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards/</loc>
+    <loc>http://sookocheff.com/post/linux/how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards/</loc>
     <lastmod>2010-09-28T14:23:34+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2010-09-04-readability-by-arc90/</loc>
+    <loc>http://sookocheff.com/post/tools/readability-by-arc90/</loc>
     <lastmod>2010-09-04T13:13:13+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2010-08-03-share-multiple-mt-daap-libraries/</loc>
+    <loc>http://sookocheff.com/post/linux/share-multiple-mt-daap-libraries/</loc>
     <lastmod>2010-08-03T18:12:34+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2010-07-28-mounting-samba-shares-from-the-command-line/</loc>
+    <loc>http://sookocheff.com/post/linux/mounting-samba-shares-from-the-command-line/</loc>
     <lastmod>2010-07-28T18:12:37+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/2010-06-01-how-to-forward-root-users-mail-to-an-external-address/</loc>
+    <loc>http://sookocheff.com/post/linux/how-to-forward-root-users-mail-to-an-external-address/</loc>
     <lastmod>2010-06-01T14:12:32+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://sookocheff.com/posts/linux/how-to-monitor-a-raid-array-in-ubuntu-server/</loc>
+    <loc>http://sookocheff.com/post/linux/how-to-monitor-a-raid-array-in-ubuntu-server/</loc>
     <lastmod>2010-05-28T02:15:45+00:00</lastmod>
   </url>
   

@@ -77,6 +77,22 @@
         
         
           <article>
+            <h2><a href="http://sookocheff.com/post/appengine/managed-vms/managed-vms-and-the-future-of-appengine/">Managed VMs and the Future of App Engine</a></h2>
+            <small class="text-muted">
+              Posted on Tuesday, June 23, 2015 · <a href="http://sookocheff.com/post/appengine/managed-vms/managed-vms-and-the-future-of-appengine/#disqus_thread">0 Comments</a>
+            </small>
+            <p>
+              I&rsquo;ve been thinking about the transition of App Engine to Python 3 and have come to the conclusion that it will never happen — App Engine will eventually be deprecated in favour of Managed VMs. Let&rsquo;s break this apart to see why this is. First, consider the effort required by Google to develop App Engine. The Python runtime environment was modified to enforce the sandbox of the App Engine environment. To provide a Python 3 environment for App Engine as we know it, the Python 3 runtime would need to be modified with the same restrictions.
+            </p>
+            
+            <p class="text-center">
+              <a href="http://sookocheff.com/post/appengine/managed-vms/managed-vms-and-the-future-of-appengine/"><button type="button" class="btn btn-primary">Read More</button></a>
+            </p>
+            
+            <hr>
+          </article>
+        
+          <article>
             <h2><a href="http://sookocheff.com/post/python/introducing-cloudpypi/">Introducing CloudPyPI</a></h2>
             <small class="text-muted">
               Posted on Tuesday, June 16, 2015 · <a href="http://sookocheff.com/post/python/introducing-cloudpypi/#disqus_thread">0 Comments</a>
@@ -402,39 +418,6 @@ copy all of your library code into a local folder to ship along with your app.</
             
             <p class="text-center">
               <a href="http://sookocheff.com/post/appengine/managing-app-engine-dependencies-with-pip/"><button type="button" class="btn btn-primary">Read More</button></a>
-            </p>
-            
-            <hr>
-          </article>
-        
-          <article>
-            <h2><a href="http://sookocheff.com/post/appengine/mapreduce/writing-a-custom-output-writer/">App Engine MapReduce API - Part 7: Writing a Custom Output Writer</a></h2>
-            <small class="text-muted">
-              Posted on Monday, December 22, 2014 · <a href="http://sookocheff.com/post/appengine/mapreduce/writing-a-custom-output-writer/#disqus_thread">0 Comments</a>
-            </small>
-            <p>
-              <h2 id="mapreduce-api-series:ab07d07908727ffe1abccc24ebcef928">MapReduce API Series</h2>
-
-<ul>
-<li><a href="http://sookocheff.com/posts/2014-04-15-app-engine-mapreduce-api-part-1-the-basics/">Part 1: The Basics</a></li>
-<li><a href="http://sookocheff.com/posts/2014-04-22-app-engine-mapreduce-api-part-2-running-a-mapreduce-job-using-mapreduceyaml/">Part 2: Running a MapReduce Job Using mapreduce.yaml</a></li>
-<li><a href="http://sookocheff.com/posts/2014-04-30-app-engine-mapreduce-api-part-3-programmatic-mapreduce-using-pipelines/">Part 3: Programmatic MapReduce using Pipelines</a></li>
-<li><a href="http://sookocheff.com/posts/2014-05-13-app-engine-mapreduce-api-part-4-combining-sequential-mapreduce-jobs/">Part 4: Combining Sequential MapReduce Jobs</a></li>
-<li><a href="http://sookocheff.com/posts/2014-05-20-app-engine-mapreduce-api-part-5-using-combiners-to-reduce-data-throughput/">Part 5: Using Combiners to Reduce Data Throughput</a></li>
-<li><a href="http://sookocheff.com/posts/2014-12-04-app-engine-mapreduce-api-part-6-writing-a-custom-input-reader/">Part 6: Writing a Custom Input Reader</a></li>
-<li><a href="http://sookocheff.com/posts/2014-12-20-app-engine-mapreduce-api-part-7-writing-a-custom-output-writer/">Part 7: Writing a Custom Output Writer</a></li>
-</ul>
-
-<p>The MapReduce library supports a number of default output writers. You can also
-write your own that implements the output writer interface. This article
-examines how to write a custom output writer that pushes data from the App
-Engine datastore to an elasticsearch cluster. A similar pattern can be followed
-to push the output from your MapReduce job to any number of places.</p>
-
-            </p>
-            
-            <p class="text-center">
-              <a href="http://sookocheff.com/post/appengine/mapreduce/writing-a-custom-output-writer/"><button type="button" class="btn btn-primary">Read More</button></a>
             </p>
             
             <hr>

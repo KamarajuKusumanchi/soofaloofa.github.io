@@ -119,13 +119,12 @@ You can also grab the source code from
 </code></pre>
 
 <p>Pipeline requests need to be handled by the Pipeline application. We set that up
-by adding a handler to <code>app.yaml</code>. Since these are internal application requrest
-we can secure them using the <code>login: admin</code> directive.</p>
+by adding a handler to <code>app.yaml</code>. The pipeline library itself will enforce the
+login access restrictions so we do not need to secure these handlers.</p>
 
 <pre><code class="language-yaml">handlers:
 - url: /_ah/pipeline.*
   script: pipeline.handlers._APP
-  login: admin
 </code></pre>
 
 <h2 id="basic-synchronous-pipelines:dd1501e70e3c5b7c7f6f0783a2583eda">Basic Synchronous Pipelines</h2>

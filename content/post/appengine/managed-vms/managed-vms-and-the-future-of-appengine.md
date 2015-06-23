@@ -1,5 +1,5 @@
 ---
-date: 2015-06-18T20:33:37-06:00
+date: 2015-06-23T20:33:37-06:00
 title: Managed VMs and the Future of App Engine
 tags: 
   - "app engine"

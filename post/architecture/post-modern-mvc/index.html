@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<title>Structuring an Application using Model View Controller : sookocheff.com</title>
+
+<meta charset="utf-8">
+<meta http-equiv="content-type", content="text/html; charset=utf-8">
+<meta name="viewport", content="width=device-width, initial-scale=1.0">
+
+<link rel="canonical" href="http://localhost:1313/post/architecture/post-modern-mvc/">
+
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Bree+Serif">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/styles/default.min.css">
+
+<link rel="stylesheet" href="/css/vendor/bootstrap.min.css">
+<link rel="stylesheet" href="/css/vendor/monokai_sublime.css">
+<link rel="stylesheet" href="/css/style.css">
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-20611089-6', 'sookocheff.com');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand">Kevin Sookocheff</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/project/">Projects</a>
+        </li>
+        <li class="">
+          <a href="/post/">Posts</a>
+        </li>
+        <li class="dropdown">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+            Subscribe <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="http://eepurl.com/KJE01">Email</a></li>
+            <li><a href="http://sookocheff.com/index.xml">RSS</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="container page-container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <section class="page">
+        <article class="post">
+          <h1>Structuring an Application using Model View Controller</h1>
+          <p>
+            <small class="text-muted">
+              Posted on Tuesday, July 7, 2015 · <a href="http://localhost:1313/post/architecture/post-modern-mvc/#disqus_thread">0 Comments</a>
+            </small>
+          </p>
+
+          <div class=".post-content">
+            
+
+<p>Early pioneers in object-oriented programming paved the path towards using Model
+View Controller (MVC) for graphical user interfaces as early as 1970 and web
+applications have continued using the pattern to separate business logic from
+display. This article attempts to clarify the use of Model View Controller
+within web applications — giving consideration to the fact that most developers
+will be building their application using an existing web framework.</p>
+
+<h2 id="model-view-controller:9305b434a14d46f70fd24939751bd372">Model View Controller</h2>
+
+<p>Let&rsquo;s start our investigation of Model View Controller for web applications by examining a broad
+overview of how the Model, View and Controller work together to handle a single
+request to a web server. This diagram is adapted from the book <a href="http://martinfowler.com/books/eaa.html">Patterns of
+Enterprise Application Architecture by Martin
+Fowler</a>.</p>
+
+<p>[[ Diagram ]]</p>
+
+<p>A request comes in to the application and is handled by an input controller (1).
+The controller parses any data that is on the request (e.g., query parameters,
+cookies, form data) and chooses the appropriate model objects and
+performs domain logic for this request (2). The controller chooses a view for
+displaying the result of the domain logic and data or model objects are passed
+into the view (3). The view uses this data to render the response (4). Finally,
+the response is returned to the user via the controller (5).</p>
+
+<p>The most important reason for applying Model View Controller is to ensure that
+models are completely separated from the presentation. This makes it easier to
+modify the presentation independently of domain and business logic. Within this
+request flow the model objects are responsible for integrating with the
+persistent data source and potentially gathering information for display in the
+view.</p>
+
+<h2 id="web-frameworks:9305b434a14d46f70fd24939751bd372">Web Frameworks</h2>
+
+<p>Most web frameworks incorporate most of the functionality described by Model
+View Controller in their design. The Model View Controller and associated
+patterns were developed when web frameworks where in their infancy and largely
+outline the correct process to create a web framework from scratch. A common
+misconception for new web application developers learning Model View Controller
+is to implement MVC within their web framework. This unfortunately leads to a
+convoluted design with unnecessary layers of indirection during the processing
+of the web request.</p>
+
+<p>My advice for new developers is to lean on your framework to implement Model
+View Controller and focus your attention on your business logic. As a concrete
+example, I will walk through a sample architecture for App Engine applications
+that uses <a href="https://webapp-improved.appspot.com/">webapp2</a>,
+<a href="https://cloud.google.com/appengine/docs/python/ndb/">ndb</a>, and
+<a href="http://jinja.pocoo.org/docs/dev/">jinja</a>.</p>
+
+<p>In this example file, App Engine acts as our web server implementing the
+<a href="http://wsgi.readthedocs.org/en/latest/">WSGI</a> specification. Once a request is
+received by the server it is forwarded to the webapp2 framework which handles
+routing to a <a href="http://martinfowler.com/eaaCatalog/pageController.html">Page Controller</a>.  So far,
+the WSGI application and webapp2 handle the creation of a controller to handle
+the request.</p>
+
+<h2 id="model-view-controller-for-app-engine:9305b434a14d46f70fd24939751bd372">Model View Controller for App Engine</h2>
+
+<pre><code class="language-python">import webapp2
+
+
+class HelloWorld(webapp2.RequestHandler):
+
+    def get(self):
+        self.response.out.write('Hello World')
+
+
+ROUTES = [
+    webapp2.Route('/', handler=HelloWorld)
+]
+
+APPLICATION = webapp2.WSGIApplication(ROUTES)
+</code></pre>
+
+<p>We can start by implementing handling the request and customizing our response
+based on any incoming request data (1).</p>
+
+<p>[[ diagram of (1) ]]</p>
+
+<pre><code class="language-python">import webapp2
+
+
+class HelloWorld(webapp2.RequestHandler):
+
+    def get(self):
+        name = self.request.params.get('name')
+        if name:
+            self.response.out.write('Hello %s' % name)
+        else:
+            self.response.out.write('Hello World')
+
+
+ROUTES = [
+    webapp2.Route('/', handler=HelloWorld)
+]
+
+APPLICATION = webapp2.WSGIApplication(ROUTES)
+</code></pre>
+
+<p>Now let&rsquo;s connect our application to a model (2).</p>
+
+<p>[[ diagram of (2) ]]</p>
+
+<p>The model in our diagram is connected to a data source and is responsible for
+converting from the data source to an in memory representation. ndb follows an
+<a href="http://www.martinfowler.com/eaaCatalog/activeRecord.html">Active Record</a>
+pattern, providing a one-to-one mapping from the data source to memory, and a
+<a href="http://www.martinfowler.com/eaaCatalog/tableModule.html">Table Module</a> for . You
+could build up a rich <a href="http://www.martinfowler.com/eaaCatalog/domainModel.html">Domain
+Model</a> based on ndb. In
+my opinion the overhead of a Domain Model outweighs its benefits and you end up
+fighting against a pattern that is already available with ndb. For our simple
+application, our model is a user object that is created or loaded based on the
+query parameter passed in on the request.</p>
+
+<pre><code class="language-python">import webapp2
+from google.appengine.ext import ndb
+
+
+class User(ndb.Model):
+
+    name = ndb.StringProperty()
+
+
+class HelloWorld(webapp2.RequestHandler):
+
+    def get(self):
+        name = self.request.params.get('name')
+        if name:
+            user = ndb.Key('User', name).get()
+            if not user:
+                user = User(name=name, id=name)
+                user.put()
+            self.response.out.write('Hello %s' % user.name)
+        else:
+            self.response.out.write('Hello World')
+
+
+ROUTES = [
+    webapp2.Route('/', handler=HelloWorld)
+]
+
+APPLICATION = webapp2.WSGIApplication(ROUTES)
+</code></pre>
+
+<p>We&rsquo;ve leveraged ndb to handle mapping from our data source to an in memory
+representation and don&rsquo;t need to define any special handling to interact with
+the data source. This is typical when working with a pre-existing framework and
+I would suggest caution when making any more complex data source transformations
+<em>unless you are building your own framework</em>. We also perform some simple domain
+logic in our controller. Since getting or creating a model is a common operation
+we may want to push this function to the model itself to provide reuse. The
+Active Record pattern that ndb implements lends itself to this structure.</p>
+
+<pre><code class="language-python">import webapp2
+from google.appengine.ext import ndb
+
+
+class User(ndb.Model):
+
+    name = ndb.StringProperty()
+
+    @classmethod
+    def get_or_create(cls, name):
+        if not name:
+            return None
+
+        user = ndb.Key('User', name).get()
+        if not user:
+            user = User(name=name, id=name)
+            user.put()
+        return user
+
+
+class HelloWorld(webapp2.RequestHandler):
+
+    def get(self):
+        name = self.request.params.get('name')
+        user = User.get_or_create(name)
+
+        if user:
+            self.response.out.write('Hello %s' % user.name)
+        else:
+            self.response.out.write('Hello World')
+
+
+ROUTES = [
+    webapp2.Route('/', handler=HelloWorld)
+]
+
+APPLICATION = webapp2.WSGIApplication(ROUTES)
+</code></pre>
+
+<p>Now we&rsquo;ve separated common functionality to the model and used the controller to
+coordinate the domain logic. As this application grows the controller can be
+leveraged to perform more complex domain logic on multiple models. If we find
+that we have two controllers performing similar logic we may want to move that
+particular functionality out into a shared script.</p>
+
+<p>Let&rsquo;s extend our example by rendering our page using a view.</p>
+
+<p>[ put image here (3 and 4) ].</p>
+
+<p>We leverage Jinja to act as our view and provide the
+interpretation and rendering of our model following a
+<a href="http://www.martinfowler.com/eaaCatalog/templateView.html">Template View</a>
+pattern. We&rsquo;ve again kept our interpretation of Model View Controller simple by
+working within our web application framework rather than against it.</p>
+
+<pre><code class="language-python">import os
+import webapp2
+import jinja2
+from google.appengine.ext import ndb
+
+
+JINJA_ENVIRONMENT = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
+    extensions=['jinja2.ext.autoescape'])
+
+
+class User(ndb.Model):
+
+    name = ndb.StringProperty()
+
+    @classmethod
+    def get_or_create(cls, name):
+        if not name:
+            return None
+
+        user = ndb.Key('User', name).get()
+        if not user:
+            user = User(name=name, id=name)
+            user.put()
+        return user
+
+
+class HelloWorld(webapp2.RequestHandler):
+
+    def get(self):
+        name = self.request.params.get('name')
+        user = User.get_or_create(name)
+
+        name = user.name if user else 'World'
+
+        template = JINJA_ENVIRONMENT.get_template('index.html')
+        self.response.out.write(template.render(name=name))
+
+
+ROUTES = [
+    webapp2.Route('/', handler=HelloWorld)
+]
+
+APPLICATION = webapp2.WSGIApplication(ROUTES)
+</code></pre>
+
+<p>Finally, webapp2 and the WSGI application and server handle returning our
+response to the user and completing the request-response cycle.</p>
+
+<p>As our application becomes more complex, we may want to separate our code into
+separate modules for Model, View and Controller. I recommend including an
+additional module called Scripts that stores more complex interactions between
+models that are used in multiple controllers. However, since each request to our
+application is typically an independent transaction sharing logic between
+different requests should be rare. The final directory structure should look
+something like the following.</p>
+
+<pre><code class="language-bash">.
+├── app.yaml
+├── controller
+│   ├── __init__.py
+│   └── index.py
+├── main.py
+├── model
+│   ├── __init__.py
+│   └── user.py
+├── scripts
+│   └── __init__.py
+└── view
+    ├── __init__.py
+    └── index.html
+</code></pre>
+
+<p>The overarching theme of this article is to leverage our existing framework and
+libraries to implement the Model View Controller pattern for us. Leave your
+application simple and lean on your tools. Of course, design patterns are
+subjective and my opinion may not apply to your use case — take what works for
+you and leave the rest.</p>
+
+<p>Full source code for this example is available on <a href="https://github.com/soofaloofa/ModelViewController">GitHub</a>.</p>
+ 
+          </div>
+
+          <hr>
+            <ul class="list-inline">
+  <li>Share this post:</li>
+  <li>
+    <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2flocalhost%3a1313%2fpost%2farchitecture%2fpost-modern-mvc%2f&text=Structuring%20an%20Application%20using%20Model%20View%20Controller&via=soofaloofa">
+      <i class="fa fa-twitter fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fpost%2farchitecture%2fpost-modern-mvc%2f">
+      <i class="fa fa-facebook fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="https://plus.google.com/share?url=http%3a%2f%2flocalhost%3a1313%2fpost%2farchitecture%2fpost-modern-mvc%2f">
+      <i class="fa fa-google-plus fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2flocalhost%3a1313%2fpost%2farchitecture%2fpost-modern-mvc%2f">
+      <i class="fa fa-linkedin fa-lg"></i>
+    </a>
+  </li>
+  <li>
+    <a href="mailto:?subject=Check out this link&body=http%3a%2f%2flocalhost%3a1313%2fpost%2farchitecture%2fpost-modern-mvc%2f">
+      <i class="fa fa-envelope fa-lg"></i>
+    </a>
+  </li>
+</ul>
+
+          <hr>
+
+          <div class="donation">
+            <p>Think this post was worth a dollar? If so, I'd love to have it. Support this site quickly and easily using the Paypal button below.</p>
+
+            <div class="row">
+              <div class="col-md-10 col-md-offset-5">
+                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="44DHX3GQMER48">
+<table>
+<tr><td><input type="hidden" name="on0" value="Amount of Support:">Amount of Support:</td></tr><tr><td><select name="os0">
+	<option value="Hat Tip">Hat Tip $1.00 CAD</option>
+	<option value="Coffee">Coffee $5.00 CAD</option>
+	<option value="Beer">Beer $10.00 CAD</option>
+	<option value="Lunch">Lunch $50.00 CAD</option>
+	<option value="Dinner">Dinner $100.00 CAD</option>
+</select> </td></tr>
+</table>
+<input type="hidden" name="currency_code" value="CAD">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+</form>
+
+              </div>
+            </div>
+          </div>
+
+          <hr>
+
+          <div class="blurb">
+            <div class="row">
+              <div class="col-md-10 col-md-offset-1">
+                <h4 class="text-center">About Kevin Sookocheff</h4>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 col-md-offset-1">
+                <p>
+                  <img class="img-circle center-block" src="/img/profile.png">
+                </p>
+              </div>
+              <div class="col-md-6">
+                <p>
+                  I am a Software Developer. I work at <a
+  href="http://www.vendasta.com">VendAsta</a> with a bunch of great people. I
+run a business as <a href="http://redfinchsoftware.com">Red Finch Software</a>.
+You can find me online as <a
+href="https://twitter.com/soofaloofa">soofaloofa</a>. I love to teach, learn,
+speak, and write about business and software. 
+
+                  <ul class="list-inline">
+                    <li>On the web:</li>
+                    <li><a href="http://www.twitter.com/soofaloofa"><i class="fa fa-twitter-square fa-lg"></i></a></li>
+                    <li><a href="http://www.facebook.com/kevin.sookocheff"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+                    <li><a href="http://www.linkedin.com/in/kevinsookocheff"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+                    <li><a href="https://github.com/soofaloofa"><i class="fa fa-github-square fa-lg"></i></a></li>
+                    <li><a href="http://sookocheff.com/rss.xml"><i class="fa fa-rss-square fa-lg"></i></a></li>
+                  </ul>
+                </p>
+              </div>
+            </div>
+          </div>
+          <hr>
+
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+     
+    var disqus_shortname = 'kevinsookocheff'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        </article>
+      </section>
+    </div>
+  </div>
+</div>
+
+<footer>
+ <div class="footer-above text-center">
+   <div class="container">
+     <div class="row">
+       <div class="footer-col col-md-3">
+         <h3>App Engine</h3>
+         <ul class="list-unstyled">
+           <li><a href="/series/mapreduce-api/">MapReduce API</a></li>
+           <li><a href="/series/pipelines-api/">Pipelines API</a></li>
+           <li><a href="/series/cloud-endpoints/">Cloud Endpoints</a></li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>APIs</h3>
+         <ul class="list-unstyled">
+           <li>
+             <a href="/posts/2014-03-11-on-choosing-a-hypermedia-format/">On Choosing a Hypermedia Format</a>
+           </li>
+           <li>
+             <a href="/posts/2014-03-27-when-to-use-http-put-and-http-post/">When to use HTTP PUT</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Random</h3>
+         <ul class="list-unstyled">
+           <li>
+           <a href="http://sookocheff.com/posts/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/"> Unity3d on the Mac App Store</a>
+           </li>
+           <li>
+             <a href="http://sookocheff.com/posts/2011-07-27-saving-canvas-data-to-an-image-file-with-javascript-and-php/">Saving Canvas Data to an Image</a>
+           </li>
+         </ul>
+       </div>
+
+       <div class="footer-col col-md-3">
+         <h3>Social</h3>
+         <ul class="list-unstyled">
+           <li><a href="http://www.twitter.com/soofaloofa">Twitter</a></li>
+           <li><a href="http://www.facebook.com/kevin.sookocheff">Facebook</a></li>
+           <li><a href="http://www.linkedin.com/in/kevinsookocheff">LinkedIn</a></li>
+           <li><a href="https://plus.google.com/+KevinSookocheff">Google+</a></li>
+           <li><a href="https://github.com/soofaloofa">Github</a></li>
+         </ul>
+       </div>
+     </div>
+   </div>
+ </div>
+ <div class="footer-below text-center">
+     <div class="container">
+         <div class="row">
+             <div class="col-lg-12">
+                 &copy; Kevin Sookocheff · <a href="#">Top</a>
+             </div>
+         </div>
+     </div>
+ </div>
+</footer>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/highlight.min.js"></script>
+<script src="/js/vendor/retina.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+ 
+var disqus_shortname = 'kevinsookocheff'; 
+
+ 
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+<script data-no-instant>document.write('<script src="http://'
+        + (location.host || 'localhost').split(':')[0]
+		+ ':1313/livereload.js?mindelay=10"></'
+        + 'script>')</script></body>
+</html>
+

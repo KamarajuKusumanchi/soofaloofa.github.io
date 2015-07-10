@@ -9,7 +9,7 @@ tags:
 series:
   - "Cloud Endpoints"
 aliases:
-  - "posts/2014-07-10-unit-testing-cloud-endponts/"
+  - "posts/2014-07-10-unit-testing-cloud-endpoints/"
 ---
 
 Writing unit tests for App Engine Cloud Endpoints is a fairly straight forward

@@ -7,5 +7,60 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Tue, 23 Jun 2015 20:33:37 CST</lastBuildDate>
     
+    <item>
+      <title>Managed VMs and the Future of App Engine</title>
+      <link>http://sookocheff.com/post/appengine/managed-vms/managed-vms-and-the-future-of-appengine/</link>
+      <pubDate>Tue, 23 Jun 2015 20:33:37 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/appengine/managed-vms/managed-vms-and-the-future-of-appengine/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve been thinking about the transition of App Engine to Python 3 and have come
+to the conclusion that it will never happen — App Engine will eventually be
+deprecated in favour of Managed VMs. Let&amp;rsquo;s break this apart to see why this is.&lt;/p&gt;
+
+&lt;p&gt;First, consider the effort required by Google to develop App Engine. The Python
+runtime environment was modified to enforce the sandbox of the App
+Engine environment. To provide a Python 3 environment for App Engine as we know
+it, the Python 3 runtime would need to be modified with the same restrictions.
+Even imagining that this would happen for Python 3.4, the effort to upgrade to
+Python 3.5 would require additional effort by Google to modify the runtime.&lt;/p&gt;
+
+&lt;p&gt;Considering the desire to run additional languages such as Javascript (via
+NodeJS) or Ruby, Google is put in an untenable position if it expects to
+support modified runtimes for multiple versions of different languages.&lt;/p&gt;
+
+&lt;p&gt;Now let&amp;rsquo;s consider the rise of Docker and the development of Managed VMs.
+Managed VMs are built on top of Docker and provide a &amp;lsquo;dockerized&amp;rsquo; platform
+hosting your language runtime. Managed VMs provide the auto-scaling,
+health-check, colocation and server upgrades that are the hallmark of App Engine while
+allowing the use of arbitrary runtimes within the Docker sandbox.&lt;/p&gt;
+
+&lt;p&gt;This diagram from the &lt;a href=&#34;https://cloud.google.com/appengine/docs/managed-vms/&#34;&gt;Managed VMs documentation&lt;/a&gt;
+shows the difference between the heavily modified App Engine sandbox and the
+more traditional environment running within a Docker container as a Managed VM.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;https://cloud.google.com/appengine/docs/managed-vms/&#34;&gt;
+  &lt;img src=&#34;https://cloud.google.com/appengine/images/vmhosting.png&#34; alt=&#34;Managed VM Sandbox&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;The great thing about Managed VMs is that they still allow access to the
+traditional App Engine APIs such as Datastore, Memcached, Logging, Task Queues
+and Search. This allows you to write applications in a fashion similar to your
+existing App Engine projects in a Managed VM environment. You can also use the
+Modules API to have a portion of your application be served by requests routed
+to the Managed VM and other requests routed to your App Engine application.&lt;/p&gt;
+
+&lt;p&gt;Managed VMs also allow better insight into product costs. The VMs are deployed
+as Compute Engine instances, giving you the ability to monitor CPU and network
+usage and upgrade and downgrade your instances as you see fit.&lt;/p&gt;
+
+&lt;p&gt;My feeling is that as the APIs to access Google Cloud Platform are extended and
+enhanced to work outside of the current App Engine sandbox, Managed VMs will
+take over Google&amp;rsquo;s development efforts to the point where App Engine as we know
+it is replaced with Managed VMs. The next project I develop will be using
+Managed VMs from the start.&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

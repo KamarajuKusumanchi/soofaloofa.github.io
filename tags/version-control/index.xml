@@ -7,5 +7,17 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Mon, 08 Oct 2012 09:11:18 UTC</lastBuildDate>
     
+    <item>
+      <title>Using Unity3d with Version Control</title>
+      <link>http://sookocheff.com/post/unity/using-unity3d-with-version-control/</link>
+      <pubDate>Mon, 08 Oct 2012 09:11:18 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/unity/using-unity3d-with-version-control/</guid>
+      <description>&lt;p&gt;I had a tough time finding this page. The steps to get Unity set up with version control aren’t that difficult but it is one of those problems that you need to be told how to solve.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://docs.unity3d.com/Documentation/Manual/ExternalVersionControlSystemSupport.html&#34;&gt;Unity – Using External Version Control Systems with Unity [docs.unity3d.com]&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

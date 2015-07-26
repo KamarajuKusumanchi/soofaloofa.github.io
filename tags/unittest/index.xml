@@ -7,5 +7,34 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Thu, 12 Feb 2015 06:20:37 CST</lastBuildDate>
     
+    <item>
+      <title>Halting Python unittest Execution on First Error</title>
+      <link>http://sookocheff.com/post/python/halting-unittest-execution-at-first-error/</link>
+      <pubDate>Thu, 12 Feb 2015 06:20:37 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/python/halting-unittest-execution-at-first-error/</guid>
+      <description>&lt;p&gt;We all know the importance of unit tests. Especially in a dynamic language like
+Python. Occasionally you have a set of unit tests that are failing in a
+cascading fashion where the first error case causes subsequent tests to fail
+(these tests are likely no longer unit tests, but that&amp;rsquo;s a different
+ discussion). To help isolate the offending test case in a see of failures you
+can set the &lt;code&gt;unittest.TestCase&lt;/code&gt; class to halt after the first error by
+overriding the &lt;code&gt;run&lt;/code&gt; method as follows.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class HaltingTestCase(unittest.TestCase):
+
+    def run(self, result=None):
+        &amp;quot;&amp;quot;&amp;quot; Stop after first error &amp;quot;&amp;quot;&amp;quot;
+        if not result.errors:
+            super(HaltingTestCase, self).run(result)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In this block of code, if we do not have any errors we call the super class to
+continue running tests. If we have an error execution stops after this method
+call. This allows you to pinpoint the first error case, fix it, and continue on
+fixing subsequent tests.&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

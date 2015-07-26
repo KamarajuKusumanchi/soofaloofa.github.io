@@ -7,5 +7,21 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Tue, 28 Jun 2011 11:15:08 UTC</lastBuildDate>
     
+    <item>
+      <title>Using Leiningen behind a Windows proxy</title>
+      <link>http://sookocheff.com/post/clojure/using-leiningen-behind-a-windows-proxy/</link>
+      <pubDate>Tue, 28 Jun 2011 11:15:08 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/clojure/using-leiningen-behind-a-windows-proxy/</guid>
+      <description>&lt;p&gt;I’ve been getting familiar with the &lt;a href=&#34;https://github.com/technomancy/leiningen&#34;&gt;Leiningen&lt;/a&gt; build tool for &lt;a href=&#34;http://clojure.org/&#34;&gt;Clojure&lt;/a&gt; but had trouble connecting to the Clojar and Maven repositories behind a proxy.&lt;/p&gt;
+
+&lt;p&gt;I ended up adding my proxy to Maven’s &lt;code&gt;settings.xml&lt;/code&gt; and everything worked out.&lt;/p&gt;
+
+&lt;p&gt;You can find &lt;code&gt;settings.xml&lt;/code&gt;  at &lt;code&gt;C:\apache-maven-X.X.X\conf\settings.xml&lt;/code&gt;  and can edit it according to the conventions described &lt;a href=&#34;http://maven.apache.org/guides/mini/guide-proxies.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;After editing the file run lein deps  to download your project dependencies. If still can’t connect to the repository servers you may have to copy the &lt;code&gt;settings.xml&lt;/code&gt; file to your &lt;code&gt;.m2&lt;/code&gt; directory at &lt;code&gt;C:\Documents and Settings\username\.m2\settings.xml&lt;/code&gt;&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

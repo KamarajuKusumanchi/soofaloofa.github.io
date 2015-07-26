@@ -7,5 +7,31 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Thu, 15 Nov 2012 13:14:15 UTC</lastBuildDate>
     
+    <item>
+      <title>Showing a local webpage in Unity3d using the Prime[31] etcetera plugin.</title>
+      <link>http://sookocheff.com/post/unity/etcetera-plugin-live-alerts-prompts-loading-views-push-localization-and-more/</link>
+      <pubDate>Thu, 15 Nov 2012 13:14:15 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/unity/etcetera-plugin-live-alerts-prompts-loading-views-push-localization-and-more/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve been working with Prime31&amp;rsquo;s Etcetera plugin for iOS development with
+Unity3d. There are a lot of great things in there but some of the documentation
+is lacking.  Anyways, if you want to show a local web page with the
+&lt;code&gt;showWebPage&lt;/code&gt; command it is a two step process.&lt;/p&gt;
+
+&lt;p&gt;Step 1:&lt;/p&gt;
+
+&lt;p&gt;Copy the files you wish to access into a folder called &lt;code&gt;StreamingAssets&lt;/code&gt; under your &lt;code&gt;Assets&lt;/code&gt; directory.&lt;/p&gt;
+
+&lt;p&gt;Step 2:&lt;/p&gt;
+
+&lt;p&gt;Call &lt;code&gt;EtceteraBinding&lt;/code&gt; as follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;EtceteraBinding.showWebPage(Application.dataPath + &amp;quot;/Raw/FolderWithHTML/index.html&amp;quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;where &lt;code&gt;FolderWithHTML&lt;/code&gt; is the folder you placed in the &lt;code&gt;StreamingAssets&lt;/code&gt; folder.&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

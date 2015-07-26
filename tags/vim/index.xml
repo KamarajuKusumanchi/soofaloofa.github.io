@@ -7,5 +7,32 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Fri, 19 Apr 2013 12:18:19 UTC</lastBuildDate>
     
+    <item>
+      <title>Creating a new file or directory in Vim using NERDTree</title>
+      <link>http://sookocheff.com/post/vim/creating-a-new-file-or-directoryin-vim-using-nerdtree/</link>
+      <pubDate>Fri, 19 Apr 2013 12:18:19 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/vim/creating-a-new-file-or-directoryin-vim-using-nerdtree/</guid>
+      <description>&lt;p&gt;I’m not sure why this was so difficult to discover. For the longest time I was not sure how to create a new file using NERDTree. I finally sat down and figure out how it works.&lt;/p&gt;
+
+&lt;p&gt;First, bring up NERDTree and navigate to the directory where you want to create the new file. Press &lt;code&gt;m&lt;/code&gt; to bring up the NERDTree Filesystem Menu. This menu allows you to create, rename, and delete files and directories. Type &lt;code&gt;a&lt;/code&gt; to add a child node and then simply enter the filename. You’re done! To create a directory follow the same steps but append a &lt;code&gt;/&lt;/code&gt; to the filename.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Copying from Vim to the OS X Mountain Lion clipboard</title>
+      <link>http://sookocheff.com/post/vim/copying-from-the-vim-to-the-os-x-mountain-lion-clipboard/</link>
+      <pubDate>Tue, 22 Jan 2013 08:16:42 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/vim/copying-from-the-vim-to-the-os-x-mountain-lion-clipboard/</guid>
+      <description>&lt;p&gt;The latest version of OS X (Mountain Lion) broke compatibility with the vim and the OS clipboard. In most cases you can configure vim to use the operating system clipboard by setting &lt;code&gt;clipboard=unnamed&lt;/code&gt; in your &lt;code&gt;.vimrc&lt;/code&gt;. Unfortunately this setting does not work in OS X because the default version of vim was not compiled with clipboard support. You can check if your version of vim is compiled with clipboard support by typing &lt;code&gt;vim –version&lt;/code&gt;  and looking for &lt;code&gt;clipboard&lt;/code&gt;. A prepended &lt;code&gt;+&lt;/code&gt; means support is enabled. A prepended &lt;code&gt;–&lt;/code&gt; means support is disabled.&lt;/p&gt;
+
+&lt;p&gt;So, how do we get clipboard support? By using Macports to install a new version of vim using the &lt;code&gt;huge&lt;/code&gt; flag of &lt;code&gt;port install&lt;/code&gt;. I also compiled with support for python, ruby, and cscope.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo port install vim huge python ruby cscope
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

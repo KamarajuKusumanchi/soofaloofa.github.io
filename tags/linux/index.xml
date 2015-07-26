@@ -7,5 +7,504 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Tue, 11 Jan 2011 06:55:12 UTC</lastBuildDate>
     
+    <item>
+      <title>A cheap home server</title>
+      <link>http://sookocheff.com/post/linux/a-cheap-home-server/</link>
+      <pubDate>Tue, 11 Jan 2011 06:55:12 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/linux/a-cheap-home-server/</guid>
+      <description>&lt;p&gt;In order to have a home server you need the server.  That is, you need the hardware.  You could probably find all sorts of information comparing performance, power consumption, and cost for an assortment of different parts (check &lt;a href=&#34;http://www.tomshardware.com&#34;&gt;tomshardware.com&lt;/a&gt; or do some intense [Googling][2]).  Or, you can trust that I’ve done my research and go with the same setup as me.&lt;/p&gt;
+
+&lt;p&gt;I started with a barebones &lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16856167037&#34;&gt;MSI Wind Nettop PC&lt;/a&gt;.  It’s small and built to be both quiet and efficient, plus it comes with a compact flash slot to house the operating system; all big wins for a home server.  Really, any bare bones PC with an Atom 330 processor or better will do. You can always check out &lt;a href=&#34;http://us.shuttle.com/&#34;&gt;Shuttle’s&lt;/a&gt; latest offerings as well. With bare bones systems you must supply your own RAM and hard drives (be careful, you may have to supply your own CPU as well).  Just be careful to get the right type of RAM for your motherboard.  I went with 2GB of &lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16820231146&#34;&gt;G.SKILL DDR2 533 Laptop Memory&lt;/a&gt;. I opted for two &lt;a href=&#34;http://&#34;&gt;Western Digital Caviar Green 1TB hard drives&lt;/a&gt;.  These drives will be used solely to house data.  Get as big a hard drive as you want/need (you can even build a two drive RAID array if you want) and a &lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16820220459&#34;&gt;Patriot 4GB Compact Flash&lt;/a&gt; card to house the operating system.  That’s it, that’s all. I won’t guide you through every piece of the component installation as there are far better resources out there already.  However, if you are following along with the exact component list I described beware of one potential snafu.  The MSI Nettop has only one hard drive bay and we ordered two drives.  However, with appropriate &lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16817994073&amp;amp;cm_re=drive_bay_adapter-_-17-994-073-_-Product&#34;&gt;5.25″ to 3.5″ drive bay adapters&lt;/a&gt; you can re-purpose the DVD tray to hold that second hard drive. Beware that the compact flash slot on this PC is positioned awkwardly and you will have to unscrew the male VGA adapter from the case in order to install the compact flash card. Lastly, since we have no DVD drive we will need to have a USB drive handy for installing the operating system. Hardware List:&lt;/p&gt;
+
+&lt;p&gt;[2]: &lt;a href=&#34;http://lmgtfy.com/?q=diyhome&#34;&gt;http://lmgtfy.com/?q=diyhome&lt;/a&gt; server&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16856167037&#34;&gt;MSI Wind Nettop PC&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16820231146&#34;&gt;G.SKILL DDR2 533 Laptop Memory (2GB)&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Western Digital Caviar Green 1TB hard drives (x2)&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16820220459&#34;&gt;Patriot 4GB Compact Flash&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16817994073&amp;amp;cm_re=drive_bay_adapter-_-17-994-073-_-Product&#34;&gt;5.25″ to 3.5″ drive bay adapters&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Other essentials:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;A spare monitor, keyboard, and mouse (don’t worry, after setup we don’t need these around).&lt;/li&gt;
+&lt;li&gt;A spare USB flash drive&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How to get Pulse Audio to recognize your Delta 44 (and other ICE1712 cards)</title>
+      <link>http://sookocheff.com/post/linux/how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards/</link>
+      <pubDate>Tue, 28 Sep 2010 14:23:34 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/linux/how-to-get-pulse-audio-to-recognize-your-delta-44-and-other-ice1712-cards/</guid>
+      <description>&lt;p&gt;I bought a used Delta 44 soundcard with the intention of recording my guitar playing. Pairing this with Rockit 5 powered monitors, a Mackie 802-VLZ3 mixer and the classic Shure SM57 microphone made for a good quality, inexpensive home studio. Using the PCI-based Delta 44 meant that any old computer would work and my idea was to use vanilla Ubuntu and install the Ardour digital audio workstation to push costs even further down. So far so good. Now the only issue is getting everything up and running. Ubuntu is a fairly mature distribution; you can expect a certain level of quality with each release. Unfortunately, this has not been the case with PulseAudio. I won’t go into details; suffice it to say it had a tumultuous upbringing and many of the kinks have since been worked out. Anyways, I quickly discovered that PulseAudio does not recognize the Delta 44. Don’t worry, this is a known problem and a workaround exists. Finding the workaround, however, did take some time.&lt;/p&gt;
+
+&lt;p&gt;By writing this, I hope to spare some time of yours. I’m going to copy the solution almost verbatim from the Launchpad bug report on this issue and hope that it gets a little more visibility than being buried in a long bug report with cross-references to other forum discussions. Make sure you entirely remove any leftovers from previous attempts to fix the problem. First, create the file&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/etc/udev/rules.d/ice1712-pulseaudio-workaround.rules
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;and enter the following information.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;SUBSYSTEM!=&amp;quot;sound&amp;quot;, GOTO=&amp;quot;ice1712_end&amp;quot;
+ACTION!=&amp;quot;change&amp;quot;, GOTO=&amp;quot;ice1712_end&amp;quot;
+KERNEL!=&amp;quot;card*&amp;quot;, GOTO=&amp;quot;ice1712_end&amp;quot;
+
+SUBSYSTEMS==&amp;quot;pci&amp;quot;, ATTRS{vendor}==&amp;quot;0x1412&amp;quot;, ATTRS{device}==&amp;quot;0x1712&amp;quot;, ATTRS{subsystem_vendor}==&amp;quot;0x1412&amp;quot;, ATTRS{subsystem_device}==&amp;quot;0xd633&amp;quot;, ENV{PULSE_PROFILE_SET}=&amp;quot;via-ice1712.conf&amp;quot;
+
+LABEL=&amp;quot;ice1712_end&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you have a different audio card with the ICE1712 chipset (such as the Delta 66 for example) substitute&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ATTRS{subsystem_device}==&amp;quot;0xd633&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;with whatever is given by the command&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;lspci -vvnnd1412
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, create the file&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/usr/share/pulseaudio/alsa-mixer/profile-sets/via-ice1712.conf
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;whose contents should be those of , or those of the second “code” block in  When you are finished it should look like this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# This file is part of PulseAudio.
+#
+# PulseAudio is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; either version 2.1 of the
+# License, or (at your option) any later version.
+#
+# PulseAudio is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with PulseAudio; if not, write to the Free Software Foundation,
+# Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+
+; Via ICE1712 multi-channel audio chipset
+;
+; This chipset has up to four stereo pairs of input and four stereo pairs of
+; output, named channels 1 to 8. Also available are separate S/PDIF stereo
+; channels (input and output), and a separate &amp;quot;system-out&amp;quot; stereo jack that
+; supports 6-channel hardware mixing.
+;
+; The S/PDIF stereo channels can be controlled via the mixer for hw:0, and
+; additionally, the 8 main outputs can be loop-routed to a separate stereo
+; input pair, available as channels 11 and 12.
+;
+; Many cards available from vendors do not expose all channels from this chip
+; to an external port, which effectively reduces the number of channels that
+; are useful to the user. However, the ALSA driver still exposes all channels
+; even if they are not connected.
+;
+; We knowingly only define a subset of the theoretically possible
+; mapping combinations as profiles here.
+;
+; See default.conf for an explanation on the directives used here.
+
+[General]
+auto-profiles = no
+
+[Mapping analog-mch-in]
+description = Analog Multi-Channel Main Input
+device-strings = hw:%f,0
+#channel-map = front-left,front-right,rear-left,rear-right,front-center,lfe,side-left,side-right,aux0,aux1,aux2,aux3
+channel-map = aux0,aux1,front-left,front-right,aux2,aux3,aux4,aux5,aux6,aux7,aux8,aux9
+direction = input
+
+[Mapping analog-mch-out]
+description = Analog Multi-Channel Main Output
+device-strings = hw:%f,0
+#channel-map = front-left,front-right,rear-left,rear-right,front-center,lfe,side-left,side-right,aux0,aux1
+channel-map = front-left,front-right,aux0,aux1,aux2,aux3,aux4,aux5,aux6,aux7
+direction = output
+
+[Mapping digital-stereo]
+description = Digital Stereo Input/Output
+#device-strings = hw:%f,1
+device-strings = iec958:%f
+channel-map = left,right
+direction = any
+
+[Mapping analog-system-out]
+description = Analog Stereo System-Out
+device-strings = hw:%f,2
+channel-map = left,right
+direction = output
+
+[Profile output:mch]
+description = Multi-Channel Output Active (Digital Disabled)
+output-mappings = analog-mch-out analog-system-out
+input-mappings =
+priority = 90
+skip-probe = yes
+
+[Profile output:mch input:mch]
+description = Multi-Channel Input/Output (Digital Disabled)
+output-mappings = analog-mch-out analog-system-out
+input-mappings = analog-mch-in
+priority = 100
+skip-probe = yes
+
+[Profile output:spdif]
+description = Digital Output (Multi-Channel Disabled)
+output-mappings = digital-stereo analog-system-out
+input-mappings =
+priority = 80
+skip-probe = yes
+
+[Profile output:spdif input:spdif]
+description = Digital Input/Output (Multi-Channel Disabled)
+output-mappings = digital-stereo analog-system-out
+input-mappings = digital-stereo
+priority = 90
+skip-probe = yes
+
+[Profile output:system]
+description = System Output Only
+output-mappings = analog-system-out
+input-mappings =
+priority = 60
+skip-probe = yes
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Make sure you save everything and then restart pulseaudio (or reboot your system) to enjoy your Delta 44!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Share multiple mt-daap libraries</title>
+      <link>http://sookocheff.com/post/linux/share-multiple-mt-daap-libraries/</link>
+      <pubDate>Tue, 03 Aug 2010 18:12:34 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/linux/share-multiple-mt-daap-libraries/</guid>
+      <description>&lt;p&gt;I recently moved all of our household music to a shared network drive and was looking for a solution to stream these libraries as distinct entities; I wanted to keep my wife’s library separate mostly so I could keep all of my painstakingly catalouged music organized exactly how I like it. I was already using mt-daapd, now known as the Firefly Media Server, to stream my own library from my Linux server. Unfortunately, it doesn’t support streaming two libraries from one program instance. The solution to this is to run two copies of mt-daapd and configure them to play nice with each other. Don’t worry, it’s not quite as difficult as it sounds. The first thing you’ll need is to have a separate configuration file for the second daap instance. The easiest way to do this is to copy the files from an existing installation.&lt;/p&gt;
+
+&lt;p&gt;Run the following commands to copy the configuration and playlist files.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cp /etc/mt-daapd.conf /etc/mt-daapd-new_library_name.conf
+cp /etc/mt-daapd.playlist /etc/mt-daapd-new_library_name.playlist
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now edit the new configuration file and make sure you change all of the following properties:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;port – 3690 should do.&lt;/li&gt;
+&lt;li&gt;db_parms – This is the folder containing the sqlite database for your collection. I suggest you suffix the existing name with ‘-new_library_name’ to keep things easily recognizable in the future.&lt;/li&gt;
+&lt;li&gt;mp3_dir – point to the new collection.&lt;/li&gt;
+&lt;li&gt;servername – change to a distinct name (new_library_name that you used above) so you can tell them apart.&lt;/li&gt;
+&lt;li&gt;playlist – point to the playlist file you created in the previous step.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Note that mt-daapd will create a sqlite database if one doesn’t already exist but you will need to create the containing folder if it doesn’t already exist and ensure it has the correct permissions (have a look at the permissions on the existing folder). Now you need to test the new configuration works. With your first server still running, execute the following command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mtdaapd -c /etc/mt-daapd-new_library_name.conf
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If everything has worked then running ps -ef | grep mt-daapd should reveal two mt-daapd processes are running. You should now be able to test that both of them are working using a daapd client such as Rhythmbox. Next we need to create an init.d script to start and stop the server at system startup:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo cp /etc/init.d/mt-daapd /etc/init.d/mt-daapd-new_library_name
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Edit /etc/init.d/mt-daapd-new_library_name and add the following to the properties near the top:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;DAEMON_OPTS=&amp;quot;-c /etc/mt-daapd-new_library_name.conf&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Change the &lt;code&gt;NAME&lt;/code&gt; and &lt;code&gt;DESC&lt;/code&gt; properties as follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;NAME=mt-daapd-new_library_name 
+DESC=mt-daapd-new_library_name
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally we need to set the boot level of the new instance&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd /etc/rc0.d
+ln -s /etc/init.d/mt-daapd-new_library_name K25mt-daapd-new_library_name
+cd /etc/rc1.d
+ln -s /etc/init.d/mt-daapd-new_library_name K25mt-daapd-new_library_name
+cd /etc/rc2.d
+ln -s /etc/init.d/mt-daapd-new_library_name S25mt-daapd-new_library_name
+cd /etc/rc3.d
+ln -s /etc/init.d/mt-daapd-new_library_name S25mt-daapd-new_library_name
+cd /etc/rc4.d
+ln -s /etc/init.d/mt-daapd-new_library_name S25mt-daapd-new_library_name
+cd /etc/rc5.d
+ln -s /etc/init.d/mt-daapd-new_library_name S25mt-daapd-new_library_name
+cd /etc/rc6.d
+ln -s /etc/init.d/mt-daapd-new_library_name K25mt-daapd-new_library_name
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt; &lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Mounting SAMBA shares from the command line</title>
+      <link>http://sookocheff.com/post/linux/mounting-samba-shares-from-the-command-line/</link>
+      <pubDate>Wed, 28 Jul 2010 18:12:37 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/linux/mounting-samba-shares-from-the-command-line/</guid>
+      <description>&lt;p&gt;I recently started using Xubuntu to see if the proclaimed speed differences actually made a difference in productivity. Unfortunately, the Thunar file manager does not automatically recognize network drives so I needed to manually mount SAMBA shares from the command line.  In my searches I stumbled across this &lt;a href=&#34;http://ubuntuforums.org/showthread.php?t=288534&#34;&gt;thread&lt;/a&gt; giving the exact solution I used.  Hopefully this helps someone else who is having this same problem.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How to forward root users mail to an external address</title>
+      <link>http://sookocheff.com/post/linux/how-to-forward-root-users-mail-to-an-external-address/</link>
+      <pubDate>Tue, 01 Jun 2010 14:12:32 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/linux/how-to-forward-root-users-mail-to-an-external-address/</guid>
+      <description>&lt;p&gt;I recently set up a RAID array wanted to keep notified of any errors that may occur. By default Ubuntu Server sends mail to the root user whenever an error occurs but logging in as root to check mail every so often didn’t seem very convenient. There had to be a better way. The best information that I found came from the Ubuntu community forums. Here I’ll expand on that discussion, hopefully helping other people who are trying to do the same thing. The traditional way to forward mail is to create a .forward file in your home directory, entering the addresses that you would like to forward mail to.&lt;/p&gt;
+
+&lt;p&gt;For example,&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo su cd ~ vim .forward
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And add the line&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;jane.doe@gmail.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;before saving and closing the file. Unfortunately, things won’t be that easy for two reasons.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Postfix needs to be set up to handle and recognize external addresses.&lt;/li&gt;
+&lt;li&gt;As a security measure, the root user cannot send mail to external addresses, so we need to forward root mail to another user before sending it on to an external address.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;So, if you are following along, delete the .forward file from the root directory so that we are starting fresh. First, install postfix if you haven’t already done so. You can choose no configuration since we will manually configure it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get install postfix
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Postfix configuration is specified in /etc/postfix/main.cf. Edit this file by replacing it with the following code. The important parts are highlighted by a large comment block.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# Debian specific: Specifying a file name will cause the first 
+# line of that file to be used as the name. The Debian default 
+# is /etc/mailname. 
+#myorigin = /etc/mailname 
+
+smtpd_banner = $myhostname ESMTP $mail_name (Ubuntu)
+biff = no  
+
+# appending .domain is the MUA&#39;s job. 
+append_dot_mydomain = no  
+
+# Uncomment the next line to generate &amp;quot;delayed mail&amp;quot; warnings 
+#delay_warning_time = 4h 
+
+# TLS parameters 
+smtpd_tls_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+smtpd_tls_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+smtpd_use_tls=yes
+smtpd_tls_session_cache_database = btree:${queue_directory}/smtpd_scache
+smtp_tls_session_cache_database = btree:${queue_directory}/smtp_scache  
+
+# See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for 
+# information on enabling SSL in the smtp client. 
+
+myhostname = localhost
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+mydestination = localhost, localhost.localdomain
+mynetworks = 127.0.0.0/8
+mailbox_size_limit = 0
+recipient_delimiter =  
+inet_interfaces = loopback-only
+inet_protocols = all  
+
+############################# 
+# enable forwarding to external address
+############################# 
+
+##### client TLS parameters ##### 
+smtp_tls_loglevel=1
+smtp_tls_security_level=encrypt
+smtp_sasl_auth_enable=yes
+smtp_sasl_password_maps=hash:/etc/postfix/sasl/passwd
+smtp_sasl_security_options = noanonymous  
+
+##### map jane@localhost to jane.doe@gmail.com ##### 
+smtp_generic_maps=hash:/etc/postfix/generic
+relayhost=[smtp.gmail.com]:587
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;By default, Postfix tries to deliver mail directly to the Internet. The relayhost tells Postfix to use gmails servers to provide mail delivery service instead. This is a good thing for two reasons.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Google’s mail servers (or your ISPs, or whoever is your mail provider) are already set up for secure smtp. Running a mail server is non-trivial so in most cases you want someone else to do this for you.&lt;/li&gt;
+&lt;li&gt;Most services will reject mail that does not originate from a registered domain name in order to cut down on spam. I use my server locally and don’t have a domain name; by using GMail as my relayhost all mail is sent from Google’s servers which will not be rejected for delivery.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Note that to use DNS the relayhost needs square brackets around it, otherwise it will look for an MX record.  I’ve seen a few tutorials that don’t properly explain this and it took a bit of fiddling to figure out what was wrong. Other important parts of the main.cf file are&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;smtp_sasl_password_maps=hash:/etc/postfix/sasl/passwd
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;and&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;smtp_generic_maps=hash:/etc/postfix/generic
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The /etc/postfix/sasl/passwd file contains your Gmail password. You can edit the file and add the lines&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[smtp.gmail.com]:587 jane.doe@gmail.com:doeadeer
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Postfix reads a hashmap database generated from the passwd file.  To create passwd.db and set ownership and permissions appropriately run the following commands:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd /etc/postfix/sasl
+postmap passwd
+chown root.root passwd passwd.db
+chmod 600 passwd passwd.db
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The file /etc/postfix/generic tells Postfix how to map local e-mail addresses to Internet addresses when mail is sent.  Postfix rewrites “From:” headers to make e-mail appear to come from  instead of jane@localhost. You can edit this file and add the line&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;jane@localhost jane.doe@gmail.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Postfix is expecting to read a hashmap just like the passwd.db file above.  You can generate /etc/postfix/generic.db by using the postmap command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd /etc/postfix postmap generic
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Start or reload Postfix&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/etc/init.d/postfix restart
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, let’s test out what we have done. To check that basic delivery works, run the following command as a normal user (replacing “jane” with your username):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sendmail -bv jane
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then, while logged in as jane check to see that you have mail.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mail
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To check that Postfix can successfully connect to Gmail, run&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sendmail -bv jane.doe@gmail.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;and check your Gmail account to see that you received your test message. If both of these commands worked we know that you can properly send mail both locally and externally. This doesn’t quite solve our problem yet.  We still need to forward mail from root to a local user and from the local user to your external address.&lt;/p&gt;
+
+&lt;p&gt;First we’ll forward mail from root on to a local user&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo su cd ~ vim .forward
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Add the line&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;jane.localhost
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And then to forward from the local user to gmail create a .forward file in the local users home directory and add the line&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;jane.doe@gmail.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Lastly, send mail to root.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sendmail -bv root
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;and then open Gmail to ensure everything worked!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How to monitor a RAID array in Ubuntu server</title>
+      <link>http://sookocheff.com/post/linux/how-to-monitor-a-raid-array-in-ubuntu-server/</link>
+      <pubDate>Fri, 28 May 2010 02:15:45 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/linux/how-to-monitor-a-raid-array-in-ubuntu-server/</guid>
+      <description>
+
+&lt;p&gt;I’ve been searching for a way to reliably monitor a RAID array.  I found a few resources and decided to compile them in one post.  If you are running Ubuntu Server skip to the bottom for some good news.&lt;/p&gt;
+
+&lt;h2 id=&#34;proc-mdstat:561442c5805fcd4b89f8d059d9c475f8&#34;&gt;/proc/mdstat&lt;/h2&gt;
+
+&lt;p&gt;The first resource I found is from the &lt;a href=&#34;https://raid.wiki.kernel.org/index.php/Detecting,_querying_and_testing#Monitoring_RAID_arrays:/etc/cron.d&#34;&gt;Linux RAID wiki&lt;/a&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;You can always take a look at /proc/mdstat. It won’t hurt. Let’s learn how to read the file. For&lt;/p&gt;
+
+&lt;p&gt;Personalities : [raid1]&lt;br /&gt;
+read_ahead 1024 sectors&lt;br /&gt;
+md0 : active raid1 sdb5[1] sda5[0]&lt;br /&gt;
+4200896 blocks [&lt;sup&gt;2&lt;/sup&gt;&amp;frasl;&lt;sub&gt;2&lt;/sub&gt;] [UU]&lt;/p&gt;
+
+&lt;p&gt;unused devices: none&lt;/p&gt;
+
+&lt;p&gt;To identify the spare devices, first look for the [#/#] value on a line. The first number is the number of a complete raid device as defined. Lets say it is “n”. The raid role numbers [#] following each device indicate its role, or function, within the raid set. Any device with “n” or higher are spare disks. 0,1,..,n-1 are for the working array.&lt;/p&gt;
+
+&lt;p&gt;Also, if you have a failure, the failed device will be marked with (F) after the [#]. The spare that replaces this device will be the device with the lowest role number n or higher that is not marked (F). Once the resync operation is complete, the device’s role numbers are swapped.&lt;/p&gt;
+
+&lt;p&gt;The order in which the devices appear in the /proc/mdstat output means nothing.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Given this information you could write a script that polls /proc/mdstat searching for character sequence [UU] and then schedule this via cron. That seemed like a good solution, but I had also heard about mdadm and wanted to investigate it too.&lt;/p&gt;
+
+&lt;h2 id=&#34;mdadm:561442c5805fcd4b89f8d059d9c475f8&#34;&gt;mdadm&lt;/h2&gt;
+
+&lt;p&gt;Also from the &lt;a href=&#34;https://raid.wiki.kernel.org/index.php/Detecting,_querying_and_testing#Monitoring_RAID_arrays:/etc/cron.d&#34;&gt;Linux RAID wiki&lt;/a&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;mdadm –detail /dev/md0&lt;/p&gt;
+
+&lt;p&gt;This commands will show spare and failed disks loud and clear.&lt;/p&gt;
+
+&lt;p&gt;You can run mdadm as a daemon by using the follow-monitor mode. If needed, that will make mdadm send email alerts to the system administrator when arrays encounter errors or fail. Also, follow mode can be used to trigger contingency commands if a disk fails, like giving a second chance to a failed disk by removing and reinserting it, so a non-fatal failure could be automatically solved.&lt;/p&gt;
+
+&lt;p&gt;Let’s see a basic example. Running&lt;/p&gt;
+
+&lt;p&gt;mdadm –monitor –mail=root@localhost –delay=1800 /dev/md2&lt;/p&gt;
+
+&lt;p&gt;should release a mdadm daemon to monitor /dev/md2. The delay parameter means that polling will be done in intervals of 1800 seconds. Finally, critical events and fatal errors should be e-mailed to the system manager. That’s RAID monitoring made easy.&lt;/p&gt;
+
+&lt;p&gt;Finally, the –program or –alert parameters specify the program to be run whenever an event is detected.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;ubuntu-server:561442c5805fcd4b89f8d059d9c475f8&#34;&gt;ubuntu server&lt;/h2&gt;
+
+&lt;p&gt;This was all great but now my dilemma was in deciding how to put this information to use.  I searched some more and came across the following from &lt;a href=&#34;http://serverfault.com/questions/49939/daemon-to-verify-linux-md-raid&#34;&gt;ServerFault&lt;/a&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;On Debian (and therefore Ubuntu) machines, cron runs:&lt;/p&gt;
+
+&lt;p&gt;/usr/share/mdadm/checkarray –cron –all –quiet&lt;/p&gt;
+
+&lt;p&gt;the first Sunday of the month by default (see /etc/cron.d).   All output is mailed to the sys admin.   This command checks all data integrity.&lt;/p&gt;
+
+&lt;p&gt;It basically boils down to:&lt;/p&gt;
+
+&lt;p&gt;echo check &amp;gt; /sys/block/$array/md/sync_action&lt;/p&gt;
+
+&lt;p&gt;but with a lot of sanity around it.   Steal it from your nearest Debian install, or from the mdadm source package.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;So, it turns out that my version of Ubuntu Server was already monitoring data integrity once a month.  I then decided to search my init scripts to see what was installed by default and found /etc/init.d/mdadm.  It turns out that, by default, a daemon job to monitor the array (with the mdadm –monitor command shown above) is run at startup and will send mail to root for any strange occurrence. So, if you are running a debian-based server and wish to monitor the state of your RAID array you really don’t have to do anything at all.  But how about sending root mail to your external e-mail address.  Well, that’s the subject of &lt;a href=&#34;http://www.kevinsookocheff.com/2010/06/01/how-to-forward-root-users-mail-to-an-external-address/&#34;&gt;another post&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

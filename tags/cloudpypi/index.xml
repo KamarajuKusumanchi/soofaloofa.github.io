@@ -7,5 +7,29 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Thu, 18 Jun 2015 07:19:26 CST</lastBuildDate>
     
+    <item>
+      <title>Introducing CloudPyPI</title>
+      <link>http://sookocheff.com/post/python/introducing-cloudpypi/</link>
+      <pubDate>Tue, 16 Jun 2015 21:19:26 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/python/introducing-cloudpypi/</guid>
+      <description>&lt;p&gt;A common problem with Python development for large-scale teams is sharing
+internal libraries. At Vendasta we&amp;rsquo;ve been solving this problem using a private
+PyPI installation running on Google App Engine with Python eggs and wheels being
+served by Google Cloud Storage. Today, we are announcing the open source version
+of this tool — CloudPyPI.&lt;/p&gt;
+
+&lt;p&gt;CloudPyPI is a modification of
+&lt;a href=&#34;https://pypi.python.org/pypi/pypiserver&#34;&gt;pypiserver&lt;/a&gt; for running on Google App
+Engine. We&amp;rsquo;ve also introduced a simple user management system to allow
+authenticated access to your Python packages. Together, we&amp;rsquo;ve found this to be a
+robust tool for distributing private Python libraries internally. If this is a
+problem you&amp;rsquo;ve been trying to solve, give CloudPyPI a try — contributions and
+feature requests are always welcome.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;btn btn-default&#34; href=&#34;https://github.com/vendasta/cloudpypi&#34; role=&#34;button&#34;&gt;Check out CloudPyPI on Github&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

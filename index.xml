@@ -7,5 +7,2576 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Sat, 25 Jul 2015 06:41:06 UTC</lastBuildDate>
     
+    <item>
+      <title>Modeling Natural Language with N-Gram Models</title>
+      <link>http://sookocheff.com/post/nlp/n-gram-modeling/</link>
+      <pubDate>Sat, 25 Jul 2015 06:41:06 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/nlp/n-gram-modeling/</guid>
+      <description>
+
+&lt;p&gt;One of the most widely used methods natural language is n-gram modeling. This
+article explains what an n-gram model is, how it is computed, and what the
+probabilities of an n-gram model tell us.&lt;/p&gt;
+
+&lt;h2 id=&#34;what-is-an-n-gram:6aa7a6edb627f8b743e3120c4f84c63a&#34;&gt;What is an n-gram?&lt;/h2&gt;
+
+&lt;p&gt;&lt;blockquote&gt;
+  &lt;p&gt;An n-gram is a contiguous sequence of n items from a given sequence of text.&lt;/p&gt;
+  &lt;footer&gt;Wikipedia &lt;cite title=&#34;https://en.wikipedia.org/wiki/N-gram&#34;&gt;https://en.wikipedia.org/wiki/N-gram&lt;/cite&gt;&lt;/footer&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Given a sentence, &lt;code&gt;s&lt;/code&gt;, we can construct a list of n-grams from &lt;code&gt;s&lt;/code&gt; by finding
+pairs of words that occur next to each other. For example, given the sentence &amp;ldquo;I
+am Sam&amp;rdquo; you can construct bigrams (n-grams of length 2) by finding consecutive
+pairs of words.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; s = &amp;quot;I am Sam.&amp;quot;
+&amp;gt;&amp;gt;&amp;gt; tokens = s.split(&amp;quot; &amp;quot;)
+&amp;gt;&amp;gt;&amp;gt; bigrams = [(tokens[i],tokens[i+1]) for i in range(0,len(tokens)-1)]
+&amp;gt;&amp;gt;&amp;gt; bigrams
+[(&#39;I&#39;, &#39;am&#39;), (&#39;am&#39;, &#39;Sam.&#39;)]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;calculating-n-gram-probability:6aa7a6edb627f8b743e3120c4f84c63a&#34;&gt;Calculating n-gram Probability&lt;/h2&gt;
+
+&lt;p&gt;Given a list of n-grams we can count the number of occurrences of each n-gram;
+this count determines the frequency with which an n-gram occurs throughout our
+document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; from collections import Counter
+&amp;gt;&amp;gt;&amp;gt; count = Counter(bigrams)
+&amp;gt;&amp;gt;&amp;gt; count
+[((&#39;am&#39;, &#39;Sam.&#39;), 1), ((&#39;I&#39;, &#39;am&#39;), 1)]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With this small corpus we only count one occurrence of each n-gram. By dividing
+these counts by the size of all n-grams in our list we would get a probability
+of 0.5 of each n-gram occurring.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s look a larger corpus of words and see what the probabilities can tell us.
+The following sequence of bigrams was computed from data downloaded from &lt;a href=&#34;http://www.corpora.heliohost.org/&#34;&gt;HC
+Corpora&lt;/a&gt;. It lists the 20 most frequently
+encountered bigrams out of 97,810,566 bigrams in the entire corpus.&lt;/p&gt;
+
+&lt;p&gt;This data represents the most frequently used pairs of words in the corpus along
+with the number of times they occur.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-dns&#34;&gt;of	the	421560
+in	the	380608
+to	the	207571
+for	the	190683
+on	the	184430
+to	be	153285
+at	the	128980
+and	the	114232
+in	a	109527
+with	the	99141
+is	a	99053
+for	a	90209
+from	the	82223
+with	a	78918
+will	be	78049
+of	a	78009
+I	was	76788
+I	have	76621
+going	to	75088
+is	the	70045
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;By consulting our frequency table of bigrams, we can tell that the sentence
+&lt;code&gt;There was heavy rain last night&lt;/code&gt; is much more likely to be grammatically
+correct than the sentence &lt;code&gt;There was large rain last night&lt;/code&gt; by the fact that the
+bigram &lt;code&gt;heavy rain&lt;/code&gt; occurs much more frequently than &lt;code&gt;large rain&lt;/code&gt; in our corpus.
+Said another way, the probability of the bigram &lt;code&gt;heavy rain&lt;/code&gt; is larger than the
+probability of the bigram &lt;code&gt;large rain&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;sentences-as-probability-models:6aa7a6edb627f8b743e3120c4f84c63a&#34;&gt;Sentences as probability models&lt;/h2&gt;
+
+&lt;p&gt;More precisely, we can use n-gram models to derive a probability of the sentence
+,&lt;code&gt;W&lt;/code&gt;, as the joint probability of each individual word in the sentence, &lt;code&gt;wi&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-dns&#34;&gt;P(W) = P(w1, w2, ..., wn)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This can be reduced to a sequence of n-grams using the Chain Rule of
+conditional probability.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-dns&#34;&gt;P(x1, x2, ..., xn) = P(x1)P(x2|x1)...P(xn|x1,...xn-1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As a concrete example, let&amp;rsquo;s predict the probability of the sentence &lt;code&gt;There was
+heavy rain&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-dns&#34;&gt;P(&#39;There was heavy rain&#39;) = P(&#39;There&#39;, &#39;was&#39;, &#39;heavy&#39;, &#39;rain&#39;)
+P(&#39;There was heavy rain&#39;) = P(&#39;There&#39;)P(&#39;was&#39;|&#39;There&#39;)P(&#39;heavy&#39;|&#39;There was&#39;)P(&#39;rain&#39;|&#39;There was heavy&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Each of the terms on the right hand side of this equation are n-gram
+probabilities that we can estimate using the counts of n-grams in our corpus. To
+calculate the probability of the entire sentence, we just need to lookup the
+probabilities of each component part in the conditional probability.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, this formula does not scale since we cannot compute n-grams of
+every length. For example, consider the case where we have solely bigrams in our
+model; we have no way of knowing the probability `P(&amp;lsquo;rain&amp;rsquo;|&amp;lsquo;There was&amp;rsquo;) from
+bigrams.&lt;/p&gt;
+
+&lt;p&gt;By using the &lt;a href=&#34;https://en.wikipedia.org/wiki/Markov_property&#34;&gt;Markov Assumption&lt;/a&gt;,
+we can simplify our equation by assuming that future states in our model only
+depend upon the present state of our model. This assumption means that we can
+reduce our conditional probabilities to be approximately equal so that&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-dns&#34;&gt;P(&#39;rain&#39;|&#39;There was heavy&#39;) ~ P(&#39;rain&#39;|&#39;heavy&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;More generally, we can estimate the probability of a sentence by the
+probabilities of each component part. In the equation that follows, the
+probability of the sentence is reduced to the probabilities of the sentence&amp;rsquo;s
+individual bigrams.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-dns&#34;&gt;P(&#39;There was heavy rain&#39;) ~ P(&#39;There&#39;)P(&#39;was&#39;|&#39;There&#39;)P(&#39;heavy&#39;|&#39;was&#39;)P(&#39;rain&#39;|&#39;heavy&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;applications:6aa7a6edb627f8b743e3120c4f84c63a&#34;&gt;Applications&lt;/h2&gt;
+
+&lt;p&gt;What can we use n-gram models for? Given the probabilities of a sentence we can
+determine the likelihood of an automated machine translation being correct, we
+could predict the next most likely word to occur in a sentence, we could
+automatically generate text from speech, automate spelling correction, or
+determine the relative sentiment of a piece of text.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Structuring an Application using Model View Controller</title>
+      <link>http://sookocheff.com/post/architecture/structuring-with-mvc/</link>
+      <pubDate>Thu, 09 Jul 2015 19:40:15 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/architecture/structuring-with-mvc/</guid>
+      <description>
+
+&lt;p&gt;Early pioneers in object-oriented programming paved the path towards using Model
+View Controller (MVC) for graphical user interfaces as early as 1970 and web
+applications have continued using the pattern to separate business logic from
+display. This article attempts to clarify the use of Model View Controller
+within web applications — giving consideration to the fact that most developers
+will be building their application using an existing web framework.&lt;/p&gt;
+
+&lt;h2 id=&#34;model-view-controller:9f1e744e0ce624b070c416549ce80507&#34;&gt;Model View Controller&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start our investigation of Model View Controller for web applications by examining a broad
+overview of how the Model, View and Controller work together to handle a single
+request to a web server. This diagram is adapted from the book &lt;a href=&#34;http://martinfowler.com/books/eaa.html&#34;&gt;Patterns of
+Enterprise Application Architecture by Martin
+Fowler&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/architecture/structuring-with-mvc/MVCBroadOverview.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/architecture/structuring-with-mvc/MVCBroadOverview.png&#34; alt=&#34;Model View Controller&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;A request comes in to the application and is handled by an input controller (1).
+The controller parses any data that is on the request (e.g., query parameters,
+cookies, form data) and chooses the appropriate model objects and
+performs domain logic for this request (2). The controller chooses a view for
+displaying the result of the domain logic and data or model objects are passed
+into the view (3). The view uses this data to render the response (4). Finally,
+the response is returned to the user via the controller (5).&lt;/p&gt;
+
+&lt;p&gt;The most important reason for applying Model View Controller is to ensure that
+models are completely separated from the presentation. This makes it easier to
+modify the presentation independently of domain and business logic. Within this
+request flow the model objects are responsible for integrating with the
+persistent data source and potentially gathering information for display in the
+view.&lt;/p&gt;
+
+&lt;h2 id=&#34;web-frameworks:9f1e744e0ce624b070c416549ce80507&#34;&gt;Web Frameworks&lt;/h2&gt;
+
+&lt;p&gt;Most web frameworks incorporate most of the functionality described by Model
+View Controller in their design. The Model View Controller and associated
+patterns were developed when web frameworks where in their infancy and largely
+outline the correct process to create a web framework from scratch. A common
+misconception for new web application developers learning Model View Controller
+is to implement MVC within their web framework. This unfortunately leads to a
+convoluted design with unnecessary layers of indirection during the processing
+of the web request.&lt;/p&gt;
+
+&lt;p&gt;My advice for new developers is to lean on your framework to implement Model
+View Controller and focus your attention on your business logic. As a concrete
+example, I will walk through a sample architecture for App Engine applications
+that uses &lt;a href=&#34;https://webapp-improved.appspot.com/&#34;&gt;webapp2&lt;/a&gt;,
+&lt;a href=&#34;https://cloud.google.com/appengine/docs/python/ndb/&#34;&gt;ndb&lt;/a&gt;, and
+&lt;a href=&#34;http://jinja.pocoo.org/docs/dev/&#34;&gt;jinja&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In this example file, App Engine acts as our web server implementing the
+&lt;a href=&#34;http://wsgi.readthedocs.org/en/latest/&#34;&gt;WSGI&lt;/a&gt; specification. Once a request is
+received by the server it is forwarded to the webapp2 framework which handles
+routing to a &lt;a href=&#34;http://martinfowler.com/eaaCatalog/pageController.html&#34;&gt;Page Controller&lt;/a&gt;.  So far,
+the WSGI application and webapp2 handle the creation of a controller to handle
+the request.&lt;/p&gt;
+
+&lt;h2 id=&#34;model-view-controller-for-app-engine:9f1e744e0ce624b070c416549ce80507&#34;&gt;Model View Controller for App Engine&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import webapp2
+
+
+class HelloWorld(webapp2.RequestHandler):
+
+    def get(self):
+        self.response.out.write(&#39;Hello World&#39;)
+
+
+ROUTES = [
+    webapp2.Route(&#39;/&#39;, handler=HelloWorld)
+]
+
+APPLICATION = webapp2.WSGIApplication(ROUTES)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can start by implementing handling the request and customizing our response
+based on any incoming request data (1).&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/architecture/structuring-with-mvc/InstantiateController.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/architecture/structuring-with-mvc/InstantiateController.png&#34; alt=&#34;Instantiating a Controller&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import webapp2
+
+
+class HelloWorld(webapp2.RequestHandler):
+
+    def get(self):
+        name = self.request.params.get(&#39;name&#39;)
+        if name:
+            self.response.out.write(&#39;Hello %s&#39; % name)
+        else:
+            self.response.out.write(&#39;Hello World&#39;)
+
+
+ROUTES = [
+    webapp2.Route(&#39;/&#39;, handler=HelloWorld)
+]
+
+APPLICATION = webapp2.WSGIApplication(ROUTES)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now let&amp;rsquo;s connect our application to a model (2).&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/architecture/structuring-with-mvc/PerformDomainLogic.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/architecture/structuring-with-mvc/PerformDomainLogic.png&#34; alt=&#34;Perform Domain Logic&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;The model in our diagram is connected to a data source and is responsible for
+converting from the data source to an in memory representation. ndb follows an
+&lt;a href=&#34;http://www.martinfowler.com/eaaCatalog/activeRecord.html&#34;&gt;Active Record&lt;/a&gt;
+pattern, providing a one-to-one mapping from the data source to memory, and a
+&lt;a href=&#34;http://www.martinfowler.com/eaaCatalog/tableModule.html&#34;&gt;Table Module&lt;/a&gt; for . You
+could build up a rich &lt;a href=&#34;http://www.martinfowler.com/eaaCatalog/domainModel.html&#34;&gt;Domain
+Model&lt;/a&gt; based on ndb. In
+my opinion the overhead of a Domain Model outweighs its benefits and you end up
+fighting against a pattern that is already available with ndb. For our simple
+application, our model is a user object that is created or loaded based on the
+query parameter passed in on the request.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import webapp2
+from google.appengine.ext import ndb
+
+
+class User(ndb.Model):
+
+    name = ndb.StringProperty()
+
+
+class HelloWorld(webapp2.RequestHandler):
+
+    def get(self):
+        name = self.request.params.get(&#39;name&#39;)
+        if name:
+            user = ndb.Key(&#39;User&#39;, name).get()
+            if not user:
+                user = User(name=name, id=name)
+                user.put()
+            self.response.out.write(&#39;Hello %s&#39; % user.name)
+        else:
+            self.response.out.write(&#39;Hello World&#39;)
+
+
+ROUTES = [
+    webapp2.Route(&#39;/&#39;, handler=HelloWorld)
+]
+
+APPLICATION = webapp2.WSGIApplication(ROUTES)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We&amp;rsquo;ve leveraged ndb to handle mapping from our data source to an in memory
+representation and don&amp;rsquo;t need to define any special handling to interact with
+the data source. This is typical when working with a pre-existing framework and
+I would suggest caution when making any more complex data source transformations
+&lt;em&gt;unless you are building your own framework&lt;/em&gt;. We also perform some simple domain
+logic in our controller. Since getting or creating a model is a common operation
+we may want to push this function to the model itself to provide reuse. The
+Active Record pattern that ndb implements lends itself to this structure.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import webapp2
+from google.appengine.ext import ndb
+
+
+class User(ndb.Model):
+
+    name = ndb.StringProperty()
+
+    @classmethod
+    def get_or_create(cls, name):
+        if not name:
+            return None
+
+        user = ndb.Key(&#39;User&#39;, name).get()
+        if not user:
+            user = User(name=name, id=name)
+            user.put()
+        return user
+
+
+class HelloWorld(webapp2.RequestHandler):
+
+    def get(self):
+        name = self.request.params.get(&#39;name&#39;)
+        user = User.get_or_create(name)
+
+        if user:
+            self.response.out.write(&#39;Hello %s&#39; % user.name)
+        else:
+            self.response.out.write(&#39;Hello World&#39;)
+
+
+ROUTES = [
+    webapp2.Route(&#39;/&#39;, handler=HelloWorld)
+]
+
+APPLICATION = webapp2.WSGIApplication(ROUTES)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we&amp;rsquo;ve separated common functionality to the model and used the controller to
+coordinate the domain logic. As this application grows the controller can be
+leveraged to perform more complex domain logic on multiple models. If we find
+that we have two controllers performing similar logic we may want to move that
+particular functionality out into a shared script.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s extend our example by rendering our page using a view.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/architecture/structuring-with-mvc/RenderView.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/architecture/structuring-with-mvc/RenderView.png&#34; alt=&#34;Rendering the View&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;We leverage Jinja to act as our view and provide the
+interpretation and rendering of our model following a
+&lt;a href=&#34;http://www.martinfowler.com/eaaCatalog/templateView.html&#34;&gt;Template View&lt;/a&gt;
+pattern. We&amp;rsquo;ve again kept our interpretation of Model View Controller simple by
+working within our web application framework rather than against it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import os
+import webapp2
+import jinja2
+from google.appengine.ext import ndb
+
+
+JINJA_ENVIRONMENT = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
+    extensions=[&#39;jinja2.ext.autoescape&#39;])
+
+
+class User(ndb.Model):
+
+    name = ndb.StringProperty()
+
+    @classmethod
+    def get_or_create(cls, name):
+        if not name:
+            return None
+
+        user = ndb.Key(&#39;User&#39;, name).get()
+        if not user:
+            user = User(name=name, id=name)
+            user.put()
+        return user
+
+
+class HelloWorld(webapp2.RequestHandler):
+
+    def get(self):
+        name = self.request.params.get(&#39;name&#39;)
+        user = User.get_or_create(name)
+
+        name = user.name if user else &#39;World&#39;
+
+        template = JINJA_ENVIRONMENT.get_template(&#39;index.html&#39;)
+        self.response.out.write(template.render(name=name))
+
+
+ROUTES = [
+    webapp2.Route(&#39;/&#39;, handler=HelloWorld)
+]
+
+APPLICATION = webapp2.WSGIApplication(ROUTES)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally, webapp2 and the WSGI application and server handle returning our
+response to the user and completing the request-response cycle.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/architecture/structuring-with-mvc/ReturnResponse.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/architecture/structuring-with-mvc/ReturnResponse.png&#34; alt=&#34;Returning a Response&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;As our application becomes more complex, we may want to separate our code into
+separate modules for Model, View and Controller. I recommend including an
+additional module called Scripts that stores more complex interactions between
+models that are used in multiple controllers. However, since each request to our
+application is typically an independent transaction sharing logic between
+different requests should be rare. The final directory structure should look
+something like the following.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;.
+├── app.yaml
+├── controller
+│   ├── __init__.py
+│   └── index.py
+├── main.py
+├── model
+│   ├── __init__.py
+│   └── user.py
+├── scripts
+│   └── __init__.py
+└── view
+    ├── __init__.py
+    └── index.html
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The overarching theme of this article is to leverage our existing framework and
+libraries to implement the Model View Controller pattern for us. Leave your
+application simple and lean on your tools. Of course, design patterns are
+subjective and my opinion may not apply to your use case — take what works for
+you and leave the rest.&lt;/p&gt;
+
+&lt;p&gt;Full source code for this example is available on &lt;a href=&#34;https://github.com/soofaloofa/ModelViewController&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Managed VMs and the Future of App Engine</title>
+      <link>http://sookocheff.com/post/appengine/managed-vms/managed-vms-and-the-future-of-appengine/</link>
+      <pubDate>Tue, 23 Jun 2015 20:33:37 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/appengine/managed-vms/managed-vms-and-the-future-of-appengine/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve been thinking about the transition of App Engine to Python 3 and have come
+to the conclusion that it will never happen — App Engine will eventually be
+deprecated in favour of Managed VMs. Let&amp;rsquo;s break this apart to see why this is.&lt;/p&gt;
+
+&lt;p&gt;First, consider the effort required by Google to develop App Engine. The Python
+runtime environment was modified to enforce the sandbox of the App
+Engine environment. To provide a Python 3 environment for App Engine as we know
+it, the Python 3 runtime would need to be modified with the same restrictions.
+Even imagining that this would happen for Python 3.4, the effort to upgrade to
+Python 3.5 would require additional effort by Google to modify the runtime.&lt;/p&gt;
+
+&lt;p&gt;Considering the desire to run additional languages such as Javascript (via
+NodeJS) or Ruby, Google is put in an untenable position if it expects to
+support modified runtimes for multiple versions of different languages.&lt;/p&gt;
+
+&lt;p&gt;Now let&amp;rsquo;s consider the rise of Docker and the development of Managed VMs.
+Managed VMs are built on top of Docker and provide a &amp;lsquo;dockerized&amp;rsquo; platform
+hosting your language runtime. Managed VMs provide the auto-scaling,
+health-check, colocation and server upgrades that are the hallmark of App Engine while
+allowing the use of arbitrary runtimes within the Docker sandbox.&lt;/p&gt;
+
+&lt;p&gt;This diagram from the &lt;a href=&#34;https://cloud.google.com/appengine/docs/managed-vms/&#34;&gt;Managed VMs documentation&lt;/a&gt;
+shows the difference between the heavily modified App Engine sandbox and the
+more traditional environment running within a Docker container as a Managed VM.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;https://cloud.google.com/appengine/docs/managed-vms/&#34;&gt;
+  &lt;img src=&#34;https://cloud.google.com/appengine/images/vmhosting.png&#34; alt=&#34;Managed VM Sandbox&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;The great thing about Managed VMs is that they still allow access to the
+traditional App Engine APIs such as Datastore, Memcached, Logging, Task Queues
+and Search. This allows you to write applications in a fashion similar to your
+existing App Engine projects in a Managed VM environment. You can also use the
+Modules API to have a portion of your application be served by requests routed
+to the Managed VM and other requests routed to your App Engine application.&lt;/p&gt;
+
+&lt;p&gt;Managed VMs also allow better insight into product costs. The VMs are deployed
+as Compute Engine instances, giving you the ability to monitor CPU and network
+usage and upgrade and downgrade your instances as you see fit.&lt;/p&gt;
+
+&lt;p&gt;My feeling is that as the APIs to access Google Cloud Platform are extended and
+enhanced to work outside of the current App Engine sandbox, Managed VMs will
+take over Google&amp;rsquo;s development efforts to the point where App Engine as we know
+it is replaced with Managed VMs. The next project I develop will be using
+Managed VMs from the start.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Introducing CloudPyPI</title>
+      <link>http://sookocheff.com/post/python/introducing-cloudpypi/</link>
+      <pubDate>Tue, 16 Jun 2015 21:19:26 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/python/introducing-cloudpypi/</guid>
+      <description>&lt;p&gt;A common problem with Python development for large-scale teams is sharing
+internal libraries. At Vendasta we&amp;rsquo;ve been solving this problem using a private
+PyPI installation running on Google App Engine with Python eggs and wheels being
+served by Google Cloud Storage. Today, we are announcing the open source version
+of this tool — CloudPyPI.&lt;/p&gt;
+
+&lt;p&gt;CloudPyPI is a modification of
+&lt;a href=&#34;https://pypi.python.org/pypi/pypiserver&#34;&gt;pypiserver&lt;/a&gt; for running on Google App
+Engine. We&amp;rsquo;ve also introduced a simple user management system to allow
+authenticated access to your Python packages. Together, we&amp;rsquo;ve found this to be a
+robust tool for distributing private Python libraries internally. If this is a
+problem you&amp;rsquo;ve been trying to solve, give CloudPyPI a try — contributions and
+feature requests are always welcome.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;btn btn-default&#34; href=&#34;https://github.com/vendasta/cloudpypi&#34; role=&#34;button&#34;&gt;Check out CloudPyPI on Github&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 6: The Pipeline UI</title>
+      <link>http://sookocheff.com/post/appengine/pipelines/pipeline-ui/</link>
+      <pubDate>Tue, 09 Jun 2015 20:43:56 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/appengine/pipelines/pipeline-ui/</guid>
+      <description>
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This article will serve as a reminder of the Pipeline UI as much for the writer
+as for the reader. The Pipeline UI requires the MapMeduce library to be
+installed. If you are not familiar with MapReduce please refer to the &lt;a href=&#34;http://sookocheff.com/series/mapreduce-api/&#34;&gt;MapReduce
+API Series of articles&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Once MapReduce is installed you will need to add a few indices to &lt;code&gt;index.yaml&lt;/code&gt;
+to properly query for pipeline records for display in the UI.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;indexes:
+- kind: _AE_Pipeline_Record
+  properties: 
+    - name: is_root_pipeline 
+    - name: start_time 
+      direction: desc
+
+- kind: _AE_Pipeline_Record
+  properties: 
+    - name: class_path 
+    - name: is_root_pipeline 
+    - name: start_time
+      direction: desc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;list-root-pipelines:7ab75bf11afccfc89345fe106e22b8e1&#34;&gt;List Root Pipelines&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;/mapreduce/pipeline/list
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This URL will list all root pipelines in the system, ordered by their starting
+time. You can filter pipelines by their class path and check on an individual
+pipelines status using this UI.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/root-pipelines.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/root-pipelines.png&#34; alt=&#34;List Root Pipelines&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;pipeline-status:7ab75bf11afccfc89345fe106e22b8e1&#34;&gt;Pipeline Status&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;/mapreduce/pipeline/status?root=7ba9b9b2b2e24787b3b4c11079178cb6
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you know a pipeline&amp;rsquo;s root identifier you can jump directly to the status
+page. This page presents you with a UI displaying the status of a pipeline and
+any of the pipeline&amp;rsquo;s children.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/pipeline-status.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/pipeline-status.png&#34; alt=&#34;Pipeline Status&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;list-mapreduce-pipelines:7ab75bf11afccfc89345fe106e22b8e1&#34;&gt;List MapReduce Pipelines&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;/mapreduce/status
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If your pipeline is a MapReduce job, it will have an entry on the MapReduce
+status page. You can navigate to individual jobs to check their sharding and
+processing status or cleanup a job by removing datastore entries for the
+pipeline.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/mapreduce-list.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/mapreduce-list.png&#34; alt=&#34;MapReduce List&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;mapreduce-status:7ab75bf11afccfc89345fe106e22b8e1&#34;&gt;MapReduce Status&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;/mapreduce/detail?mapreduce_id=1574647046653BE202D4D
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you know a mapreduce job&amp;rsquo;s identifier you can jump directly to the status
+page. This page will show any counters you have defined and show how the
+processing of each shard of data.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/mapreduce-status.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-ui/mapreduce-status.png&#34; alt=&#34;MapReduce Status&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 5: Asynchronous Pipelines</title>
+      <link>http://sookocheff.com/post/appengine/pipelines/asynchronous-pipelines/</link>
+      <pubDate>Tue, 02 Jun 2015 04:45:56 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/appengine/pipelines/asynchronous-pipelines/</guid>
+      <description>
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This article will cover fully asynchronous pipelines. The term &amp;lsquo;asynchronous&amp;rsquo; is
+misleading here — all piplines are asynchronous in the sense that yielding a
+pipeline is a non-blocking operation. An asynchronous refers to a
+pipeline that remains in a RUN state until outside action is taken, for example,
+a button is clicked or a task is executed.&lt;/p&gt;
+
+&lt;p&gt;Marking a pipeline as an asynchronous pipeline is as simple as setting the
+&lt;code&gt;async&lt;/code&gt; class property to True.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class AsyncPipeline(pipeline.Pipeline):
+    async = True
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once this pipeline starts, it will remain in the RUN state until the pipeline is
+transitioned to another state. You transition a pipeline to another state by
+calling the &lt;code&gt;complete&lt;/code&gt; method, using a callback. &lt;code&gt;complete()&lt;/code&gt; is a
+method only available to asynchronous pipelines. Calling complete will fill the
+pipelines output slots and, if all slots have been filled, mark the pipeline
+complete. Any barriers related to the slots being filled are notified as
+described in &lt;a href=&#34;http://sookocheff.com/post/appengine/pipelines/pipeline-internals/&#34;&gt;the previous article&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class AsyncPipeline(pipeline.Pipeline):
+    async = True
+
+    def callback(self):
+        self.complete()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;callback-urls:74bf5c045d8c3cbfb500a70528c1dea1&#34;&gt;Callback URLs&lt;/h2&gt;
+
+&lt;p&gt;The pipeline API provides convenience methods for calling the callback method.
+&lt;code&gt;get_callback_url&lt;/code&gt; returns a URL that, when accessed, passes any query
+parameters to the callback method. For example, to generate a URL to our
+pipeline with a &lt;code&gt;choice&lt;/code&gt; parameter we can call get_callback_url as follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;url = get_callback_url(choice=&#39;approve&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will generate a URL of the form:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;/_ah/pipeline/callback?choice=approve&amp;amp;pipeline_id=fd789852183b4310b5f1353205a967fe
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Accessing this URL will pass the &lt;code&gt;choice&lt;/code&gt; parameter to the callback function of
+the pipeline with pipeline_id &lt;code&gt;fd789852183b4310b5f1353205a967fe&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class AsyncPipeline(pipeline.Pipeline):
+    async = True
+    public_callbacks = True
+
+    def run(self):
+        url = self.get_callback_url(choice=&#39;approve&#39;)
+        logging.info(&#39;Callback URL: %s&#39; % url)
+
+    def callback(self, choice):
+        if choice == &#39;approve&#39;:
+            logging.info(&#39;Pipeline Complete&#39;)
+            self.complete()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running the pipeline above will log the Callback URL to the console. By visiting
+that URL, the &lt;code&gt;callback&lt;/code&gt; method will execute, completing your pipeline. You can
+refer to the &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines/blob/master/python/src/pipeline/common.py&#34;&gt;EmailToContinue&lt;/a&gt; Pipeline for a more robust example.&lt;/p&gt;
+
+&lt;h2 id=&#34;callback-tasks:74bf5c045d8c3cbfb500a70528c1dea1&#34;&gt;Callback Tasks&lt;/h2&gt;
+
+&lt;p&gt;The second way to execute a callback method is via a callback task. The
+Pipelines API provides another convenience method to generate a callback task
+that will execute our pipeline. In the following example, a task is created to
+trigger in the future, adding an artificial delay to our pipeline.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class DelayPipeline(pipeline.Pipeline):
+    async = True
+
+    def __init__(self, seconds):
+        super(DelayPipeline, self).__init__(seconds=seconds)
+
+    def run(self, seconds=None):
+        task = self.get_callback_task(
+            countdown=seconds,
+            name=&#39;ae-pipeline-delay-&#39; + self.pipeline_id)
+        try:
+            task.add(self.queue_name)
+        except (taskqueue.TombstonedTaskError, taskqueue.TaskAlreadyExistsError):
+            pass
+
+    def callback(self):
+        self.complete(self.kwargs[&#39;seconds&#39;])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Note that the task is queued using the pipeline_id in the task name. This helps
+ensure our run method is idempotent. Full source code for an asynchronous
+pipeline follows. This pipeline will delay for 10 seconds, and then log a
+callback_url to the console. Visiting the callback URL will complete the
+pipeline.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+from google.appengine.api import taskqueue
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        pipeline = DelayPipeline(10)
+        pipeline.start()
+
+
+class DelayPipeline(pipeline.Pipeline):
+    async = True
+
+    def __init__(self, seconds):
+        pipeline.Pipeline.__init__(self, seconds=seconds)
+
+    def run(self, seconds=None):
+        task = self.get_callback_task(
+            countdown=seconds,
+            name=&#39;ae-pipeline-delay-&#39; + self.pipeline_id)
+        try:
+            task.add(self.queue_name)
+        except (taskqueue.TombstonedTaskError,
+                taskqueue.TaskAlreadyExistsError):
+            pass
+
+    def callback(self):
+        AsyncPipeline().start()
+
+
+class AsyncPipeline(pipeline.Pipeline):
+    async = True
+    public_callbacks = True
+
+    def run(self):
+        url = self.get_callback_url(choice=&#39;approve&#39;)
+        logging.info(&#39;Callback URL: %s&#39; % url)
+
+    def callback(self, choice):
+        if choice == &#39;approve&#39;:
+            self.complete()
+
+
+routes = [webapp2.Route(&#39;/pipeline-test/&#39;, handler=&#39;main.RunPipelineHandler&#39;)]
+
+APP = webapp2.WSGIApplication(routes)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 4: Pipeline Internals</title>
+      <link>http://sookocheff.com/post/appengine/pipelines/pipeline-internals/</link>
+      <pubDate>Wed, 27 May 2015 05:57:19 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/appengine/pipelines/pipeline-internals/</guid>
+      <description>
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/post/appengine/pipelines/connecting-pipelines/&#34;&gt;We&amp;rsquo;ve learned how to execute and chain together pipelines&lt;/a&gt;,
+now let&amp;rsquo;s take a look at how pipelines execute under the hood. If necessary,
+you can refer to the &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines&#34;&gt;source code of the pipelines
+project&lt;/a&gt; to
+clarify any details.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-pipeline-data-model:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;The Pipeline Data Model&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start with the pipeline data model. Note that each Kind defined by the
+pipelines API is prefixed by &lt;code&gt;_AE_Pipeline&lt;/code&gt;, making it easy to view individual
+pipeline details by viewing the datastore entity.&lt;/p&gt;
+
+&lt;h3 id=&#34;pipelinerecord:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;PipelineRecord&lt;/h3&gt;
+
+&lt;p&gt;Every pipeline is represented by a &lt;em&gt;PipelineRecord&lt;/em&gt; in the datastore. The
+PipelineRecord records the pipeline&amp;rsquo;s root identifier (if this pipeline is a
+child), any child pipelines spawned by this pipeline, the current status
+of the pipeline, and a few additional bookkeeping details.&lt;/p&gt;
+
+&lt;p&gt;At any point in time a Pipeline may be in one of four states: WAITING, RUN,
+DONE, and ABORTED.  WAITING implies that this pipeline has a barrier that
+must be satisfied before the pipeline can be RUN. RUN means that the pipeline
+has been started. DONE means that the pipeline is complete. ABORTED means
+that the pipeline has been manually aborted.&lt;/p&gt;
+
+&lt;h3 id=&#34;slotrecord:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;SlotRecord&lt;/h3&gt;
+
+&lt;p&gt;The output of a pipeline is represented as a &lt;em&gt;Slot&lt;/em&gt; stored in the datastore as a
+&lt;em&gt;SlotRecord&lt;/em&gt;. When a pipeline completes, it stores its output in the SlotRecord
+to be made available to further pipelines.&lt;/p&gt;
+
+&lt;h3 id=&#34;barrierrecord:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;BarrierRecord&lt;/h3&gt;
+
+&lt;p&gt;A &lt;em&gt;BarrierRecord&lt;/em&gt; represents the slots that must be filled before a pipeline can
+execute. The barrier tracks &lt;em&gt;blocking_slots&lt;/em&gt; that must be filled before the
+barrier can be lifted. Once the barrier is lifted a &lt;em&gt;target&lt;/em&gt; pipeline is
+notified and the target can transition to the RUN state.&lt;/p&gt;
+
+&lt;p&gt;Barriers that depend on a slot being filled are stored in the &lt;em&gt;BarrierIndex&lt;/em&gt;,
+which tracks barriers that are dependent on a slot. The purpose of the
+BarrierIndex is to force &lt;a href=&#34;https://cloud.google.com/datastore/docs/articles/balancing-strong-and-eventual-consistency-with-google-cloud-datastore/&#34;&gt;strong consistency&lt;/a&gt; when querying for a SlotRecord&amp;rsquo;s Barriers.&lt;/p&gt;
+
+&lt;h3 id=&#34;statusrecord:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;StatusRecord&lt;/h3&gt;
+
+&lt;p&gt;The &lt;em&gt;StatusRecord&lt;/em&gt; tracks the current status of a pipeline and facilitates the
+pipeline user interface. The StatusRecord is updated as the pipeline progresses
+to give a view of the current pipeline state. Not much more than that.&lt;/p&gt;
+
+&lt;h2 id=&#34;pipeline-execution:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;Pipeline Execution&lt;/h2&gt;
+
+&lt;p&gt;Having an understanding of the pipeline data model gives a rough idea of how
+pipelines are executed. Each stage of execution corresponds to a webapp2 handler
+that services the request and advances the state of the pipeline. The following
+diagram shows each of the pipeline stages during typical execution and the
+description that follows provides more detail on each stage.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-internals/pipeline-states.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/appengine/pipelines/pipeline-internals/pipeline-states.png&#34; alt=&#34;Pipeline States&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&#34;start:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;start()&lt;/h3&gt;
+
+&lt;p&gt;A pipeline is started by calling its &lt;code&gt;start()&lt;/code&gt; method. When calling &lt;code&gt;start()&lt;/code&gt; a
+&lt;em&gt;PipelineRecord&lt;/em&gt; is created and marked as a &lt;em&gt;RootPipeline&lt;/em&gt;, &lt;em&gt;SlotRecords&lt;/em&gt; are
+created for each of the pipelines outputs and marked as children of the
+pipeline, and &lt;em&gt;BarrierRecords&lt;/em&gt; are created corresponding to each of the output
+slots of the pipeline. Finally, a task is queued to the &lt;code&gt;/run&lt;/code&gt; handler to
+execute the pipeline.&lt;/p&gt;
+
+&lt;h3 id=&#34;run-handler:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;/run handler&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;/run&lt;/code&gt; handler transitions the pipeline from the WAITING state to the RUN
+state by setting a flag on the &lt;em&gt;PipelineRecord&lt;/em&gt;, the pipeline object instance is
+then reconstructed given the data from the request and the pipeline&amp;rsquo;s &lt;code&gt;run()&lt;/code&gt;
+method is called. When the &lt;code&gt;run()&lt;/code&gt; method is complete, any outputs are used to
+fill &lt;em&gt;SlotRecords&lt;/em&gt; and yielded to the parent pipeline when necessary.  Finally,
+any child pipelines and their dependent slots and barriers are created and
+marked as children of the parent pipeline. Calls to the &lt;code&gt;/fanout&lt;/code&gt;
+handler are made to queue tasks to start any child pipelines.&lt;/p&gt;
+
+&lt;h3 id=&#34;fanout-handler:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;/fanout handler&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;/fanout&lt;/code&gt; handler loads all child pipelines given a parent pipeline and queues
+a task to the &lt;code&gt;/run&lt;/code&gt; handler for each of them.&lt;/p&gt;
+
+&lt;h3 id=&#34;output-handler:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;/output handler&lt;/h3&gt;
+
+&lt;p&gt;Whenever a slot is filled a task is queued to the &lt;code&gt;/output&lt;/code&gt; handler to notify any
+barriers to a pipeline&amp;rsquo;s execution that they can be removed. If a pipeline has
+all its barriers to completing removed, a task is queued to the &lt;code&gt;/finalize&lt;/code&gt; handler
+to mark our pipeline as complete. The &lt;code&gt;/output&lt;/code&gt; handler queues tasks to the
+&lt;code&gt;/run&lt;/code&gt; method for any pipelines that have their barriers to starting removed.&lt;/p&gt;
+
+&lt;h3 id=&#34;finalized-handler:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;/finalized handler&lt;/h3&gt;
+
+&lt;p&gt;When the &lt;code&gt;/finalized&lt;/code&gt; handler is called, the pipeline is marked as complete and
+our pipeline&amp;rsquo;s &lt;code&gt;finalized()&lt;/code&gt; method is called.&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusion:b0f788db0cc3986803d61b920ecd3adf&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;Understanding the Pipeline data model and run-time can help you to visualize and
+debug any pipeline problems. Stay tuned for the next article covering
+asynchronous pipelines.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 3: Fan In, Fan Out, Sequencing</title>
+      <link>http://sookocheff.com/post/appengine/pipelines/fan-in-fan-out/</link>
+      <pubDate>Tue, 19 May 2015 05:57:19 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/appengine/pipelines/fan-in-fan-out/</guid>
+      <description>
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/post/appengine/pipelines/connecting-pipelines/&#34;&gt;Last time&lt;/a&gt;,
+we studied how to connect two pipelines together. In this post, we expand on
+this topic, exploring how to fan-out to do multiple tasks in parallel, fan-in
+to combine multiple tasks into one, and how to do sequential work.&lt;/p&gt;
+
+&lt;h2 id=&#34;fan-out:077d7e8a485e72c5c014b45abe98e05c&#34;&gt;Fan-Out&lt;/h2&gt;
+
+&lt;p&gt;Fan-Out refers to spreading a task to multiple destinations in parallel. Using
+the Pipelines API, fan-out can be achieved elegantly by yielding a new pipeline
+for every task you wish to execute. Each of these pipelines is exeucted
+immediately via a Task in the App Engine Task Queue. Fan-out parallelizes
+implicitly when additional App Engine instances are started to handle the
+increased number of requests arriving in the Task Queue. You can moderate the
+amount of fan-out by changing the processing rate on the task queue that
+executes your pipelines.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;Squaring: %s&#39;, number)
+        return number * number
+
+
+class FanOutPipeline(pipeline.Pipeline):
+
+    def run(self, count):
+        for i in xrange(0, count):
+            yield SquarePipeline(i)
+        # All children run immediately
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;fan-in:077d7e8a485e72c5c014b45abe98e05c&#34;&gt;Fan-In&lt;/h2&gt;
+
+&lt;p&gt;Fan-In implies waiting for a collection of related tasks to complete before
+continuing processing. The example can be extended by summing the list of
+squared values — when we call &lt;code&gt;yield Sum(*results)&lt;/code&gt; the pipeline run-time will
+wait until all results are ready before executing Sum. Internally, a &lt;em&gt;barrier&lt;/em&gt;
+record is created that blocks execution of Sum and tracks the dependencies
+required to lift the barrier. Once all dependencies have been satisfied the
+barrier is lifted and Sum can execute.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;Squaring: %s&#39; % number)
+        return number * number
+
+
+class Sum(pipeline.Pipeline):
+
+    def run(self, *args):
+        value = sum(list(args))
+        logging.info(&#39;Sum: %s&#39;, value)
+        return value
+
+
+class FanInPipeline(pipeline.Pipeline):
+
+    def run(self, count):
+        results = []
+        for i in xrange(0, count):
+            result = yield SquarePipeline(i)
+            results.append(result)
+
+        # Waits until all SquarePipeline results are complete
+        yield Sum(*results)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;sequencing:077d7e8a485e72c5c014b45abe98e05c&#34;&gt;Sequencing&lt;/h2&gt;
+
+&lt;p&gt;A common workflow is running pipelines in a predefined sequence. The Pipelines
+API provides context managers that will force execution ordering using the
+&lt;code&gt;with&lt;/code&gt; keyword. This is useful for Pipelines with no output that you wish to
+execute in a specific order — we cannot wait for the output and so no barrier
+must be satisfied, but we still want to enforce an execution order. In the
+following example, we extend the FanOutFanInPipeline to update an HTML
+dashboard with our results and, once that is complete, send out an e-mail to the
+development team. This example is taken from the excellent &lt;a href=&#34;https://www.youtube.com/watch?v=Rsfy_TYA2ZY&#34;&gt;Pipelines API
+introductory video&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class FanOutFanInPipeline(pipeline.Pipeline):
+
+    def run(self, count):
+        results = []
+        for i in xrange(0, count):
+            result = yield SquarePipeline(i)
+            results.append(result)
+
+        result = yield Sum(*results)
+        with pipeline.InOrder():
+            yield UpdateDashboard()
+            yield EmailTeam()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;conclusion:077d7e8a485e72c5c014b45abe98e05c&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;This article describes how to coordinate pipeline tasks using fan-in, fan-out
+and sequencing. The next article we will discuss Pipeline API internals.&lt;/p&gt;
+
+&lt;p&gt;Full source code of both Fan-In and Fan-Out follows.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        stage = FanOutFanInPipeline(10)
+        stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;Squaring: %s&#39; % number)
+        return number * number
+
+
+class Sum(pipeline.Pipeline):
+
+    def run(self, *args):
+        value = sum(list(args))
+        logging.info(&#39;Sum: %s&#39;, value)
+        return value
+
+
+class FanOutFanInPipeline(pipeline.Pipeline):
+
+    def run(self, count):
+        results = []
+        for i in xrange(0, count):
+            result = yield SquarePipeline(i)
+            results.append(result)
+
+        yield Sum(*results)
+
+
+routes = [
+    webapp2.Route(&#39;/pipeline-test/&#39;, handler=&#39;main.RunPipelineHandler&#39;)
+]
+
+APP = webapp2.WSGIApplication(routes)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 2: Connecting Pipelines</title>
+      <link>http://sookocheff.com/post/appengine/pipelines/connecting-pipelines/</link>
+      <pubDate>Tue, 12 May 2015 05:57:19 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/appengine/pipelines/connecting-pipelines/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://sookocheff.com/post/appengine/pipelines/the-basics/&#34;&gt;Last time&lt;/a&gt;,
+we discussed basic pipeline instantiation and execution. This time, we will
+cover sequential pipelines, answering the question &amp;ldquo;How do I connect the output
+of one pipeline with the input of another pipeline&amp;rdquo;?&lt;/p&gt;
+
+&lt;p&gt;To begin, let&amp;rsquo;s review a basic pipeline that squares its input. If any of this
+does not make sense refer to the &lt;a href=&#34;http://sookocheff.com/post/appengine/pipelines/the-basics/&#34;&gt;first part of this tutorial&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        stage = SquarePipeline(10)
+        stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        return number * number
+
+    def finalized(self):
+        logging.info(&#39;All done! Square is %s&#39;, self.outputs.default.value)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The first step in passing data between two pipelines is updating our pipeline to
+use the generator interface. The generator interface uses the &lt;code&gt;yield&lt;/code&gt; keyword as
+a means of connecting pipelines together. For this contrived example, let&amp;rsquo;s
+create a &lt;em&gt;parent&lt;/em&gt; pipeline that executes &lt;code&gt;SquarePipeline&lt;/code&gt; twice in succession.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class TwiceSquaredPipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        first_square = yield SquarePipeline(number)
+        second_square = yield SquarePipeline(first_square)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;What now? We need a way to access the value stored in &lt;code&gt;second_square&lt;/code&gt;. When
+execution hits a &lt;code&gt;yield&lt;/code&gt; statement a task is started to run the pipeline and a
+&lt;code&gt;PipelineFuture&lt;/code&gt; is returned. The &lt;code&gt;PipelineFuture&lt;/code&gt; will have a value &lt;em&gt;after&lt;/em&gt; the
+task has finished executing but not immediately. So how do we access the value?
+With a &lt;em&gt;child&lt;/em&gt; pipeline that can read the result. In this example, we simply log
+the value of the computation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class TwiceSquaredPipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        first_square = yield SquarePipeline(number)
+        second_square = yield SquarePipeline(first_square)
+        yield LogResult(second_square)
+
+class LogResult(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;All done! Value is %s&#39;, number)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The rule of thumb here is that &lt;em&gt;anything you instantiate your pipeline with (and
+subsequently pass to the &lt;code&gt;run&lt;/code&gt; method) is accessible within your
+pipeline&lt;/em&gt;. These are called &lt;em&gt;immediate values&lt;/em&gt; and you can treat them as regular
+Python values. When this code is executed, each pipeline started by a &lt;code&gt;yield&lt;/code&gt;
+call is a separate App Engine Task that executes in the Task Queue. The Pipeline
+runtime coordinates running these tasks and shares the results of execution
+between tasks, allowing you to safely connect pipelines together.&lt;/p&gt;
+
+&lt;p&gt;Full source code for this example follows.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        stage = TwiceSquaredPipeline(10)
+        stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        return number * number
+
+
+class TwiceSquaredPipeline(pipeline.Pipeline):
+
+    def run(self, number):
+        first_square = yield SquarePipeline(number)
+        second_square = yield SquarePipeline(first_square)
+        yield LogResult(second_square)
+
+
+class LogResult(pipeline.Pipeline):
+
+    def run(self, number):
+        logging.info(&#39;All done! Value is %s&#39;, number)
+
+
+routes = [
+    webapp2.Route(&#39;/pipeline-test/&#39;, handler=&#39;main.RunPipelineHandler&#39;)
+]
+
+APP = webapp2.WSGIApplication(routes)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>App Engine Pipelines API - Part 1: The Basics</title>
+      <link>http://sookocheff.com/post/appengine/pipelines/the-basics/</link>
+      <pubDate>Tue, 05 May 2015 05:57:19 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/appengine/pipelines/the-basics/</guid>
+      <description>
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sookocheff.com/series/pipelines-api/&#34;&gt;View all articles in the Pipeline API Series&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The &lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines&#34;&gt;Pipelines API&lt;/a&gt;
+is a general purpose workflow engine for App Engine applications. With the
+Pipelines API we can connect together complex workflows into a coherent run time
+backed by the Datastore. This article provides a basic overview of the Pipelines
+API and how it can be used for abritrary computational workflows.&lt;/p&gt;
+
+&lt;p&gt;In the most basic sense a Pipeline is an object that takes input, performs some
+logic or computation on that input, and produces output. Pipelines can take two
+general forms &amp;ndash; synchronous or asynchronous. Synchronous pipelines act as basic
+functions that must complete during a single request. Asynchronous pipelines
+spawn child pipelines and connect them together into a workflow by passing input
+and output parameters around.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;A word of warning.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Pipelines must be idempotent and it is up to the developer to ensure that they
+are &amp;ndash; this is not enforced by the run-time. A pipeline may fail and be retried
+and it is important that running the same pipeline with the same set of inputs
+will product the same results.&lt;/p&gt;
+
+&lt;h2 id=&#34;getting-started:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Getting Started&lt;/h2&gt;
+
+&lt;p&gt;The first step is to grab the latest version of the Pipelines API (and its
+        dependencies) using pip. The following assumes you install third party
+App Engine dependencies in the lib directory relative to where pip is being run.
+You can also grab the source code from
+&lt;a href=&#34;https://github.com/GoogleCloudPlatform/appengine-pipelines&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;pip install GoogleAppEnginePipeline -t lib/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Pipeline requests need to be handled by the Pipeline application. We set that up
+by adding a handler to &lt;code&gt;app.yaml&lt;/code&gt;. The pipeline library itself will enforce the
+login access restrictions so we do not need to secure these handlers.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;handlers:
+- url: /_ah/pipeline.*
+  script: pipeline.handlers._APP
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;basic-synchronous-pipelines:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Basic Synchronous Pipelines&lt;/h2&gt;
+
+&lt;p&gt;A synchronous pipeline runs within the bounds of a single App Engine request.
+Once the request has been made the pipeline starts and pipeline processing
+happens automatically. We can set up this pipeline by defining a handler
+responsible for starting the pipeline. For now, create a default handler that
+will receive a request at the URL of your choosing.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        logging.info(&#39;Launch pipeline&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A request processed by this handler will kick off our Pipeline. To define a
+pipeline we inherit from the Pipeline object and the method &lt;code&gt;run&lt;/code&gt;. The pipeline
+is launched via the &lt;code&gt;start&lt;/code&gt; method. The code below instantiates a custom
+pipeline and launches it. Accessing the URL for the RunPipelineHandler will
+print the message &amp;lsquo;Do something here&amp;rsquo; to the logs.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        logging.info(&#39;Launch pipeline&#39;)
+        pipeline = MyPipeline()
+        pipeline.start()
+
+
+class MyPipeline(pipeline.Pipeline):
+    def run(self, *args, **kwargs):
+        logging.info(&#39;Do something here.&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can update our pipeline to do a simple operation, like squaring a number.
+You&amp;rsquo;ll notice in the code that follows that the arguments passed when
+initializing the pipeline are accessible as parameters to the &lt;code&gt;run&lt;/code&gt; method
+within the pipeline.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+    def run(self, number):
+        return number * number
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running this pipeline will show that the pipeline executes correctly. But where
+does our return value go? How can we access the output of &lt;code&gt;SquarePipeline&lt;/code&gt;?&lt;/p&gt;
+
+&lt;h2 id=&#34;accessing-pipeline-output:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Accessing Pipeline Output&lt;/h2&gt;
+
+&lt;p&gt;You&amp;rsquo;ll notice that in &lt;code&gt;SquarePipeline&lt;/code&gt; we are returning a value directly but
+we never actually access it. Pipeline output can only ever be accessed after the
+pipeline has finished executing. We can check for the end of pipeline execution
+using the &lt;code&gt;has_finalized&lt;/code&gt; property. This property will be set to &lt;code&gt;True&lt;/code&gt; when all
+stages of a pipeline have finished executing. At this point in time our output
+will be available as a value on the Pipeline object. Let&amp;rsquo;s see what happens when
+we try to check if our pipeline has finalized. To do this we need to store the
+pipeline_id generated from our start method and check the &lt;code&gt;has_finalized&lt;/code&gt;
+property.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+        pipeline_id = square_stage.pipeline_id
+
+        stage = SquarePipeline.from_id(pipeline_id)
+        if stage.has_finalized:
+            logging.info(&#39;Finalized&#39;)
+        else:
+            logging.info(&#39;Not finalized&#39;)
+
+
+class SquarePipeline(pipeline.Pipeline):
+    def run(self, number):
+        return number * number
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running the preceding code we see that our pipeline is not finalized. What
+happened here? The pipeline is executed as an ayschronous task after it has been
+started and may or may not complete by the time we check that it has finalized.
+The pipeline itself is a future whose value has not materialized. Any output
+from a pipeline is not actually available until all child pipeline tasks are
+executed. So how do we get the final value of the SquarePipeline?&lt;/p&gt;
+
+&lt;h2 id=&#34;finalized:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Finalized&lt;/h2&gt;
+
+&lt;p&gt;The finalized method is called by the pipeline API once a Pipeline has completed
+its work (by filling all of is slots &amp;ndash; to be described later). By overriding
+the &lt;code&gt;finalized&lt;/code&gt; method we can see the result of our pipeline and do further
+processing on that result if necessary. By default our output is set to
+&lt;code&gt;self.outputs.default.value&lt;/code&gt;. As an example, executing the following code will
+log the message &amp;ldquo;All done! Square is 100&amp;rdquo;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+    def run(self, number):
+        return number * number
+
+    def finalized(self):
+        logging.info(&#39;All done! Square is %s&#39;, self.outputs.default.value)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We will see in a later article how to connect the output of one pipeline with
+another.&lt;/p&gt;
+
+&lt;h2 id=&#34;named-outputs:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Named outputs&lt;/h2&gt;
+
+&lt;p&gt;Pipelines also allow you to explicitly name outputs, this is useful in the case
+where you have more than one output to return or as a means of passing data
+between one pipeline execution and the next. When using named outputs, instead
+of returning a value from the &lt;code&gt;run&lt;/code&gt; method we fill a pipeline slot with our
+value. To use named outputs we define an &lt;code&gt;output_names&lt;/code&gt; class variable listing
+the names of our outputs. By calling &lt;code&gt;self.fill&lt;/code&gt; on our named output we store
+the return value of our pipeline for later access in the &lt;code&gt;run&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    output_names = [&#39;square&#39;]
+
+    def run(self, number):
+        self.fill(self.outputs.square, number * number)
+
+    def finalized(self):
+        logging.info(&#39;All done! Square is %s&#39;, self.outputs.square.value)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;testing-a-pipeline:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Testing a pipeline&lt;/h2&gt;
+
+&lt;p&gt;Sometimes our pipelines call out over the wire or perform expensive data
+operations. The Pipeline API provides a convenient way to test pipelines. By
+calling &lt;code&gt;start_test&lt;/code&gt; instead of &lt;code&gt;start&lt;/code&gt;. In our example we verify the
+expected output of our squaring pipeline by calling &lt;code&gt;start_test&lt;/code&gt;. The final
+value of our pipeline is available immediately.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start_test()
+        assert stage.outputs.square.value == 100
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If we need to mock out any behaviour from our &lt;code&gt;run&lt;/code&gt; method, we can supply a
+&lt;code&gt;run_test&lt;/code&gt; method that is executed whenever we run our pipeline with
+&lt;code&gt;start_test&lt;/code&gt;. Within this method we can mock out or adjust the behaviour of the
+pipeline to work under test.&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusion:dd1501e70e3c5b7c7f6f0783a2583eda&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;This article gives a basic outline of how to start and execute pipelines. Full
+source code for the final example is listed below. In the next article we will
+see how to pass the output of one pipeline to another and understand how parent
+and child pipelines interact.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+import webapp2
+import pipeline
+
+
+class RunPipelineHandler(webapp2.RequestHandler):
+    def get(self):
+        square_stage = SquarePipeline(10)
+        square_stage.start()
+
+
+class SquarePipeline(pipeline.Pipeline):
+
+    output_names = [&#39;square&#39;]
+
+    def run(self, number):
+        self.fill(self.outputs.square, number * number)
+
+    def finalized(self):
+        logging.info(&#39;All done! Square is %s&#39;, self.outputs.square.value)
+
+routes = [
+    webapp2.Route(&#39;/pipeline-test/&#39;, handler=&#39;main.RunPipelineHandler&#39;)
+]
+
+APP = webapp2.WSGIApplication(routes)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Durabledict for App Engine</title>
+      <link>http://sookocheff.com/post/appengine/durabledict-for-app-engine/</link>
+      <pubDate>Wed, 29 Apr 2015 06:19:23 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/appengine/durabledict-for-app-engine/</guid>
+      <description>
+
+&lt;h2 id=&#34;tldr:3359893ce98fc496a5f20da3cde1b0c4&#34;&gt;tldr;&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/soofaloofa/datastoredict&#34;&gt;DatastoreDict&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;what-s-a-durabledict:3359893ce98fc496a5f20da3cde1b0c4&#34;&gt;What&amp;rsquo;s a durabledict?&lt;/h2&gt;
+
+&lt;p&gt;Good question. &lt;a href=&#34;https://github.com/disqus/durabledict&#34;&gt;Durabledict&lt;/a&gt; is a Python
+implementation of a persistent dictionary. The dictionary values are cached
+locally and sync with the datastore whenever a value in the datastore changes.&lt;/p&gt;
+
+&lt;p&gt;Disqus provides concrete implementations for Redis, Django, ZooKeeper and in
+memory. This blog post details an implementation using the App Engine datastore
+and memcache.&lt;/p&gt;
+
+&lt;h2 id=&#34;creating-your-own-durabledict:3359893ce98fc496a5f20da3cde1b0c4&#34;&gt;Creating your own durabledict&lt;/h2&gt;
+
+&lt;p&gt;By following the &lt;a href=&#34;https://github.com/disqus/durabledict&#34;&gt;guide the durabledict
+README&lt;/a&gt; we can create our own
+implementation. We need to subclass &lt;code&gt;durabledict.base.DurableDict&lt;/code&gt; and implement
+the following interface methods. Strictly speaking, &lt;code&gt;_pop&lt;/code&gt; and &lt;code&gt;_setdefault&lt;/code&gt; do
+not have to be implemented but doing so makes your durabledict behave like a
+base dict in all cases.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;persist(key, value)&lt;/code&gt; - Persist value at key to your data store.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;depersist(key)&lt;/code&gt; - Delete the value at key from your data store.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;durables()&lt;/code&gt; - Return a key=val dict of all keys in your data store.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;last_updated()&lt;/code&gt; - A comparable value of when the data in your data store was last updated.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;_pop(key, default=None)&lt;/code&gt; - If key is in the dictionary, remove it and return its value, else return default. If default is not given and key is not in the dictionary, a KeyError is raised.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;_setdefault(key, default=None)&lt;/code&gt; - If key is in the dictionary, return its value. If not, insert key with a value of default and return default. default defaults to None.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s implement these one-by-one.&lt;/p&gt;
+
+&lt;h3 id=&#34;persist-key-value:3359893ce98fc496a5f20da3cde1b0c4&#34;&gt;persist(key, value)&lt;/h3&gt;
+
+&lt;p&gt;Persisting a value to the datastore is a relatively simple operation. If the key
+already exists we update it&amp;rsquo;s value. If the key does not already exist we create
+it. To aid with this operation we create a &lt;code&gt;get_or_create&lt;/code&gt; method that will
+return an existing entity if one exists or create a new entity if one does not
+exist.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def persist(self, key, val):
+    instance, created = get_or_create(self.model, key, val)
+
+    if not created and instance.value != val:
+        instance.value = val
+        instance.put()
+
+    self.touch_last_updated()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The last line of this function updates the last time this durabledict was
+changed. This is used for caching. We create the &lt;code&gt;last_updated&lt;/code&gt; and
+&lt;code&gt;touch_last_updated&lt;/code&gt; functions now.&lt;/p&gt;
+
+&lt;h3 id=&#34;last-updated-key-value:3359893ce98fc496a5f20da3cde1b0c4&#34;&gt;last_updated(key, value)&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def last_updated(self):
+    return self.cache.get(self.cache_key)
+
+def touch_last_updated(self):
+    self.cache.incr(self.cache_key, initial_value=self.last_synced + 1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;init:3359893ce98fc496a5f20da3cde1b0c4&#34;&gt;&lt;strong&gt;init&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;We now have the building blocks to create our initial durabledict. Within the
+&lt;code&gt;__init__&lt;/code&gt; method we set a manager and cache instance. The manager is
+responsible for ndb datastore operations to decouple the ndb interface from the
+durabledict implementation. We decouple our caching method in a similar fashion.
+We also set the initial value of the cache whenever we create a new instance of
+the durabledict.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from google.appengine.api import memcache
+
+from durabledict.base import DurableDict
+from durabledict.encoding import NoOpEncoding
+
+
+class DatastoreDict(DurableDict):
+
+    def __init__(self,
+                 model,
+                 value_col=&#39;value&#39;,
+                 cache=memcache,
+                 cache_key=&#39;__DatastoreDict:LastUpdated__&#39;):
+
+        self.model = model
+        self.value_col = value_col
+        self.cache = cache
+        self.cache_key = cache_key
+
+        self.cache.add(self.cache_key, 1)
+
+        super(DatastoreDict, self).__init__(encoding=NoOpEncoding)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;depersist-key:3359893ce98fc496a5f20da3cde1b0c4&#34;&gt;depersist(key)&lt;/h3&gt;
+
+&lt;p&gt;Depersist implies deleting a key from the dictionary (and datastore). Here we
+assume a helper method &lt;code&gt;delete&lt;/code&gt; that, given an ndb model and a string
+representing it&amp;rsquo;s key deletes the model. Since the data has changed we also
+update the last touched value to force a cache invalidation and data refresh.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def depersist(self, key):
+    delete(self.model, key)
+    self.touch_last_updated()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;durables:3359893ce98fc496a5f20da3cde1b0c4&#34;&gt;durables()&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;durables()&lt;/code&gt; returns the entire dictionary. Since we are all matching entities
+from the datastore it is important to keep your dictionary relatively small &amp;ndash;
+as the dictionary grows in size, resyncing it&amp;rsquo;s state with the datastore will
+get more and more expensive. This function assumes a &lt;code&gt;get_all&lt;/code&gt; method that will
+return all instances of a model.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def durables(self):
+    encoded_models = get_all(self.model)
+    return dict((model.key.id(), getattr(model, self.value_col)) for model in encoded_models)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;setdefault-key-default-none:3359893ce98fc496a5f20da3cde1b0c4&#34;&gt;setdefault(key, default=None)&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;_setdefault()&lt;/code&gt; overrides the dictionary built-in &lt;code&gt;setdefault&lt;/code&gt; which allows you
+to insert a key into the dictionary, creating the key with the default value if
+it does not exist and returning the existing value if it does exist.&lt;/p&gt;
+
+&lt;p&gt;For example, the following sequence of code creates a key for &lt;code&gt;y&lt;/code&gt;, which does not
+exist, and returns the existing value for &lt;code&gt;x&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; d = {&#39;x&#39;: 1}
+&amp;gt;&amp;gt;&amp;gt; d.setdefault(&#39;y&#39;, 2)
+2
+&amp;gt;&amp;gt;&amp;gt; d
+{&#39;y&#39;: 2, &#39;x&#39;: 1}
+&amp;gt;&amp;gt;&amp;gt; d.setdefault(&#39;x&#39;, 3)
+1
+&amp;gt;&amp;gt;&amp;gt; d
+{&#39;y&#39;: 2, &#39;x&#39;: 1}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can implement &lt;code&gt;_setdefault&lt;/code&gt; using the &lt;code&gt;get_or_create&lt;/code&gt; helper method, updating
+the cache if we have changed the dictionary.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def _setdefault(self, key, default=None):
+    instance, created = get_or_create(self.model, key, default)
+
+    if created:
+        self.touch_last_updated()
+
+    return getattr(instance, self.value_col)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;pop-key-default-none:3359893ce98fc496a5f20da3cde1b0c4&#34;&gt;pop(key, default=None)&lt;/h3&gt;
+
+&lt;p&gt;pop returns the value for a key and deletes the key. This is fairly straight
+forward given a &lt;code&gt;get&lt;/code&gt; and &lt;code&gt;delete&lt;/code&gt; helper method.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def _pop(self, key, default=None):
+    instance = get(self.model, key)
+    if instance:
+        value = getattr(instance, self.value_col)
+        delete(self.model, key)
+        self.touch_last_updated()
+        return value
+    else:
+        if default is not None:
+            return default
+        else:
+            raise KeyError
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;the-help:3359893ce98fc496a5f20da3cde1b0c4&#34;&gt;The Help&lt;/h3&gt;
+
+&lt;p&gt;The previous discussion uses a few helper methods that we haven&amp;rsquo;t defined yet.
+Each of these methods takes an arbitrary ndb model and performs an operation on
+it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def build_key(cls, key):
+    return ndb.Key(DatastoreDictAncestorModel,
+                   DatastoreDictAncestorModel.generate_key(cls).string_id(),
+                   cls, key.lower(),
+                   namespace=&#39;&#39;)
+
+
+@ndb.transactional
+def get_all(cls):
+    return cls.query(
+        ancestor=DatastoreDictAncestorModel.generate_key(cls)).fetch()
+
+
+@ndb.transactional
+def get(cls, key):
+    return build_key(cls, key).get()
+
+
+@ndb.transactional
+def get_or_create(cls, key, value=None):
+    key = build_key(cls, key)
+
+    instance = key.get()
+    if instance:
+        return instance, False
+
+    instance = cls(key=key, value=value)
+    instance.put()
+
+    return instance, True
+
+
+@ndb.transactional
+def delete(cls, key):
+    key = build_key(cls, key)
+    return key.delete()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The last item of note is the use of a parent for each DatastoreDict. This common
+ancestor forces strong read consistency for the &lt;code&gt;get_all&lt;/code&gt; method, allowing us to
+update a dictionary and have a consistent view of the data on subsequent reads.
+We use an additional model to provide the strong read consistency.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class DatastoreDictAncestorModel(ndb.Model):
+
+    @classmethod
+    def generate_key(cls, child_cls):
+        key_name = &#39;__%s-%s__&#39; % (&#39;ancestor&#39;, child_cls.__name__)
+        return ndb.Key(cls, key_name, namespace=&#39;&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Continuous Delivery Distilled</title>
+      <link>http://sookocheff.com/post/continuous-delivery/continuous-delivery-distilled/</link>
+      <pubDate>Thu, 23 Apr 2015 08:32:37 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/continuous-delivery/continuous-delivery-distilled/</guid>
+      <description>
+
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/-B0ZEHmBCH8&#34; frameborder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;
+
+&lt;p&gt;What if you could deliver more value, with more speed and with more stability?&lt;/p&gt;
+
+&lt;p&gt;What if you could triage bugs faster?&lt;/p&gt;
+
+&lt;p&gt;What if you could fix bugs easier and with less user facing impact?&lt;/p&gt;
+
+&lt;p&gt;You can, with continuous delivery.&lt;/p&gt;
+
+&lt;h2 id=&#34;terminology:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Terminology&lt;/h2&gt;
+
+&lt;p&gt;First, some terminology. What distinguishes continuous integration, continuous
+deployment and continuous delivery? Continuous integration revolves around the
+continuous automated testing of software whenever change to the software is
+made. Continuous deployment is the practice of automatically deploying any
+change to the code. Continuous delivery implies that you can deploy any change
+to production but for any number of reasons you may choose not to. The focus of
+this article is on continuous delivery.&lt;/p&gt;
+
+&lt;h2 id=&#34;what-is-continuous-delivery:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;What is continuous delivery?&lt;/h2&gt;
+
+&lt;p&gt;Continuous delivery is a set of development practices that allow you to release
+software to production at any time (&lt;a href=&#34;http://martinfowler.com/bliki/ContinuousDelivery.html&#34; title=&#34;Continuous Delivery&#34;&gt;Fowler, 2014&lt;/a&gt;). By following
+these practices you can reduce the cost, development time and risk  of
+delivering features to users (&lt;a href=&#34;http://www.thoughtworks.com/insights/blog/case-continuous-delivery&#34; title=&#34;The Case for Continuous Delivery&#34;&gt;Humble, 2014&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s expand upon these definitions by talking about what differentiates
+continuous delivery from traditional software development. With continuous
+delivery, at any point in time any stakeholder in the business can ask for the
+current version of the software to be deployed to production. This implies that
+your software is deployable throughout the development lifecycle and that the
+development team prioritizes keeping the software stable and deployable over
+working on new features (&lt;a href=&#34;http://martinfowler.com/bliki/ContinuousDelivery.html&#34; title=&#34;Continuous Delivery&#34;&gt;Fowler, 2014&lt;/a&gt;). It also implies some level
+of testing and deployment automation.&lt;/p&gt;
+
+&lt;p&gt;The following diagram of the continuous delivery process helps to visualize the
+automation steps that typically accompany a software change and the subsequent
+release of the software to production. The red bars in the diagram signal that
+failures at this stage of the process halt the entire process.&lt;/p&gt;
+
+&lt;p&gt;First, the delivery team or development team makes a change and commits that
+change to a version control system. This check in triggers automated unit tests
+that verify the commit. If those unit tests pass, automated acceptance tests run
+and if those pass we move on to manual user testing. Once the user has tested
+and approved the change a release can go out. From a development standpoint it
+is important to understand that any code commit that passes testing may be
+released to customers at &lt;em&gt;any&lt;/em&gt; point in time.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://commons.wikimedia.org/wiki/File:Continuous_Delivery_process_diagram.png#/media/File:Continuous_Delivery_process_diagram.png&#34;&gt;
+  &lt;img src=&#34;http://upload.wikimedia.org/wikipedia/commons/7/74/Continuous_Delivery_process_diagram.png&#34; alt=&#34;Continuous Delivery process diagram - Jez Humble&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;why-continuous-delivery:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Why Continuous Delivery?&lt;/h2&gt;
+
+&lt;p&gt;Google, Facebook, LinkedIn, Netflix, Etsy, Ebay, Github and Hewlett-Packard,
+among many others, have adopted continuous delivery in their products. On
+average, Amazon makes changes to production code every 11.6 seconds
+(&lt;a href=&#34;https://www.youtube.com/watch?v=dxk8b9rSKOo&#34; title=&#34;Velocity Culture&#34;&gt;Jenkins, 2011&lt;/a&gt;) &amp;ndash; that&amp;rsquo;s 3000 production deployments every
+day. Facebook commits to master 5000 times a day deploys to production twice
+a day (&lt;a href=&#34;http://www.infoq.com/presentations/Facebook-Release-Process&#34; title=&#34;The Facebook Release Process&#34;&gt;Rossi, 2011&lt;/a&gt;). Etsy deploys more than 50 times a day
+(&lt;a href=&#34;http://www.infoq.com/news/2014/03/etsy-deploy-50-times-a-day&#34; title=&#34;How Etsy Deploys More Than 50 Times a Day&#34;&gt;Miranda, 2014&lt;/a&gt;). Why would companies do this? What is the
+benefit?&lt;/p&gt;
+
+&lt;h3 id=&#34;reduced-risk:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Reduced Risk&lt;/h3&gt;
+
+&lt;p&gt;The first benefit is reduced risk. Each deployment is a smaller change that can
+easily be understood in isolation. If an error occurs it is trivially easy to
+roll-back a single change or push a new release on top of the change.&lt;/p&gt;
+
+&lt;h3 id=&#34;believable-progress:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Believable Progress&lt;/h3&gt;
+
+&lt;p&gt;Developers are generally quite bad at estimating software delivery projects
+([Milstein, 2013][Milstein2103]). If the definition of &amp;ldquo;done&amp;rdquo; means &amp;ldquo;developers
+declare it to be done&amp;rdquo; that is much less believable than if it&amp;rsquo;s safely deployed
+into a production environment.&lt;/p&gt;
+
+&lt;h3 id=&#34;faster-iteration-towards-product-fit:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Faster Iteration Towards Product Fit&lt;/h3&gt;
+
+&lt;p&gt;Generally speaking, the biggest risk in software development is building
+something that the user doesn&amp;rsquo;t want. Continuous delivery is a great enabler of
+A/B testing and allows you to frequently get working software in front of real
+users to assess user behaviour and performance impact of software changes.&lt;/p&gt;
+
+&lt;h3 id=&#34;expose-inefficiencies:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Expose Inefficiencies&lt;/h3&gt;
+
+&lt;p&gt;Continuous delivery enforces discipline on the software development team to
+always keep the product in deployable condition. This discipline naturally
+exposes inefficiencies in the development process &amp;ndash; anything that gets in the
+way of the goal of releasing working software quickly is an impediment to
+development that will quickly be brought to light with continuous delivery.&lt;/p&gt;
+
+&lt;h3 id=&#34;encourage-responsibility:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Encourage Responsibility&lt;/h3&gt;
+
+&lt;p&gt;With continuous delivery, the developer making a change and the developer
+deploying the code is the same person. This avoids any problems with handing
+your deployment &amp;lsquo;over the wall&amp;rsquo; and allowing another person or team to test,
+deploy and verify the code. It keeps the onus on working software with the
+people most knowledge about how the software works.&lt;/p&gt;
+
+&lt;h2 id=&#34;does-continuous-delivery-actually-work:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Does Continuous Delivery Actually Work?&lt;/h2&gt;
+
+&lt;p&gt;Rather than reflect on a few abstract benefits, let&amp;rsquo;s look at some of the
+available data on continuous delivery.&lt;/p&gt;
+
+&lt;p&gt;ThoughtWorks (&lt;a href=&#34;http://www.thoughtworks.com/insights/blog/case-continuous-delivery&#34; title=&#34;The Case for Continuous Delivery&#34;&gt;Humble, 2014&lt;/a&gt;) analyzed their data on high performing
+companies and found that those practicing continuous delivery ship code 30 times
+faster, have 50% fewer failed deployments, and restore service 12 times faster
+than their peers.&lt;/p&gt;
+
+&lt;p&gt;In A Practical Approach to Large-Scale Agile Development (&lt;a href=&#34;http://www.amazon.ca/Practical-Approach-Large-Scale-Agile-Development/dp/0321821726&#34; title=&#34;A Practical Approach to Large-Scale Agile Development: How HP Transformed LaserJet FutureSmart Firmware&#34;&gt;Gruver,
+2012&lt;/a&gt;). Hewlett-Packard, who had been practicing more traditional
+software delivery process, experimented with continuous deployment in an
+organization having roughly 400 developers working over 3 continents. After
+switching to continuous delivery, they integrated small changesets over 100
+times a day and deployed at least ten times a day. What happened? The number
+of features under active development increased by 140% and development costs
+per feature reduced by 78%. This amounted to a total development cost
+reduction of 40%.&lt;/p&gt;
+
+&lt;h2 id=&#34;how-to-do-continuous-delivery:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;How to do Continuous Delivery?&lt;/h2&gt;
+
+&lt;p&gt;At this point, you may be sold on the benefits of continuous delivery and are
+asking how to get started. Continuous delivery requires a few components to be
+effective.&lt;/p&gt;
+
+&lt;h4 id=&#34;1-continuous-integration:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;1. Continuous Integration&lt;/h4&gt;
+
+&lt;p&gt;A build server performing continuous intergration of every commit is a
+necessity. Once a code change is committed, the build server triggers the
+testing and deployment pipeline ultimately leading to successfully deploying a
+production release.&lt;/p&gt;
+
+&lt;h4 id=&#34;2-automated-testing:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;2. Automated Testing&lt;/h4&gt;
+
+&lt;p&gt;Automated unit testing, and, where applicable, automated performance testing,
+makes it easy to spot issues in code about to be deployed. If any of
+these tests fail the current release is rejected. This is not a silver
+bullet. Manual QA is still needed to verify a build and test before
+releasing.&lt;/p&gt;
+
+&lt;h4 id=&#34;3-feature-flags:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;3. Feature Flags&lt;/h4&gt;
+
+&lt;p&gt;Some features are too big to commit as one chunk. In these cases a &lt;a href=&#34;http://martinfowler.com/bliki/FeatureToggle.html&#34;&gt;feature
+flag&lt;/a&gt; is used to hide
+functionality that is not ready for general release, while still allowing code
+to be released to production.&lt;/p&gt;
+
+&lt;h4 id=&#34;4-monitoring:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;4. Monitoring&lt;/h4&gt;
+
+&lt;p&gt;Monitoring systems allow the development and test teams to easily see the effect
+a given change has on user behaviour, system performance or system stability.&lt;/p&gt;
+
+&lt;h4 id=&#34;5-one-click-deployment-and-roll-back:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;5. &amp;ldquo;One-Click&amp;rdquo; Deployment and Roll-Back.&lt;/h4&gt;
+
+&lt;p&gt;Deployments and roll-backs must be easy enough for anyone to do at a moments
+notice.&lt;/p&gt;
+
+&lt;h2 id=&#34;continuous-delivery-in-practice:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Continuous Delivery in Practice&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s run through three examples of how continuous delivery would look like in
+practice, contrasting continuous delivery with a more traditional release
+process. In these examples, the traditional release process assumes that any
+changes scheduled to be released are held in a development environment for one
+week, a staging environment for one week, and finally deployed to a production
+environment after one week on the staging environment. Each envrionment
+corresponds to a unique code branch (develop, test, master) and weekly merges
+take place to push the development code up to the test branch (and staging
+environment) and the test code up to the master branch (and production
+environment).&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/continuous-delivery-in-practice.png&#34; alt=&#34;Traditional Release Structure&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&#34;scenario-1-bug-fix:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Scenario 1: Bug Fix&lt;/h3&gt;
+
+&lt;p&gt;Imagine a scenario where a customer reports a bug in the system. The bug is
+simple enough for a single developer to work on and the fix is small enough to
+understand within a single code commit. Let&amp;rsquo;s begin by examining the traditional
+release process to see how this bug fix reaches the customer.&lt;/p&gt;
+
+&lt;p&gt;The developer, Brad, begins by checking out the latest copy of the development
+branch, and begins work on the bug. Once he is confident that the bug has been
+fixed he goes over the changes with QA and merges the bug into the develop
+branch where it waits for the weekly deployment to test.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-1.png&#34; alt=&#34;Merging to Develop&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Brad is now free to pick up another issue and commit the code for that issue to
+develop, where it waits once again for the weekly deployment to test. Test now
+has two issues that have been committed to development that will be released to
+the test environment in one week.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-2.png&#34; alt=&#34;Second Merge to Develop&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Meanwhile, other developers are working on issues and committing the code to
+develop. By the time the weekly deployment to the testing environment comes
+around we end up with 13 disparate issues being pushed to the test environment.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-3.png&#34; alt=&#34;Group of Merges to Develop&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Now, the QA team can perform regression testing of all of these 13 issues for
+the week that this release is held in the test environment for staging. After
+one week has passed, the test branch is merged with the master branch and a
+deployment to production is done.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/bug-fix-stage-4.png&#34; alt=&#34;Group of Merges to Develop&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s also important to note that &lt;em&gt;we still do not know that the bug fix will
+address the customer&amp;rsquo;s issues on production&lt;/em&gt;. We can&amp;rsquo;t know for sure that the
+bug fix not complete until it fixes the issue on the production environment. So,
+after the release a prudent developer will check back to make sure the bug
+is no longer an issue and it can be marked as resolved.&lt;/p&gt;
+
+&lt;p&gt;At this point we delivered the bug fix to the customer after a two week waiting
+period. We also dedicated testing time to this bug fix before merging it to the
+development branch, to regression test the release in the staging environment,
+and to test this bug fix on the production environment. For
+arguments sake, let&amp;rsquo;s say this testing time took 1 hour on each
+environment.&lt;/p&gt;
+
+&lt;h4 id=&#34;total-customer-time-waiting-for-this-bug-fix:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Total Customer Time Waiting For This Bug Fix:&lt;/h4&gt;
+
+&lt;p&gt;2 weeks&lt;/p&gt;
+
+&lt;h4 id=&#34;total-testing-time:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Total Testing Time:&lt;/h4&gt;
+
+&lt;p&gt;3 hours&lt;/p&gt;
+
+&lt;p&gt;Now imagine we have 13 issues that have been delivered with this release, we can
+compound the total waiting time and total testing time.&lt;/p&gt;
+
+&lt;h4 id=&#34;total-customer-time-waiting-for-this-release:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Total Customer Time Waiting For This Release:&lt;/h4&gt;
+
+&lt;p&gt;26 weeks&lt;/p&gt;
+
+&lt;h4 id=&#34;total-testing-time-for-this-release:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Total Testing Time For This Release:&lt;/h4&gt;
+
+&lt;p&gt;39 hours&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s contrast this with a continuous delivery approach. In this scenario, Alice
+works on an issue by first checking out the latest production code from the
+master branch. Once she is confident she has fixed the bug and it has passed QA,
+she merges the bug in to the master branch and deploys the fix to
+production. Let&amp;rsquo;s assume that she took two hours to fix the bug and that
+the bug required one hour of testing.&lt;/p&gt;
+
+&lt;h4 id=&#34;total-customer-time-waiting-for-this-release-1:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Total Customer Time Waiting For This Release:&lt;/h4&gt;
+
+&lt;p&gt;2 hours&lt;/p&gt;
+
+&lt;h4 id=&#34;total-testing-time-for-this-release-1:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Total Testing Time For This Release:&lt;/h4&gt;
+
+&lt;p&gt;1 hour&lt;/p&gt;
+
+&lt;p&gt;We can compound this by assuming we have 13 issues that are being worked on for the week.&lt;/p&gt;
+
+&lt;h4 id=&#34;total-customer-time-waiting-for-this-week:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Total Customer Time Waiting For This Week:&lt;/h4&gt;
+
+&lt;p&gt;26 hours&lt;/p&gt;
+
+&lt;h4 id=&#34;total-testing-time-for-this-week:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Total Testing Time For This Week:&lt;/h4&gt;
+
+&lt;p&gt;13 hours&lt;/p&gt;
+
+&lt;h3 id=&#34;scenario-2-regressions-and-rollback:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Scenario 2: Regressions and Rollback&lt;/h3&gt;
+
+&lt;p&gt;Now imagine that the bug fix in the scenario above actually causes a regression
+on production that needs to be fixed immediately or rolled back.&lt;/p&gt;
+
+&lt;p&gt;In Brad&amp;rsquo;s case (the weekly release process), someone on the devops or change
+management team packages the production release and pushes it to the production
+environment. And something goes wrong. Devops knows that one of 13 different
+change sets have been released but have no way of knowing which of those change
+sets is causing the regression. A critical issue is created identifying the
+problem and this issue is handed off to the development team. The team works to
+triage the issue, notices that Brad&amp;rsquo;s change caused the problem and Brad is now
+in charge of fixing it. But the last time Brad worked on this piece of code was
+two weeks ago and his memory is a bit fuzzy about why the change was made. Or
+maybe Brad is on holiday and someone else needs to pick up his work without
+fully understanding the intricacies and risks involved with the chage.
+Ultimately, the team decides they can&amp;rsquo;t go forward and all 13 change sets are
+rolled back until they can properly fix the problem.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/weekly-regression.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/weekly-regression.png&#34; alt=&#34;Regression in Weekly Release&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Contrast this with a continuous delivery approach. Alice works with QA to verify
+her change. Alice and QA deploy the change to production and immediately verify
+that the integrity of the fix. And something goes wrong. In this case, there is
+only one change set that could have cause the problem &amp;ndash; Alice&amp;rsquo;s. Alice has
+immediate knowledge of the changes she just committed and possible reasons for a
+failure. She can choose at this point to fix the issue and release her fix or to
+roll-back her single change. In this scenario, Alice is responsible for the
+integrity of her changes and for verifying that her work was done correctly. She
+is able to work in concert with QA to test the issue and does not simply push
+her issue &amp;lsquo;over the wall&amp;rsquo; for someone else to test and deploy.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/continuous-regression.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/continuous-regression.png&#34; alt=&#34;Regression With Continuous Delivery&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;With continuous delivery, each deployment is a smaller change that can be easily
+understood, fixed or, when necessary, rolled-back.&lt;/p&gt;
+
+&lt;h3 id=&#34;scenario-3-new-features:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Scenario 3: New Features&lt;/h3&gt;
+
+&lt;p&gt;We&amp;rsquo;ve seen how continuous delivery can aid in deploying bug fixes, but what
+about delivery new features? Remember that with continuous delivery any commit
+at any time can be deployed directly to the production environment. So how can
+you deploy partially complete features? The answer is &lt;a href=&#34;http://martinfowler.com/bliki/FeatureToggle.html&#34;&gt;feature
+flags&lt;/a&gt;. Feature flags allow
+the developer to write a new feature or edit an existing feature without
+exposing those changes to the end user.&lt;/p&gt;
+
+&lt;p&gt;For a brand new feature, it&amp;rsquo;s relatively easy to develop the entire feature
+behind a feature flag that is inaccessible to the user by not exposing the new
+page, button or widget at all. Once the feature matures it can be opened up to
+QA or product managers for testing and eventually rolled out to a small
+percentage of users. These users are able to test the feature with real
+production data and real production load &amp;ndash; making sure everything works as
+expected.&lt;/p&gt;
+
+&lt;p&gt;Gradually rolling out the feature also gives you the ability to &lt;em&gt;measure user
+behaviour&lt;/em&gt; and &lt;em&gt;gather feedback&lt;/em&gt; before committing to a certain path of action.&lt;/p&gt;
+
+&lt;p&gt;When enhancing existing features or doing refactoring, feature flags work best
+with continuous delivery when following a &lt;a href=&#34;http://martinfowler.com/bliki/ParallelChange.html&#34;&gt;parallel
+change&lt;/a&gt; design pattern, where
+both the old and the new code is run during a request, but only one version of
+the result is returned to the user. As a concrete example, imagine we are trying
+to improve the performance of a page through a refactoring. When a request comes
+in, we route the request to both the old and new code and can measure &amp;ndash; on
+production &amp;ndash; the performance of the new code. We can easily see if our proposed
+refactoring has measurable performance improvements in a real-world setting.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/parallel-code.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/parallel-code.png&#34; alt=&#34;Parallel Code&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;For example, by extracting performance measurements over each iteration of the
+code we visually compare the effect of a code change.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/performance-comparison.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/performance-comparison.png&#34; alt=&#34;Performance Comparison&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;We can also use the same pattern to ensure we have confidence in the results of
+our new code. For example, on each request, we can run both the old and the new
+code, and compare the results on real-world production data. When we are
+confident that the differences between the new and old code are within an
+acceptable error range the new code is ready to go live. We also have the
+ability to use production data to inform our unit tests and guard against future
+regressions.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/accuracy-comparison.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-04-23-continuous-delivery-distilled/accuracy-comparison.png&#34; alt=&#34;Accuracy Comparison&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Caution must be exercised whenever using feature flags. Every feature flag that
+is in use within the product is technical debt that should be short lived.&lt;/p&gt;
+
+&lt;h2 id=&#34;towards-continuous-delivery:c680f2413c4e7ebf173aa863a59cf515&#34;&gt;Towards Continuous Delivery&lt;/h2&gt;
+
+&lt;p&gt;Continuous delivery is not a panacea &amp;ndash; it requires diligence and responsibility
+on behalf of the development team. However, if the team is able to cross these
+hurdles continuous delivery can be used to deliver stable software to customers
+faster than ever before.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Creating a BigQuery Table using the Java Client Library</title>
+      <link>http://sookocheff.com/post/bigquery/creating-a-big-query-table-java-api/</link>
+      <pubDate>Mon, 23 Mar 2015 15:32:37 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/bigquery/creating-a-big-query-table-java-api/</guid>
+      <description>&lt;p&gt;I haven&amp;rsquo;t been able to find great documentation on creating a BigQuery
+TableSchema using the Java Client Library. This blog post hopes to rectify that
+:).&lt;/p&gt;
+
+&lt;p&gt;You can use the &lt;a href=&#34;https://github.com/GoogleCloudPlatform/bigquery-samples-java&#34;&gt;BigQuery sample
+code&lt;/a&gt; for an idea
+of how to create a client connection to BigQuery. Assuming you have the
+connection set up you can start by creating a new &lt;code&gt;TableSchema&lt;/code&gt;. The
+&lt;code&gt;TableSchema&lt;/code&gt; provides a method for setting the list of fields that make up the
+columns of your BigQuery Table. Those columns are defined as an Array of
+&lt;code&gt;TableFieldSchema&lt;/code&gt; objects.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;ArrayList&amp;lt;TableFieldSchema&amp;gt; fieldSchema = new ArrayList&amp;lt;TableFieldSchema&amp;gt;();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For simple types you can populate your columns with the correct type and mode
+according to the &lt;a href=&#34;https://cloud.google.com/bigquery/docs/reference/v2/tables#resource&#34;&gt;BigQuery API
+documentation&lt;/a&gt;.
+For example, to create a STRING field that is NULLABLE you can use the
+following.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;fieldSchema.add(new TableFieldSchema().setName(&amp;quot;username&amp;quot;).setType(&amp;quot;STRING&amp;quot;).setMode(&amp;quot;NULLABLE&amp;quot;));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And for repeated fields you can use the REPEATED mode.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;fieldSchema.add(new TableFieldSchema().setName(&amp;quot;email&amp;quot;).setType(&amp;quot;STRING&amp;quot;).setMode(&amp;quot;REPEATED&amp;quot;));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To create nested records you specify the parent as a RECORD mode and then call
+&lt;code&gt;setFields&lt;/code&gt; for each column of nested data you want to insert. The columns of a
+nested type are the same format as for the parent &amp;ndash; a list of TableFieldSchema
+objects.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;fieldSchema.add(
+  new TableFieldSchema().setName(&amp;quot;location&amp;quot;).setType(&amp;quot;RECORD&amp;quot;).setFields(
+    new ArrayList&amp;lt;TableFieldSchema&amp;gt;() {
+      {
+        add(new TableFieldSchema().setName(&amp;quot;city&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
+        add(new TableFieldSchema().setName(&amp;quot;address&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
+        add(new TableFieldSchema().setName(&amp;quot;zipcode&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
+      }
+    }
+  )
+);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The last step is to set the entire schema as the fields of our table schema.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;TableSchema schema = new TableSchema();
+schema.setFields(fieldSchema);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then we set a &lt;code&gt;TableReference&lt;/code&gt; that holds the current project id, dataset id and
+table id. We use this &lt;code&gt;TableReference&lt;/code&gt; to create our &lt;code&gt;Table&lt;/code&gt; using the &lt;code&gt;TableSchema&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;TableReference ref = new TableReference();
+ref.setProjectId(PROJECT_ID);
+ref.setDatasetId(&amp;quot;pubsub&amp;quot;);
+ref.setTableId(&amp;quot;review_test&amp;quot;);
+
+Table content = new Table();
+content.setTableReference(ref);
+content.setSchema(schema);
+
+client.tables().insert(ref.getProjectId(), ref.getDatasetId(), content).execute();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Putting this all together gives you a working sample of creating a BigQuery Table using the Java Client Library.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;public static void main(String[] args) throws IOException, InterruptedException {
+  Bigquery client = createAuthorizedClient(); // As per the BQ sample code
+  
+  ArrayList&amp;lt;TableFieldSchema&amp;gt; fieldSchema = new ArrayList&amp;lt;TableFieldSchema&amp;gt;();
+  
+  fieldSchema.add(new TableFieldSchema().setName(&amp;quot;username&amp;quot;).setType(&amp;quot;STRING&amp;quot;).setMode(&amp;quot;NULLABLE&amp;quot;));
+  fieldSchema.add(new TableFieldSchema().setName(&amp;quot;email&amp;quot;).setType(&amp;quot;STRING&amp;quot;).setMode(&amp;quot;REPEATED&amp;quot;));
+  fieldSchema.add(
+    new TableFieldSchema().setName(&amp;quot;location&amp;quot;).setType(&amp;quot;RECORD&amp;quot;).setFields(
+      new ArrayList&amp;lt;TableFieldSchema&amp;gt;() {
+        {
+          add(new TableFieldSchema().setName(&amp;quot;city&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
+          add(new TableFieldSchema().setName(&amp;quot;address&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
+          add(new TableFieldSchema().setName(&amp;quot;zipcode&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
+        }
+  }));
+  
+  TableSchema schema = new TableSchema();
+  schema.setFields(fieldSchema);
+  
+  TableReference ref = new TableReference();
+  ref.setProjectId(&amp;quot;&amp;lt;YOUR_PROJECT_ID&amp;gt;&amp;quot;);
+  ref.setDatasetId(&amp;quot;&amp;lt;YOUR_DATASET_ID&amp;gt;&amp;quot;);
+  ref.setTableId(&amp;quot;&amp;lt;YOUR_TABLE_ID&amp;gt;&amp;quot;);
+  
+  Table content = new Table();
+  content.setTableReference(ref);
+  content.setSchema(schema);
+  
+  client.tables().insert(ref.getProjectId(), ref.getDatasetId(), content).execute();
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Deploying R Studio on Compute Engine</title>
+      <link>http://sookocheff.com/post/r/deploying-r-studio-to-compute-engine/</link>
+      <pubDate>Mon, 23 Mar 2015 15:32:37 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/r/deploying-r-studio-to-compute-engine/</guid>
+      <description>
+
+&lt;p&gt;Sometimes you have a data analysis problem that is just too big for your desktop
+or laptop. The limiting factor here is generally RAM. Thankfully, services like
+Google Compute Engine allow you to lease servers with up to 208GB of RAM, large
+enough for a wide variety of intensive tasks. An ancillary benefit of using a
+service like Compute Engine is that it allows you to easily load your data from
+a Cloud Storage Bucket, meaning you don&amp;rsquo;t need to keep a copy of the large
+dataset locally at all times.&lt;/p&gt;
+
+&lt;p&gt;R Studio has a remote mode allowing you to install it on a server with access
+through a remote interface. This tutorial details how to start a Compute Engine
+instance, install R Studio on it and access R Studio from the remote interface.&lt;/p&gt;
+
+&lt;p&gt;The rest of this tutorial assumes that you have a Google Cloud Platform account
+with billing enabled and have installed the &lt;a href=&#34;https://cloud.google.com/sdk/&#34;&gt;Google Cloud
+SDK&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;deploying-a-compute-engine-instance:a84679a16a118ba5a9c46f36f1d63ec8&#34;&gt;Deploying a Compute Engine Instance&lt;/h2&gt;
+
+&lt;p&gt;The first step is to deploy your Compute Engine instance. The &lt;code&gt;gcloud compute&lt;/code&gt;
+command allows you to create instances. The only required parameter to create an
+instance is the instance name. We will call our instance &lt;code&gt;r-studio&lt;/code&gt; but you can
+choose any name you like. R Studio Server is typically built on Ubuntu so it is
+safest to use the Ubuntu distribution for your server.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute instances create r-studio
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You will be prompted to choose a
+&lt;a href=&#34;https://cloud.google.com/compute/docs/zones&#34;&gt;Zone&lt;/a&gt;. Just choose a zone close to
+you. You can also specify the zone when creating the instance using the &lt;code&gt;--zone&lt;/code&gt;
+parameter. For example.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute instances create r-studio --zone us-central1-a
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You will also have to open the Compute Engine firewall to allow port 8787 for R
+Studio.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcutil addfirewall allow-r-studio --allowed=tcp:8787
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;installing-r-studio:a84679a16a118ba5a9c46f36f1d63ec8&#34;&gt;Installing R Studio&lt;/h2&gt;
+
+&lt;p&gt;Once we have our Compute Engine instance set up, we log in to the machine using ssh.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute ssh r-studio --zone us-central1-a
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now that we are logged in to the Compute Engine instance, it&amp;rsquo;s time to install
+R by first updating the Debian apt-get repository and then installing R.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo apt-get update
+sudo apt-get install r-base r-base-dev
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;R Studio currently requries OpenSSL version 0.9.8. We need to install this
+separately and then install install R Studio&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;wget http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl0.9.8_0.9.8o-4squeeze14_amd64.deb
+sudo dpkg -i libssl0.9.8_0.9.8o-4squeeze14_amd64.deb
+sudo apt-get install gdebi-core
+wget http://download2.rstudio.org/rstudio-server-0.98.1103-amd64.deb
+sudo gdebi rstudio-server-0.98.1103-amd64.deb
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You should be up and running with R Studio on your compute engine instance. To
+verify, navigate to the IP address of your Compute Engine instance on port 8787
+(the default R Studio port).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http://&amp;lt;ipaddress&amp;gt;:8787
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;R Studio only permits access to users of the system, we can add a user with
+standard Linux tools like adduser. For example, to create a new user named
+rstudio and specify the password you could execute the following commands.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo adduser rstudio
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You will be prompted to enter a password for the user and confirm the users name
+and phone number.&lt;/p&gt;
+
+&lt;p&gt;Afterwards, logging in with the user you created will present a web UI of the
+familiar R Studio. You can now perform analysis on those larger data sets using
+the R Studio that just weren&amp;rsquo;t possible on a laptop.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Keeping App Engine Search Documents and Datastore Entities In Sync</title>
+      <link>http://sookocheff.com/post/appengine/syncing-search-documents-with-datastore-entities/</link>
+      <pubDate>Mon, 23 Feb 2015 08:20:37 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/appengine/syncing-search-documents-with-datastore-entities/</guid>
+      <description>
+
+&lt;p&gt;At Vendasta the App Engine Datastore serves as the single point of truth for
+most operational data and the majority of interactions are against this single
+point of truth. However, a piece of required functionality in many of our
+products is to provide a searchable view of the data in the App Engine
+Datastore. Search is difficult using the Datastore and so we have moved to using
+the &lt;a href=&#34;https://cloud.google.com/appengine/docs/python/search/&#34;&gt;Search API&lt;/a&gt; as a
+managed solution for searching datastore entities. In this use case, every edit
+to an entity in the Datastore is reflected as a change to a Search Document.
+This article details an architecture for keeping Datastore entities and Search
+Documents in sync throughout failure and race conditions.&lt;/p&gt;
+
+&lt;h2 id=&#34;updating-the-search-document-using-a-post-put-hook:f26697b1ccb5784892d1bb4717bd943c&#34;&gt;Updating the Search Document Using a _post_put_hook&lt;/h2&gt;
+
+&lt;p&gt;To ensure that every put of an entity to the Datastore results in an update to
+the associated search document, we update the search document in the
+_post_put_hook of the entity. The _post_put_hook is executed every time
+the entity is put so each time the entity has changed we will put a new and
+updated search document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from google.appengine.api import search
+from google.appengine.ext import ndb
+
+class UserModel(ndb.model):
+
+    username = ndb.StringProperty(required=True)
+    email = ndb.StringProperty(required=True)
+
+    def _post_put_hook(self, future):
+        document = search.Document(
+            doc_id = self.username,
+            fields=[
+               search.TextField(name=&#39;username&#39;, value=self.username),
+               search.TextField(name=&#39;email&#39;, value=self.email),
+               ])
+        try:
+            index = search.Index(name=&amp;quot;UserIndex&amp;quot;)
+            index.put(document)
+        except search.Error:
+            logging.exception(&#39;Put failed&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Updating the search document during every put as part of the post put hook is a
+light weight way to keep the search document up-to-date with changes to the
+entity. However, this design does not account for the potential error conditions
+where putting the search document or the Datastore entity fails. We will need
+some additional functionality to handle these cases.&lt;/p&gt;
+
+&lt;h2 id=&#34;handling-search-document-put-failures:f26697b1ccb5784892d1bb4717bd943c&#34;&gt;Handling Search Document Put Failures&lt;/h2&gt;
+
+&lt;p&gt;The first obstacle to overcome is handling failures when putting the search
+document. One method for handling failures is retrying. We can add retrying to
+our workflow by separating updating the search document into its own task and
+deferring that task using the deferred library. This accomplishes two things.
+First, moving the search document functionality into its own function makes our
+code more modular. Second, the App Engine task queue mechanism allows us to
+specify our retry semantics, handling backoff and failure conditions gracefully.
+In this example, we allow infinite retries of failed tasks, allowing DevOps to find
+search documents that may have become out of sync with their Datastore entities
+and correct any problems that may arise. We assume in the example below that the
+username acts as the ndb Key.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from google.appengine.api import search
+from google.appengine.ext import ndb
+from google.appengine.ext import deferred
+
+class UserModel(ndb.model):
+
+    username = ndb.StringProperty(required=True)
+    email = ndb.StringProperty(required=True)
+
+    @classmethod
+    def put_search_document(cls, username):
+        model = ndb.Key(cls, username).get()
+        if model:
+            document = search.Document(
+                doc_id = username,
+                fields=[
+                   search.TextField(name=&#39;username&#39;, value=self.username),
+                   search.TextField(name=&#39;email&#39;, value=self.email),
+                   ])
+            index = search.Index(name=&amp;quot;UserIndex&amp;quot;)
+            index.put(document)
+
+    def _post_put_hook(self, future):
+        deferred.defer(UserModel.put_search_document, self.username)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;handling-datastore-put-failures:f26697b1ccb5784892d1bb4717bd943c&#34;&gt;Handling Datastore Put Failures&lt;/h2&gt;
+
+&lt;p&gt;The second obstacle to overcome is safely handling Datastore put failures. In
+this architecture, each change to a Datastore entity is required to run within a
+transaction. We update the _post_put_hook to queue a transactional task &amp;ndash; which
+forces the task to only be queued if the current transaction has successfully
+completed. This guarantees that failed Datastore puts will not result in search
+documents being updated and becoming out of sync with the Datastore.&lt;/p&gt;
+
+&lt;p&gt;We specify that the task should be run as a transaction by passing the result of
+the &lt;code&gt;in_transaction&lt;/code&gt; function to the &lt;code&gt;_transactional&lt;/code&gt; parameter of &lt;code&gt;defer&lt;/code&gt;.
+&lt;code&gt;in_transaction&lt;/code&gt; returns &lt;code&gt;True&lt;/code&gt; if the currently executing code is running in a
+transaction and &lt;code&gt;False&lt;/code&gt; otherwise.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from google.appengine.api import search
+from google.appengine.ext import ndb
+from google.appengine.ext import deferred
+
+class UserModel(ndb.model):
+
+    username = ndb.StringProperty(required=True)
+    email = ndb.StringProperty(required=True)
+
+    @classmethod
+    def put_search_document(cls, username):
+        model = ndb.Key(cls, username).get()
+        if model:
+            document = search.Document(
+                doc_id = username,
+                fields=[
+                   search.TextField(name=&#39;username&#39;, value=self.username),
+                   search.TextField(name=&#39;email&#39;, value=self.email),
+                   ])
+            index = search.Index(name=&amp;quot;UserIndex&amp;quot;)
+            index.put(document)
+
+    def _post_put_hook(self, future):
+        deferred.defer(UserModel.put_search_document,
+                       self.username,
+                       _transactional=ndb.in_transaction())
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we have sastisfied the case where either the search document or the
+Datastore put has failed. If the search document put has failed we retry, if the
+Datastore put has failed we do not put the search document. We still have one
+remaining problem: Dirty Reads.&lt;/p&gt;
+
+&lt;h2 id=&#34;handling-dirty-reads:f26697b1ccb5784892d1bb4717bd943c&#34;&gt;Handling Dirty Reads&lt;/h2&gt;
+
+&lt;p&gt;The last obstacle to overcome is dealing with race conditions that could lead to
+reading stale data and writing that data to the search document. Consider the
+case where two subsequent puts to the Datastore occur back-to-back within a
+short time frame. Each of these puts will write new data to the Datastore and
+queue a task to put the updated search document to the Datastore. The dirty
+read problem arises when the second task to update the search document reads old
+data from the Datastore that may not have been fully replicated throughout the
+Datastore.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2015-02-23-syncing-search-documents-with-datastore-entities/SyncingSearchDocuments.png&#34; alt=&#34;Syncing Search Documents&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;We can overcome this problem by versioning our tasks to coincide with the
+version of our Datastore entity. We add a version number to the entity and
+update the version number during a _pre_put_hook.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from google.appengine.ext import ndb
+
+class UserModel(ndb.model):
+
+    username = ndb.StringProperty(required=True)
+    email = ndb.StringProperty(required=True)
+    version = ndb.IntegerProperty(default=0)
+
+    def _pre_put_hook(self):
+        self.version = self.version + 1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now during the _post_put_hook we queue a task corresponding to the version number
+of the Datastore entity we are putting. This ties the task to the point in time
+when the Datastore entity was put.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import logging
+from google.appengine.api import search
+from google.appengine.ext import ndb
+from google.appengine.ext import deferred
+
+class UserModel(ndb.model):
+
+    username = ndb.StringProperty(required=True)
+    email = ndb.StringProperty(required=True)
+    version = ndb.IntegerProperty(default=0)
+
+    @classmethod
+    def put_search_document(cls, username, version):
+        model = ndb.Key(cls, username).get()
+        if model:
+            if version &amp;lt; model.version:
+                logging.warning(&#39;Attempting to write stale data. Ignore&#39;)
+                return
+
+            if version &amp;gt; model.version:
+                msg = &#39;Attempting to write future data. Retry to await consistency.&#39;
+                logging.warning(msg)
+                raise Exception(msg)
+
+            # Versions match. Update the search document
+            document = search.Document(
+                doc_id = username,
+                fields=[
+                   search.TextField(name=&#39;username&#39;, value=model.username),
+                   search.TextField(name=&#39;email&#39;, value=model.email),
+                   search.TextField(name=&#39;version&#39;, value=model.version),
+                   ])
+            index = search.Index(name=&amp;quot;UserIndex&amp;quot;)
+            index.put(document)
+
+    def _pre_put_hook(self):
+        self.version = self.version + 1
+
+    def _post_put_hook(self, future):
+        deferred.defer(UserModel.put_search_document,
+                       self.username,
+                       self.version,
+                       _transactional=ndb.in_transaction())
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If the version number of the task being executed is less than the version number
+written to the Datastore, we are attempting to write stale data and do not need
+to process this request. If the version number is greater than the task being
+executed, we are attempting to write data to the search document that has not
+been fully replicated throughout the Datastore. In this case, we raise an
+exception to retry putting the search document. In subsequent retries the data
+will have propagated and our put will succeed. Note that if another task is
+executed while the current task is retrying, the version number of our retrying
+task will become stale and when the task is next executed we do not write the
+now stale data to the search document.&lt;/p&gt;
+
+&lt;p&gt;This still handles the case when a search document put fails &amp;ndash; whenever our
+version number becomes out of sync due to the failed put, we do not write the
+data to the search document. Furthermore, if our Datastore put fails then our
+task to put the search document will not be queued &lt;em&gt;as long as the Datastore put
+is run within a transaction&lt;/em&gt;. The version number will not be incremented in this
+case because the value set during the _pre_put_hook will not be persisted during
+a failed transaction.&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusion:f26697b1ccb5784892d1bb4717bd943c&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;Putting this all together, we&amp;rsquo;ve developed a solution for keeping search
+documents in sync with Datastore entities that is robust to failure and race
+conditions. This same technique can be used for syncing the state of any number
+of datasets that are dependent on the Datastore being the single point of truth
+in your system.&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

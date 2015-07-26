@@ -7,5 +7,21 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Sat, 04 Sep 2010 13:13:13 UTC</lastBuildDate>
     
+    <item>
+      <title>Readability by Arc90</title>
+      <link>http://sookocheff.com/post/tools/readability-by-arc90/</link>
+      <pubDate>Sat, 04 Sep 2010 13:13:13 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/tools/readability-by-arc90/</guid>
+      <description>&lt;p&gt;According to Wikipedia, readability is defined as reading ease, especially as it results from a writing style.  Only experience, practice, and hard work can improve a person’s writing style.  Let’s increase readability in a different manner: with typography.&lt;/p&gt;
+
+&lt;p&gt;The web is awash with examples of terrible typography: poor font choice, minuscule text, horrible colours.  Everyone has came across a web page that was just about impossible to read.  There is a solution.  &lt;a href=&#34;http://lab.arc90.com/experiments/readability/&#34;&gt;Readability by Arc90&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I discovered this tool shortly after my ophthalmologist explained that extended computer use strains eye muscles and that larger fonts may help.  Since then, I use it to read almost every article I come across.  The &lt;a href=&#34;https://addons.mozilla.org/en-US/firefox/addon/46442/&#34;&gt;Firefox add-on&lt;/a&gt; makes the process even easier.  After landing on the next great blog post from&lt;a href=&#34;http://news.ycombinator.com/&#34;&gt; Hacker News&lt;/a&gt;, my next action is invariably to enable Readability with CTRL ALT R.&lt;/p&gt;
+
+&lt;p&gt;Give it a try, and give your eyes a break!&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

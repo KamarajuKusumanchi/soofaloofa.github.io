@@ -7,5 +7,36 @@
     <copyright>Copyright Kevin Sookocheff.</copyright>
     <lastBuildDate>Tue, 11 Jan 2011 06:55:12 UTC</lastBuildDate>
     
+    <item>
+      <title>A cheap home server</title>
+      <link>http://sookocheff.com/post/linux/a-cheap-home-server/</link>
+      <pubDate>Tue, 11 Jan 2011 06:55:12 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/linux/a-cheap-home-server/</guid>
+      <description>&lt;p&gt;In order to have a home server you need the server.  That is, you need the hardware.  You could probably find all sorts of information comparing performance, power consumption, and cost for an assortment of different parts (check &lt;a href=&#34;http://www.tomshardware.com&#34;&gt;tomshardware.com&lt;/a&gt; or do some intense [Googling][2]).  Or, you can trust that I’ve done my research and go with the same setup as me.&lt;/p&gt;
+
+&lt;p&gt;I started with a barebones &lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16856167037&#34;&gt;MSI Wind Nettop PC&lt;/a&gt;.  It’s small and built to be both quiet and efficient, plus it comes with a compact flash slot to house the operating system; all big wins for a home server.  Really, any bare bones PC with an Atom 330 processor or better will do. You can always check out &lt;a href=&#34;http://us.shuttle.com/&#34;&gt;Shuttle’s&lt;/a&gt; latest offerings as well. With bare bones systems you must supply your own RAM and hard drives (be careful, you may have to supply your own CPU as well).  Just be careful to get the right type of RAM for your motherboard.  I went with 2GB of &lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16820231146&#34;&gt;G.SKILL DDR2 533 Laptop Memory&lt;/a&gt;. I opted for two &lt;a href=&#34;http://&#34;&gt;Western Digital Caviar Green 1TB hard drives&lt;/a&gt;.  These drives will be used solely to house data.  Get as big a hard drive as you want/need (you can even build a two drive RAID array if you want) and a &lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16820220459&#34;&gt;Patriot 4GB Compact Flash&lt;/a&gt; card to house the operating system.  That’s it, that’s all. I won’t guide you through every piece of the component installation as there are far better resources out there already.  However, if you are following along with the exact component list I described beware of one potential snafu.  The MSI Nettop has only one hard drive bay and we ordered two drives.  However, with appropriate &lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16817994073&amp;amp;cm_re=drive_bay_adapter-_-17-994-073-_-Product&#34;&gt;5.25″ to 3.5″ drive bay adapters&lt;/a&gt; you can re-purpose the DVD tray to hold that second hard drive. Beware that the compact flash slot on this PC is positioned awkwardly and you will have to unscrew the male VGA adapter from the case in order to install the compact flash card. Lastly, since we have no DVD drive we will need to have a USB drive handy for installing the operating system. Hardware List:&lt;/p&gt;
+
+&lt;p&gt;[2]: &lt;a href=&#34;http://lmgtfy.com/?q=diyhome&#34;&gt;http://lmgtfy.com/?q=diyhome&lt;/a&gt; server&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16856167037&#34;&gt;MSI Wind Nettop PC&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16820231146&#34;&gt;G.SKILL DDR2 533 Laptop Memory (2GB)&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Western Digital Caviar Green 1TB hard drives (x2)&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16820220459&#34;&gt;Patriot 4GB Compact Flash&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.newegg.ca/Product/Product.aspx?Item=N82E16817994073&amp;amp;cm_re=drive_bay_adapter-_-17-994-073-_-Product&#34;&gt;5.25″ to 3.5″ drive bay adapters&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Other essentials:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;A spare monitor, keyboard, and mouse (don’t worry, after setup we don’t need these around).&lt;/li&gt;
+&lt;li&gt;A spare USB flash drive&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

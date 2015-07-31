@@ -5,7 +5,240 @@
     <link>http://sookocheff.com/tags/n-gram/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Sat, 25 Jul 2015 06:41:06 UTC</lastBuildDate>
+    <lastBuildDate>Tue, 28 Jul 2015 19:16:33 CST</lastBuildDate>
+    
+    <item>
+      <title>N-gram Modeling With Markov Chains</title>
+      <link>http://sookocheff.com/post/nlp/ngram-modeling-with-markov-chains/</link>
+      <pubDate>Tue, 28 Jul 2015 19:16:33 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/nlp/ngram-modeling-with-markov-chains/</guid>
+      <description>
+
+&lt;p&gt;A common method of reducing the complexity of n-gram modeling is using the
+&lt;a href=&#34;https://en.wikipedia.org/wiki/Markov_property&#34;&gt;Markov Property&lt;/a&gt;. The Markov
+Property states that the probability of future states depends only on the
+present state, not on the sequence of events that preceded it. This concept can
+be elegantly implemented using a &lt;a href=&#34;https://en.wikipedia.org/wiki/Markov_chain&#34;&gt;Markov
+Chain&lt;/a&gt; storing the probabilities of
+transitioning to a next state.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s look at a simple example of a Markov Chain that models text using bigrams.
+The following code creates a list of bigrams from a piece of text.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; s = &amp;quot;I am Sam. Sam I am. I do not like green eggs and ham.&amp;quot;
+&amp;gt;&amp;gt;&amp;gt; tokens = s.split(&amp;quot; &amp;quot;)
+&amp;gt;&amp;gt;&amp;gt; bigrams = [(tokens[i],tokens[i+1]) for i in range(0,len(tokens)-1)]
+&amp;gt;&amp;gt;&amp;gt; bigrams
+[(&#39;I&#39;, &#39;am&#39;), (&#39;am&#39;, &#39;Sam.&#39;), (&#39;Sam.&#39;, &#39;Sam&#39;), (&#39;Sam&#39;, &#39;I&#39;), (&#39;I&#39;, &#39;am.&#39;), (&#39;am.&#39;, &#39;I&#39;), (&#39;I&#39;, &#39;do&#39;), (&#39;do&#39;, &#39;not&#39;), (&#39;not&#39;, &#39;like&#39;), (&#39;like&#39;, &#39;green&#39;), (&#39;green&#39;, &#39;eggs&#39;), (&#39;eggs&#39;, &#39;and&#39;), (&#39;and&#39;, &#39;ham.&#39;)]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Listing the bigrams starting with the word &lt;code&gt;I&lt;/code&gt; results in:
+&lt;code&gt;I am&lt;/code&gt;, &lt;code&gt;I am.&lt;/code&gt;, and &lt;code&gt;I do&lt;/code&gt;. If we were to use this data to predict a word that
+follows the word &lt;code&gt;I&lt;/code&gt; we have three choices and each of them has the same
+probability (&lt;sup&gt;1&lt;/sup&gt;&amp;frasl;&lt;sub&gt;3&lt;/sub&gt;) of being a valid choice. Modeling this using a Markov Chain
+results in a state machine with an approximately 0.33 chance of transitioning to
+any one of the next states.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/nlp/ngram-modeling-with-markov-chains/transitions-from-I.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/nlp/ngram-modeling-with-markov-chains/transitions-from-I.png&#34; alt=&#34;Transitions from I&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;We can add additional transitions to our Chain by considering additional bigrams
+starting with &lt;code&gt;am&lt;/code&gt;, &lt;code&gt;am.&lt;/code&gt;, and &lt;code&gt;do&lt;/code&gt;. In each case, there is only one possible
+choice for the next state in our Markov Chain given the bigrams we know from our
+input text. Each transition from one of these states therefore has a 1.0
+probability.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/nlp/ngram-modeling-with-markov-chains/following-transitions-from-I.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/nlp/ngram-modeling-with-markov-chains/following-transitions-from-I.png&#34; alt=&#34;Following Transitions from I&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Now, given a starting point in our chain, say &lt;code&gt;I&lt;/code&gt;, we can follow the transitions
+to predict a sequence of words. This sequence follows the probability
+distribution of the bigrams we have learned. For example, we can randomly sample
+from the possible transitions from &lt;code&gt;I&lt;/code&gt; to arrive at the next possible state in
+the machine.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; import random
+&amp;gt;&amp;gt;&amp;gt; random.sample([&#39;am&#39;, &#39;am.&#39;, &#39;do&#39;], 1)
+[&#39;am.&#39;]
+&amp;gt;&amp;gt;&amp;gt; random.sample([&#39;am&#39;, &#39;am.&#39;, &#39;do&#39;], 1)
+[&#39;do&#39;]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Making the first transition, to &lt;code&gt;do&lt;/code&gt;, we can sample from the possible states
+following &lt;code&gt;do&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; random.sample([&#39;am&#39;, &#39;am.&#39;, &#39;do&#39;], 1)
+[&#39;do&#39;]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;writing-a-markov-chain:d97a8c10263ba1350fa7aeccc4b468c0&#34;&gt;Writing a Markov Chain&lt;/h2&gt;
+
+&lt;p&gt;We have all the building blocks we need to write a complete Markov Chain
+implementation. The implementation is a simple dictionary with each key being
+the current state and the value being the list of possible next states. For
+example, after learning the text &lt;code&gt;I am Sam.&lt;/code&gt; our dictionary would look like
+this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;{
+    &#39;I&#39;: [&#39;am&#39;],
+    &#39;am&#39;: [&#39;Sam.&#39;],
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And after adding the text &lt;code&gt;Sam I am.&lt;/code&gt; our dictionary would look like this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;{
+    &#39;I&#39;: [&#39;am&#39;, &#39;am.&#39;],
+    &#39;am&#39;: [&#39;Sam.&#39;],
+    &#39;Sam&#39;: [&#39;I&#39;],
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can implement a basic Markov Chain that creates a bigram dictionary using the
+following code.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class MarkovChain:
+
+    def __init__(self):
+        self.memory = {}
+
+    def _learn_key(self, key, value):
+        if key not in self.memory:
+            self.memory[key] = []
+
+        self.memory[key].append(value)
+
+    def learn(self, text):
+        tokens = text.split(&amp;quot; &amp;quot;)
+        bigrams = [(tokens[i], tokens[i + 1]) for i in range(0, len(tokens) - 1)]
+        for bigram in bigrams:
+            self._learn_key(bigram[0], bigram[1])
+
+
+if __name__ == &#39;__main__&#39;:
+    m = MarkovChain()
+    m.learn(&#39;I am Sam. Sam I am. I do not like green eggs and ham.&#39;)
+    print(m.memory)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; python markov_chain.py
+{&#39;I&#39;: [&#39;am&#39;, &#39;am.&#39;, &#39;do&#39;],
+ &#39;Sam&#39;: [&#39;I&#39;],
+ &#39;Sam.&#39;: [&#39;Sam&#39;],
+ &#39;am&#39;: [&#39;Sam.&#39;],
+ &#39;am.&#39;: [&#39;I&#39;],
+ &#39;and&#39;: [&#39;ham.&#39;],
+ &#39;do&#39;: [&#39;not&#39;],
+ &#39;eggs&#39;: [&#39;and&#39;],
+ &#39;green&#39;: [&#39;eggs&#39;],
+ &#39;like&#39;: [&#39;green&#39;],
+ &#39;not&#39;: [&#39;like&#39;]}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can then transition to a new state in our Markov Chain by randomly
+choosing a next state given the current state. If we do not have any information
+on the current state we can randomly pick a state to start in.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def _next(self, current_state):
+    next_possible = self.memory.get(current_state)
+
+    if not next_possible:
+        next_possible = self.memory.keys()
+
+    return random.sample(next_possible, 1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The transition probabilities between states naturally become weighted as we
+learn more text.  For example, in the following sequence we learn a few
+sentences with the same bigrams and in the final state we are twice as likely to
+choose &lt;code&gt;am&lt;/code&gt; as the next word following &lt;code&gt;I&lt;/code&gt; by randomly sampling from the next
+possible states.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; from markov_chain import MarkovChain
+&amp;gt;&amp;gt;&amp;gt; m = MarkovChain()
+&amp;gt;&amp;gt;&amp;gt; m.learn(&#39;I am Sam.&#39;)
+&amp;gt;&amp;gt;&amp;gt; m.memory
+{&#39;I&#39;: [&#39;am&#39;], &#39;am&#39;: [&#39;Sam.&#39;]}
+&amp;gt;&amp;gt;&amp;gt; m.learn(&#39;I am Kevin.&#39;)
+&amp;gt;&amp;gt;&amp;gt; m.memory
+{&#39;I&#39;: [&#39;am&#39;, &#39;am&#39;], &#39;am&#39;: [&#39;Sam.&#39;, &#39;Kevin.&#39;]}
+&amp;gt;&amp;gt;&amp;gt; m.learn(&#39;I do.&#39;)
+&amp;gt;&amp;gt;&amp;gt; m.memory  # Twice as likely to follow &#39;I&#39; with &#39;am&#39; than &#39;do&#39;.
+{&#39;I&#39;: [&#39;am&#39;, &#39;am&#39;, &#39;do&#39;], &#39;am&#39;: [&#39;Sam.&#39;, &#39;Kevin.&#39;]}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The state machine produced by our code would have the probabilities in the
+following figure.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/nlp/ngram-modeling-with-markov-chains/learned-probabilities.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/nlp/ngram-modeling-with-markov-chains/learned-probabilities.png&#34; alt=&#34;Learned Probabilities&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Finally, we can ask our chain to print out some text of an arbitrary length by
+following the transitions between the text we have learned.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def babble(self, amount, state=&#39;&#39;):
+    if not amount:
+        return state
+
+    next_word = self._next(state)
+
+    if not next_word:
+        return state
+
+    return state + &#39; &#39; + self.babble(amount - 1, next_word)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Putting it all together we have a simple Markov Chain that can learn bigrams and
+babble text given the probability of bigrams that it has learned. Markov Chain&amp;rsquo;s
+are a simple way to store and query n-gram probabilities. Full source code for
+this example follows.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-implementation:d97a8c10263ba1350fa7aeccc4b468c0&#34;&gt;The Implementation&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import random
+
+
+class MarkovChain:
+
+    def __init__(self):
+        self.memory = {}
+
+    def _learn_key(self, key, value):
+        if key not in self.memory:
+            self.memory[key] = []
+
+        self.memory[key].append(value)
+
+    def learn(self, text):
+        tokens = text.split(&amp;quot; &amp;quot;)
+        bigrams = [(tokens[i], tokens[i + 1]) for i in range(0, len(tokens) - 1)]
+        for bigram in bigrams:
+            self._learn_key(bigram[0], bigram[1])
+
+    def _next(self, current_state):
+        next_possible = self.memory.get(current_state)
+
+        if not next_possible:
+            next_possible = self.memory.keys()
+
+        return random.sample(next_possible, 1)[0]
+
+    def babble(self, amount, state=&#39;&#39;):
+        if not amount:
+            return state
+
+        next_word = self._next(state)
+        return state + &#39; &#39; + self.babble(amount - 1, next_word)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>Modeling Natural Language with N-Gram Models</title>

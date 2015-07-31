@@ -1,5 +1,5 @@
 ---
-date: 2015-07-28T19:16:33-06:00
+date: 2015-07-31T06:23:43-06:00
 title: N-gram Modeling With Markov Chains
 tags:
   - "n-gram"

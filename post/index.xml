@@ -5,7 +5,403 @@
     <link>http://sookocheff.com/post/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Fri, 31 Jul 2015 06:23:43 CST</lastBuildDate>
+    <lastBuildDate>Wed, 05 Aug 2015 05:41:06 UTC</lastBuildDate>
+    
+    <item>
+      <title>Counting N-Grams with Cloud Dataflow</title>
+      <link>http://sookocheff.com/post/nlp/counting-n-grams-with-cloud-dataflow/</link>
+      <pubDate>Wed, 05 Aug 2015 05:41:06 UTC</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/nlp/counting-n-grams-with-cloud-dataflow/</guid>
+      <description>
+
+&lt;p&gt;Counting &lt;a href=&#34;http://sookocheff.com/post/nlp/n-gram-modeling/&#34;&gt;n-grams&lt;/a&gt; is a common
+pre-processing step for computing sentence and word probabilities over a corpus.
+Thankfully, this task is &lt;a href=&#34;https://en.wikipedia.org/wiki/Embarrassingly_parallel&#34;&gt;embarrassingly
+parallel&lt;/a&gt; and is a
+natural fit for distributed processing frameworks like &lt;a href=&#34;https://cloud.google.com/dataflow/&#34;&gt;Cloud
+Dataflow&lt;/a&gt;. This article provides an
+implementation of n-gram counting using Cloud Dataflow that is able to
+efficiently compute n-grams in parallel over massive datasets.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-algorithm:373238c81a8bcfdf6cdd9d4aa8562076&#34;&gt;The Algorithm&lt;/h2&gt;
+
+&lt;p&gt;Cloud Dataflow uses a programming abstraction called &lt;code&gt;PCollections&lt;/code&gt; which are
+collections of data that can be operated on in parallel (Parallel Collections).
+When programming for Cloud Dataflow you treat each operation as a transformation
+of a parallel collection that returns another parallel collection for further
+processing. This style of development is similar to the traditional Unix
+philosophy of piping the output of one command to another for further
+processing.&lt;/p&gt;
+
+&lt;p&gt;An outline of the algorithm for counting n-grams is presented in the following
+figure. The first stage of our dataflow pipeline is reading all lines of our
+input. We then proceed to extract n-grams from each individual line, outputting
+the results as a &lt;code&gt;PCollection&lt;/code&gt;. We then count the n-grams and take the top
+n-grams in our dataset. Lastly, the results are output to a file.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/nlp/counting-n-grams-with-cloud-dataflow/dataflow-graph.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/nlp/counting-n-grams-with-cloud-dataflow/dataflow-graph.png&#34; alt=&#34;Dataflow Graph&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;As a concrete example, we can represent the same algorithm as transformations on
+a text file. In this example we will count the occurrence of bigrams.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;I am Sam. I am Kevin.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;First, the file is read as input and bigrams are extracted.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;(&#39;I&#39;, &#39;am&#39;)
+(&#39;am&#39;, &#39;Sam.&#39;)
+(&#39;Sam.&#39;, &#39;I&#39;)
+(&#39;I&#39;, &#39;am&#39;)
+(&#39;am&#39;, &#39;Kevin.&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Next, for each element, we count the number of occurrences. This happens in two
+stages. First, we group all elements by key. This has the effect of combining
+all tuples with the same value to be on one line.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;(&#39;I&#39;, &#39;am&#39;), (&#39;I&#39;, &#39;am&#39;)
+(&#39;am&#39;, &#39;Sam.&#39;)
+(&#39;Sam.&#39;, &#39;I&#39;)
+(&#39;am&#39;, &#39;Kevin.&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;From here, we simply count the number of elements in each group.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;(&#39;I&#39;, &#39;am&#39;), 2
+(&#39;am&#39;, &#39;Sam.&#39;), 1
+(&#39;Sam.&#39;, &#39;I&#39;), 1
+(&#39;am&#39;, &#39;Kevin.&#39;), 1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In Cloud Dataflow, the previous operations are combined into the
+&lt;code&gt;Count.PerElement&lt;/code&gt; operation that counts the number of times an element occurs.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/nlp/counting-n-grams-with-cloud-dataflow/count-per-element.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/nlp/counting-n-grams-with-cloud-dataflow/count-per-element.png&#34; alt=&#34;Count.PerElement&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Once all the elements are grouped and counted, we can extract the top &lt;code&gt;x&lt;/code&gt;
+elements. To do this, we need to be able to combine elements across machines and
+across files. Dataflow provides the &lt;code&gt;Combine.PerKey&lt;/code&gt; operation for this purpose.
+This operation merges elements from multiple files into a single file. We can
+then take the top &lt;code&gt;x&lt;/code&gt; results to view the top &lt;code&gt;x&lt;/code&gt; bigrams. Dataflow provides a
+convenience function &lt;code&gt;Top.Globally&lt;/code&gt; to extract the top &lt;code&gt;x&lt;/code&gt; results from a
+&lt;code&gt;PCollection&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/nlp/counting-n-grams-with-cloud-dataflow/top-globally.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/nlp/counting-n-grams-with-cloud-dataflow/top-globally.png&#34; alt=&#34;Top.Globally&#34;&gt;
+&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;show-me-the-code:373238c81a8bcfdf6cdd9d4aa8562076&#34;&gt;Show Me The Code&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s go ahead and express our algorithm using Cloud Dataflow. The algorithm is
+expressed in two parts. First, extracting n-grams from a block of text. This is
+a simple transformation that takes a block of text as input and repeatedly
+outputs individual n-grams. This list of n-grams serves as our initial
+&lt;code&gt;PCollection&lt;/code&gt; for the rest of the algorithm.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;/**
+* This DoFn tokenizes lines of text into individual ngrams;
+* we pass it to a ParDo in the pipeline.
+*/
+static class ExtractNGramsFn extends DoFn&amp;lt;String, String&amp;gt; {
+  private static final long serialVersionUID = 0;
+  
+  private Integer n;
+  
+  public ExtractNGramsFn(Integer n) {
+    this.n = n;
+  }
+  
+  @Override
+  public void processElement(ProcessContext c) {
+    // Split the line into words.
+    String[] words = c.element().split(&amp;quot;\\s+&amp;quot;);
+  
+    // Group into ngrams
+    List&amp;lt;String&amp;gt; ngrams = new ArrayList&amp;lt;String&amp;gt;();
+    for (int i = 0; i &amp;lt;= words.length-this.n; i++) {
+      StringBuilder ngram = new StringBuilder();
+      for (int j = 0; j &amp;lt; this.n; j++) {
+        if (j &amp;gt; 0) {
+          ngram.append(&amp;quot;\t&amp;quot;);
+        }
+        ngram.append(words[i+j]);
+      }
+      ngrams.add(ngram.toString());
+    }
+  
+    // Output each ngram encountered into the output PCollection.
+    for (String ngram : ngrams) {
+      if (!ngram.isEmpty()) {
+        c.output(ngram);
+      }
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Second, we use the &lt;code&gt;PCollection&lt;/code&gt; of all n-grams as input to a transform that outputs
+the list of most frequently encountered n-grams in the corpus.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;/**
+* A PTransform that converts a PCollection containing lines of text into a PCollection of
+* word counts.
+*/
+public static class CountNGrams
+  extends PTransform&amp;lt;PCollection&amp;lt;String&amp;gt;, PCollection&amp;lt;List&amp;lt;KV&amp;lt;String, Long&amp;gt;&amp;gt;&amp;gt;&amp;gt; {
+  
+  private static final long serialVersionUID = 0;
+  
+  private Integer n;
+  private Integer top;
+  
+  public CountNGrams(Integer n) {
+    this.n = n;
+    this.top = new Integer(100);
+  }
+  
+  public CountNGrams(Integer n, Integer top) {
+    this.n = n;
+    this.top = top;
+  }
+  
+  @Override
+  public PCollection&amp;lt;List&amp;lt;KV&amp;lt;String, Long&amp;gt;&amp;gt;&amp;gt; apply(PCollection&amp;lt;String&amp;gt; lines) {
+  
+    // Convert lines of text into individual ngrams.
+    PCollection&amp;lt;String&amp;gt; ngrams = lines.apply(
+        ParDo.of(new ExtractNGramsFn(this.n)));
+  
+    // Count the number of times each ngram occurs.
+    PCollection&amp;lt;KV&amp;lt;String, Long&amp;gt;&amp;gt; ngramCounts =
+        ngrams.apply(Count.&amp;lt;String&amp;gt;perElement());
+  
+    // Find the top ngrams in the corpus.
+    PCollection&amp;lt;List&amp;lt;KV&amp;lt;String, Long&amp;gt;&amp;gt;&amp;gt; topNgrams = 
+        ngramCounts.apply(Top.of(this.top, new SerializableComparator&amp;lt;KV&amp;lt;String, Long&amp;gt;&amp;gt;() {
+                  private static final long serialVersionUID = 0;
+  
+                  @Override
+                  public int compare(KV&amp;lt;String, Long&amp;gt; o1, KV&amp;lt;String, Long&amp;gt; o2) {
+                    return Long.compare(o1.getValue(), o2.getValue());
+                  }
+                }).withoutDefaults());
+    
+    return topNgrams;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;full-source-code:373238c81a8bcfdf6cdd9d4aa8562076&#34;&gt;Full Source Code&lt;/h2&gt;
+
+&lt;p&gt;The rest of the code is boilerplate to setup the pipeline and accept user input.
+Feel free to use this code as a basis for your own pipelines.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;package com.sookocheff.cloud.dataflow.examples;
+
+import com.google.cloud.dataflow.sdk.Pipeline;
+import com.google.cloud.dataflow.sdk.io.TextIO;
+import com.google.cloud.dataflow.sdk.options.DataflowPipelineOptions;
+import com.google.cloud.dataflow.sdk.options.Default;
+import com.google.cloud.dataflow.sdk.options.DefaultValueFactory;
+import com.google.cloud.dataflow.sdk.options.Description;
+import com.google.cloud.dataflow.sdk.options.PipelineOptions;
+import com.google.cloud.dataflow.sdk.options.PipelineOptionsFactory;
+import com.google.cloud.dataflow.sdk.transforms.Aggregator;
+import com.google.cloud.dataflow.sdk.transforms.Count;
+import com.google.cloud.dataflow.sdk.transforms.DoFn;
+import com.google.cloud.dataflow.sdk.transforms.PTransform;
+import com.google.cloud.dataflow.sdk.transforms.ParDo;
+import com.google.cloud.dataflow.sdk.transforms.Sum;
+import com.google.cloud.dataflow.sdk.transforms.Top;
+import com.google.cloud.dataflow.sdk.transforms.SerializableComparator;
+import com.google.cloud.dataflow.sdk.util.gcsfs.GcsPath;
+import com.google.cloud.dataflow.sdk.values.KV;
+import com.google.cloud.dataflow.sdk.values.PCollection;
+
+import java.io.IOException;
+import java.util.*;
+
+
+/**
+ * Count N-Grams.
+ */
+public class NGramCount {
+
+  /**
+   * This DoFn tokenizes lines of text into individual ngrams; we pass it to a ParDo in the
+   * pipeline.
+   */
+  static class ExtractNGramsFn extends DoFn&amp;lt;String, String&amp;gt; {
+    private static final long serialVersionUID = 0;
+
+    private Integer n;
+
+    public ExtractNGramsFn(Integer n) {
+      this.n = n;
+    }
+
+    private final Aggregator&amp;lt;Long, Long&amp;gt; ngramCount =
+        createAggregator(&amp;quot;ngramCount&amp;quot;, new Sum.SumLongFn());
+
+    @Override
+    public void processElement(ProcessContext c) {
+      // Split the line into words (splits at any whitespace character, grouping
+      // whitespace together).
+      String[] words = c.element().split(&amp;quot;\\s+&amp;quot;);
+
+      // Group into ngrams
+      List&amp;lt;String&amp;gt; ngrams = new ArrayList&amp;lt;String&amp;gt;();
+      for (int i = 0; i &amp;lt;= words.length-this.n; i++) {
+        StringBuilder ngram = new StringBuilder();
+        for (int j = 0; j &amp;lt; this.n; j++) {
+          if (j &amp;gt; 0) {
+            ngram.append(&amp;quot;\t&amp;quot;);
+          }
+          ngram.append(words[i+j]);
+        }
+        ngrams.add(ngram.toString());
+      }
+
+      // Output each ngram encountered into the output PCollection.
+      for (String ngram : ngrams) {
+        if (!ngram.isEmpty()) {
+          ngramCount.addValue(1L);
+          c.output(ngram);
+        }
+      }
+    }
+  }
+
+  /** A DoFn that converts an NGram and Count into a printable string. */
+  public static class FormatAsTextFn extends DoFn&amp;lt;List&amp;lt;KV&amp;lt;String, Long&amp;gt;&amp;gt;, String&amp;gt; {
+    private static final long serialVersionUID = 0;
+
+    @Override
+    public void processElement(ProcessContext c) {
+
+      for (KV&amp;lt;String, Long&amp;gt; item : c.element()) {
+        String ngram = item.getKey();
+        long count = item.getValue();
+        c.output(ngram + &amp;quot;\t&amp;quot; + count);
+      }
+    }
+  }
+
+  /**
+   * A PTransform that converts a PCollection containing lines of text into a PCollection of
+   * word counts.
+   */
+  public static class CountNGrams
+    extends PTransform&amp;lt;PCollection&amp;lt;String&amp;gt;, PCollection&amp;lt;List&amp;lt;KV&amp;lt;String, Long&amp;gt;&amp;gt;&amp;gt;&amp;gt; {
+
+    private static final long serialVersionUID = 0;
+
+    private Integer n;
+    private Integer top;
+
+    public CountNGrams(Integer n) {
+      this.n = n;
+      this.top = new Integer(100);
+    }
+
+    public CountNGrams(Integer n, Integer top) {
+      this.n = n;
+      this.top = top;
+    }
+
+    @Override
+    public PCollection&amp;lt;List&amp;lt;KV&amp;lt;String, Long&amp;gt;&amp;gt;&amp;gt; apply(PCollection&amp;lt;String&amp;gt; lines) {
+
+      // Convert lines of text into individual ngrams.
+      PCollection&amp;lt;String&amp;gt; ngrams = lines.apply(
+          ParDo.of(new ExtractNGramsFn(this.n)));
+
+      // Count the number of times each ngram occurs.
+      PCollection&amp;lt;KV&amp;lt;String, Long&amp;gt;&amp;gt; ngramCounts =
+          ngrams.apply(Count.&amp;lt;String&amp;gt;perElement());
+
+      // Find the top ngrams in the corpus
+      PCollection&amp;lt;List&amp;lt;KV&amp;lt;String, Long&amp;gt;&amp;gt;&amp;gt; topNgrams = 
+          ngramCounts.apply(Top.of(this.top, new SerializableComparator&amp;lt;KV&amp;lt;String, Long&amp;gt;&amp;gt;() {
+                    private static final long serialVersionUID = 0;
+
+                    @Override
+                    public int compare(KV&amp;lt;String, Long&amp;gt; o1, KV&amp;lt;String, Long&amp;gt; o2) {
+                      return Long.compare(o1.getValue(), o2.getValue());
+                    }
+                  }).withoutDefaults());
+      
+      return topNgrams;
+    }
+  }
+
+  /**
+   * Options supported by {@link NGramCount}.
+   */
+  public static interface NGramCountOptions extends PipelineOptions {
+    @Description(&amp;quot;Number of n-grams to model.&amp;quot;)
+    @Default.Integer(2)
+    Integer getN();
+    void setN(Integer value);
+
+    @Description(&amp;quot;Number top n-gram counts to return.&amp;quot;)
+    @Default.Integer(100)
+    Integer getTop();
+    void setTop(Integer value);
+
+    @Description(&amp;quot;Path of the file to read from.&amp;quot;)
+    @Default.String(&amp;quot;gs://dataflow-samples/shakespeare/kinglear.txt&amp;quot;)
+    String getInputFile();
+    void setInputFile(String value);
+
+    @Description(&amp;quot;Path of the file to write to.&amp;quot;)
+    @Default.InstanceFactory(OutputFactory.class)
+    String getOutput();
+    void setOutput(String value);
+
+    /**
+     * Returns gs://${STAGING_LOCATION}/&amp;quot;counts.txt&amp;quot; as the default destination.
+     */
+    public static class OutputFactory implements DefaultValueFactory&amp;lt;String&amp;gt; {
+      @Override
+      public String create(PipelineOptions options) {
+        DataflowPipelineOptions dataflowOptions = options.as(DataflowPipelineOptions.class);
+        if (dataflowOptions.getStagingLocation() != null) {
+          return GcsPath.fromUri(dataflowOptions.getStagingLocation())
+              .resolve(&amp;quot;counts.txt&amp;quot;).toString();
+        } else {
+          throw new IllegalArgumentException(&amp;quot;Must specify --output or --stagingLocation&amp;quot;);
+        }
+      }
+    }
+
+  }
+
+  public static void main(String[] args) throws IOException {
+    NGramCountOptions options = PipelineOptionsFactory.fromArgs(args).withValidation()
+      .as(NGramCountOptions.class);
+    Pipeline p = Pipeline.create(options);
+
+    p.apply(TextIO.Read.named(&amp;quot;ReadLines&amp;quot;).from(options.getInputFile()))
+     .apply(new CountNGrams(options.getN(), options.getTop()))
+     .apply(ParDo.of(new FormatAsTextFn()))
+     .apply(TextIO.Write.named(&amp;quot;WriteCounts&amp;quot;).to(options.getOutput()));
+
+    p.run();
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>N-gram Modeling With Markov Chains</title>
@@ -2460,102 +2856,6 @@ client.tables().insert(ref.getProjectId(), ref.getDatasetId(), content).execute(
   client.tables().insert(ref.getProjectId(), ref.getDatasetId(), content).execute();
 }
 &lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Deploying R Studio on Compute Engine</title>
-      <link>http://sookocheff.com/post/r/deploying-r-studio-to-compute-engine/</link>
-      <pubDate>Mon, 23 Mar 2015 15:32:37 CST</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/post/r/deploying-r-studio-to-compute-engine/</guid>
-      <description>
-
-&lt;p&gt;Sometimes you have a data analysis problem that is just too big for your desktop
-or laptop. The limiting factor here is generally RAM. Thankfully, services like
-Google Compute Engine allow you to lease servers with up to 208GB of RAM, large
-enough for a wide variety of intensive tasks. An ancillary benefit of using a
-service like Compute Engine is that it allows you to easily load your data from
-a Cloud Storage Bucket, meaning you don&amp;rsquo;t need to keep a copy of the large
-dataset locally at all times.&lt;/p&gt;
-
-&lt;p&gt;R Studio has a remote mode allowing you to install it on a server with access
-through a remote interface. This tutorial details how to start a Compute Engine
-instance, install R Studio on it and access R Studio from the remote interface.&lt;/p&gt;
-
-&lt;p&gt;The rest of this tutorial assumes that you have a Google Cloud Platform account
-with billing enabled and have installed the &lt;a href=&#34;https://cloud.google.com/sdk/&#34;&gt;Google Cloud
-SDK&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;deploying-a-compute-engine-instance:a84679a16a118ba5a9c46f36f1d63ec8&#34;&gt;Deploying a Compute Engine Instance&lt;/h2&gt;
-
-&lt;p&gt;The first step is to deploy your Compute Engine instance. The &lt;code&gt;gcloud compute&lt;/code&gt;
-command allows you to create instances. The only required parameter to create an
-instance is the instance name. We will call our instance &lt;code&gt;r-studio&lt;/code&gt; but you can
-choose any name you like. R Studio Server is typically built on Ubuntu so it is
-safest to use the Ubuntu distribution for your server.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute instances create r-studio
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;You will be prompted to choose a
-&lt;a href=&#34;https://cloud.google.com/compute/docs/zones&#34;&gt;Zone&lt;/a&gt;. Just choose a zone close to
-you. You can also specify the zone when creating the instance using the &lt;code&gt;--zone&lt;/code&gt;
-parameter. For example.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute instances create r-studio --zone us-central1-a
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;You will also have to open the Compute Engine firewall to allow port 8787 for R
-Studio.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcutil addfirewall allow-r-studio --allowed=tcp:8787
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;installing-r-studio:a84679a16a118ba5a9c46f36f1d63ec8&#34;&gt;Installing R Studio&lt;/h2&gt;
-
-&lt;p&gt;Once we have our Compute Engine instance set up, we log in to the machine using ssh.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcloud compute ssh r-studio --zone us-central1-a
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now that we are logged in to the Compute Engine instance, it&amp;rsquo;s time to install
-R by first updating the Debian apt-get repository and then installing R.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo apt-get update
-sudo apt-get install r-base r-base-dev
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;R Studio currently requries OpenSSL version 0.9.8. We need to install this
-separately and then install install R Studio&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;wget http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl0.9.8_0.9.8o-4squeeze14_amd64.deb
-sudo dpkg -i libssl0.9.8_0.9.8o-4squeeze14_amd64.deb
-sudo apt-get install gdebi-core
-wget http://download2.rstudio.org/rstudio-server-0.98.1103-amd64.deb
-sudo gdebi rstudio-server-0.98.1103-amd64.deb
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;You should be up and running with R Studio on your compute engine instance. To
-verify, navigate to the IP address of your Compute Engine instance on port 8787
-(the default R Studio port).&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http://&amp;lt;ipaddress&amp;gt;:8787
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;R Studio only permits access to users of the system, we can add a user with
-standard Linux tools like adduser. For example, to create a new user named
-rstudio and specify the password you could execute the following commands.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo adduser rstudio
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;You will be prompted to enter a password for the user and confirm the users name
-and phone number.&lt;/p&gt;
-
-&lt;p&gt;Afterwards, logging in with the user you created will present a web UI of the
-familiar R Studio. You can now perform analysis on those larger data sets using
-the R Studio that just weren&amp;rsquo;t possible on a laptop.&lt;/p&gt;
 </description>
     </item>
     

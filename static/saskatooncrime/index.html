@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<title>Where's the crime in Saskatoon?</title>
+    <link rel="stylesheet" href="./lib/material.min.css">
+    <link rel="stylesheet" href="./lib/d3.slider.css" />  
+    <link rel="stylesheet" href="./app/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+
+    <script src="./lib/material.min.js"></script>
+    <script data-main="app" src="./lib/require.js"></script>
+	</head>
+  <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      <main class="mdl-layout__content">
+        <div class="mdl-layout__tab-panel is-active" id="overview">
+          <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+              <div class="mdl-card__supporting-text">
+                <h4>Where's the crime in Saskatoon?</h4>
+                Inspired by the <a href="http://www.cbc.ca/news/canada/saskatoon/crime-rates-down-in-saskatoon-still-second-highest-in-canada-1.2715889">recent</a> <a href="http://www.thestarphoenix.com/life/Saskatoon+Canada+highest+crime+rate+victim+success+says+Atchison/11233864/story.html">reports</a> of Saskatoon having the highest crime rate in Canada, I decided to create a quick visualization of the neighbourhoods most affected by crime in the city. The map below charts the number of crimes per region in Saskatoon from the years 2004 to 2012. Darker regions are correlated to higher crime rates than lighter colored regions. You can adjust the year using the slider at the top of the map and hover over the map to view the raw data for each neighbourhood.
+              </div>
+            </div>
+          </section>
+          <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+              <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
+                <div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
+                  <div class="mdl-cell mdl-cell--12-col mdl-cell--middle">
+                    <h3 style="text-align: center;">Year <span id="year-value">2012</span></h3>
+                  </div>
+                  <input id="year-slider" class="mdl-slider mdl-js-slider" type="range" min="2004" max="2012" value="2012" tabindex="0"/>
+                  <div id="map"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+              <div class="mdl-card__supporting-text">
+                <h4>Colophon</h4>
+                Crime data was obtained from the <a href="http://www.communityview.ca/">CommunityView Collaboration</a> website. Neighbourhood map data was obtained from the City of Saskatoon's <a href="http://opendata-saskatoon.cloudapp.net/">Open Data Catalogue</a>. Exploratory analysis and data preparation was performed using <a href="https://www.r-project.org/">R</a>. Visualisation was done using <a href="http://d3js.org/">d3</a>.
+              </div>
+              <div class="mdl-card__actions">
+                <a href="http://sookocheff.com" class="mdl-button">By Kevin Sookocheff (sookocheff.com)</a>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
+

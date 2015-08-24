@@ -1,0 +1,760 @@
+"Year","Neighbourhood","Crimes"
+2004-01-01,"Central Business District",3490
+2004-01-01,"Pleasant Hill",3366
+2004-01-01,"Riversdale",2402
+2004-01-01,"Confederation Suburban Centre",1716
+2004-01-01,"Caswell Hill",1698
+2004-01-01,"Mount Royal",1682
+2004-01-01,"Nutana",1544
+2004-01-01,"Meadowgreen",1460
+2004-01-01,"Confederation Park",1456
+2004-01-01,"Westmount",1232
+2004-01-01,"Wildwood",1228
+2004-01-01,"Mayfair",1226
+2004-01-01,"City Park",1196
+2004-01-01,"Varsity View",1000
+2004-01-01,"Massey Place",904
+2004-01-01,"Airport Business Area",888
+2004-01-01,"Sutherland",814
+2004-01-01,"College Park",700
+2004-01-01,"Brevoort Park",696
+2004-01-01,"Pacific Heights",690
+2004-01-01,"Forest Grove",674
+2004-01-01,"Silverwood Heights",672
+2004-01-01,"Fairhaven",658
+2004-01-01,"King George",654
+2004-01-01,"Kelsey - Woodlawn",646
+2004-01-01,"Holliston",600
+2004-01-01,"North Industrial",600
+2004-01-01,"Westview",560
+2004-01-01,"Dundonald",552
+2004-01-01,"Buena Vista",550
+2004-01-01,"Greystone Heights",544
+2004-01-01,"Exhibition",524
+2004-01-01,"College Park East",520
+2004-01-01,"Parkridge",494
+2004-01-01,"Haultain",480
+2004-01-01,"Hudson Bay Park",474
+2004-01-01,"Lawson Heights Suburban Centre",468
+2004-01-01,"Lakeview",464
+2004-01-01,"Central Industrial",446
+2004-01-01,"Nutana Suburban Centre",418
+2004-01-01,"Grosvenor Park",384
+2004-01-01,"Avalon",380
+2004-01-01,"Queen Elizabeth",378
+2004-01-01,"North Park",374
+2004-01-01,"River Heights",368
+2004-01-01,"Hudson Bay Industrial",366
+2004-01-01,"Lawson Heights",366
+2004-01-01,"Adelaide/Churchill",334
+2004-01-01,"Eastview",328
+2004-01-01,"Montgomery Place",308
+2004-01-01,"U of S Lands South Management Area",274
+2004-01-01,"Erindale",266
+2004-01-01,"Holiday Park",260
+2004-01-01,"Nutana Park",258
+2004-01-01,"Sutherland Industrial",210
+2004-01-01,"West Industrial",178
+2004-01-01,"Agriplace",166
+2004-01-01,"Lakeridge",160
+2004-01-01,"Arbor Creek",158
+2004-01-01,"Silverspring",136
+2004-01-01,"South West Industrial",124
+2004-01-01,"Briarwood",116
+2004-01-01,"University Heights Suburban Centre",116
+2004-01-01,"Richmond Heights",100
+2004-01-01,"Marquis Industrial",80
+2004-01-01,"CN Industrial",64
+2004-01-01,"U of S Lands North Management Area",34
+2004-01-01,"Lakewood Suburban Centre",30
+2004-01-01,"Airport Management Area",20
+2004-01-01,"SaskPower Management Area",18
+2004-01-01,"Willowgrove",18
+2004-01-01,"Blairmore Development Area",10
+2004-01-01,"Gordie Howe Management Area",8
+2004-01-01,"Diefenbaker Management Area",6
+2004-01-01,"Stonebridge",4
+2004-01-01,"Agpro Industrial",0
+2004-01-01,"Blairmore Suburban Centre",0
+2004-01-01,"CN Yards Management Area",0
+2004-01-01,"Hampton Village",0
+2004-01-01,"SE Development Area",0
+2004-01-01,"The Willows",0
+2004-01-01,"University Heights Development Area",0
+2005-01-01,"Central Business District",3890
+2005-01-01,"Pleasant Hill",3552
+2005-01-01,"Riversdale",2478
+2005-01-01,"Caswell Hill",1916
+2005-01-01,"Mount Royal",1734
+2005-01-01,"Confederation Suburban Centre",1646
+2005-01-01,"Meadowgreen",1456
+2005-01-01,"Confederation Park",1362
+2005-01-01,"Nutana",1310
+2005-01-01,"Mayfair",1252
+2005-01-01,"City Park",1242
+2005-01-01,"Westmount",1078
+2005-01-01,"Wildwood",1074
+2005-01-01,"Sutherland",1028
+2005-01-01,"Varsity View",914
+2005-01-01,"Massey Place",868
+2005-01-01,"College Park",766
+2005-01-01,"Fairhaven",766
+2005-01-01,"Greystone Heights",690
+2005-01-01,"King George",688
+2005-01-01,"Kelsey - Woodlawn",662
+2005-01-01,"Holliston",656
+2005-01-01,"Forest Grove",654
+2005-01-01,"Exhibition",628
+2005-01-01,"Airport Business Area",614
+2005-01-01,"Brevoort Park",614
+2005-01-01,"Silverwood Heights",600
+2005-01-01,"Pacific Heights",580
+2005-01-01,"Hudson Bay Park",576
+2005-01-01,"North Industrial",560
+2005-01-01,"Westview",550
+2005-01-01,"Lawson Heights Suburban Centre",536
+2005-01-01,"Buena Vista",530
+2005-01-01,"Lakeview",530
+2005-01-01,"Central Industrial",518
+2005-01-01,"Parkridge",494
+2005-01-01,"Haultain",482
+2005-01-01,"Nutana Suburban Centre",454
+2005-01-01,"Dundonald",434
+2005-01-01,"U of S Lands South Management Area",434
+2005-01-01,"College Park East",404
+2005-01-01,"Grosvenor Park",386
+2005-01-01,"River Heights",386
+2005-01-01,"Queen Elizabeth",352
+2005-01-01,"Lawson Heights",348
+2005-01-01,"Adelaide/Churchill",346
+2005-01-01,"Avalon",320
+2005-01-01,"North Park",304
+2005-01-01,"Nutana Park",284
+2005-01-01,"Hudson Bay Industrial",270
+2005-01-01,"Holiday Park",254
+2005-01-01,"Eastview",224
+2005-01-01,"Montgomery Place",218
+2005-01-01,"Erindale",186
+2005-01-01,"Lakeridge",180
+2005-01-01,"University Heights Suburban Centre",176
+2005-01-01,"Sutherland Industrial",154
+2005-01-01,"West Industrial",152
+2005-01-01,"Arbor Creek",144
+2005-01-01,"Briarwood",124
+2005-01-01,"Silverspring",122
+2005-01-01,"Richmond Heights",112
+2005-01-01,"Agriplace",110
+2005-01-01,"South West Industrial",106
+2005-01-01,"CN Industrial",100
+2005-01-01,"Marquis Industrial",72
+2005-01-01,"Lakewood Suburban Centre",54
+2005-01-01,"U of S Lands North Management Area",44
+2005-01-01,"Blairmore Development Area",26
+2005-01-01,"Gordie Howe Management Area",24
+2005-01-01,"Stonebridge",18
+2005-01-01,"Willowgrove",16
+2005-01-01,"Airport Management Area",10
+2005-01-01,"Hampton Village",8
+2005-01-01,"Diefenbaker Management Area",4
+2005-01-01,"SaskPower Management Area",4
+2005-01-01,"CN Yards Management Area",2
+2005-01-01,"The Willows",2
+2005-01-01,"University Heights Development Area",2
+2005-01-01,"Agpro Industrial",0
+2005-01-01,"Blairmore Suburban Centre",0
+2005-01-01,"SE Development Area",0
+2006-01-01,"Central Business District",3706
+2006-01-01,"Pleasant Hill",2959
+2006-01-01,"Riversdale",2240
+2006-01-01,"Confederation Suburban Centre",1472
+2006-01-01,"Caswell Hill",1463
+2006-01-01,"Confederation Park",1438
+2006-01-01,"Mount Royal",1372
+2006-01-01,"Nutana",1331
+2006-01-01,"Meadowgreen",1202
+2006-01-01,"Mayfair",1050
+2006-01-01,"Sutherland",992
+2006-01-01,"Westmount",987
+2006-01-01,"City Park",962
+2006-01-01,"King George",832
+2006-01-01,"Wildwood",824
+2006-01-01,"Forest Grove",806
+2006-01-01,"College Park",791
+2006-01-01,"Massey Place",787
+2006-01-01,"Varsity View",682
+2006-01-01,"Pacific Heights",673
+2006-01-01,"Fairhaven",644
+2006-01-01,"Parkridge",622
+2006-01-01,"Kelsey - Woodlawn",614
+2006-01-01,"Brevoort Park",604
+2006-01-01,"Silverwood Heights",603
+2006-01-01,"Holliston",567
+2006-01-01,"Dundonald",534
+2006-01-01,"Exhibition",526
+2006-01-01,"Lakeview",526
+2006-01-01,"Greystone Heights",519
+2006-01-01,"Airport Business Area",502
+2006-01-01,"Westview",483
+2006-01-01,"North Industrial",478
+2006-01-01,"Buena Vista",460
+2006-01-01,"Hudson Bay Park",444
+2006-01-01,"Haultain",420
+2006-01-01,"Lawson Heights Suburban Centre",412
+2006-01-01,"Lawson Heights",399
+2006-01-01,"College Park East",383
+2006-01-01,"Nutana Suburban Centre",380
+2006-01-01,"Central Industrial",378
+2006-01-01,"River Heights",356
+2006-01-01,"Grosvenor Park",348
+2006-01-01,"Holiday Park",344
+2006-01-01,"Avalon",343
+2006-01-01,"Queen Elizabeth",338
+2006-01-01,"Adelaide/Churchill",327
+2006-01-01,"U of S Management Area",288
+2006-01-01,"Eastview",232
+2006-01-01,"Nutana Park",232
+2006-01-01,"Arbor Creek",229
+2006-01-01,"Hudson Bay Industrial",224
+2006-01-01,"Montgomery Place",218
+2006-01-01,"North Park",216
+2006-01-01,"Erindale",205
+2006-01-01,"University Heights Suburban Centre",171
+2006-01-01,"West Industrial",167
+2006-01-01,"Lakeridge",160
+2006-01-01,"Sutherland Industrial",154
+2006-01-01,"Briarwood",134
+2006-01-01,"Agriplace",126
+2006-01-01,"South West Industrial",108
+2006-01-01,"Silverspring",107
+2006-01-01,"Marquis Industrial",84
+2006-01-01,"CN Industrial",80
+2006-01-01,"Richmond Heights",60
+2006-01-01,"Blairmore Development Area",50
+2006-01-01,"Airport Management Area",46
+2006-01-01,"Lakewood Suburban Centre",38
+2006-01-01,"U of S Lands North Management Area",38
+2006-01-01,"U of S Lands South Management Area",38
+2006-01-01,"Gordie Howe Management Area",28
+2006-01-01,"Stonebridge",22
+2006-01-01,"Hampton Village",16
+2006-01-01,"Willowgrove",16
+2006-01-01,"Blairmore Suburban Centre",12
+2006-01-01,"Diefenbaker Management Area",8
+2006-01-01,"The Willows",4
+2006-01-01,"University Heights Development Area",4
+2006-01-01,"SaskPower Management Area",2
+2006-01-01,"Agpro Industrial",0
+2006-01-01,"CN Yards Management Area",0
+2006-01-01,"SE Development Area",0
+2006-01-01,"Rosewood",0
+2006-01-01,"Silverwood Industrial",0
+2007-01-01,"Central Business District",3191
+2007-01-01,"Pleasant Hill",3119
+2007-01-01,"Riversdale",2132
+2007-01-01,"Caswell Hill",1454
+2007-01-01,"Mount Royal",1400
+2007-01-01,"Confederation Suburban Centre",1320
+2007-01-01,"Mayfair",1169
+2007-01-01,"Nutana",1153
+2007-01-01,"Meadowgreen",1096
+2007-01-01,"Confederation Park",1079
+2007-01-01,"Westmount",1001
+2007-01-01,"City Park",819
+2007-01-01,"Sutherland",767
+2007-01-01,"Massey Place",731
+2007-01-01,"King George",684
+2007-01-01,"College Park",671
+2007-01-01,"Exhibition",627
+2007-01-01,"Silverwood Heights",599
+2007-01-01,"Wildwood",586
+2007-01-01,"North Industrial",574
+2007-01-01,"Forest Grove",556
+2007-01-01,"Varsity View",556
+2007-01-01,"Airport Business Area",536
+2007-01-01,"Kelsey - Woodlawn",508
+2007-01-01,"Fairhaven",505
+2007-01-01,"Buena Vista",487
+2007-01-01,"Haultain",449
+2007-01-01,"Holliston",442
+2007-01-01,"Pacific Heights",440
+2007-01-01,"Brevoort Park",432
+2007-01-01,"Greystone Heights",431
+2007-01-01,"Central Industrial",416
+2007-01-01,"Nutana Suburban Centre",402
+2007-01-01,"Lakeview",370
+2007-01-01,"Parkridge",368
+2007-01-01,"Dundonald",364
+2007-01-01,"Westview",354
+2007-01-01,"Hudson Bay Park",352
+2007-01-01,"Grosvenor Park",348
+2007-01-01,"College Park East",338
+2007-01-01,"Queen Elizabeth",335
+2007-01-01,"Lawson Heights",333
+2007-01-01,"Avalon",324
+2007-01-01,"Lawson Heights Suburban Centre",306
+2007-01-01,"U of S Lands Management Area",284
+2007-01-01,"Adelaide/Churchill",282
+2007-01-01,"Holiday Park",275
+2007-01-01,"River Heights",272
+2007-01-01,"Nutana Park",233
+2007-01-01,"North Park",224
+2007-01-01,"Hudson Bay Industrial",214
+2007-01-01,"Erindale",192
+2007-01-01,"Eastview",175
+2007-01-01,"Montgomery Place",171
+2007-01-01,"Silverspring",168
+2007-01-01,"University Heights Suburban Centre",168
+2007-01-01,"Sutherland Industrial",164
+2007-01-01,"Agriplace",156
+2007-01-01,"Lakeridge",156
+2007-01-01,"Marquis Industrial",154
+2007-01-01,"West Industrial",154
+2007-01-01,"Arbor Creek",124
+2007-01-01,"Briarwood",112
+2007-01-01,"Stonebridge",98
+2007-01-01,"Lakewood Suburban Centre",78
+2007-01-01,"Hampton Village",76
+2007-01-01,"South West Industrial",76
+2007-01-01,"U of S Lands South Management Area",66
+2007-01-01,"Richmond Heights",56
+2007-01-01,"CN Industrial",50
+2007-01-01,"Airport Management Area",48
+2007-01-01,"U of S Lands North Management Area",44
+2007-01-01,"Blairmore Development Area",40
+2007-01-01,"Willowgrove",32
+2007-01-01,"Gordie Howe Management Area",28
+2007-01-01,"Blairmore Suburban Centre",14
+2007-01-01,"Agpro Industrial",6
+2007-01-01,"SaskPower Management Area",6
+2007-01-01,"Diefenbaker Management Area",4
+2007-01-01,"The Willows",4
+2007-01-01,"University Heights Development Area",4
+2007-01-01,"CN Yards Management Area",0
+2007-01-01,"SE Development Area",0
+2007-01-01,"Rosewood",0
+2007-01-01,"Silverwood Industrial",0
+2008-01-01,"Pleasant Hill",2658
+2008-01-01,"Central Business District",2648
+2008-01-01,"Riversdale",1568
+2008-01-01,"Caswell Hill",1239
+2008-01-01,"Mount Royal",1234
+2008-01-01,"Confederation Suburban Centre",1108
+2008-01-01,"Mayfair",1060
+2008-01-01,"Meadowgreen",1012
+2008-01-01,"Nutana",983
+2008-01-01,"Confederation Park",942
+2008-01-01,"Westmount",882
+2008-01-01,"City Park",815
+2008-01-01,"Sutherland",796
+2008-01-01,"Wildwood",654
+2008-01-01,"Massey Place",647
+2008-01-01,"College Park",636
+2008-01-01,"King George",632
+2008-01-01,"Forest Grove",568
+2008-01-01,"Greystone Heights",557
+2008-01-01,"North Industrial",554
+2008-01-01,"Airport Business Area",526
+2008-01-01,"Varsity View",508
+2008-01-01,"Fairhaven",507
+2008-01-01,"Central Industrial",504
+2008-01-01,"Kelsey - Woodlawn",498
+2008-01-01,"Exhibition",482
+2008-01-01,"Westview",460
+2008-01-01,"Dundonald",453
+2008-01-01,"Pacific Heights",452
+2008-01-01,"Holliston",436
+2008-01-01,"Hudson Bay Park",436
+2008-01-01,"Brevoort Park",421
+2008-01-01,"Buena Vista",406
+2008-01-01,"Lakeview",398
+2008-01-01,"Haultain",390
+2008-01-01,"Nutana Suburban Centre",381
+2008-01-01,"Silverwood Heights",378
+2008-01-01,"College Park East",348
+2008-01-01,"Parkridge",344
+2008-01-01,"Lawson Heights Suburban Centre",328
+2008-01-01,"Queen Elizabeth",326
+2008-01-01,"Grosvenor Park",303
+2008-01-01,"U of S Lands Management Area",298
+2008-01-01,"River Heights",290
+2008-01-01,"Avalon",278
+2008-01-01,"Lawson Heights",269
+2008-01-01,"Erindale",261
+2008-01-01,"University Heights Suburban Centre",240
+2008-01-01,"Hudson Bay Industrial",234
+2008-01-01,"Holiday Park",226
+2008-01-01,"Eastview",218
+2008-01-01,"Adelaide/Churchill",212
+2008-01-01,"Montgomery Place",206
+2008-01-01,"Stonebridge",192
+2008-01-01,"North Park",184
+2008-01-01,"Silverspring",182
+2008-01-01,"Arbor Creek",172
+2008-01-01,"Briarwood",168
+2008-01-01,"Lakeridge",166
+2008-01-01,"Nutana Park",164
+2008-01-01,"Marquis Industrial",150
+2008-01-01,"Agriplace",140
+2008-01-01,"Sutherland Industrial",124
+2008-01-01,"West Industrial",118
+2008-01-01,"Lakewood Suburban Centre",116
+2008-01-01,"Hampton Village",112
+2008-01-01,"CN Industrial",106
+2008-01-01,"U of S Lands North Management Area",88
+2008-01-01,"Willowgrove",86
+2008-01-01,"Richmond Heights",82
+2008-01-01,"South West Industrial",76
+2008-01-01,"Airport Management Area",46
+2008-01-01,"U of S Lands South Management Area",42
+2008-01-01,"Blairmore Development Area",38
+2008-01-01,"Gordie Howe Management Area",30
+2008-01-01,"Blairmore Suburban Centre",26
+2008-01-01,"The Willows",14
+2008-01-01,"Agpro Industrial",6
+2008-01-01,"University Heights Development Area",4
+2008-01-01,"Diefenbaker Management Area",2
+2008-01-01,"SE Development Area",2
+2008-01-01,"CN Yards Management Area",0
+2008-01-01,"SaskPower Management Area",0
+2008-01-01,"Rosewood",0
+2008-01-01,"Silverwood Industrial",0
+2009-01-01,"Central Business District",2742
+2009-01-01,"Pleasant Hill",2542
+2009-01-01,"Riversdale",1317
+2009-01-01,"Confederation Suburban Centre",1272
+2009-01-01,"Mount Royal",1269
+2009-01-01,"Caswell Hill",1252
+2009-01-01,"Nutana",1163
+2009-01-01,"Confederation Park",1021
+2009-01-01,"Mayfair",1010
+2009-01-01,"Westmount",1004
+2009-01-01,"City Park",891
+2009-01-01,"Meadowgreen",880
+2009-01-01,"Sutherland",844
+2009-01-01,"Wildwood",776
+2009-01-01,"Massey Place",692
+2009-01-01,"College Park",651
+2009-01-01,"Airport Business Area",648
+2009-01-01,"North Industrial",629
+2009-01-01,"King George",617
+2009-01-01,"Greystone Heights",596
+2009-01-01,"Varsity View",589
+2009-01-01,"Kelsey - Woodlawn",586
+2009-01-01,"Fairhaven",578
+2009-01-01,"Silverwood Heights",535
+2009-01-01,"Holliston",527
+2009-01-01,"Pacific Heights",505
+2009-01-01,"Parkridge",485
+2009-01-01,"Exhibition",472
+2009-01-01,"Dundonald",470
+2009-01-01,"Brevoort Park",466
+2009-01-01,"Haultain",455
+2009-01-01,"Buena Vista",433
+2009-01-01,"Forest Grove",433
+2009-01-01,"Westview",428
+2009-01-01,"Hudson Bay Park",414
+2009-01-01,"U of S Lands Management Area",390
+2009-01-01,"Central Industrial",382
+2009-01-01,"Lakeview",367
+2009-01-01,"Queen Elizabeth",354
+2009-01-01,"Lawson Heights Suburban Centre",353
+2009-01-01,"Hudson Bay Industrial",342
+2009-01-01,"Nutana Suburban Centre",340
+2009-01-01,"River Heights",327
+2009-01-01,"Stonebridge",327
+2009-01-01,"Adelaide/Churchill",326
+2009-01-01,"Avalon",310
+2009-01-01,"College Park East",302
+2009-01-01,"Grosvenor Park",278
+2009-01-01,"Holiday Park",256
+2009-01-01,"Lawson Heights",251
+2009-01-01,"North Park",250
+2009-01-01,"University Heights Suburban Centre",245
+2009-01-01,"Eastview",242
+2009-01-01,"Briarwood",213
+2009-01-01,"Marquis Industrial",193
+2009-01-01,"Arbor Creek",189
+2009-01-01,"Nutana Park",189
+2009-01-01,"Agriplace",188
+2009-01-01,"Lakeridge",186
+2009-01-01,"Willowgrove",186
+2009-01-01,"Silverspring",177
+2009-01-01,"Erindale",171
+2009-01-01,"Montgomery Place",160
+2009-01-01,"Sutherland Industrial",143
+2009-01-01,"Hampton Village",141
+2009-01-01,"Lakewood Suburban Centre",140
+2009-01-01,"West Industrial",118
+2009-01-01,"South West Industrial",102
+2009-01-01,"U of S Lands South Management Area",86
+2009-01-01,"CN Industrial",78
+2009-01-01,"U of S Lands North Management Area",66
+2009-01-01,"Blairmore Development Area",60
+2009-01-01,"Richmond Heights",47
+2009-01-01,"Blairmore Suburban Centre",32
+2009-01-01,"Airport Management Area",28
+2009-01-01,"Gordie Howe Management Area",16
+2009-01-01,"The Willows",16
+2009-01-01,"Diefenbaker Management Area",14
+2009-01-01,"Agpro Industrial",12
+2009-01-01,"CN Yards Management Area",8
+2009-01-01,"Rosewood",2
+2009-01-01,"SaskPower Management Area",0
+2009-01-01,"SE Development Area",0
+2009-01-01,"University Heights Development Area",0
+2009-01-01,"Silverwood Industrial",0
+2010-01-01,"Central Business District",2774
+2010-01-01,"Pleasant Hill",2324
+2010-01-01,"Caswell Hill",1443
+2010-01-01,"Riversdale",1179
+2010-01-01,"Confederation Suburban Centre",1132
+2010-01-01,"Mount Royal",1009
+2010-01-01,"Nutana",934
+2010-01-01,"Confederation Park",919
+2010-01-01,"Mayfair",862
+2010-01-01,"Meadowgreen",832
+2010-01-01,"City Park",826
+2010-01-01,"Westmount",812
+2010-01-01,"Greystone Heights",752
+2010-01-01,"Sutherland",719
+2010-01-01,"Wildwood",649
+2010-01-01,"Massey Place",643
+2010-01-01,"North Industrial",574
+2010-01-01,"King George",544
+2010-01-01,"College Park",540
+2010-01-01,"Westview",536
+2010-01-01,"Kelsey - Woodlawn",525
+2010-01-01,"Fairhaven",513
+2010-01-01,"Varsity View",505
+2010-01-01,"Dundonald",487
+2010-01-01,"Holliston",484
+2010-01-01,"Airport Business Area",447
+2010-01-01,"Silverwood Heights",435
+2010-01-01,"Haultain",427
+2010-01-01,"Forest Grove",422
+2010-01-01,"Nutana Suburban Centre",420
+2010-01-01,"Brevoort Park",414
+2010-01-01,"Buena Vista",405
+2010-01-01,"Exhibition",404
+2010-01-01,"Central Industrial",400
+2010-01-01,"Hudson Bay Park",366
+2010-01-01,"Parkridge",362
+2010-01-01,"Lakeview",345
+2010-01-01,"Lawson Heights Suburban Centre",339
+2010-01-01,"Pacific Heights",321
+2010-01-01,"U of S Lands Management Area",313
+2010-01-01,"River Heights",305
+2010-01-01,"College Park East",301
+2010-01-01,"Queen Elizabeth",295
+2010-01-01,"Hudson Bay Industrial",293
+2010-01-01,"Stonebridge",282
+2010-01-01,"Holiday Park",278
+2010-01-01,"Grosvenor Park",272
+2010-01-01,"Avalon",262
+2010-01-01,"Blairmore Suburban Centre",246
+2010-01-01,"Lawson Heights",246
+2010-01-01,"University Heights Suburban Centre",246
+2010-01-01,"Adelaide/Churchill",235
+2010-01-01,"Hampton Village",232
+2010-01-01,"Eastview",226
+2010-01-01,"Montgomery Place",191
+2010-01-01,"Lakeridge",189
+2010-01-01,"North Park",185
+2010-01-01,"Nutana Park",176
+2010-01-01,"Arbor Creek",172
+2010-01-01,"Erindale",171
+2010-01-01,"Briarwood",156
+2010-01-01,"Silverspring",145
+2010-01-01,"Sutherland Industrial",140
+2010-01-01,"Willowgrove",136
+2010-01-01,"Marquis Industrial",134
+2010-01-01,"Lakewood Suburban Centre",113
+2010-01-01,"Agriplace",98
+2010-01-01,"South West Industrial",98
+2010-01-01,"West Industrial",88
+2010-01-01,"U of S Lands North Management Area",64
+2010-01-01,"CN Industrial",59
+2010-01-01,"Airport Management Area",48
+2010-01-01,"Richmond Heights",48
+2010-01-01,"U of S Lands South Management Area",37
+2010-01-01,"Blairmore Development Area",28
+2010-01-01,"Diefenbaker Management Area",12
+2010-01-01,"Gordie Howe Management Area",10
+2010-01-01,"CN Yards Management Area",8
+2010-01-01,"University Heights Development Area",8
+2010-01-01,"The Willows",6
+2010-01-01,"Rosewood",6
+2010-01-01,"SaskPower Management Area",4
+2010-01-01,"Agpro Industrial",2
+2010-01-01,"SE Development Area",0
+2010-01-01,"Silverwood Industrial",0
+2011-01-01,"Central Business District",2549
+2011-01-01,"Pleasant Hill",2300
+2011-01-01,"Riversdale",1366
+2011-01-01,"Caswell Hill",1210
+2011-01-01,"Mayfair",1089
+2011-01-01,"Nutana",1067
+2011-01-01,"Mount Royal",1013
+2011-01-01,"Kelsey - Woodlawn",1006
+2011-01-01,"Westmount",991
+2011-01-01,"Confederation Suburban Centre",982
+2011-01-01,"Meadowgreen",856
+2011-01-01,"Confederation Park",813
+2011-01-01,"City Park",792
+2011-01-01,"Sutherland",767
+2011-01-01,"Wildwood",658
+2011-01-01,"Fairhaven",604
+2011-01-01,"College Park",563
+2011-01-01,"North Industrial",533
+2011-01-01,"Stonebridge",528
+2011-01-01,"Brevoort Park",520
+2011-01-01,"Varsity View",512
+2011-01-01,"Silverwood Heights",473
+2011-01-01,"Greystone Heights",449
+2011-01-01,"Central Industrial",445
+2011-01-01,"Westview",438
+2011-01-01,"Holliston",434
+2011-01-01,"Airport Business Area",424
+2011-01-01,"Exhibition",415
+2011-01-01,"Massey Place",413
+2011-01-01,"King George",410
+2011-01-01,"Forest Grove",400
+2011-01-01,"Hudson Bay Park",375
+2011-01-01,"Pacific Heights",374
+2011-01-01,"Lawson Heights Suburban Centre",373
+2011-01-01,"Parkridge",371
+2011-01-01,"Dundonald",355
+2011-01-01,"Nutana Suburban Centre",354
+2011-01-01,"Buena Vista",340
+2011-01-01,"Lakeview",339
+2011-01-01,"River Heights",334
+2011-01-01,"Haultain",333
+2011-01-01,"Blairmore Suburban Centre",325
+2011-01-01,"Willowgrove",302
+2011-01-01,"Hampton Village",294
+2011-01-01,"Queen Elizabeth",294
+2011-01-01,"University Heights Suburban Centre",287
+2011-01-01,"Lawson Heights",280
+2011-01-01,"College Park East",270
+2011-01-01,"Silverspring",260
+2011-01-01,"Eastview",259
+2011-01-01,"Grosvenor Park",256
+2011-01-01,"Adelaide/Churchill",255
+2011-01-01,"Avalon",254
+2011-01-01,"Hudson Bay Industrial",232
+2011-01-01,"North Park",230
+2011-01-01,"Briarwood",224
+2011-01-01,"Erindale",216
+2011-01-01,"Holiday Park",216
+2011-01-01,"Arbor Creek",199
+2011-01-01,"Nutana Park",198
+2011-01-01,"Marquis Industrial",174
+2011-01-01,"Montgomery Place",153
+2011-01-01,"Lakeridge",150
+2011-01-01,"Agriplace",128
+2011-01-01,"Lakewood Suburban Centre",127
+2011-01-01,"U of S Lands North Management Area",97
+2011-01-01,"Sutherland Industrial",96
+2011-01-01,"U of S Lands Management Area",72
+2011-01-01,"West Industrial",71
+2011-01-01,"Richmond Heights",69
+2011-01-01,"U of S Lands South Management Area",62
+2011-01-01,"South West Industrial",57
+2011-01-01,"CN Industrial",49
+2011-01-01,"Airport Management Area",32
+2011-01-01,"Blairmore Development Area",24
+2011-01-01,"Gordie Howe Management Area",20
+2011-01-01,"The Willows",20
+2011-01-01,"Rosewood",19
+2011-01-01,"Agpro Industrial",6
+2011-01-01,"Diefenbaker Management Area",6
+2011-01-01,"SaskPower Management Area",2
+2011-01-01,"CN Yards Management Area",0
+2011-01-01,"SE Development Area",0
+2011-01-01,"University Heights Development Area",0
+2011-01-01,"Silverwood Industrial",0
+2012-01-01,"Central Business District",2541
+2012-01-01,"Pleasant Hill",2165
+2012-01-01,"Riversdale",1490
+2012-01-01,"Caswell Hill",1175
+2012-01-01,"Confederation Suburban Centre",1150
+2012-01-01,"Nutana",939
+2012-01-01,"Mayfair",892
+2012-01-01,"Mount Royal",825
+2012-01-01,"Westmount",788
+2012-01-01,"City Park",765
+2012-01-01,"Confederation Park",750
+2012-01-01,"Meadowgreen",735
+2012-01-01,"Wildwood",640
+2012-01-01,"Brevoort Park",600
+2012-01-01,"North Industrial",593
+2012-01-01,"College Park",590
+2012-01-01,"Central Industrial",584
+2012-01-01,"Kelsey - Woodlawn",537
+2012-01-01,"Sutherland",529
+2012-01-01,"Varsity View",520
+2012-01-01,"Blairmore Suburban Centre",487
+2012-01-01,"Massey Place",483
+2012-01-01,"Fairhaven",472
+2012-01-01,"King George",430
+2012-01-01,"Greystone Heights",429
+2012-01-01,"Airport Business Area",419
+2012-01-01,"Stonebridge",400
+2012-01-01,"Silverwood Heights",382
+2012-01-01,"Pacific Heights",376
+2012-01-01,"Holliston",371
+2012-01-01,"Parkridge",344
+2012-01-01,"Hudson Bay Park",339
+2012-01-01,"Forest Grove",334
+2012-01-01,"Lakeview",332
+2012-01-01,"Westview",316
+2012-01-01,"Hudson Bay Industrial",312
+2012-01-01,"Haultain",309
+2012-01-01,"Lawson Heights Suburban Centre",309
+2012-01-01,"Exhibition",300
+2012-01-01,"Nutana Suburban Centre",292
+2012-01-01,"Dundonald",288
+2012-01-01,"Hampton Village",283
+2012-01-01,"Grosvenor Park",278
+2012-01-01,"Buena Vista",273
+2012-01-01,"University Heights Suburban Centre",262
+2012-01-01,"Eastview",260
+2012-01-01,"Avalon",257
+2012-01-01,"Queen Elizabeth",252
+2012-01-01,"Lawson Heights",244
+2012-01-01,"Adelaide/Churchill",242
+2012-01-01,"College Park East",240
+2012-01-01,"River Heights",225
+2012-01-01,"Holiday Park",209
+2012-01-01,"North Park",203
+2012-01-01,"Sutherland Industrial",192
+2012-01-01,"Briarwood",166
+2012-01-01,"Nutana Park",166
+2012-01-01,"Willowgrove",162
+2012-01-01,"Lakeridge",158
+2012-01-01,"Silverspring",153
+2012-01-01,"Arbor Creek",137
+2012-01-01,"Marquis Industrial",125
+2012-01-01,"U of S Lands North Management Area",125
+2012-01-01,"U of S Lands Management Area",124
+2012-01-01,"West Industrial",123
+2012-01-01,"Lakewood Suburban Centre",118
+2012-01-01,"Erindale",94
+2012-01-01,"Agriplace",92
+2012-01-01,"Montgomery Place",81
+2012-01-01,"U of S Lands South Management Area",74
+2012-01-01,"CN Industrial",64
+2012-01-01,"South West Industrial",52
+2012-01-01,"Richmond Heights",44
+2012-01-01,"Airport Management Area",38
+2012-01-01,"Blairmore Development Area",36
+2012-01-01,"Rosewood",30
+2012-01-01,"Gordie Howe Management Area",28
+2012-01-01,"The Willows",18
+2012-01-01,"Diefenbaker Management Area",10
+2012-01-01,"SaskPower Management Area",8
+2012-01-01,"CN Yards Management Area",6
+2012-01-01,"Agpro Industrial",2
+2012-01-01,"SE Development Area",0
+2012-01-01,"University Heights Development Area",0
+2012-01-01,"Silverwood Industrial",0

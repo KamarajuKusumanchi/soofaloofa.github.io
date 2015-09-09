@@ -5,7 +5,129 @@
     <link>http://sookocheff.com/post/</link>
     <language>en-us</language>
     <copyright>Copyright Kevin Sookocheff.</copyright>
-    <lastBuildDate>Wed, 05 Aug 2015 05:41:06 UTC</lastBuildDate>
+    <lastBuildDate>Thu, 10 Sep 2015 06:29:12 CST</lastBuildDate>
+    
+    <item>
+      <title>A Review of the Coursera Data Science Specialization</title>
+      <link>http://sookocheff.com/post/datascience/datasciencespecialization/</link>
+      <pubDate>Thu, 10 Sep 2015 06:29:12 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/datascience/datasciencespecialization/</guid>
+      <description>
+
+&lt;h1 id=&#34;a-review-of-the-coursera-data-science-specialization:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;A Review of the Coursera Data Science Specialization&lt;/h1&gt;
+
+&lt;p&gt;I recently completed the 10th and final course in the Data Science Specialization offered by Coursera in conjunction with Johns Hopkins University. My background is as a computer scientist and programmer looking to learn more about statistical analysis and machine learning — I have always had an interest in data analysis and machine learning but never actually studied it. I used the Data Science Specialization acted as a starting point to learn more about the field and become familiar with typical problems and solutions that data scientists encounter in the field. This article describes my experience with the specialization and answers the question of whether or not the it is worth the time.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-data-scientist-s-toolbox:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;The Data Scientist&amp;rsquo;s Toolbox&lt;/h2&gt;
+
+&lt;p&gt;The specialization opens with The Data Scientist&amp;rsquo;s Toolbox, providing a broad overview of the specialization itself and of the tools and technologies that will be covered throughout the course. You will learn the basics of Git, GitHub, Markdown and R. With tutorials on how to install RStudio and R packages.&lt;/p&gt;
+
+&lt;p&gt;The Data Scientist&amp;rsquo;s Toolbox is basic to the point of being remedial. A large portion of the course is spent reviewing what the upcoming courses will cover. It seems disingenuous to charge $50 for a course that explains what additional courses will cover. The concrete material in this course could easily be relegated to pre-requisites of other courses. If you complete a basic tutorial on Git and Markdown and know how to install software you will have completed all the requirements for this course.&lt;/p&gt;
+
+&lt;h3 id=&#34;verdict:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Verdict&lt;/h3&gt;
+
+&lt;p&gt;Skip. If you know absolutely nothing about software development this course may be useful. Otherwise, skip it.&lt;/p&gt;
+
+&lt;h2 id=&#34;r-programming:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;R Programming&lt;/h2&gt;
+
+&lt;p&gt;The R Programming course provides an overview of R as a programming language. It covers basic R syntax and data structures and offers an opportunity to practice writing basic R functions.&lt;/p&gt;
+
+&lt;p&gt;Given background in other programming languages the R Programming course will not provide you with much benefit. I would recommend following some R programming introductory tutorials at your own pace. If, however, you do not have much programming experience this course will explain the fundamentals and teach you to think programmatically. This is one of the few courses that comes with a recommended textbook. Unfortunately, the textbook covers advanced R material and would only be useful after becoming familiar with R programming. The pace of the book does not match the expectations of the course.&lt;/p&gt;
+
+&lt;h3 id=&#34;verdict-1:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Verdict&lt;/h3&gt;
+
+&lt;p&gt;Take.  There is enough R specific material to make this course worth while. Just don&amp;rsquo;t expect revelations — you will not be an expert in R after this course. An additional textbook would be wonderful.&lt;/p&gt;
+
+&lt;h2 id=&#34;getting-and-cleaning-data:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Getting and Cleaning Data&lt;/h2&gt;
+
+&lt;p&gt;Getting and Cleaning Data covers reading files into R from a variety of sources: CSV, MySQL, HDFS, among others. You will learn how to reshape data using R and how to generate summary statistics of your data.&lt;/p&gt;
+
+&lt;p&gt;While getting and cleaning data is a necessary process in data analysis, the material covered in this course is basic and disjointed. I would have vastly preferred covering how to load one or two different file types and spent more time on manipulating and preparing data with R.&lt;/p&gt;
+
+&lt;h3 id=&#34;verdict-2:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Verdict&lt;/h3&gt;
+
+&lt;p&gt;Skip. This material can easily be learned when needed using specific Google searches on how to load a particular file with R. Consider taking this course if you need additional practice in R.&lt;/p&gt;
+
+&lt;h2 id=&#34;exploratory-data-analysis:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Exploratory Data Analysis&lt;/h2&gt;
+
+&lt;p&gt;The Exploratory Analysis course covers plotting in R using the base plotting system, the lattice package, and ggplot2. It then moves on to explain k-means, dimensionality reduction and principal components analysis.&lt;/p&gt;
+
+&lt;p&gt;The material on plotting is great. I only wish that the coverage of the lattice package were removed and more time dedicated to ggplot. I&amp;rsquo;ve yet to see any lattice plots in the real world — it seems like ggplot is the de facto standard in this area and should be covered more thoroughly. The course provides a cursory overview of k-means and principal components analysis as a way to summarize data. This material could have used a lot more explanation and motivation.&lt;/p&gt;
+
+&lt;h3 id=&#34;verdict-3:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Verdict&lt;/h3&gt;
+
+&lt;p&gt;Take. ggplot is a must and this course will get you started on the right path to plotting. The statistical material on k-means and principal components analysis deserved more in-depth treatment and could almost be a course in itself. I wished for more material in these areas.&lt;/p&gt;
+
+&lt;h2 id=&#34;reproducible-research:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Reproducible Research&lt;/h2&gt;
+
+&lt;p&gt;Reproducible research provides the motivation for making research reproducible. It then follows with coverage of R specific technologies that can aid in producing reproducible research: knitr, RPubs, and slidify.&lt;/p&gt;
+
+&lt;p&gt;I have mixed feelings about this course. It&amp;rsquo;s great that coverage of reproducible research is included in the specialization but four weeks is too much for this particular topic. Most of the course seems like filler and following a quick tutorial on knitr would provide much the same benefit as taking this course. I also do not see the benefit in covering both RPubs and slidify when they do basically the same thing. I would much prefer seeing more in-depth coverage of one technology — anything learned in one technology could be easily applied to the other when it is needed.&lt;/p&gt;
+
+&lt;h3 id=&#34;verdict-4:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Verdict&lt;/h3&gt;
+
+&lt;p&gt;Skip. The coverage of each technology is cursory at best. Reading the documentation of knitr would provide more detail for less time and effort than taking this course. Not recommended.&lt;/p&gt;
+
+&lt;h2 id=&#34;statistical-inference:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Statistical Inference&lt;/h2&gt;
+
+&lt;p&gt;The statistical inference course covers they key concepts of statistical inference: probability, confidence intervals, hypothesis testing and common statistical distributions. The course is math heavy, covering the theory behind each statistical method before providing R code for using the method in practice.&lt;/p&gt;
+
+&lt;p&gt;The course is a jarring departure from the rest of the specialization so far. Previous courses have covered practical considerations and mostly focussed on becoming proficient with R and the RStudio environment. The mathematical treatment of statistics and statistical models can be overwhelming at times and the videos are unevenly paced with complex topics being covered with only one or two slides. The course highlights one of the key failings of the specialization: lack of supplementary material. I would have loved a companion text and problem set to help work though the details.&lt;/p&gt;
+
+&lt;h3 id=&#34;verdict-5:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Verdict&lt;/h3&gt;
+
+&lt;p&gt;Skip. The material in this course is fundamental. Unfortunately you will need a better source to learn it from. It&amp;rsquo;s a shame that so much material is crammed into this four week course with no additional material to draw from. I would recommend picking up a basic statistics book rather than taking this course.&lt;/p&gt;
+
+&lt;h2 id=&#34;regression-models:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Regression Models&lt;/h2&gt;
+
+&lt;p&gt;Regression models continues the discussion of statistical methods, this time focussing on linear regression, log-linear regression and how to interpret the results of a regression model using residuals.&lt;/p&gt;
+
+&lt;p&gt;The regression models course falls victim to the same shortcomings as the statistical inference course. Namely, the theoretical nature of the course without supplementary resources makes it difficult to fully dive into the technical details. One or two slides and a video as a format for learning complex material is unrealistic.&lt;/p&gt;
+
+&lt;h3 id=&#34;verdict-6:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Verdict&lt;/h3&gt;
+
+&lt;p&gt;Skip. This course attempts to cover a very broad range of material in a short time frame. Unfortunately, not having a supplementary text to work from means that the coverage of the material is spotty and incomplete.&lt;/p&gt;
+
+&lt;h2 id=&#34;practical-machine-learning:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Practical Machine Learning&lt;/h2&gt;
+
+&lt;p&gt;The practical machine learning course eases off from the theoretical underpinnings of prediction to introduce the caret package in R and walks through some typical machine learning algorithms. It starts with a discussion of what prediction is and how to measure if a prediction model is accurate or not, then dives in to linear regression, prediction trees, and random forests.&lt;/p&gt;
+
+&lt;p&gt;The caret package is becoming the de facto standard interface for machine learning in R. As such, the course has some great material focusing on the practical aspects of the caret package. The course also provides a discussion of how to evaluate a prediction model for accuracy and how to compare models against one another. I wish there was more of this material as it seems like such a fundamental problem in machine learning.&lt;/p&gt;
+
+&lt;h3 id=&#34;verdict-7:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Verdict&lt;/h3&gt;
+
+&lt;p&gt;Take. This course provides a solid introduction to the caret package and should guide the student to further areas of study. You will not be an expert in machine learning after taking this course but it should give you a starting point to learn additional details whenever they are needed.&lt;/p&gt;
+
+&lt;h2 id=&#34;developing-data-products:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Developing Data Products&lt;/h2&gt;
+
+&lt;p&gt;This course focuses on using R to create presentations and web apps as a means of showcasing your models. This course covers Shiny, RStudio presenter and slidify, among other technologies. Each technology for presenting your work is introduced along with a minimal tutorial. Once that tutorial is complete, a new technology is introduced.&lt;/p&gt;
+
+&lt;p&gt;I wish this course focussed more on one or two technologies and expanded more deeply on how they work and what can be accomplished with them. As it stands, it&amp;rsquo;s hard to recommend a course that simply re-implements existing documentation for each technology that could easily be gotten in other, more complete, forms from the respective technologies websites. The course instructor even admits that most of the material is the exact examples from the technologies documentation.&lt;/p&gt;
+
+&lt;h3 id=&#34;verdict-8:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Verdict&lt;/h3&gt;
+
+&lt;p&gt;Skip. Just read the tutorial for the technologies that interest you.&lt;/p&gt;
+
+&lt;h2 id=&#34;data-science-capstone:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Data Science Capstone&lt;/h2&gt;
+
+&lt;p&gt;The capstone project involves creating a Shiny web application that, given a sequence of input words, predicts the next word in the sentence. This project requires some understanding of NLP, data management, Shiny, and RPubs.&lt;/p&gt;
+
+&lt;p&gt;The project provided a good experience of what being a data scientist entails. It necessitated a lot of research, data mangling, and performance tuning that are common in the field. The end product is useful and the skills required to make it run well are novel and useful. My only issue with the project was that there was little use of statistical methods.&lt;/p&gt;
+
+&lt;h3 id=&#34;verdict-9:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Verdict&lt;/h3&gt;
+
+&lt;p&gt;Take. The capstone brings together a lot of elements of the course and ties it all together. I feel like I learned a lot about data science simply by taking the capstone project.&lt;/p&gt;
+
+&lt;h2 id=&#34;summary:693c3509f98d11a9bb6c7b10600e6ef2&#34;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;The individual reviews of the courses follow a definite trend: uneven coverage of material and technologies. That trend continues for the specialization as a whole. I don&amp;rsquo;t think anyone doing actual data science would believe that a topic such as statistical inference should be given the same weight as a topic such as git. Although git is definitely something that is valuable for a data scientist, it is not essential to the field. As such, the course would be a great introduction to data science from the perspective of a statistician. It would teach the statistician basic programming techniques, version control, and how to deploy your code via a Shiny application.&lt;/p&gt;
+
+&lt;p&gt;Another failing of the course is the lack of supplementary material. Not everyone learns best from watching videos and if you need to go back and review material at a later date then you need to either find the correct place in the video or look at only a few bullet points in a set of slides. The specialization begs for a text book for at least a few of the courses and could definitely use some supplementary material for almost every course. It seems that the instructors agree with this assessment as they are slowly publishing books through Leanpub that supplement the Coursera course. This is great news for new students going through the material.&lt;/p&gt;
+
+&lt;p&gt;As it stands, the specialization does provide a broad overview of the field of data science and I do feel like I can now dive in to particular areas of interest with more confidence. Overall, I&amp;rsquo;m glad that I took the entire specialization but looking back I believe I could have skipped a few of the courses and focussed more on my areas of interest from the beginning. If you wish to maximize the value for the time spent in this specialization, consider cherry-picking the particular courses that interest you rather than taking the entire specialization.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Counting N-Grams with Cloud Dataflow</title>
@@ -2745,117 +2867,6 @@ is in use within the product is technical debt that should be short lived.&lt;/p
 on behalf of the development team. However, if the team is able to cross these
 hurdles continuous delivery can be used to deliver stable software to customers
 faster than ever before.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Creating a BigQuery Table using the Java Client Library</title>
-      <link>http://sookocheff.com/post/bigquery/creating-a-big-query-table-java-api/</link>
-      <pubDate>Mon, 23 Mar 2015 15:32:37 CST</pubDate>
-      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
-      <guid>http://sookocheff.com/post/bigquery/creating-a-big-query-table-java-api/</guid>
-      <description>&lt;p&gt;I haven&amp;rsquo;t been able to find great documentation on creating a BigQuery
-TableSchema using the Java Client Library. This blog post hopes to rectify that
-:).&lt;/p&gt;
-
-&lt;p&gt;You can use the &lt;a href=&#34;https://github.com/GoogleCloudPlatform/bigquery-samples-java&#34;&gt;BigQuery sample
-code&lt;/a&gt; for an idea
-of how to create a client connection to BigQuery. Assuming you have the
-connection set up you can start by creating a new &lt;code&gt;TableSchema&lt;/code&gt;. The
-&lt;code&gt;TableSchema&lt;/code&gt; provides a method for setting the list of fields that make up the
-columns of your BigQuery Table. Those columns are defined as an Array of
-&lt;code&gt;TableFieldSchema&lt;/code&gt; objects.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;ArrayList&amp;lt;TableFieldSchema&amp;gt; fieldSchema = new ArrayList&amp;lt;TableFieldSchema&amp;gt;();
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;For simple types you can populate your columns with the correct type and mode
-according to the &lt;a href=&#34;https://cloud.google.com/bigquery/docs/reference/v2/tables#resource&#34;&gt;BigQuery API
-documentation&lt;/a&gt;.
-For example, to create a STRING field that is NULLABLE you can use the
-following.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;fieldSchema.add(new TableFieldSchema().setName(&amp;quot;username&amp;quot;).setType(&amp;quot;STRING&amp;quot;).setMode(&amp;quot;NULLABLE&amp;quot;));
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And for repeated fields you can use the REPEATED mode.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;fieldSchema.add(new TableFieldSchema().setName(&amp;quot;email&amp;quot;).setType(&amp;quot;STRING&amp;quot;).setMode(&amp;quot;REPEATED&amp;quot;));
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;To create nested records you specify the parent as a RECORD mode and then call
-&lt;code&gt;setFields&lt;/code&gt; for each column of nested data you want to insert. The columns of a
-nested type are the same format as for the parent &amp;ndash; a list of TableFieldSchema
-objects.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;fieldSchema.add(
-  new TableFieldSchema().setName(&amp;quot;location&amp;quot;).setType(&amp;quot;RECORD&amp;quot;).setFields(
-    new ArrayList&amp;lt;TableFieldSchema&amp;gt;() {
-      {
-        add(new TableFieldSchema().setName(&amp;quot;city&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
-        add(new TableFieldSchema().setName(&amp;quot;address&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
-        add(new TableFieldSchema().setName(&amp;quot;zipcode&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
-      }
-    }
-  )
-);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The last step is to set the entire schema as the fields of our table schema.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;TableSchema schema = new TableSchema();
-schema.setFields(fieldSchema);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Then we set a &lt;code&gt;TableReference&lt;/code&gt; that holds the current project id, dataset id and
-table id. We use this &lt;code&gt;TableReference&lt;/code&gt; to create our &lt;code&gt;Table&lt;/code&gt; using the &lt;code&gt;TableSchema&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;TableReference ref = new TableReference();
-ref.setProjectId(PROJECT_ID);
-ref.setDatasetId(&amp;quot;pubsub&amp;quot;);
-ref.setTableId(&amp;quot;review_test&amp;quot;);
-
-Table content = new Table();
-content.setTableReference(ref);
-content.setSchema(schema);
-
-client.tables().insert(ref.getProjectId(), ref.getDatasetId(), content).execute();
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Putting this all together gives you a working sample of creating a BigQuery Table using the Java Client Library.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;public static void main(String[] args) throws IOException, InterruptedException {
-  Bigquery client = createAuthorizedClient(); // As per the BQ sample code
-  
-  ArrayList&amp;lt;TableFieldSchema&amp;gt; fieldSchema = new ArrayList&amp;lt;TableFieldSchema&amp;gt;();
-  
-  fieldSchema.add(new TableFieldSchema().setName(&amp;quot;username&amp;quot;).setType(&amp;quot;STRING&amp;quot;).setMode(&amp;quot;NULLABLE&amp;quot;));
-  fieldSchema.add(new TableFieldSchema().setName(&amp;quot;email&amp;quot;).setType(&amp;quot;STRING&amp;quot;).setMode(&amp;quot;REPEATED&amp;quot;));
-  fieldSchema.add(
-    new TableFieldSchema().setName(&amp;quot;location&amp;quot;).setType(&amp;quot;RECORD&amp;quot;).setFields(
-      new ArrayList&amp;lt;TableFieldSchema&amp;gt;() {
-        {
-          add(new TableFieldSchema().setName(&amp;quot;city&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
-          add(new TableFieldSchema().setName(&amp;quot;address&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
-          add(new TableFieldSchema().setName(&amp;quot;zipcode&amp;quot;).setType(&amp;quot;STRING&amp;quot;));
-        }
-  }));
-  
-  TableSchema schema = new TableSchema();
-  schema.setFields(fieldSchema);
-  
-  TableReference ref = new TableReference();
-  ref.setProjectId(&amp;quot;&amp;lt;YOUR_PROJECT_ID&amp;gt;&amp;quot;);
-  ref.setDatasetId(&amp;quot;&amp;lt;YOUR_DATASET_ID&amp;gt;&amp;quot;);
-  ref.setTableId(&amp;quot;&amp;lt;YOUR_TABLE_ID&amp;gt;&amp;quot;);
-  
-  Table content = new Table();
-  content.setTableReference(ref);
-  content.setSchema(schema);
-  
-  client.tables().insert(ref.getProjectId(), ref.getDatasetId(), content).execute();
-}
-&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     

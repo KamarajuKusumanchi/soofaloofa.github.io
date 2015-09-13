@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kevin Sookocheff</title>
+    <link>http://sookocheff.com/tags/docker/</link>
+    <language>en-us</language>
+    <copyright>Copyright Kevin Sookocheff.</copyright>
+    <lastBuildDate>Mon, 14 Sep 2015 20:26:21 CST</lastBuildDate>
+    
+    <item>
+      <title>Beginning Docker</title>
+      <link>http://sookocheff.com/post/docker/beginning-docker/</link>
+      <pubDate>Mon, 14 Sep 2015 20:26:21 CST</pubDate>
+      <author>kevin.sookocheff@gmail.com (Kevin Sookocheff)</author>
+      <guid>http://sookocheff.com/post/docker/beginning-docker/</guid>
+      <description>
+
+&lt;p&gt;I&amp;rsquo;m writing this article as a means of tracking commonly used docker commands in
+a place where I won&amp;rsquo;t forget them. If you find it useful or have additional
+suggestions let me know in the comments.&lt;/p&gt;
+
+&lt;h2 id=&#34;docker-machine:c1a9119712c687d2f7cd6051cc704390&#34;&gt;Docker Machine&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# create a new virtual machine
+&amp;gt; docker-machine create
+
+# create a new virtual machine using virtualbox, name it default
+&amp;gt; docker-machine create --driver virtualbox default
+
+# list available VMs
+&amp;gt; docker-machine ls 
+
+# list available VMs
+&amp;gt; docker-machine ls 
+
+# list environment variables needed connect to default VM
+&amp;gt; docker-machine env default
+
+# source environment variables into current shell session
+&amp;gt; eval $(docker-machine env default)
+
+# SSH into the VM
+&amp;gt; docker-machine ssh default
+
+# check a machine&#39;s status
+&amp;gt; docker-machine status default
+
+# start a machine
+&amp;gt; docker-machine start default
+
+# stop a machine
+&amp;gt; docker-machine stop default
+
+# remove a machine
+&amp;gt; docker-machine rm default
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;docker:c1a9119712c687d2f7cd6051cc704390&#34;&gt;Docker&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# create a container
+&amp;gt; docker create redis
+
+# start a container
+&amp;gt; docker start d8c20e1b7e98
+
+# create and start a container
+&amp;gt; docker run d8c20e1b7e98
+
+# pause a container (it won&#39;t be scheduled to execute tasks)
+&amp;gt; docker pause d8c20e1b7e98
+
+# unpause a container (resume scheduling)
+&amp;gt; docker unpause d8c20e1b7e98
+
+# set the port mappings between container and host
+&amp;gt; docker run -p 6379:6379 redis
+
+# auto-restart a container
+&amp;gt; docker run --restart=always redis
+
+# auto-restart up to three times on failure
+&amp;gt; docker run --restart=on-failure:3 redis
+
+# list all running containers
+&amp;gt; docker ps
+
+# list *all* containers
+&amp;gt; docker ps -a
+
+# run a command (ex: bash)
+&amp;gt; docker run redis bash
+
+# run an interactive container (t=&amp;gt;connect TTY, i=&amp;gt;interactive session)
+&amp;gt; docker run -ti redis bash
+
+# inspect a container
+&amp;gt; docker inspect d8c20e1b7e98
+
+# delete a container
+&amp;gt; docker rm d8c20e1b7e98
+
+# delete *all* containers
+&amp;gt; docker rm $(docker ps -a -q)
+
+# list all images
+&amp;gt; docker images
+
+# delete an image
+&amp;gt; docker rmi redis:latest
+
+# delete all images
+&amp;gt; docker rmi $(docker images -q)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -21,8 +21,7 @@
 
 &lt;p&gt;First, build your application for Mac and make sure that you uncheck Mac App Store Validation in the PlayerSettings Inspector window.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://sookocheff.com/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/player-settings.png&#34; alt=&#34;PlayerSettings&#34; title=&#34;PlayerSettings&#34; /&gt;
-&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://sookocheff.com/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/player-settings.png&#34; alt=&#34;PlayerSettings&#34; title=&#34;PlayerSettings&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Building your App from Unity will create a .App file. Navigate to this file in Finder and right-click. Choose Show Package Contents from the context menu to open your app as a folder.&lt;/p&gt;
 
@@ -30,8 +29,7 @@
 
 &lt;p&gt;Navigate to the Contents directory and open the file Info.plist in your favorite text editor. You will need to make a few changes to this file.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://sookocheff.com/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/info-plist.png&#34; alt=&#34;Info.plist&#34; title=&#34;Info.plist&#34; /&gt;
-&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://sookocheff.com/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/info-plist.png&#34; alt=&#34;Info.plist&#34; title=&#34;Info.plist&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Specifically, you will need to edit the following entries to correspond to your specific application.&lt;/p&gt;
 
@@ -136,8 +134,7 @@ icon_512x512@2x.png
 
 &lt;p&gt;You can find &amp;rdquo;XXXX&amp;rdquo; in the Keychain Access program. Look for a code signing certificate beginning with the text &amp;ldquo;3rd Party Mac Developer Application&amp;rdquo; you will need to copy this entire text to the codesign command above. You can find more details from the &lt;a href=&#34;http://developer.apple.com/library/mac/#releasenotes/General/SubmittingToMacAppStore/index.html&#34;&gt;App Store Submission documentation&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://sookocheff.com/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/keychain.png&#34; alt=&#34;KeyChain Access&#34; title=&#34;KeyChain Access&#34; /&gt;
-&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://sookocheff.com/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/keychain.png&#34; alt=&#34;KeyChain Access&#34; title=&#34;KeyChain Access&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;In addition to signing your app you must sign &lt;code&gt;libmono.dylib&lt;/code&gt;.&lt;/p&gt;
 

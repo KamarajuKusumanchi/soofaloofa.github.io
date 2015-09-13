@@ -849,8 +849,7 @@ class&lt;/a&gt;
 used by Apple&amp;rsquo;s GameCenter API. The &lt;code&gt;Player&lt;/code&gt; resource can be expressed with this
 simple diagram.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://sookocheff.com/img/2014-02-06-on-choosing-a-hypermedia-format/player-model.png&#34; alt=&#34;PlayerResource&#34; title=&#34;Player Resource&#34; /&gt;
-&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://sookocheff.com/img/2014-02-06-on-choosing-a-hypermedia-format/player-model.png&#34; alt=&#34;PlayerResource&#34; title=&#34;Player Resource&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Representing this as a typical JSON response would yield something like the
 following.&lt;/p&gt;

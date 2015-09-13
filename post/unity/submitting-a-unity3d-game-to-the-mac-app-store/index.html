@@ -89,8 +89,7 @@
 
 <p>First, build your application for Mac and make sure that you uncheck Mac App Store Validation in the PlayerSettings Inspector window.</p>
 
-<p><img src="/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/player-settings.png" alt="PlayerSettings" title="PlayerSettings" />
-</p>
+<p><img src="/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/player-settings.png" alt="PlayerSettings" title="PlayerSettings" /></p>
 
 <p>Building your App from Unity will create a .App file. Navigate to this file in Finder and right-click. Choose Show Package Contents from the context menu to open your app as a folder.</p>
 
@@ -98,8 +97,7 @@
 
 <p>Navigate to the Contents directory and open the file Info.plist in your favorite text editor. You will need to make a few changes to this file.</p>
 
-<p><img src="/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/info-plist.png" alt="Info.plist" title="Info.plist" />
-</p>
+<p><img src="/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/info-plist.png" alt="Info.plist" title="Info.plist" /></p>
 
 <p>Specifically, you will need to edit the following entries to correspond to your specific application.</p>
 
@@ -204,8 +202,7 @@ icon_512x512@2x.png
 
 <p>You can find &rdquo;XXXX&rdquo; in the Keychain Access program. Look for a code signing certificate beginning with the text &ldquo;3rd Party Mac Developer Application&rdquo; you will need to copy this entire text to the codesign command above. You can find more details from the <a href="http://developer.apple.com/library/mac/#releasenotes/General/SubmittingToMacAppStore/index.html">App Store Submission documentation</a>.</p>
 
-<p><img src="/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/keychain.png" alt="KeyChain Access" title="KeyChain Access" />
-</p>
+<p><img src="/img/2013-04-09-submitting-a-unity3d-game-to-the-mac-app-store/keychain.png" alt="KeyChain Access" title="KeyChain Access" /></p>
 
 <p>In addition to signing your app you must sign <code>libmono.dylib</code>.</p>
 

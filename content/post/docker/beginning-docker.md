@@ -9,6 +9,8 @@ I'm writing this article as a means of tracking commonly used docker commands in
 a place where I won't forget them. If you find it useful or have additional
 suggestions let me know in the comments.
 
+<!--more-->
+
 ## Docker Machine
 
 ```bash

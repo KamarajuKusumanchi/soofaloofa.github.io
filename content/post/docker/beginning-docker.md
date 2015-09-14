@@ -14,9 +14,6 @@ suggestions let me know in the comments.
 ## Docker Machine
 
 ```bash
-# create a new virtual machine
-> docker-machine create
-
 # create a new virtual machine using virtualbox, name it default
 > docker-machine create --driver virtualbox default
 

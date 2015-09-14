@@ -21,10 +21,7 @@ suggestions let me know in the comments.&lt;/p&gt;
 
 &lt;h2 id=&#34;docker-machine:c1a9119712c687d2f7cd6051cc704390&#34;&gt;Docker Machine&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# create a new virtual machine
-&amp;gt; docker-machine create
-
-# create a new virtual machine using virtualbox, name it default
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# create a new virtual machine using virtualbox, name it default
 &amp;gt; docker-machine create --driver virtualbox default
 
 # list available VMs

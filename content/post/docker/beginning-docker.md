@@ -14,6 +14,9 @@ suggestions let me know in the comments.
 ## Docker Machine
 
 ```bash
+# create a new virtual machine
+> docker-machine create
+
 # create a new virtual machine using virtualbox, name it default
 > docker-machine create --driver virtualbox default
 
@@ -28,6 +31,9 @@ suggestions let me know in the comments.
 
 # source environment variables into current shell session
 > eval $(docker-machine env default)
+
+# view a machines IP address
+> docker-machine ip default
 
 # SSH into the VM
 > docker-machine ssh default
@@ -48,6 +54,12 @@ suggestions let me know in the comments.
 ## Docker
 
 ```bash
+# check the docker version
+> docker version
+
+# check server information
+> docker info
+
 # create a container
 > docker create redis
 
@@ -55,7 +67,10 @@ suggestions let me know in the comments.
 > docker start d8c20e1b7e98
 
 # create and start a container
-> docker run d8c20e1b7e98
+> docker run redis
+
+# create and start a container
+> docker run 91e54dfb1179  # give an image id
 
 # pause a container (it won't be scheduled to execute tasks)
 > docker pause d8c20e1b7e98
@@ -71,6 +86,18 @@ suggestions let me know in the comments.
 
 # auto-restart up to three times on failure
 > docker run --restart=on-failure:3 redis
+
+# start a container and run a command
+> docker exec -t -i d8c20e1b7e98 /bin/bash
+
+# start a container and run a command in background mode
+> docker exec -t -i -d d8c20e1b7e98 /bin/bash
+
+# update a container
+> docker pull redis:latest
+
+# run a command in a running container
+> docker exec -t -i d8c20e1b7e98 /bin/bash
 
 # list all running containers
 > docker ps
@@ -97,8 +124,27 @@ suggestions let me know in the comments.
 > docker images
 
 # delete an image
-> docker rmi redis:latest
+> docker rmi redis:latest 
 
 # delete all images
 > docker rmi $(docker images -q)
+
+# look at container logs (stdout and stderr)
+> docker logs d8c20e1b7e98
+
+# block for more log output
+> docker logs -f d8c20e1b7e98
+
+# view stats
+> docker stats 7736a32c6e41
+
+# view events
+> docker events
+
+# view events after a time
+> docker events --since 2015-02-18T14:03:31-08:00
+
+# view events before a time
+> docker events --until 2015-02-18T14:03:31-08:00
+
 ```

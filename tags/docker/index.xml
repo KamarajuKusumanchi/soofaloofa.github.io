@@ -21,7 +21,10 @@ suggestions let me know in the comments.&lt;/p&gt;
 
 &lt;h2 id=&#34;docker-machine:c1a9119712c687d2f7cd6051cc704390&#34;&gt;Docker Machine&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# create a new virtual machine using virtualbox, name it default
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# create a new virtual machine
+&amp;gt; docker-machine create
+
+# create a new virtual machine using virtualbox, name it default
 &amp;gt; docker-machine create --driver virtualbox default
 
 # list available VMs
@@ -35,6 +38,9 @@ suggestions let me know in the comments.&lt;/p&gt;
 
 # source environment variables into current shell session
 &amp;gt; eval $(docker-machine env default)
+
+# view a machines IP address
+&amp;gt; docker-machine ip default
 
 # SSH into the VM
 &amp;gt; docker-machine ssh default
@@ -54,14 +60,23 @@ suggestions let me know in the comments.&lt;/p&gt;
 
 &lt;h2 id=&#34;docker:c1a9119712c687d2f7cd6051cc704390&#34;&gt;Docker&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# create a container
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# check the docker version
+&amp;gt; docker version
+
+# check server information
+&amp;gt; docker info
+
+# create a container
 &amp;gt; docker create redis
 
 # start a container
 &amp;gt; docker start d8c20e1b7e98
 
 # create and start a container
-&amp;gt; docker run d8c20e1b7e98
+&amp;gt; docker run redis
+
+# create and start a container
+&amp;gt; docker run 91e54dfb1179  # give an image id
 
 # pause a container (it won&#39;t be scheduled to execute tasks)
 &amp;gt; docker pause d8c20e1b7e98
@@ -77,6 +92,18 @@ suggestions let me know in the comments.&lt;/p&gt;
 
 # auto-restart up to three times on failure
 &amp;gt; docker run --restart=on-failure:3 redis
+
+# start a container and run a command
+&amp;gt; docker exec -t -i d8c20e1b7e98 /bin/bash
+
+# start a container and run a command in background mode
+&amp;gt; docker exec -t -i -d d8c20e1b7e98 /bin/bash
+
+# update a container
+&amp;gt; docker pull redis:latest
+
+# run a command in a running container
+&amp;gt; docker exec -t -i d8c20e1b7e98 /bin/bash
 
 # list all running containers
 &amp;gt; docker ps
@@ -103,10 +130,29 @@ suggestions let me know in the comments.&lt;/p&gt;
 &amp;gt; docker images
 
 # delete an image
-&amp;gt; docker rmi redis:latest
+&amp;gt; docker rmi redis:latest 
 
 # delete all images
 &amp;gt; docker rmi $(docker images -q)
+
+# look at container logs (stdout and stderr)
+&amp;gt; docker logs d8c20e1b7e98
+
+# block for more log output
+&amp;gt; docker logs -f d8c20e1b7e98
+
+# view stats
+&amp;gt; docker stats 7736a32c6e41
+
+# view events
+&amp;gt; docker events
+
+# view events after a time
+&amp;gt; docker events --since 2015-02-18T14:03:31-08:00
+
+# view events before a time
+&amp;gt; docker events --until 2015-02-18T14:03:31-08:00
+
 &lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>

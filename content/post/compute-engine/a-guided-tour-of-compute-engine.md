@@ -141,7 +141,7 @@ Service. Any other requests are routed to the `web` service.
 The Target HTTP Proxy is a simple proxy that receives requests and routes them
 to the URL Maps. 
 
-{{% img "2014-11-05-a-guided-tour-of-compute-engine/TargetHttpProxy.png" "Target HTTP Proxy" %}}
+{{% img "2014-11-05-a-guided-tour-of-compute-engine/TargetHTTPProxy.png" "Target HTTP Proxy" %}}
 
 ### Global Forwarding Rule
 

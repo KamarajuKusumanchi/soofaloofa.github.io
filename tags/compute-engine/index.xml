@@ -376,8 +376,8 @@ Service. Any other requests are routed to the &lt;code&gt;web&lt;/code&gt; servi
 &lt;p&gt;The Target HTTP Proxy is a simple proxy that receives requests and routes them
 to the URL Maps.&lt;/p&gt;
 
-&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/TargetHttpProxy.png&#34;&gt;
-  &lt;img src=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/TargetHttpProxy.png&#34; alt=&#34;Target HTTP Proxy&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;thumbnail&#34; href=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/TargetHTTPProxy.png&#34;&gt;
+  &lt;img src=&#34;http://sookocheff.com/img/2014-11-05-a-guided-tour-of-compute-engine/TargetHTTPProxy.png&#34; alt=&#34;Target HTTP Proxy&#34;&gt;
 &lt;/a&gt;
 &lt;/p&gt;
 
